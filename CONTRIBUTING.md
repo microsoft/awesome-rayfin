@@ -27,8 +27,9 @@ This repo is a curated gallery of templates and resources for Rayfin builders. C
 ### Adding a community template or sample
 
 1. Open an issue describing the template — what it does, what Rayfin features it uses, and who it's for.
-2. Submit a PR that adds an entry to the appropriate section in `README.md`.
-3. Each entry should include:
+2. Review the [Template Guidelines](docs/template-guidelines.md) for required files and conventions.
+3. Submit a PR that adds an entry to the appropriate section in `README.md`.
+4. Each entry should include:
    - **Name** with a link to the repository or directory
    - **Description** — one or two sentences explaining what it demonstrates
    - **Feature tags** — which Rayfin capabilities it uses (Auth, Data, Storage, etc.)

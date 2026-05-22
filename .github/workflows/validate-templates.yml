@@ -82,3 +82,34 @@ jobs:
             echo "::error::$errors template(s) failed scaffold test"
             exit 1
           fi
+
+  lint-build-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        template:
+          - field-engineer
+          - events-app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        working-directory: templates/${{ matrix.template }}
+        run: npm install
+
+      - name: Lint
+        working-directory: templates/${{ matrix.template }}
+        run: npm run lint
+
+      - name: Build
+        working-directory: templates/${{ matrix.template }}
+        run: npm run build
+
+      - name: Test
+        working-directory: templates/${{ matrix.template }}
+        run: npm test

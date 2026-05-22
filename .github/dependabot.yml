@@ -1,0 +1,33 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/templates/field-engineer"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "field-engineer"
+    groups:
+      rayfin:
+        patterns:
+          - "@microsoft/rayfin-*"
+
+  - package-ecosystem: "npm"
+    directory: "/templates/events-app"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "events-app"
+    groups:
+      rayfin:
+        patterns:
+          - "@microsoft/rayfin-*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "ci"

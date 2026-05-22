@@ -1,11 +1,26 @@
 # AGENTS.md
 
-This project ships Rayfin agent context.
-Load `.agents/skills/rayfin/SKILL.md` and the `rayfin` MCP server in `.mcp.json` before writing Rayfin code.
+This repository is the **Awesome Rayfin** template gallery, not a single Rayfin app. Work primarily in `templates/` and keep gallery metadata, manifests, and docs in sync.
 
-Rayfin docs are version-locked to the packages installed in this project.
-Prefer the MCP tools `search_docs`, `get_doc`, `list_docs`, and `discover_packages` for examples, API details, and troubleshooting.
-If MCP is unavailable, run `rayfin docs ...` from the project root so the CLI reads this project's `node_modules`.
-If `rayfin` is not on `PATH`, use `npx -y @microsoft/rayfin-cli docs ...` from the project root.
+## Start here
 
-Use `discover_packages` or `rayfin docs discover <topic>` when installed docs do not cover the task.
+- Follow `docs/template-guidelines.md` for required template structure and contribution expectations.
+- Load `.agents/skills/template-gallery/SKILL.md` before creating, validating, or updating templates in this gallery.
+- Use the `rayfin` MCP server defined in `.mcp.json` for Rayfin SDK and CLI documentation while editing template code.
+
+## Key repo workflows
+
+- `scripts/new-template.sh` scaffolds a new template directory: `./scripts/new-template.sh <name> "<Display Name>" "<description>"`
+- `scripts/generate-manifest.mjs` regenerates the root `rayfin-template.yml`, per-template manifests, and the README templates table.
+- `node scripts/generate-manifest.mjs --check` verifies generated files are up to date.
+
+## Validation expectations
+
+- CI is defined in `.github/workflows/validate-templates.yml`.
+- The workflow validates template metadata, checks generated manifests and README output, and smoke-tests scaffolding with `rayfin init`.
+- When changing templates or gallery metadata, run the same checks locally when practical.
+
+## Rayfin docs
+
+- Prefer the Rayfin MCP server in `.mcp.json` for package discovery, examples, and API details.
+- If MCP is unavailable, use `rayfin docs ...` or `npx -y @microsoft/rayfin-cli docs ...` from the relevant template directory so docs match that template's installed packages.
