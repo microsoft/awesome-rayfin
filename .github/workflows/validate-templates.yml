@@ -1,0 +1,84 @@
+name: Validate Templates
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate template metadata
+        run: |
+          errors=0
+          for dir in templates/*/; do
+            pkg="$dir/package.json"
+            if [ ! -f "$pkg" ]; then
+              echo "❌ $dir is missing package.json"
+              errors=$((errors + 1))
+              continue
+            fi
+
+            name=$(node -e "const p=require('./$pkg'); console.log(p.template?.name || '')")
+            displayName=$(node -e "const p=require('./$pkg'); console.log(p.template?.displayName || '')")
+            description=$(node -e "const p=require('./$pkg'); console.log(p.template?.description || '')")
+
+            if [ -z "$name" ] || [ -z "$displayName" ] || [ -z "$description" ]; then
+              echo "❌ $pkg missing template.name, template.displayName, or template.description"
+              errors=$((errors + 1))
+            else
+              echo "✅ $dir → $displayName"
+            fi
+          done
+
+          if [ $errors -gt 0 ]; then
+            echo "::error::$errors template(s) have invalid metadata"
+            exit 1
+          fi
+
+      - name: Check generated files are up to date
+        run: node scripts/generate-manifest.mjs --check
+
+      - name: Scaffold each template
+        run: |
+          npm install -g @microsoft/rayfin-cli
+
+          # Read template names from the root manifest
+          entries=$(node -e "
+            const fs = require('fs');
+            const yaml = fs.readFileSync('rayfin-template.yml', 'utf8');
+            const names = [...yaml.matchAll(/^ {2}- path: .+\n {4}name: (.+)/gm)].map(m => m[1]);
+            names.forEach(n => console.log(n));
+          ")
+
+          errors=0
+          while IFS= read -r name; do
+            dir=$(mktemp -d)
+            echo "📦 Scaffolding '$name' into $dir..."
+            if rayfin init -t "$(pwd)" --template-name "$name" --project-dir "$dir" --overwrite 2>&1; then
+              echo "✅ $name scaffolded successfully"
+
+              # Verify package.json exists in output
+              if [ ! -f "$dir/package.json" ]; then
+                echo "❌ $name scaffold output is missing package.json"
+                errors=$((errors + 1))
+              fi
+            else
+              echo "❌ $name failed to scaffold"
+              errors=$((errors + 1))
+            fi
+            rm -rf "$dir"
+          done <<< "$entries"
+
+          if [ $errors -gt 0 ]; then
+            echo "::error::$errors template(s) failed scaffold test"
+            exit 1
+          fi
