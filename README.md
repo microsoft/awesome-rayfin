@@ -42,6 +42,7 @@ The CLI reads `rayfin-template.yml` at the repo root and presents an interactive
 | Template | Description | Auth | Data | Stack |
 |----------|-------------|:----:|:----:|-------|
 | **[Field Engineer](./templates/field-engineer)** | Field engineer task management app with Fabric authentication, data tracking, and React + Vite. | ✅ | ✅ | React, Vite, Tailwind |
+| **[Events App](./templates/events-app)** | Events management app with scheduling, listings, and Fabric authentication. | ✅ | ✅ | React, Vite, Tailwind |
 
 > **Adding a template?** See the [Contributing Guide](CONTRIBUTING.md).
 

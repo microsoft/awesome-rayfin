@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: events-app
+  displayName: Events App
+  description: Events management app with scheduling, listings, and Fabric authentication
+entries:
+  - path: .
+    name: Events App

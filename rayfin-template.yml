@@ -7,3 +7,6 @@ entries:
   - path: templates/field-engineer
     name: Field Engineer
     description: Field engineer task management app with Fabric authentication, data tracking, and React + Vite
+  - path: templates/events-app
+    name: Events App
+    description: Events management app with scheduling, listings, and Fabric authentication
