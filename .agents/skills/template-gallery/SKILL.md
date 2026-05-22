@@ -12,6 +12,7 @@ Make changes that keep individual templates, generated manifests, and gallery do
 2. Read the root `AGENTS.md` for gallery-specific workflow guidance.
 3. Use the `rayfin` MCP server from `.mcp.json` when you need Rayfin SDK or CLI docs.
 4. Review a nearby template in `templates/` if you need a working example.
+5. Use `.scratchpad/` for any temporary or working files — it is git-ignored.
 
 ## Create a new template
 

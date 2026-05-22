@@ -20,6 +20,11 @@ This repository is the **Awesome Rayfin** template gallery, not a single Rayfin 
 - The workflow validates template metadata, checks generated manifests and README output, and smoke-tests scaffolding with `rayfin init`.
 - When changing templates or gallery metadata, run the same checks locally when practical.
 
+## Scratch space
+
+- `.scratchpad/` is git-ignored and available for temporary working files (draft content, intermediate output, exploration notes, etc.).
+- Prefer `.scratchpad/` over the repo tree for any files that should not be committed.
+
 ## Rayfin docs
 
 - Prefer the Rayfin MCP server in `.mcp.json` for package discovery, examples, and API details.
