@@ -1,0 +1,59 @@
+name: New Template Proposal
+description: Propose a new template for the Awesome Rayfin gallery
+labels: ["new-template", "proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing a new template! Please fill out the details below so
+        maintainers can evaluate the idea.
+
+  - type: input
+    id: template-name
+    attributes:
+      label: Template name
+      description: Short kebab-case name (e.g. `inventory-tracker`)
+      placeholder: my-template
+    validations:
+      required: true
+
+  - type: input
+    id: display-name
+    attributes:
+      label: Display name
+      description: Human-readable name shown in the gallery
+      placeholder: My Template
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What does this template do? What scenario or audience is it for?
+    validations:
+      required: true
+
+  - type: textarea
+    id: rayfin-features
+    attributes:
+      label: Rayfin features used
+      description: Which Rayfin capabilities will this template demonstrate?
+      placeholder: |
+        - Fabric authentication
+        - Lakehouse data via SQL endpoint
+        - Real-time hub events
+
+  - type: textarea
+    id: differentiation
+    attributes:
+      label: How is this different from existing templates?
+      description: Explain what gap this template fills compared to the current gallery.
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I plan to implement and submit this template myself
+        - label: I have read the [Template Guidelines](docs/template-guidelines.md)
