@@ -34,7 +34,7 @@ A `docs/template-guidelines.md` covering required files, naming conventions, met
 
 Add `.agents/skills/` with skills that help coding agents create, validate, and maintain templates in this gallery. This could include instructions for scaffolding a new template from the template-for-templates (item 4), running validation checks (manifest metadata, required files, `rayfin init` smoke test), and updating the gallery manifest and README. Lets agents be first-class contributors to the gallery.
 
-### 7. Remove leaf `rayfin-template.yml` duplication
+### [Declined] 7. Remove leaf `rayfin-template.yml` duplication
 
 Right now each template needs its own `rayfin-template.yml` because the CLI resolves into the subdirectory then looks for a manifest. If the CLI supports this pattern long-term, the auto-gen script (item 1) should also generate the leaf manifests. If not, investigate whether the root manifest alone can suffice with a CLI update.
 
@@ -62,6 +62,6 @@ The root-level `AGENTS.md` and `.mcp.json` reference Rayfin MCP and skills, but 
 
 Extend the auto-gen script to also update the `README.md` templates table from the same `package.json` metadata, so the gallery table stays in sync automatically.
 
-### 13. Issue templates
+### [Complete] 13. Issue templates
 
 `.github/ISSUE_TEMPLATE/` with forms for "New Template Proposal" and "Bug in Existing Template".
