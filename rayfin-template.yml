@@ -1,0 +1,9 @@
+apiVersion: v1
+metadata:
+  name: awesome-rayfin
+  displayName: Awesome Rayfin Templates
+  description: Community-curated template gallery for Project Rayfin
+entries:
+  - path: templates/field-engineer
+    name: Field Engineer
+    description: Field engineer task management app with Fabric authentication, data tracking, and React + Vite
