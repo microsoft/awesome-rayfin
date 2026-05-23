@@ -1,0 +1,26 @@
+id: todo-local-experimental
+name: todo-local-experimental
+version: 1.0.0
+services:
+  auth:
+    enabled: true
+    fabric:
+      enabled: true
+    password:
+      enabled: true
+    allowedRedirectUris:
+      - http://localhost:5173
+      - https://elite-shrub-7fb6a71a5d-westcentralus.webapp.msit.fabricapps.net
+  data:
+    enabled: true
+    dialect: mssql
+  staticHosting:
+    enabled: true
+    folder: dist
+    buildCommand: npm run build
+    indexDocument: index.html
+  storage:
+    enabled: false
+  functions:
+    enabled: false
+publishable_key: pk-5kiNx3d0xdRzxTNwRCFI
