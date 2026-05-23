@@ -5,11 +5,12 @@ services:
   auth:
     enabled: true
     fabric:
-      enabled: false
+      enabled: true
     password:
       enabled: true
     allowedRedirectUris:
       - http://localhost:5173
+      - https://elite-shrub-7fb6a71a5d-westcentralus.webapp.msit.fabricapps.net
   data:
     enabled: true
     dialect: mssql
@@ -18,4 +19,8 @@ services:
     folder: dist
     buildCommand: npm run build:fabric
     indexDocument: index.html
+  storage:
+    enabled: false
+  functions:
+    enabled: false
 publishable_key: pk-5kiNx3d0xdRzxTNwRCFI

@@ -12,15 +12,13 @@
     "predev": "rayfin env --framework vite",
     "prebuild": "rayfin env --framework vite",
     "dev": "rayfin up --exclude-services staticHosting && vite",
-    "dev:local": "cross-env RAYFIN_FEATURE_FLAGS=docker-local-dev rayfin dev",
-    "dev:local:db": "cross-env RAYFIN_FEATURE_FLAGS=docker-local-dev rayfin dev db apply",
+    "dev:local": "npm run predev && npm run rayfin:dev && vite",
+    "up": "rayfin up",
     "build": "tsc -b && vite build",
-    "build:fabric": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
     "test": "vitest run",
-    "rayfin:dev": "rayfin dev",
-    "rayfin:db": "rayfin dev db apply"
+    "rayfin:dev": "cross-env RAYFIN_FEATURE_FLAGS=docker-local-dev rayfin dev",
+    "rayfin:db": "cross-env RAYFIN_FEATURE_FLAGS=docker-local-dev rayfin dev db apply"
   },
   "dependencies": {
     "@microsoft/rayfin-auth-provider-fabric": "^1.33.0-beta.0",

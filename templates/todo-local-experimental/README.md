@@ -12,10 +12,71 @@ A working starter that exercises the full data path without Fabric — sign in, 
 npm run dev:local
 
 # Apply database migrations (first time only)
-npm run dev:local:db
+npm run rayfin:db
 ```
 
 Open [http://localhost:5173](http://localhost:5173) to view the app. Create an account with any email/password.
+
+## Development modes
+
+This template supports three development workflows:
+
+### 1. Full local (`dev:local`) — recommended for offline/local work
+
+Runs the entire Rayfin backend in Docker containers on your machine. No Fabric workspace needed.
+
+```bash
+npm run dev:local
+```
+
+This starts the Docker containers (`rayfin dev`), generates Vite env files, and launches the Vite dev server. Requires Docker Desktop and `gh` CLI authenticated to ghcr.io (the pre-flight script handles this automatically).
+
+### 2. Fabric cloud (`dev`) — requires a deployed Fabric workspace
+
+Deploys services to Fabric (`rayfin up`) and runs Vite locally against the cloud backend.
+
+```bash
+npm run dev
+```
+
+### 3. Deploy only (`up`) — deploy to Fabric without a local dev server
+
+```bash
+npm run up
+```
+
+### Passing options to `rayfin dev`
+
+The `rayfin:dev` script wraps `rayfin dev` with the required feature flag. You can pass additional CLI options after `--`:
+
+```bash
+# Check status of local containers
+npm run rayfin:dev -- status
+
+# Apply database migrations
+npm run rayfin:db
+
+# Stop local containers
+npm run rayfin:dev -- --stop
+
+# Purge local containers and volumes
+npm run rayfin:dev -- --purge
+```
+
+### Feature flag: `RAYFIN_FEATURE_FLAGS=docker-local-dev`
+
+Docker local hosting is gated behind the `docker-local-dev` feature flag. The `rayfin:dev` and `rayfin:db` scripts set this automatically via `cross-env`. If you invoke `rayfin dev` directly, you must set it yourself:
+
+```bash
+# Manual invocation (equivalent to npm run rayfin:dev)
+RAYFIN_FEATURE_FLAGS=docker-local-dev rayfin dev
+
+# Or export it for the session
+export RAYFIN_FEATURE_FLAGS=docker-local-dev
+rayfin dev
+rayfin dev db apply
+rayfin dev status
+```
 
 ## Project structure
 
@@ -49,9 +110,11 @@ Open [http://localhost:5173](http://localhost:5173) to view the app. Create an a
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev:local` | Start Docker backend + Vite dev server |
-| `npm run dev:local:db` | Apply database migrations to local backend |
-| `npm run dev` | Deploy app to Fabric and start local dev server |
+| `npm run dev:local` | Start Docker backend + Vite dev server (full local) |
+| `npm run dev` | Deploy to Fabric + start Vite dev server (cloud backend) |
+| `npm run up` | Deploy to Fabric only (no local server) |
+| `npm run rayfin:dev` | Run `rayfin dev` with the `docker-local-dev` feature flag |
+| `npm run rayfin:db` | Apply database migrations to local Docker backend |
 | `npm run build` | Production build |
 | `npm run lint` | Lint with ESLint |
 | `npm run test` | Run unit tests with Vitest |
