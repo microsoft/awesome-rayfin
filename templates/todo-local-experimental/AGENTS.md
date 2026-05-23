@@ -17,6 +17,9 @@ When working with auth code, refer to the existing `RayfinAuthService` implement
 Three modes are available:
 
 - **`npm run dev:local`** — Full local. Runs the Rayfin backend in Docker, generates env, starts Vite.
+- **`npm run dev:local:stop`** — Stop local Docker containers (keeps data).
+- **`npm run dev:local:down`** — Remove local Docker containers (keeps volumes).
+- **`npm run dev:local:purge`** — Purge containers and volumes (full reset).
 - **`npm run dev`** — Cloud backend. Deploys to Fabric (`rayfin up`), starts Vite against the remote API.
 - **`npm run up`** — Deploy only. Deploys to Fabric without a local dev server.
 
@@ -27,8 +30,9 @@ Use `npm run rayfin:dev` to invoke `rayfin dev` with the required feature flag a
 ```bash
 npm run rayfin:dev             # start Docker containers
 npm run rayfin:dev -- status   # check container status
-npm run rayfin:dev -- --stop   # stop containers
-npm run rayfin:dev -- --purge  # purge containers and volumes
+npm run dev:local:stop         # stop containers
+npm run dev:local:down         # remove containers
+npm run dev:local:purge        # purge containers and volumes
 npm run rayfin:db              # apply database migrations
 ```
 

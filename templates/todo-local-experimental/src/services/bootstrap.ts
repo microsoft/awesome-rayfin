@@ -6,8 +6,8 @@ import { initRayfinClient } from './rayfinClient';
  * Read VITE_* env vars, initialize the Rayfin client, and return the
  * auth service configured for the appropriate mode.
  *
- * - Fabric env vars present → Fabric brokered auth
- * - Otherwise               → email/password auth
+ * - API URL points to localhost → email/password auth
+ * - Otherwise                  → Fabric brokered auth
  */
 export function bootstrapAuth(): IAuthService {
   const apiUrl = import.meta.env.VITE_RAYFIN_API_URL || 'http://localhost:5168';
@@ -16,7 +16,10 @@ export function bootstrapAuth(): IAuthService {
   const workspaceId = import.meta.env.VITE_FABRIC_WORKSPACE_ID;
   const projectId = import.meta.env.VITE_FABRIC_ITEM_ID;
   const fabricPortalUrl = import.meta.env.VITE_FABRIC_PORTAL_URL;
-  const useFabric = !!(workspaceId && projectId && fabricPortalUrl);
+
+  // If the API URL points to localhost, use password auth; otherwise Fabric.
+  const apiHost = new URL(apiUrl).hostname;
+  const useFabric = apiHost !== 'localhost' && apiHost !== '127.0.0.1';
 
   if (!publishableKey && useFabric) {
     throw new Error(
@@ -35,9 +38,9 @@ export function bootstrapAuth(): IAuthService {
     return new RayfinAuthService(client, {
       mode: 'fabric',
       fabricOptions: {
-        workspaceId,
-        projectId,
-        fabricPortalUrl,
+        workspaceId: workspaceId ?? '',
+        projectId: projectId ?? '',
+        fabricPortalUrl: fabricPortalUrl ?? '',
         returnOrigin: window.location.origin,
       },
     });

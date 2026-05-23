@@ -10,6 +10,6 @@ entries:
   - path: templates/field-engineer
     name: Field Engineer
     description: Field engineer task management app with Fabric authentication, data tracking, and React + Vite
-  - path: templates/todo-app
-    name: "[Experimental] Todo App w/ full local dev"
+  - path: templates/todo-local-experimental
+    name: "[Experimental] Todo app with full local dev"
     description: Full-stack todo app with categories, auth, and Docker local development

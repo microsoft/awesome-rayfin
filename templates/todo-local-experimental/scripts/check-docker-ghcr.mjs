@@ -68,70 +68,86 @@ if (!dockerRunning) {
   process.exit(1);
 }
 
-// ── 2. GitHub CLI check ─────────────────────────────────────────────────────
+// ── 2. Quick auth check — can Docker already pull from ghcr.io? ─────────────
 
-const ghUser = run('gh', ['api', 'user', '-q', '.login']);
-if (!ghUser) {
-  console.error('❌ GitHub CLI (gh) is not installed or not authenticated.');
-  console.error('');
-  console.error('   Install it from https://cli.github.com/ then run:');
-  console.error('');
-  console.error('     gh auth login');
-  process.exit(1);
+/** Try to inspect a known image to test existing credentials. */
+function canAccessGhcr() {
+  // Use `docker manifest inspect` with a short timeout. If credentials are
+  // already cached from a prior login, this succeeds instantly.
+  const result = run('docker', ['manifest', 'inspect', `${IMAGE}:latest`], { timeout: 10_000 });
+  return result !== null;
 }
 
-// ── 3. Ensure read:packages scope ───────────────────────────────────────────
+let alreadyAuthed = canAccessGhcr();
 
-const authStatus = run('gh', ['auth', 'status', '--show-token']);
-const hasPackagesScope = authStatus?.toLowerCase().includes('read:packages');
+if (!alreadyAuthed) {
+  // ── 3. GitHub CLI check ─────────────────────────────────────────────────────
 
-if (!hasPackagesScope) {
-  console.log('🔄 Token missing read:packages scope, refreshing…');
-  try {
-    execFileSync('gh', ['auth', 'refresh', '--scopes', 'read:packages'], {
-      stdio: 'inherit',
-      timeout: 60_000,
-    });
-  } catch {
-    console.error('❌ Failed to refresh token with read:packages scope.');
+  const ghUser = run('gh', ['api', 'user', '-q', '.login']);
+  if (!ghUser) {
+    console.error('❌ GitHub CLI (gh) is not installed or not authenticated.');
     console.error('');
-    console.error('   Run manually and try again:');
+    console.error('   Install it from https://cli.github.com/ then run:');
     console.error('');
-    console.error('     gh auth refresh --scopes read:packages');
+    console.error('     gh auth login');
     process.exit(1);
   }
-}
 
-// ── 4. GHCR login ───────────────────────────────────────────────────────────
+  // ── 4. Ensure read:packages scope ─────────────────────────────────────────
 
-const token = run('gh', ['auth', 'token']);
-if (!token) {
-  console.error('❌ Could not retrieve a token from the GitHub CLI.');
-  console.error('');
-  console.error('   Try re-authenticating:  gh auth login');
-  process.exit(1);
-}
+  const authStatus = run('gh', ['auth', 'status', '--show-token']);
+  const hasPackagesScope = authStatus?.toLowerCase().includes('read:packages');
 
-try {
-  execFileSync('docker', ['login', 'ghcr.io', '-u', ghUser, '--password-stdin'], {
-    input: token,
-    stdio: ['pipe', 'pipe', 'pipe'],
-    timeout: 15_000,
-  });
-  console.log('✅ Docker is running and authenticated to ghcr.io');
-} catch (err) {
-  console.error('❌ Failed to log in to ghcr.io.');
-  console.error('');
-  const stderr = err?.stderr?.toString().trim();
-  if (stderr) {
-    console.error(`   ${stderr}`);
-    console.error('');
+  if (!hasPackagesScope) {
+    console.log('🔄 Token missing read:packages scope, refreshing…');
+    try {
+      execFileSync('gh', ['auth', 'refresh', '--scopes', 'read:packages'], {
+        stdio: 'inherit',
+        timeout: 60_000,
+      });
+    } catch {
+      console.error('❌ Failed to refresh token with read:packages scope.');
+      console.error('');
+      console.error('   Run manually and try again:');
+      console.error('');
+      console.error('     gh auth refresh --scopes read:packages');
+      process.exit(1);
+    }
   }
-  console.error('   Try re-authenticating:  gh auth login');
-  process.exit(1);
+
+  // ── 5. GHCR login ──────────────────────────────────────────────────────────
+
+  const token = run('gh', ['auth', 'token']);
+  if (!token) {
+    console.error('❌ Could not retrieve a token from the GitHub CLI.');
+    console.error('');
+    console.error('   Try re-authenticating:  gh auth login');
+    process.exit(1);
+  }
+
+  try {
+    execFileSync('docker', ['login', 'ghcr.io', '-u', ghUser, '--password-stdin'], {
+      input: token,
+      stdio: ['pipe', 'pipe', 'pipe'],
+      timeout: 15_000,
+    });
+    console.log('✅ Logged in to ghcr.io');
+  } catch (err) {
+    console.error('❌ Failed to log in to ghcr.io.');
+    console.error('');
+    const stderr = err?.stderr?.toString().trim();
+    if (stderr) {
+      console.error(`   ${stderr}`);
+      console.error('');
+    }
+    console.error('   Try re-authenticating:  gh auth login');
+    process.exit(1);
+  }
+} else {
+  console.log('✅ Docker is running and already authenticated to ghcr.io');
 }
 
-// ── 5. Verify the expected container image exists ───────────────────────────
+// ── 6. Verify the expected container image exists ───────────────────────────
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 let cliVersion;

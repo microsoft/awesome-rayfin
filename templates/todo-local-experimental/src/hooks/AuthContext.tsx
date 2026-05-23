@@ -113,7 +113,7 @@ export function AuthProvider({ children, authService }: AuthProviderProps) {
     setError('Your session has expired. Please sign in again.');
   }, []);
 
-  // Poll session validity every 30 seconds while authenticated.
+  // Poll session validity every 5 seconds while authenticated.
   useEffect(() => {
     if (!user) return;
 

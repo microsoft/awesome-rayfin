@@ -56,11 +56,14 @@ npm run rayfin:dev -- status
 # Apply database migrations
 npm run rayfin:db
 
-# Stop local containers
-npm run rayfin:dev -- --stop
+# Stop local containers (keeps data)
+npm run dev:local:stop
 
-# Purge local containers and volumes
-npm run rayfin:dev -- --purge
+# Remove local containers (keeps volumes/data)
+npm run dev:local:down
+
+# Purge local containers and volumes (full reset)
+npm run dev:local:purge
 ```
 
 ### Feature flag: `RAYFIN_FEATURE_FLAGS=docker-local-dev`
@@ -111,6 +114,9 @@ rayfin dev status
 | Command | Description |
 |---------|-------------|
 | `npm run dev:local` | Start Docker backend + Vite dev server (full local) |
+| `npm run dev:local:stop` | Stop local Docker containers (keeps data) |
+| `npm run dev:local:down` | Remove local Docker containers (keeps volumes) |
+| `npm run dev:local:purge` | Purge containers and volumes (full reset) |
 | `npm run dev` | Deploy to Fabric + start Vite dev server (cloud backend) |
 | `npm run up` | Deploy to Fabric only (no local server) |
 | `npm run rayfin:dev` | Run `rayfin dev` with the `docker-local-dev` feature flag |
@@ -123,7 +129,7 @@ rayfin dev status
 
 This template defaults to **username/password** mode — no Fabric workspace required. Users create accounts and sign in with an email and password stored in the local backend.
 
-To switch to **Fabric brokered auth**, set these env vars and add `@microsoft/rayfin-auth-provider-fabric` to dependencies:
+To switch to **Fabric brokered auth**, set these env vars (the `@microsoft/rayfin-auth-provider-fabric` dependency is already included):
 
 ```env
 VITE_FABRIC_WORKSPACE_ID=...

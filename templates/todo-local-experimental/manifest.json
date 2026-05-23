@@ -1,6 +1,6 @@
 {
   "templateId": "todoapp",
-  "icon": "todo-app",
+  "icon": "todo-local-experimental",
   "services": {
     "auth": true,
     "data": true,

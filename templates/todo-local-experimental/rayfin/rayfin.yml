@@ -17,7 +17,7 @@ services:
   staticHosting:
     enabled: true
     folder: dist
-    buildCommand: npm run build:fabric
+    buildCommand: npm run build
     indexDocument: index.html
   storage:
     enabled: false
