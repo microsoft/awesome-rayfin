@@ -51,11 +51,15 @@ jobs:
         run: |
           npm install -g @microsoft/rayfin-cli
 
-          # Read template names from the root manifest
+          # Read template display names from each template package
           entries=$(node -e "
             const fs = require('fs');
-            const yaml = fs.readFileSync('rayfin-template.yml', 'utf8');
-            const names = [...yaml.matchAll(/^ {2}- path: .+\n {4}name: (.+)/gm)].map(m => m[1]);
+            const path = require('path');
+            const names = fs.readdirSync('templates')
+              .map((dir) => path.join('templates', dir, 'package.json'))
+              .filter((pkgPath) => fs.existsSync(pkgPath))
+              .map((pkgPath) => require(path.resolve(pkgPath)).template?.displayName)
+              .filter(Boolean);
             names.forEach(n => console.log(n));
           ")
 
@@ -63,7 +67,7 @@ jobs:
           while IFS= read -r name; do
             dir=$(mktemp -d)
             echo "📦 Scaffolding '$name' into $dir..."
-            if rayfin init -t "$(pwd)" --template-name "$name" --project-dir "$dir" --overwrite 2>&1; then
+            if rayfin init "$dir" -t "$(pwd)" --template-name "$name" --overwrite 2>&1; then
               echo "✅ $name scaffolded successfully"
 
               # Verify package.json exists in output
