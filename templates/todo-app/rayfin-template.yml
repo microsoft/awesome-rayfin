@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: todo-app
+  displayName: Todo App
+  description: Full-stack todo app with categories, auth, and Docker local development
+entries:
+  - path: .
+    name: Todo App
