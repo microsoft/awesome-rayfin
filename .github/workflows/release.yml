@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (e.g. 1.0.0)"
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install tooling
+        working-directory: scripts
+        run: npm ci
+
+      - name: Generate changelog
+        working-directory: scripts
+        run: npm run changelog
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "docs: update changelog for v${{ inputs.version }}" || echo "No changelog changes to commit"
+          git tag "v${{ inputs.version }}"
+          git push origin main --tags
+
+          # Extract the latest release section for the release body
+          body=$(sed -n '/^## /,/^## /{ /^## .*'"${{ inputs.version }}"'/,/^## /{ /^## .*'"${{ inputs.version }}"'/p; /^## /!p; }; }' CHANGELOG.md)
+
+          gh release create "v${{ inputs.version }}" \
+            --title "v${{ inputs.version }}" \
+            --notes "${body:-Release v${{ inputs.version }}}"

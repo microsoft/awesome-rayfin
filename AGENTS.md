@@ -20,6 +20,16 @@ This repository is the **Awesome Rayfin** template gallery, not a single Rayfin 
 - The workflow validates template metadata, checks generated manifests and README output, and smoke-tests scaffolding with `rayfin init`.
 - When changing templates or gallery metadata, run the same checks locally when practical.
 
+## Commit messages
+
+Use [Conventional Commits](https://www.conventionalcommits.org/): `<type>(<scope>): <description>`.
+
+- Types: `feat`, `fix`, `docs`, `chore`, `refactor`
+- Scopes (optional): template name (e.g. `events-app`), `gallery`, `ci`, `scripts`, `docs`
+- Example: `feat(events-app): add attendee check-in page`
+
+See `CONTRIBUTING.md` for the full reference.
+
 ## Scratch space
 
 - `.scratchpad/` is git-ignored and available for temporary working files (draft content, intermediate output, exploration notes, etc.).

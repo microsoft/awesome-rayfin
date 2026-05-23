@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "description": "Gallery tooling — conventional-changelog and commitlint",
+  "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "conventional-changelog-cli": "^5.0.0",
+    "conventional-changelog-conventionalcommits": "^8.0.0"
+  },
+  "scripts": {
+    "changelog": "conventional-changelog -p conventionalcommits -i ../CHANGELOG.md -s -r 0",
+    "commitlint": "commitlint --config commitlint.config.js"
+  }
+}

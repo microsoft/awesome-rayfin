@@ -1,0 +1,28 @@
+name: PR Title Lint
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  lint-pr-title:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          scopes: |
+            events-app
+            field-engineer
+            gallery
+            ci
+            scripts
+            docs
+          requireScope: false
+          # Non-blocking: warn but don't fail the check
+          wip: true
+    # continue-on-error makes the check pass even if the title is non-conforming
+    continue-on-error: true

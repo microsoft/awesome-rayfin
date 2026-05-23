@@ -48,6 +48,31 @@ Templates and resources should:
 - Not duplicate existing official templates without adding meaningful value
 - Include a license compatible with open-source distribution
 
+## Commit messages
+
+This repo uses [Conventional Commits](https://www.conventionalcommits.org/).
+PR titles are linted against this format (non-blocking).
+
+**Format:** `<type>(<scope>): <description>`
+
+| Type | When to use |
+|------|-------------|
+| `feat` | New template or feature in an existing template |
+| `fix` | Bug fix in a template |
+| `docs` | Documentation changes |
+| `chore` | CI, scripts, gallery infrastructure |
+| `refactor` | Code restructuring without behavior change |
+
+**Scopes** (optional): `events-app`, `field-engineer`, `gallery`, `ci`, `scripts`, `docs`
+
+Examples:
+```
+feat(events-app): add attendee check-in page
+fix(field-engineer): correct date formatting in task list
+docs: update template guidelines with new naming rules
+chore(ci): add Node 22 to test matrix
+```
+
 ## Pull requests
 
 Keep pull requests scoped to a focused set of changes and include the rationale in the description.
