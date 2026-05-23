@@ -28,7 +28,7 @@ export function bootstrapAuth(): IAuthService {
     baseUrl: apiUrl.endsWith('/') ? apiUrl : `${apiUrl}/`,
     publishableKey: publishableKey ?? 'local-dev-key',
     functionsBaseUrl: import.meta.env.VITE_RAYFIN_FUNCTIONS_URL,
-    localDev: !useFabric,
+    localDev: false,
   });
 
   if (useFabric) {
