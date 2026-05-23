@@ -113,6 +113,24 @@ export function AuthProvider({ children, authService }: AuthProviderProps) {
     setError('Your session has expired. Please sign in again.');
   }, []);
 
+  // Poll session validity every 30 seconds while authenticated.
+  useEffect(() => {
+    if (!user) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const current = await authService.getCurrentUser();
+        if (!current) {
+          handleSessionExpired();
+        }
+      } catch {
+        handleSessionExpired();
+      }
+    }, 5_000);
+
+    return () => clearInterval(interval);
+  }, [user, authService, handleSessionExpired]);
+
   // Register as the global handler so non-React code can trigger it.
   useEffect(() => {
     setGlobalSessionExpiredHandler(handleSessionExpired);
