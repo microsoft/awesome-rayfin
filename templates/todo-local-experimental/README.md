@@ -1,25 +1,27 @@
-# Basic Todo App
+# [Experimental] Todo App w/ full local
 
-End-to-end Fabric-authenticated todo CRUD with a Rayfin data model and per-user row-level security.
-A working starter that exercises the full data path — sign in, create todos, toggle them, delete them.
+> ⚠️ **This template uses experimental features.** Username/password authentication and Docker local hosting (`rayfin dev`) are not yet stable. APIs may change without notice.
+
+End-to-end todo CRUD with username/password auth, a Rayfin data model, and Docker local development.
+A working starter that exercises the full data path without Fabric — sign in, create todos, toggle them, delete them.
 
 ## Getting started
 
 ```bash
-# Deploy app to Fabric and start the local dev server
-npm run dev
+# Start the local Docker backend and dev server
+npm run dev:local
 
-# As needed, apply database migrations (one time, when running locally)
-npm run rayfin:db
+# Apply database migrations (first time only)
+npm run dev:local:db
 ```
 
-Open [http://localhost:5173](http://localhost:5173) to view the app.
+Open [http://localhost:5173](http://localhost:5173) to view the app. Create an account with any email/password.
 
 ## Project structure
 
 ```text
 ├── rayfin/
-│   ├── rayfin.yml          # Fabric service configuration
+│   ├── rayfin.yml          # Service configuration (password auth, Docker local)
 │   └── data/
 │       ├── Todo.ts         # Todo entity with @role-based per-user access
 │       └── schema.ts       # Schema export consumed by the typed client
@@ -27,18 +29,19 @@ Open [http://localhost:5173](http://localhost:5173) to view the app.
 │   ├── main.tsx            # Entry point + Rayfin client bootstrap
 │   ├── App.tsx             # Routes and auth gate
 │   ├── hooks/
-│   │   └── AuthContext.tsx # React context wrapping the auth helpers
+│   │   └── AuthContext.tsx # React context wrapping auth + session polling
 │   ├── components/
-│   │   └── AuthPage.tsx    # Sign-in UI
+│   │   └── AuthPage.tsx    # Sign-in/sign-up UI (email/password or Fabric)
 │   ├── pages/
 │   │   └── HomePage.tsx    # Todo list UI
 │   └── services/
 │       ├── IAuthService.ts        # Auth service contract + AuthUser type
-│       ├── MockAuthService.ts     # Local-dev impl (email/password)
-│       ├── RayfinAuthService.ts   # Production impl (Fabric brokered auth)
+│       ├── RayfinAuthService.ts   # Dual-mode: password or Fabric brokered auth
 │       ├── rayfinClient.ts        # Typed Rayfin client singleton
-│       ├── bootstrap.ts           # Reads env, picks the right auth service
-│       └── todos.ts               # Todo CRUD wrappers (in-memory in local dev)
+│       ├── bootstrap.ts           # Reads env, picks the right auth mode
+│       └── todos.ts               # Todo CRUD via Rayfin data API
+├── scripts/
+│   └── check-docker-ghcr.mjs     # Pre-flight Docker + GHCR auth check
 └── package.json
 ```
 
@@ -46,10 +49,22 @@ Open [http://localhost:5173](http://localhost:5173) to view the app.
 
 | Command | Description |
 |---------|-------------|
+| `npm run dev:local` | Start Docker backend + Vite dev server |
+| `npm run dev:local:db` | Apply database migrations to local backend |
 | `npm run dev` | Deploy app to Fabric and start local dev server |
 | `npm run build` | Production build |
-| `npm run build:fabric` | Build for Fabric deployment (entrypoint for `rayfin up staticapp deploy`) |
 | `npm run lint` | Lint with ESLint |
 | `npm run test` | Run unit tests with Vitest |
-| `npm run rayfin:up` | Deploy app to Fabric (no local dev server) |
-| `npm run rayfin:db` | Apply database migrations |
+
+## Authentication
+
+This template defaults to **username/password** mode — no Fabric workspace required. Users create accounts and sign in with an email and password stored in the local backend.
+
+To switch to **Fabric brokered auth**, set these env vars and add `@microsoft/rayfin-auth-provider-fabric` to dependencies:
+
+```env
+VITE_FABRIC_WORKSPACE_ID=...
+VITE_FABRIC_ITEM_ID=...
+VITE_FABRIC_PORTAL_URL=...
+VITE_RAYFIN_PUBLISHABLE_KEY=...
+```
