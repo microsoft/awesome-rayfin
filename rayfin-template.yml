@@ -11,5 +11,5 @@ entries:
     name: Field Engineer
     description: Field engineer task management app with Fabric authentication, data tracking, and React + Vite
   - path: templates/todo-app
-    name: [Experimental] Todo App w/ full local dev
+    name: "[Experimental] Todo App w/ full local dev"
     description: Full-stack todo app with categories, auth, and Docker local development
