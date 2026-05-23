@@ -5,7 +5,7 @@
   "type": "module",
   "template": {
     "name": "todo-app",
-    "displayName": "Todo App",
+    "displayName": "[Experimental] Todo App w/ full local",
     "description": "Full-stack todo app with categories, auth, and Docker local development"
   },
   "scripts": {
