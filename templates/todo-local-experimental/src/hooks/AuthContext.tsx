@@ -24,6 +24,8 @@ interface AuthContextValue {
   signOut: () => Promise<void>;
   isAuthenticated: boolean;
   authMode: AuthMode;
+  /** Call when an API request fails due to a stale/expired token. */
+  handleSessionExpired: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -106,6 +108,16 @@ export function AuthProvider({ children, authService }: AuthProviderProps) {
     }
   }, [authService]);
 
+  const handleSessionExpired = useCallback(() => {
+    setUser(null);
+    setError('Your session has expired. Please sign in again.');
+  }, []);
+
+  // Register as the global handler so non-React code can trigger it.
+  useEffect(() => {
+    setGlobalSessionExpiredHandler(handleSessionExpired);
+  }, [handleSessionExpired]);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
@@ -116,8 +128,9 @@ export function AuthProvider({ children, authService }: AuthProviderProps) {
       signOut,
       isAuthenticated: !!user,
       authMode: authService.authMode,
+      handleSessionExpired,
     }),
-    [user, loading, error, signIn, signUp, signOut, authService]
+    [user, loading, error, signIn, signUp, signOut, authService, handleSessionExpired]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -129,4 +142,18 @@ export function useAuth(): AuthContextValue {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+}
+
+/**
+ * Global session-expired handler. Set by AuthProvider so that non-React
+ * code (like the todos service) can trigger a redirect to the login page.
+ */
+let globalSessionExpiredHandler: (() => void) | null = null;
+
+export function setGlobalSessionExpiredHandler(handler: () => void) {
+  globalSessionExpiredHandler = handler;
+}
+
+export function getGlobalSessionExpiredHandler() {
+  return globalSessionExpiredHandler;
 }
