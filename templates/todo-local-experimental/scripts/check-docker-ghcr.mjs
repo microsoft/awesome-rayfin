@@ -91,10 +91,14 @@ function canAccessGhcr() {
   return result !== null;
 }
 
-let alreadyAuthed = canAccessGhcr();
+/** Check whether a specific image tag is already present locally. */
+function hasLocalImage(imageRef) {
+  return run('docker', ['image', 'inspect', imageRef], { timeout: 10_000 }) !== null;
+}
 
-if (!alreadyAuthed) {
-  // ── 3. GitHub CLI check ─────────────────────────────────────────────────────
+/** Ensure Docker can authenticate to GHCR via the GitHub CLI token flow. */
+function ensureGhcrAuth() {
+  // ── 3. GitHub CLI check ───────────────────────────────────────────────────
 
   const ghUser = run('gh', ['api', 'user', '-q', '.login']);
   if (!ghUser) {
@@ -103,7 +107,7 @@ if (!alreadyAuthed) {
     console.error('   Install it from https://cli.github.com/ then run:');
     console.error('');
     console.error('     gh auth login');
-    process.exit(1);
+     process.exit(1);
   }
 
   // ── 4. Ensure read:packages scope ─────────────────────────────────────────
@@ -156,11 +160,9 @@ if (!alreadyAuthed) {
     console.error('   Try re-authenticating:  gh auth login');
     process.exit(1);
   }
-} else {
-  console.log('✅ Docker is running and already authenticated to ghcr.io');
 }
 
-// ── 6. Verify the expected container image exists ───────────────────────────
+// ── 2. Resolve expected image tag for this template version ─────────────────
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 let cliVersion;
@@ -175,21 +177,48 @@ if (cliVersion) {
   const tag = `cli-${cliVersion}`;
   const imageRef = `${IMAGE}:${tag}`;
 
-  // Check the GHCR API for the tag instead of `docker manifest inspect`
-  // to avoid invoking the Docker CLI (which focuses Docker Desktop on macOS).
+  // Fast path: if we already have the required image locally, skip GH auth/API.
+  if (hasLocalImage(imageRef)) {
+    console.log(`✅ Required image already present locally: ${imageRef}`);
+    process.exit(0);
+  }
+}
+
+// ── 3. Ensure auth only when a pull may be needed ───────────────────────────
+
+const alreadyAuthed = canAccessGhcr();
+if (!alreadyAuthed) {
+  ensureGhcrAuth();
+} else {
+  console.log('✅ Docker is running and already authenticated to ghcr.io');
+}
+
+// ── 4. Verify the expected container image tag exists (best effort) ─────────
+
+if (cliVersion) {
+  const tag = `cli-${cliVersion}`;
+  const imageRef = `${IMAGE}:${tag}`;
+
+  // Check GHCR API (best effort) without invoking Docker CLI.
   const tagExists = run('gh', [
-    'api', '/orgs/microsoft/packages/container/project-rayfin%2Fwebservice/versions',
+    'api', '--paginate', '/orgs/microsoft/packages/container/project-rayfin%2Fwebservice/versions',
     '--jq', `[.[].metadata.container.tags[] | select(. == "${tag}")] | length`,
   ]);
 
-  if (!tagExists || tagExists === '0') {
+  // If GH API verification isn't available (e.g., missing scope), do not
+  // treat that as a missing tag; allow downstream Docker pull behavior.
+  if (!tagExists) {
+    process.exit(0);
+  }
+
+  if (tagExists === '0') {
     console.error(`❌ Container image not found: ${imageRef}`);
     console.error('');
     console.error('   The image for this CLI version may not be published yet.');
 
     // Query GHCR API for the latest available tags
     const tagsJson = run('gh', [
-      'api', '/orgs/microsoft/packages/container/project-rayfin%2Fwebservice/versions',
+      'api', '--paginate', '/orgs/microsoft/packages/container/project-rayfin%2Fwebservice/versions',
       '--jq', '[.[].metadata.container.tags[] | select(startswith("cli-"))] | unique | sort | reverse | .[:5] | .[]',
     ]);
     if (tagsJson) {
