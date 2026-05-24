@@ -96,6 +96,23 @@ If any required file is missing, add it before considering the template complete
 3. Link to the page from navigation or the relevant entry point.
 4. Verify the page works with the template's auth and data model.
 
+## Cross-platform compatibility (Windows + macOS/Linux)
+
+Templates are used on Windows, macOS, and Linux. Check for platform issues when adding or modifying scripts:
+
+- **Prefer `.mjs` over `.sh`** for any script that end users run. Shell scripts are fine for contributor tooling only (e.g., `scripts/new-template.sh`).
+- **No Unix-only assumptions** in runtime scripts: avoid hardcoded Unix socket paths (`/var/run/docker.sock`), symlinks, or POSIX-only APIs without a Windows fallback.
+- **Use `process.platform` guards** when behavior diverges (e.g., Docker daemon detection uses sockets on Unix but named pipes/CLI on Windows).
+- **Use `cross-env`** for environment variables in npm scripts — never rely on `VAR=value cmd` syntax.
+- **Avoid path separators** in JS: use `path.join()`/`path.resolve()` instead of string concatenation with `/`.
+- **`&&` chaining in npm scripts** is safe (works in cmd, PowerShell 7+, and bash).
+
+When reviewing or validating a template, scan scripts for:
+1. Hardcoded Unix paths (`/var/run/`, `/tmp/`, `~/.docker/run/`)
+2. Socket or pipe assumptions without platform checks
+3. Shell-specific syntax in npm scripts (backticks, `$(...)`, `export`)
+4. File permission operations (`chmod`, `chown`) without guards
+
 ## Final checklist
 
 - Template structure matches `docs/template-guidelines.md`

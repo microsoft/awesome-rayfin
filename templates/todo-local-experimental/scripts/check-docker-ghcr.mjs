@@ -35,7 +35,7 @@ function run(cmd, args, opts = {}) {
 }
 
 /** Ping the Docker daemon via the Unix socket without invoking the CLI. */
-function pingDocker() {
+function pingDockerSocket() {
   const socketPaths = [
     '/var/run/docker.sock',
     join(homedir(), '.docker', 'run', 'docker.sock'),
@@ -54,6 +54,19 @@ function pingDocker() {
     req.on('error', () => resolve(false));
     req.on('timeout', () => { req.destroy(); resolve(false); });
   });
+}
+
+/** Fallback: check Docker via CLI (used on Windows where Unix sockets aren't available). */
+function pingDockerCli() {
+  return run('docker', ['info']) !== null;
+}
+
+/** Check if Docker daemon is reachable, with platform-appropriate strategy. */
+function pingDocker() {
+  if (process.platform === 'win32') {
+    return Promise.resolve(pingDockerCli());
+  }
+  return pingDockerSocket().then((ok) => ok || pingDockerCli());
 }
 
 // ── 1. Docker daemon check ──────────────────────────────────────────────────

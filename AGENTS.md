@@ -14,6 +14,17 @@ This repository is the **Awesome Rayfin** template gallery, not a single Rayfin 
 - `scripts/generate-manifest.mjs` regenerates the root `rayfin-template.yml`, per-template manifests, and the README templates table.
 - `node scripts/generate-manifest.mjs --check` verifies generated files are up to date.
 
+## Cross-platform compatibility
+
+Templates must work on both Windows and Unix-like systems (macOS/Linux). When adding or modifying scripts:
+
+- Prefer Node.js (`.mjs`) scripts over shell scripts for any logic end users run. Shell scripts (`.sh`) are acceptable for contributor-only tooling.
+- Avoid Unix-only assumptions: don't rely on Unix sockets, `/var/run/`, symlinks, or Unix file permissions in runtime scripts.
+- Use `process.platform` checks or platform-agnostic APIs when behavior differs across OSes (e.g., Docker uses named pipes on Windows vs. Unix sockets on macOS/Linux).
+- Use `cross-env` for setting environment variables in npm scripts.
+- Use `&&` for chaining npm script commands (supported by cmd, PowerShell 7+, and bash).
+- Test that `node --check <script>` passes for any new or modified `.mjs` files.
+
 ## Validation expectations
 
 - CI is defined in `.github/workflows/validate-templates.yml`.
