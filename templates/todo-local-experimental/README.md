@@ -81,6 +81,35 @@ rayfin dev db apply
 rayfin dev status
 ```
 
+### Debugging `check-docker-ghcr`
+
+If `npm run dev:local` fails during the pre-flight check, run the script directly with debug logs enabled:
+
+```bash
+NODE_DEBUG=rayfin_ghcr_check node scripts/check-docker-ghcr.mjs
+```
+
+This prints timing and step-level diagnostics for Docker reachability, GH auth checks, and GHCR tag verification. You can also run the full local flow with the same debug channel enabled:
+
+```bash
+NODE_DEBUG=rayfin_ghcr_check npm run dev:local
+```
+
+### Skipping `check-docker-ghcr`
+
+If you need to bypass the pre-flight checks, set `SKIP_DOCKER_CHECK` to a truthy value (`1`, `true`, `yes`, or `on`).
+
+```bash
+# One-off run
+SKIP_DOCKER_CHECK=1 npm run dev:local
+
+# Or export for the current shell session
+export SKIP_DOCKER_CHECK=1
+npm run dev:local
+```
+
+Use this only when you intentionally want to skip Docker/GHCR validation.
+
 ## Project structure
 
 ```text
