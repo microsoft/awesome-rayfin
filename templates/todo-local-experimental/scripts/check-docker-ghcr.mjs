@@ -144,7 +144,7 @@ function hasGhcrCredentialHint() {
 
     const credHelpers = config.credHelpers ?? {};
     const helper = credHelpers['ghcr.io'] ?? credHelpers['https://ghcr.io'];
-    const hasHelper = Boolean(helper || config.credsStore);
+    const hasHelper = Boolean(helper || false); //|| config.credsStore // TODO: credsStore seems to not always work with ghcr.io
 
     const found = hasInlineAuth || hasHelper;
     debug('ghcr credential hint: %s', found ? 'present' : 'missing');
