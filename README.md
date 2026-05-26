@@ -12,6 +12,10 @@
 
 ---
 
+```bash
+npm create @microsoft/rayfin -- --template https://github.com/microsoft/awesome-rayfin
+```
+
 ## What is Rayfin?
 
 Project Rayfin is a modern **Backend-as-a-Service (BaaS)** platform that helps teams build and ship applications faster. Define your data model with TypeScript decorators, and Rayfin handles the backend — auth, data API, storage, and hosting.
@@ -26,11 +30,12 @@ npx rayfin up                          # deploy and run
 Point the Rayfin CLI at this repo to scaffold any template from the gallery:
 
 ```bash
-# from a git URL
-rayfin init --template https://github.com/microsoft/awesome-rayfin
+npm create @microsoft/rayfin -- --template https://github.com/microsoft/awesome-rayfin
+```
 
-# from a local clone
-rayfin init --template ./awesome-rayfin
+```bash
+# OR from a local clone
+npm create @microsoft/rayfin -- --template ./awesome-rayfin
 ```
 
 The CLI reads `rayfin-template.yml` at the repo root and presents an interactive picker when multiple templates are available.
