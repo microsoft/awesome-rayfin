@@ -10,19 +10,26 @@ jobs:
     permissions:
       pull-requests: read
     steps:
-      - uses: amannn/action-semantic-pull-request@v5
+      - name: Validate pull request title
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          scopes: |
-            events-app
-            field-engineer
-            gallery
-            ci
-            scripts
-            docs
-          requireScope: false
-          # Non-blocking: warn but don't fail the check
-          wip: true
-    # continue-on-error makes the check pass even if the title is non-conforming
-    continue-on-error: true
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          node - <<'NODE'
+          const title = process.env.PR_TITLE ?? '';
+          const allowedScopes = new Set(['events-app', 'field-engineer', 'gallery', 'ci', 'scripts', 'docs']);
+          const titlePattern =
+            /^(?:\[WIP\]\s*)?(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(?:\((?<scope>[a-z0-9-]+)\))?!?:\s.+$/;
+
+          const match = title.match(titlePattern);
+          if (!match) {
+            console.log(`::warning::PR title "${title}" does not match Conventional Commits format.`);
+            process.exit(0);
+          }
+
+          const scope = match.groups?.scope;
+          if (scope && !allowedScopes.has(scope)) {
+            console.log(
+              `::warning::PR title scope "${scope}" is not in the recommended list: ${Array.from(allowedScopes).join(', ')}.`,
+            );
+          }
+          NODE

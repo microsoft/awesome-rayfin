@@ -1,8 +1,8 @@
 apiVersion: v1
 metadata:
-  name: todo-local-experimental
-  displayName: "[Experimental] Todo app with full local dev"
-  description: Full-stack todo app with categories, auth, and Docker local development
+  name: todoapp
+  displayName: [Experimental] Todo app with full local dev
+  description: End-to-end todo CRUD with username/password auth, a Rayfin data model, and Docker local development — a working starter that exercises the full data path without Fabric
 entries:
   - path: .
-    name: "[Experimental] Todo app with full local dev"
+    name: [Experimental] Todo app with full local dev
