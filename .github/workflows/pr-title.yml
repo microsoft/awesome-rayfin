@@ -16,7 +16,17 @@ jobs:
         run: |
           node - <<'NODE'
           const title = process.env.PR_TITLE ?? '';
-          const allowedScopes = new Set(['events-app', 'field-engineer', 'gallery', 'ci', 'scripts', 'docs']);
+          const allowedScopes = new Set([
+            'events-app',
+            'field-engineer',
+            'todo-app',
+            'todo-local-experimental',
+            'todoapp',
+            'gallery',
+            'ci',
+            'scripts',
+            'docs',
+          ]);
           const titlePattern =
             /^(?:\[WIP\]\s*)?(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(?:\((?<scope>[a-z0-9-]+)\))?!?:\s.+$/;
 
