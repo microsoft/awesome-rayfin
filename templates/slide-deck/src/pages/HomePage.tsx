@@ -11,6 +11,7 @@ export function HomePage() {
   const [slideshows, setSlideshows] = useState<SlideshowItem[]>([]);
   const [sessions, setSessions] = useState<SessionItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [joinCode, setJoinCode] = useState('');
 
   const loadData = useCallback(async () => {
@@ -18,8 +19,10 @@ export function HomePage() {
       const [s, sess] = await Promise.all([getSlideshows(), getSessions()]);
       setSlideshows(s);
       setSessions(sess);
+      setError(null);
     } catch (err) {
       console.error('Failed to load data:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load data. Make sure your data service is deployed.');
     } finally {
       setLoading(false);
     }
@@ -90,6 +93,20 @@ export function HomePage() {
       </header>
 
       <div className="max-w-5xl mx-auto px-6 py-8 space-y-8">
+        {/* Error banner */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+            <span className="text-red-500 text-lg">⚠️</span>
+            <div>
+              <p className="text-sm font-medium text-red-800">Failed to load data</p>
+              <p className="text-sm text-red-600 mt-1">{error}</p>
+              <p className="text-xs text-red-500 mt-2">
+                Have you deployed your data service? Run <code className="bg-red-100 px-1 rounded">npm run rayfin:up</code> to deploy.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Join a Session */}
         <section className="bg-white rounded-2xl border border-gray-200 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Join a Session</h2>

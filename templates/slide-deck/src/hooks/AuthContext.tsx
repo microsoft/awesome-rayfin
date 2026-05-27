@@ -22,12 +22,6 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-let globalSessionExpiredHandler: (() => void) | null = null;
-
-export function getGlobalSessionExpiredHandler(): (() => void) | null {
-  return globalSessionExpiredHandler;
-}
-
 interface AuthProviderProps {
   children: ReactNode;
   authService: IAuthService;
@@ -37,24 +31,6 @@ export function AuthProvider({ children, authService }: AuthProviderProps) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const signOut = useCallback(async () => {
-    try {
-      await authService.signOut();
-      setUser(null);
-      setError(null);
-    } catch (err) {
-      console.error('Logout error:', err);
-    }
-  }, [authService]);
-
-  useEffect(() => {
-    globalSessionExpiredHandler = () => {
-      setUser(null);
-      setError('Session expired. Please sign in again.');
-    };
-    return () => { globalSessionExpiredHandler = null; };
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -86,6 +62,16 @@ export function AuthProvider({ children, authService }: AuthProviderProps) {
       throw err;
     } finally {
       setLoading(false);
+    }
+  }, [authService]);
+
+  const signOut = useCallback(async () => {
+    try {
+      await authService.signOut();
+      setUser(null);
+      setError(null);
+    } catch (err) {
+      console.error('Logout error:', err);
     }
   }, [authService]);
 
