@@ -207,12 +207,20 @@ export function HomePage() {
                       <p className="text-sm text-gray-500 mt-1">{show.description}</p>
                       <p className="text-xs text-gray-400 mt-2">{show.slides.length} slides</p>
                     </div>
-                    <button
-                      onClick={() => handleStartSession(show)}
-                      className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 transition-colors whitespace-nowrap"
-                    >
-                      Start Session
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => navigate(`/browse/${show.id}`)}
+                        className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-200 transition-colors whitespace-nowrap"
+                      >
+                        Browse
+                      </button>
+                      <button
+                        onClick={() => handleStartSession(show)}
+                        className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 transition-colors whitespace-nowrap"
+                      >
+                        Start Session
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

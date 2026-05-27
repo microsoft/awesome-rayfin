@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthPage } from '@/components/AuthPage';
 import { useAuth } from '@/hooks/AuthContext';
 import { AudiencePage } from '@/pages/AudiencePage';
+import { BrowsePage } from '@/pages/BrowsePage';
 import { HomePage } from '@/pages/HomePage';
 import { PresenterPage } from '@/pages/PresenterPage';
 
@@ -54,6 +55,14 @@ function App() {
           element={
             <AuthGuard requireAuth={true}>
               <PresenterPage />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/browse/:slideshowId"
+          element={
+            <AuthGuard requireAuth={true}>
+              <BrowsePage />
             </AuthGuard>
           }
         />

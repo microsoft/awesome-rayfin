@@ -26,7 +26,10 @@ export async function getSlideshows(): Promise<SlideshowItem[]> {
 
 export async function getSlideshow(id: string): Promise<SlideshowItem | null> {
   const client = getRayfinClient();
-  const r = await client.data.Slideshow.findById(id);
+  const results = await client.data.Slideshow.select([
+    'id', 'title', 'description', 'format', 'slides', 'createdAt',
+  ]).where({ id }).execute();
+  const r = results[0];
   if (!r) return null;
   return { ...r, slides: JSON.parse(r.slides as string) } as unknown as SlideshowItem;
 }
