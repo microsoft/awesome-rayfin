@@ -3,6 +3,7 @@ import { getRayfinClient } from './rayfinClient';
 export interface ChatMessageItem {
   id: string;
   sessionId: string;
+  user_id: string;
   authorName: string;
   content: string;
   createdAt: Date;
@@ -11,7 +12,7 @@ export interface ChatMessageItem {
 export async function getChatMessages(sessionId: string): Promise<ChatMessageItem[]> {
   const client = getRayfinClient();
   const results = await client.data.ChatMessage.select([
-    'id', 'sessionId', 'authorName', 'content', 'createdAt',
+    'id', 'sessionId', 'user_id', 'authorName', 'content', 'createdAt',
   ])
     .where({ sessionId })
     .orderBy({ createdAt: 'asc' })

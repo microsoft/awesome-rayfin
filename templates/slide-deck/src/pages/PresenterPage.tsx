@@ -150,7 +150,7 @@ export function PresenterPage() {
         </div>
         {/* Chat sidebar */}
         <div className="w-80 shrink-0">
-          <ChatPanel sessionId={session.id} authorName={user?.name ?? 'Presenter'} />
+          <ChatPanel sessionId={session.id} authorName={user?.name ?? 'Presenter'} presenterUserId={session.user_id} />
         </div>
       </div>
     </div>

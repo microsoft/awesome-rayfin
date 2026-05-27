@@ -5,9 +5,10 @@ import { usePolling } from '@/hooks/usePolling';
 interface ChatPanelProps {
   sessionId: string;
   authorName: string;
+  presenterUserId?: string;
 }
 
-export function ChatPanel({ sessionId, authorName }: ChatPanelProps) {
+export function ChatPanel({ sessionId, authorName, presenterUserId }: ChatPanelProps) {
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -48,6 +49,11 @@ export function ChatPanel({ sessionId, authorName }: ChatPanelProps) {
         {(messages ?? []).map((msg) => (
           <div key={msg.id} className="text-sm">
             <span className="font-medium text-blue-600">{msg.authorName}</span>
+            {presenterUserId && msg.user_id === presenterUserId && (
+              <span className="ml-1 inline-flex items-center rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">
+                🎤 Presenter
+              </span>
+            )}
             <span className="text-gray-400 text-xs ml-2">
               {new Date(msg.createdAt).toLocaleTimeString()}
             </span>

@@ -94,7 +94,7 @@ export function AudiencePage() {
         </div>
         {/* Chat sidebar */}
         <div className="w-80 shrink-0">
-          <ChatPanel sessionId={session.id} authorName={user?.name ?? 'Audience'} />
+          <ChatPanel sessionId={session.id} authorName={user?.name ?? 'Audience'} presenterUserId={session.user_id} />
         </div>
       </div>
 

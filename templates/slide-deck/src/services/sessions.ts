@@ -7,6 +7,7 @@ export interface SessionItem {
   currentSlide: number;
   isActive: boolean;
   joinCode: string;
+  user_id: string;
   createdAt: Date;
 }
 
@@ -22,7 +23,7 @@ function generateJoinCode(): string {
 export async function getSessions(): Promise<SessionItem[]> {
   const client = getRayfinClient();
   const results = await client.data.Session.select([
-    'id', 'slideshowId', 'title', 'currentSlide', 'isActive', 'joinCode', 'createdAt',
+    'id', 'slideshowId', 'title', 'currentSlide', 'isActive', 'joinCode', 'user_id', 'createdAt',
   ]).orderBy({ createdAt: 'desc' }).execute();
   return results as SessionItem[];
 }
@@ -30,7 +31,7 @@ export async function getSessions(): Promise<SessionItem[]> {
 export async function getSession(id: string): Promise<SessionItem | null> {
   const client = getRayfinClient();
   const results = await client.data.Session.select([
-    'id', 'slideshowId', 'title', 'currentSlide', 'isActive', 'joinCode', 'createdAt',
+    'id', 'slideshowId', 'title', 'currentSlide', 'isActive', 'joinCode', 'user_id', 'createdAt',
   ]).where({ id }).execute();
   return (results[0] as SessionItem) ?? null;
 }
