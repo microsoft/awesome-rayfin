@@ -15,23 +15,25 @@ export function PresenterPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  const [error, setError] = useState<string | null>(null);
+
   const loadSession = useCallback(async () => {
     if (!sessionId) return;
     try {
       const sess = await getSession(sessionId);
-      if (!sess) { navigate('/'); return; }
+      if (!sess) { setError('Session not found. It may have been deleted.'); setLoading(false); return; }
       setSession(sess);
       setCurrentSlide(sess.currentSlide);
       const show = await getSlideshow(sess.slideshowId);
-      if (!show) { navigate('/'); return; }
+      if (!show) { setError('Slideshow not found for this session.'); setLoading(false); return; }
       setSlideshow(show);
     } catch (err) {
       console.error('Failed to load session:', err);
-      navigate('/');
+      setError(err instanceof Error ? err.message : 'Failed to load session.');
     } finally {
       setLoading(false);
     }
-  }, [sessionId, navigate]);
+  }, [sessionId]);
 
   useEffect(() => { loadSession(); }, [loadSession]);
 
@@ -62,10 +64,26 @@ export function PresenterPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   });
 
-  if (loading || !session || !slideshow) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-gray-500">Loading presentation...</div>
+      </div>
+    );
+  }
+
+  if (error || !session || !slideshow) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <p className="text-red-600 font-medium">{error ?? 'Failed to load presentation.'}</p>
+          <button
+            onClick={() => navigate('/')}
+            className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors"
+          >
+            ← Back to Home
+          </button>
+        </div>
       </div>
     );
   }
