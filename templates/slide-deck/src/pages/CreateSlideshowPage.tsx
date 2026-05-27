@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createSlideshow, getSlideshow, updateSlideshow } from '@/services/slideshows';
 import { SlideRenderer } from '@/components/SlideRenderer';
 import { ThemePicker } from '@/components/ThemePicker';
+import { ImageLibrary } from '@/components/ImageLibrary';
 import { type SlideTheme, DEFAULT_THEME } from '@/data/themes';
 
 type Format = 'markdown' | 'html';
@@ -26,6 +27,26 @@ export function CreateSlideshowPage() {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(isEditing);
   const [error, setError] = useState<string | null>(null);
+  const editorRef = useRef<HTMLTextAreaElement>(null);
+
+  const insertAtCursor = (snippet: string) => {
+    const ta = editorRef.current;
+    if (!ta) {
+      // Fallback: append to current slide content
+      updateSlideField(activeSlide, 'content', slides[activeSlide].content + '\n' + snippet);
+      return;
+    }
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    const current = slides[activeSlide].content;
+    const updated = current.substring(0, start) + snippet + current.substring(end);
+    updateSlideField(activeSlide, 'content', updated);
+    // Restore cursor after React re-render
+    requestAnimationFrame(() => {
+      ta.selectionStart = ta.selectionEnd = start + snippet.length;
+      ta.focus();
+    });
+  };
 
   // Load existing slideshow when editing
   useEffect(() => {
@@ -222,6 +243,11 @@ export function CreateSlideshowPage() {
               </div>
             ))}
           </div>
+
+          {/* Image library */}
+          <div className="p-4 border-t border-gray-200">
+            <ImageLibrary format={format} onInsert={insertAtCursor} />
+          </div>
         </div>
 
         {/* Center — editor */}
@@ -232,6 +258,7 @@ export function CreateSlideshowPage() {
             </span>
           </div>
           <textarea
+            ref={editorRef}
             value={slides[activeSlide].content}
             onChange={(e) => updateSlideField(activeSlide, 'content', e.target.value)}
             placeholder={format === 'markdown'
