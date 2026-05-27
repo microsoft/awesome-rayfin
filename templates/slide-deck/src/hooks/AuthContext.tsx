@@ -40,8 +40,12 @@ export function AuthProvider({ children, authService }: AuthProviderProps) {
       .then((current) => {
         if (!cancelled && current) setUser(current);
       })
-      .catch(() => {
-        if (!cancelled) setUser(null);
+      .catch(async () => {
+        // Clear stale tokens from localStorage so the next sign-in starts fresh
+        if (!cancelled) {
+          try { await authService.signOut(); } catch { /* ignore */ }
+          setUser(null);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
