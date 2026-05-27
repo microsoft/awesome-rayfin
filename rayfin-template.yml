@@ -10,6 +10,9 @@ entries:
   - path: templates/field-engineer
     name: Field Engineer
     description: Field engineer task management app with Fabric authentication, data tracking, and React + Vite
+  - path: templates/static-blankapp
+    name: Blank App
+    description: Bare-bones Rayfin app with authentication, but without any JS or CSS framework and a tiny TypeScript entry point
   - path: templates/todo-local-experimental
     name: "[Experimental] Todo app with full local dev"
     description: Full-stack todo app with categories, auth, and Docker local development

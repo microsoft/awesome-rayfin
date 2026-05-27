@@ -91,6 +91,7 @@ jobs:
         template:
           - field-engineer
           - events-app
+          - static-blankapp
     steps:
       - uses: actions/checkout@v4
 
