@@ -6,7 +6,7 @@
   "template": {
     "name": "static-blankapp",
     "displayName": "Blank App",
-    "description": "Bare-bones Fabric-authenticated Rayfin app — a static HTML page with inlined CSS and a tiny TypeScript entry point. No UI framework, no CSS framework, no router."
+    "description": "Bare-bones Rayfin app with authentication, but without any JS or CSS framework and a tiny TypeScript entry point"
   },
   "scripts": {
     "predev": "rayfin env --framework vite",
