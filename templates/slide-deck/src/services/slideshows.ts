@@ -58,3 +58,16 @@ export async function deleteSlideshow(id: string): Promise<void> {
   const client = getRayfinClient();
   await client.data.Slideshow.delete({ id });
 }
+
+export async function updateSlideshow(
+  id: string,
+  data: Pick<SlideshowItem, 'title' | 'description' | 'format' | 'slides'>
+): Promise<void> {
+  const client = getRayfinClient();
+  await client.data.Slideshow.update({ id }, {
+    title: data.title,
+    description: data.description,
+    format: data.format,
+    slides: JSON.stringify(data.slides),
+  });
+}

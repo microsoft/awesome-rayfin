@@ -240,6 +240,14 @@ export function HomePage() {
                     </button>
                     {user && show.user_id === user.id && (
                       <button
+                        onClick={() => navigate(`/edit/${show.id}`)}
+                        className="rounded-lg bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-700 hover:bg-amber-100 transition-colors whitespace-nowrap"
+                      >
+                        Edit
+                      </button>
+                    )}
+                    {user && show.user_id === user.id && (
+                      <button
                         onClick={() => handleDeleteSlideshow(show.id)}
                         className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-100 transition-colors whitespace-nowrap ml-auto"
                       >

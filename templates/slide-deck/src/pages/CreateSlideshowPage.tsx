@@ -1,19 +1,42 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { createSlideshow } from '@/services/slideshows';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { createSlideshow, getSlideshow, updateSlideshow } from '@/services/slideshows';
 import { SlideRenderer } from '@/components/SlideRenderer';
 
 type Format = 'markdown' | 'html';
 
 export function CreateSlideshowPage() {
   const navigate = useNavigate();
+  const { slideshowId } = useParams<{ slideshowId?: string }>();
+  const isEditing = Boolean(slideshowId);
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [format, setFormat] = useState<Format>('markdown');
   const [slides, setSlides] = useState<string[]>(['']);
   const [activeSlide, setActiveSlide] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(isEditing);
   const [error, setError] = useState<string | null>(null);
+
+  // Load existing slideshow when editing
+  useEffect(() => {
+    if (!slideshowId) return;
+    (async () => {
+      try {
+        const show = await getSlideshow(slideshowId);
+        if (!show) { setError('Slideshow not found.'); return; }
+        setTitle(show.title);
+        setDescription(show.description);
+        setFormat(show.format);
+        setSlides(show.slides.map((s) => s.content));
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load slideshow.');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [slideshowId]);
 
   const updateSlide = (index: number, content: string) => {
     setSlides((prev) => prev.map((s, i) => (i === index ? content : s)));
@@ -47,12 +70,17 @@ export function CreateSlideshowPage() {
     setSaving(true);
     setError(null);
     try {
-      await createSlideshow({
+      const payload = {
         title: title.trim(),
         description: description.trim(),
         format,
         slides: slides.filter((s) => s.trim()).map((content) => ({ content })),
-      });
+      };
+      if (isEditing && slideshowId) {
+        await updateSlideshow(slideshowId, payload);
+      } else {
+        await createSlideshow(payload);
+      }
       navigate('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save slideshow.');
@@ -60,6 +88,14 @@ export function CreateSlideshowPage() {
       setSaving(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-gray-500">Loading slideshow...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen flex flex-col">
@@ -72,14 +108,14 @@ export function CreateSlideshowPage() {
           >
             ← Back
           </button>
-          <h1 className="text-lg font-bold text-gray-900">Create Slideshow</h1>
+          <h1 className="text-lg font-bold text-gray-900">{isEditing ? 'Edit Slideshow' : 'Create Slideshow'}</h1>
         </div>
         <button
           onClick={handleSave}
           disabled={saving}
           className="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors"
         >
-          {saving ? 'Saving…' : 'Save Slideshow'}
+          {saving ? 'Saving…' : isEditing ? 'Save Changes' : 'Save Slideshow'}
         </button>
       </header>
 

@@ -60,6 +60,14 @@ function App() {
           }
         />
         <Route
+          path="/edit/:slideshowId"
+          element={
+            <AuthGuard requireAuth={true}>
+              <CreateSlideshowPage />
+            </AuthGuard>
+          }
+        />
+        <Route
           path="/present/:sessionId"
           element={
             <AuthGuard requireAuth={true}>
