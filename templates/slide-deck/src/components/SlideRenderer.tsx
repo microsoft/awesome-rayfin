@@ -102,8 +102,12 @@ function markdownToHtml(md: string, theme?: SlideTheme): string {
   html = html.replace(/```(\w*)\n([\s\S]*?)```/g, `<pre style="background: ${codeBg}; color: ${codeColor};" class="rounded-lg p-4 overflow-x-auto"><code>$2</code></pre>`);
   // Inline code
   html = html.replace(/`(.+?)`/g, `<code style="background: ${inlineCodeBg};" class="px-1.5 py-0.5 rounded text-sm">$1</code>`);
-  // Images (must come before links)
-  html = html.replace(/!\[(.+?)\]\((.+?)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />');
+  // Images with optional size hint: ![alt|size](src)
+  html = html.replace(/!\[([^\]|]+?)(?:\|(\w+))?\]\((.+?)\)/g, (_match, alt, size, src) => {
+    const sizeMap: Record<string, string> = { small: '25%', medium: '50%', large: '75%', full: '100%' };
+    const maxW = sizeMap[size] ?? '80%';
+    return `<img src="${src}" alt="${alt}" style="max-width: ${maxW}; max-height: 60vh; width: auto; height: auto; object-fit: contain; border-radius: 0.5rem; margin: 0 auto; display: block;" />`;
+  });
   // Links
   html = html.replace(/\[(.+?)\]\((.+?)\)/g, `<a href="$2" target="_blank" rel="noopener noreferrer" style="color: ${accentColor};" class="underline">$1</a>`);
   // Unordered lists

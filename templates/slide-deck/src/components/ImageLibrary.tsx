@@ -94,21 +94,28 @@ export function ImageLibrary({ format, onInsert }: ImageLibraryProps) {
     }
   };
 
-  const handleInsert = (img: ImageMeta) => {
+  const IMAGE_SIZES = [
+    { label: 'S', pct: '25%', title: 'Small (25%)' },
+    { label: 'M', pct: '50%', title: 'Medium (50%)' },
+    { label: 'L', pct: '75%', title: 'Large (75%)' },
+    { label: 'Full', pct: '100%', title: 'Full width' },
+  ] as const;
+
+  const buildSnippet = (img: ImageMeta, pct: string) => {
     const ref = `{{image:${img.id}}}`;
     if (format === 'markdown') {
-      onInsert(`![${img.filename}](${ref})`);
-    } else {
-      onInsert(`<img src="${ref}" alt="${img.filename}" style="max-width: 100%; height: auto;" />`);
+      const sizeHint = pct === '100%' ? 'full' : pct === '75%' ? 'large' : pct === '50%' ? 'medium' : 'small';
+      return `![${img.filename}|${sizeHint}](${ref})`;
     }
+    return `<img src="${ref}" alt="${img.filename}" style="max-width: ${pct}; height: auto; object-fit: contain;" />`;
+  };
+
+  const handleInsert = (img: ImageMeta, pct: string) => {
+    onInsert(buildSnippet(img, pct));
   };
 
   const handleCopyRef = (img: ImageMeta) => {
-    const ref = `{{image:${img.id}}}`;
-    const snippet = format === 'markdown'
-      ? `![${img.filename}](${ref})`
-      : `<img src="${ref}" alt="${img.filename}" style="max-width: 100%; height: auto;" />`;
-    navigator.clipboard.writeText(snippet);
+    navigator.clipboard.writeText(buildSnippet(img, '50%'));
   };
 
   return (
@@ -164,30 +171,38 @@ export function ImageLibrary({ format, onInsert }: ImageLibraryProps) {
                 <span className="text-[10px] text-gray-600 truncate block">{img.filename}</span>
               </div>
               {/* Hover overlay with actions */}
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button
-                  onClick={() => handleInsert(img)}
-                  className="rounded bg-indigo-600 px-2 py-1 text-[10px] font-medium text-white hover:bg-indigo-700"
-                  title="Insert into slide"
-                >
-                  Insert
-                </button>
-                <button
-                  onClick={() => handleCopyRef(img)}
-                  className="rounded bg-gray-600 px-2 py-1 text-[10px] font-medium text-white hover:bg-gray-700"
-                  title="Copy reference"
-                >
-                  Copy
-                </button>
-                {user && img.user_id === user.id && (
+              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1.5">
+                <span className="text-[9px] text-gray-300 font-medium">Insert size</span>
+                <div className="flex items-center gap-1">
+                  {IMAGE_SIZES.map((s) => (
+                    <button
+                      key={s.label}
+                      onClick={() => handleInsert(img, s.pct)}
+                      className="rounded bg-indigo-600 px-1.5 py-0.5 text-[10px] font-medium text-white hover:bg-indigo-700"
+                      title={s.title}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-1 mt-0.5">
                   <button
-                    onClick={() => handleDelete(img.id, img.filename)}
-                    className="rounded bg-red-600 px-2 py-1 text-[10px] font-medium text-white hover:bg-red-700"
-                    title="Delete image"
+                    onClick={() => handleCopyRef(img)}
+                    className="rounded bg-gray-600 px-2 py-0.5 text-[10px] font-medium text-white hover:bg-gray-700"
+                    title="Copy reference"
                   >
-                    ✕
+                    Copy
                   </button>
-                )}
+                  {user && img.user_id === user.id && (
+                    <button
+                      onClick={() => handleDelete(img.id, img.filename)}
+                      className="rounded bg-red-600 px-2 py-0.5 text-[10px] font-medium text-white hover:bg-red-700"
+                      title="Delete image"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
