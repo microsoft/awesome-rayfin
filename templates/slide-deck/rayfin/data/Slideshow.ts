@@ -17,7 +17,7 @@ export class Slideshow {
   /** 'markdown' or 'html' */
   @text({ max: 20 }) format!: string;
   /** JSON-serialized array of slide objects: [{ content: string }] */
-  @text({ max: 4000 }) slides!: string;
+  @text() slides!: string;
   @date() createdAt!: Date;
   @text({ max: 200 }) user_id!: string;
 }

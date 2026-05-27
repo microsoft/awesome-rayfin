@@ -37,7 +37,9 @@ export function HomePage() {
       }
       await loadData();
     } catch (err) {
-      console.error('Failed to seed samples:', err);
+      const message = err instanceof Error ? err.message : String(err);
+      console.error('Failed to seed samples:', message, err);
+      setError(`Failed to add sample slideshows: ${message}`);
     }
   };
 
