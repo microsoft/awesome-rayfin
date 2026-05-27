@@ -194,33 +194,31 @@ export function HomePage() {
               {slideshows.map((show) => (
                 <div
                   key={show.id}
-                  className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow"
+                  className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow flex flex-col"
                 >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-gray-900">{show.title}</h3>
-                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
-                          {show.format}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-500 mt-1">{show.description}</p>
-                      <p className="text-xs text-gray-400 mt-2">{show.slides.length} slides</p>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-medium text-gray-900">{show.title}</h3>
+                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
+                        {show.format}
+                      </span>
                     </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => navigate(`/browse/${show.id}`)}
-                        className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-200 transition-colors whitespace-nowrap"
-                      >
-                        Browse
-                      </button>
-                      <button
-                        onClick={() => handleStartSession(show)}
-                        className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 transition-colors whitespace-nowrap"
-                      >
-                        Start Session
-                      </button>
-                    </div>
+                    <p className="text-sm text-gray-500 mt-1">{show.description}</p>
+                    <p className="text-xs text-gray-400 mt-2">{show.slides.length} slides</p>
+                  </div>
+                  <div className="flex gap-2 mt-4">
+                    <button
+                      onClick={() => navigate(`/browse/${show.id}`)}
+                      className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-200 transition-colors whitespace-nowrap"
+                    >
+                      Browse
+                    </button>
+                    <button
+                      onClick={() => handleStartSession(show)}
+                      className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 transition-colors whitespace-nowrap"
+                    >
+                      Start Session
+                    </button>
                   </div>
                 </div>
               ))}
