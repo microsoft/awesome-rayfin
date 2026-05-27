@@ -5,8 +5,11 @@ import { AuthProvider } from '@/hooks/AuthContext';
 import type { IAuthService } from '@/services/IAuthService';
 
 const stubAuthService: IAuthService = {
-  fabricAuthEnabled: false,
+  authMode: 'password',
   async signIn() {
+    return { id: 'u1', email: 'dev@contoso.com', name: 'dev' };
+  },
+  async signUp() {
     return { id: 'u1', email: 'dev@contoso.com', name: 'dev' };
   },
   async signOut() {},

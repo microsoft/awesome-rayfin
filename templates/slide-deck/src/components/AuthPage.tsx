@@ -2,7 +2,13 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks/AuthContext';
 
 const msLogo = (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 21 21" className="mr-2">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 21 21"
+    className="mr-2"
+  >
     <rect x="1" y="1" width="9" height="9" fill="#f25022" />
     <rect x="11" y="1" width="9" height="9" fill="#7fba00" />
     <rect x="1" y="11" width="9" height="9" fill="#00a4ef" />
@@ -10,8 +16,8 @@ const msLogo = (
   </svg>
 );
 
-export function AuthPage() {
-  const { signIn, fabricAuthEnabled } = useAuth();
+function FabricAuthPage() {
+  const { signIn } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,9 +33,125 @@ export function AuthPage() {
     }
   };
 
-  const buttonLabel = isLoading
-    ? fabricAuthEnabled ? 'Opening Fabric...' : 'Signing in...'
-    : 'Sign in with Microsoft';
+  return (
+    <>
+      <button
+        type="button"
+        onClick={handleSignIn}
+        disabled={isLoading}
+        className="flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 text-sm font-medium text-white shadow-md shadow-blue-600/25 transition-all hover:shadow-lg hover:shadow-blue-600/30 hover:brightness-110 disabled:opacity-50 disabled:shadow-none"
+      >
+        {msLogo}
+        {isLoading ? 'Opening Fabric...' : 'Sign in with Microsoft'}
+      </button>
+      {error && (
+        <p className="mt-3 text-center text-sm text-red-600">{error}</p>
+      )}
+    </>
+  );
+}
+
+function PasswordAuthPage() {
+  const { signIn, signUp } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
+    try {
+      const credentials = { email, password };
+      if (isSignUp) {
+        await signUp(credentials);
+      } else {
+        await signIn(credentials);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Authentication failed.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 text-sm font-medium text-white shadow-md shadow-blue-600/25 transition-all hover:shadow-lg hover:shadow-blue-600/30 hover:brightness-110 disabled:opacity-50 disabled:shadow-none"
+        >
+          {isLoading
+            ? isSignUp
+              ? 'Creating account...'
+              : 'Signing in...'
+            : isSignUp
+              ? 'Create account'
+              : 'Sign in'}
+        </button>
+      </form>
+
+      {error && (
+        <p className="mt-3 text-center text-sm text-red-600">{error}</p>
+      )}
+
+      <p className="mt-4 text-center text-sm text-gray-500">
+        {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+        <button
+          type="button"
+          onClick={() => {
+            setIsSignUp(!isSignUp);
+            setError(null);
+          }}
+          className="font-medium text-blue-600 hover:text-blue-500"
+        >
+          {isSignUp ? 'Sign in' : 'Create one'}
+        </button>
+      </p>
+    </>
+  );
+}
+
+export function AuthPage() {
+  const { authMode } = useAuth();
 
   return (
     <div className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50">
@@ -42,16 +164,8 @@ export function AuthPage() {
               <h1 className="text-2xl font-bold text-gray-900">Slide Deck</h1>
               <p className="mt-2 text-sm text-gray-500">Sign in to present or join a session.</p>
             </div>
-            <button
-              type="button"
-              onClick={handleSignIn}
-              disabled={isLoading}
-              className="flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 text-sm font-medium text-white shadow-md shadow-blue-600/25 transition-all hover:shadow-lg hover:shadow-blue-600/30 hover:brightness-110 disabled:opacity-50 disabled:shadow-none"
-            >
-              {msLogo}
-              {buttonLabel}
-            </button>
-            {error && <p className="mt-3 text-center text-sm text-red-600">{error}</p>}
+
+            {authMode === 'fabric' ? <FabricAuthPage /> : <PasswordAuthPage />}
           </div>
         </div>
       </div>
