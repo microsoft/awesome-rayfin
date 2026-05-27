@@ -10,13 +10,14 @@ export interface SlideshowItem {
   description: string;
   format: 'markdown' | 'html';
   slides: SlideContent[];
+  user_id: string;
   createdAt: Date;
 }
 
 export async function getSlideshows(): Promise<SlideshowItem[]> {
   const client = getRayfinClient();
   const results = await client.data.Slideshow.select([
-    'id', 'title', 'description', 'format', 'slides', 'createdAt',
+    'id', 'title', 'description', 'format', 'slides', 'user_id', 'createdAt',
   ]).orderBy({ createdAt: 'desc' }).execute();
   return results.map((r) => ({
     ...r,
@@ -27,7 +28,7 @@ export async function getSlideshows(): Promise<SlideshowItem[]> {
 export async function getSlideshow(id: string): Promise<SlideshowItem | null> {
   const client = getRayfinClient();
   const results = await client.data.Slideshow.select([
-    'id', 'title', 'description', 'format', 'slides', 'createdAt',
+    'id', 'title', 'description', 'format', 'slides', 'user_id', 'createdAt',
   ]).where({ id }).execute();
   const r = results[0];
   if (!r) return null;
@@ -51,4 +52,9 @@ export async function createSlideshow(
     user_id: session.user.id,
   });
   return { ...result, slides: data.slides } as unknown as SlideshowItem;
+}
+
+export async function deleteSlideshow(id: string): Promise<void> {
+  const client = getRayfinClient();
+  await client.data.Slideshow.delete({ id });
 }

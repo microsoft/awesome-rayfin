@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/AuthContext';
-import { type SlideshowItem, getSlideshows, createSlideshow } from '@/services/slideshows';
+import { type SlideshowItem, getSlideshows, createSlideshow, deleteSlideshow } from '@/services/slideshows';
 import { type SessionItem, getSessions, createSession } from '@/services/sessions';
 import { sampleSlideshows } from '@/data/sampleSlideshows';
 
@@ -49,6 +49,17 @@ export function HomePage() {
       navigate(`/present/${session.id}`);
     } catch (err) {
       console.error('Failed to create session:', err);
+    }
+  };
+
+  const handleDeleteSlideshow = async (id: string) => {
+    if (!confirm('Delete this slideshow? This cannot be undone.')) return;
+    try {
+      await deleteSlideshow(id);
+      await loadData();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(`Failed to delete slideshow: ${message}`);
     }
   };
 
@@ -219,6 +230,14 @@ export function HomePage() {
                     >
                       Start Session
                     </button>
+                    {user && show.user_id === user.id && (
+                      <button
+                        onClick={() => handleDeleteSlideshow(show.id)}
+                        className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-100 transition-colors whitespace-nowrap ml-auto"
+                      >
+                        Delete
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
