@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: static-blankapp
+  displayName: Blank App
+  description: Bare-bones Fabric-authenticated Rayfin app — a static HTML page with inlined CSS and a tiny TypeScript entry point. No UI framework, no CSS framework, no router.
+entries:
+  - path: .
+    name: Blank App

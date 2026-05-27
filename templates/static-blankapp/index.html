@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blank App</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #ffffff;
+        --fg: #0a0a0a;
+        --muted: #9ca3af;
+        --accent: #2563eb;
+        --accent-hover: #1d4ed8;
+        --danger: #dc2626;
+        font-family:
+          system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
+          sans-serif;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--fg);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      .view {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: clamp(2.5rem, 8vw, 4rem);
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        margin: 0 0 0.5rem;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        margin: 0 0 1.75rem;
+        font-weight: 300;
+      }
+
+      button {
+        font: inherit;
+        cursor: pointer;
+        padding: 0.65rem 1.25rem;
+        border-radius: 0.5rem;
+        border: 1px solid transparent;
+        background: var(--accent);
+        color: #fff;
+        transition:
+          background-color 0.15s,
+          opacity 0.15s;
+      }
+
+      button:hover:not(:disabled) {
+        background: var(--accent-hover);
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .link-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1.5rem;
+        background: transparent;
+        color: var(--muted);
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+      }
+
+      .link-btn:hover:not(:disabled) {
+        background: transparent;
+        color: var(--fg);
+      }
+
+      .error {
+        color: var(--danger);
+        margin-top: 0.75rem;
+        font-size: 0.875rem;
+        min-height: 1.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="app">
+      <section id="loading-view" class="view">
+        <p class="subtitle">Loading…</p>
+      </section>
+
+      <section id="auth-view" class="view" hidden>
+        <h1>Blank App</h1>
+        <p class="subtitle">Sign in to get started.</p>
+        <button id="sign-in-btn" type="button">Sign in with Microsoft</button>
+        <p id="auth-error" class="error" hidden></p>
+      </section>
+
+      <section id="home-view" class="view" hidden>
+        <button
+          id="sign-out-btn"
+          class="link-btn"
+          type="button"
+          aria-label="Sign out"
+        >
+          Sign out
+        </button>
+        <h1>Hello, World.</h1>
+        <p class="subtitle">I am a Blank App.</p>
+      </section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
