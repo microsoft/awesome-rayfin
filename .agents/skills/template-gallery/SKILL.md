@@ -1,3 +1,11 @@
+---
+name: template-gallery
+description: "Use when working in the Awesome Rayfin template gallery repo — creating, validating, or updating templates under templates/, regenerating gallery manifests, or updating the templates table in README. Triggers: awesome-rayfin, template gallery, templates/, new-template.sh, generate-manifest.mjs, rayfin-template.yml, manifest.json, template metadata, templateId, template.name, template.displayName, template.description, rayfin init -t, scaffold template, gallery README, leaf manifest, root manifest"
+metadata:
+  author: microsoft
+  version: "0.1.0"
+---
+
 # Template Gallery Skill
 
 Use this skill when working in the Awesome Rayfin template gallery repo. This is an operational checklist for creating, validating, and maintaining gallery templates.
