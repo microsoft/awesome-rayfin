@@ -6,9 +6,11 @@ interface ChatPanelProps {
   sessionId: string;
   authorName: string;
   presenterUserId?: string;
+  collapsed?: boolean;
+  onToggle?: () => void;
 }
 
-export function ChatPanel({ sessionId, authorName, presenterUserId }: ChatPanelProps) {
+export function ChatPanel({ sessionId, authorName, presenterUserId, collapsed, onToggle }: ChatPanelProps) {
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -40,10 +42,36 @@ export function ChatPanel({ sessionId, authorName, presenterUserId }: ChatPanelP
     }
   };
 
+  // Collapsed state: just show a vertical tab button
+  if (collapsed) {
+    return (
+      <button
+        onClick={onToggle}
+        className="h-full w-10 shrink-0 border-l border-gray-200 bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-colors"
+        title="Open chat"
+      >
+        <span className="writing-mode-vertical text-xs font-semibold text-gray-600 [writing-mode:vertical-rl] rotate-180">
+          💬 Chat
+        </span>
+      </button>
+    );
+  }
+
   return (
     <div className="flex flex-col h-full border-l border-gray-200 bg-white">
-      <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+      <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-gray-700">Chat</h3>
+        {onToggle && (
+          <button
+            onClick={onToggle}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+            title="Collapse chat"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            </svg>
+          </button>
+        )}
       </div>
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {(messages ?? []).map((msg) => (

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChatPanel } from '@/components/ChatPanel';
 import { SlideRenderer } from '@/components/SlideRenderer';
@@ -11,6 +11,7 @@ export function AudiencePage() {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [chatCollapsed, setChatCollapsed] = useState(false);
 
   const fetchSession = useCallback(
     () => (sessionId ? getSession(sessionId) : Promise.resolve(null)),
@@ -94,8 +95,8 @@ export function AudiencePage() {
           )}
         </div>
         {/* Chat sidebar */}
-        <div className="w-80 shrink-0">
-          <ChatPanel sessionId={session.id} authorName={user?.name ?? 'Audience'} presenterUserId={session.user_id} />
+        <div className={chatCollapsed ? 'shrink-0' : 'w-80 shrink-0'}>
+          <ChatPanel sessionId={session.id} authorName={user?.name ?? 'Audience'} presenterUserId={session.user_id} collapsed={chatCollapsed} onToggle={() => setChatCollapsed((c) => !c)} />
         </div>
       </div>
 

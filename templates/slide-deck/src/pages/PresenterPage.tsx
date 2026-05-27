@@ -13,6 +13,7 @@ export function PresenterPage() {
   const [session, setSession] = useState<SessionItem | null>(null);
   const [slideshow, setSlideshow] = useState<SlideshowItem | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [chatCollapsed, setChatCollapsed] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const [error, setError] = useState<string | null>(null);
@@ -175,8 +176,8 @@ export function PresenterPage() {
           </div>
         </div>
         {/* Chat sidebar */}
-        <div className="w-80 shrink-0">
-          <ChatPanel sessionId={session.id} authorName={user?.name ?? 'Presenter'} presenterUserId={session.user_id} />
+        <div className={chatCollapsed ? 'shrink-0' : 'w-80 shrink-0'}>
+          <ChatPanel sessionId={session.id} authorName={user?.name ?? 'Presenter'} presenterUserId={session.user_id} collapsed={chatCollapsed} onToggle={() => setChatCollapsed((c) => !c)} />
         </div>
       </div>
     </div>
