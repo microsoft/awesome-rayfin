@@ -7,7 +7,8 @@ import {
 } from '@microsoft/rayfin-core';
 
 @entity()
-@role('authenticated', '*', {
+@role('authenticated', 'read')
+@role('authenticated', ['create', 'update', 'delete'], {
   policy: (claims, item) => claims.sub.eq(item.user_id),
 })
 export class Slideshow {

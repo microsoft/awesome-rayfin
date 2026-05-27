@@ -9,7 +9,8 @@ import {
 } from '@microsoft/rayfin-core';
 
 @entity()
-@role('authenticated', '*', {
+@role('authenticated', ['read', 'update'])
+@role('authenticated', ['create', 'delete'], {
   policy: (claims, item) => claims.sub.eq(item.user_id),
 })
 export class Session {

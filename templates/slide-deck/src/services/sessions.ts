@@ -29,7 +29,10 @@ export async function getSessions(): Promise<SessionItem[]> {
 
 export async function getSession(id: string): Promise<SessionItem | null> {
   const client = getRayfinClient();
-  return await client.data.Session.findById(id) as SessionItem | null;
+  const results = await client.data.Session.select([
+    'id', 'slideshowId', 'title', 'currentSlide', 'isActive', 'joinCode', 'createdAt',
+  ]).where({ id }).execute();
+  return (results[0] as SessionItem) ?? null;
 }
 
 export async function createSession(slideshowId: string, title: string): Promise<SessionItem> {
