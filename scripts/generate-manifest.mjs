@@ -58,11 +58,25 @@ function discoverTemplates() {
 // 2. Generate root rayfin-template.yml
 // ---------------------------------------------------------------------------
 
+// Quote a YAML scalar when its first char or contents would otherwise
+// be parsed as something other than a plain string (flow sequences/maps,
+// directives, anchors, tags, comments, etc.). JSON-quoted strings are
+// valid YAML double-quoted scalars.
+function yamlStr(value) {
+  const s = String(value);
+  if (s === "") return '""';
+  const needsQuote =
+    /^[\s\-?:,\[\]{}#&*!|>'"%@`]/.test(s) ||
+    /:\s|\s#|[\n\r\t]/.test(s) ||
+    /[:#]$/.test(s);
+  return needsQuote ? JSON.stringify(s) : s;
+}
+
 function generateRootManifest(templates) {
   const entries = templates
     .map(
       (t) =>
-        `  - path: templates/${t.dirName}\n    name: ${t.name}\n    description: ${t.description}`
+        `  - path: templates/${t.dirName}\n    name: ${yamlStr(t.name)}\n    description: ${yamlStr(t.description)}`
     )
     .join("\n");
 
@@ -83,12 +97,12 @@ ${entries}
 function generateLeafManifest(template) {
   return `apiVersion: v1
 metadata:
-  name: ${template.templateName}
-  displayName: ${template.name}
-  description: ${template.description}
+  name: ${yamlStr(template.templateName)}
+  displayName: ${yamlStr(template.name)}
+  description: ${yamlStr(template.description)}
 entries:
   - path: .
-    name: ${template.name}
+    name: ${yamlStr(template.name)}
 `;
 }
 
@@ -116,7 +130,6 @@ function updateReadmeTable(templates) {
       // Read manifest.json for auth/data info if available
       let auth = "✅";
       let data = "—";
-      let stack = "React, Vite";
       const manifestPath = join(TEMPLATES_DIR, t.dirName, "manifest.json");
       if (existsSync(manifestPath)) {
         try {
@@ -125,13 +138,15 @@ function updateReadmeTable(templates) {
           data = manifest.services?.data ? "✅" : "—";
         } catch { /* use defaults */ }
       }
-      // Check for tailwind in package.json
+      // Infer stack from package.json dependencies
       const pkgPath = join(TEMPLATES_DIR, t.dirName, "package.json");
       const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
       const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
-      if (allDeps["tailwindcss"] || allDeps["@tailwindcss/vite"]) {
-        stack = "React, Vite, Tailwind";
-      }
+      const parts = [];
+      if (allDeps["react"]) parts.push("React");
+      if (allDeps["vite"] || allDeps["@vitejs/plugin-react-swc"]) parts.push("Vite");
+      if (allDeps["tailwindcss"] || allDeps["@tailwindcss/vite"]) parts.push("Tailwind");
+      const stack = parts.length > 0 ? parts.join(", ") : "TypeScript";
       return `| **[${t.name}](./templates/${t.dirName})** | ${t.description} | ${auth} | ${data} | ${stack} |`;
     })
     .join("\n");
