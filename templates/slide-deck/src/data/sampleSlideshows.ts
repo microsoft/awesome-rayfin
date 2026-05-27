@@ -19,6 +19,7 @@ export const sampleSlideshows: SampleSlideshow[] = [
 **Build full-stack apps on Microsoft Fabric**
 
 Rayfin provides authentication, data, and hosting — all in one platform.`,
+        notes: 'Welcome everyone! Today we\'ll walk through Rayfin — a full-stack framework for building apps on Microsoft Fabric.',
       },
       {
         content: `## Key Features
@@ -27,6 +28,7 @@ Rayfin provides authentication, data, and hosting — all in one platform.`,
 - **Data Layer** — Type-safe entities with row-level security
 - **Static Hosting** — Deploy your frontend to Fabric
 - **Local Dev** — Full local development experience with Docker`,
+        notes: 'Emphasize that all four pillars work together out of the box. No need to wire up auth or configure a database separately.',
       },
       {
         content: `## Get Started
@@ -38,6 +40,7 @@ npm run dev
 \`\`\`
 
 Visit [localhost:5173](http://localhost:5173) to see your app.`,
+        notes: 'Live demo opportunity — run the create command and show the app scaffold.',
       },
       {
         content: `## Data Modeling
@@ -54,6 +57,7 @@ Define entities with TC39 decorators:
 **Start building with Rayfin today**
 
 *Questions? Check the docs or ask in the community.*`,
+        notes: 'Open the floor for Q&A. Have the docs site ready to share.',
       },
     ],
   },

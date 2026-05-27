@@ -2,6 +2,7 @@ import { getRayfinClient } from './rayfinClient';
 
 export interface SlideContent {
   content: string;
+  notes?: string;
 }
 
 export interface SlideshowItem {

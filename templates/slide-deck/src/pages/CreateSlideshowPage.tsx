@@ -5,6 +5,11 @@ import { SlideRenderer } from '@/components/SlideRenderer';
 
 type Format = 'markdown' | 'html';
 
+interface SlideData {
+  content: string;
+  notes: string;
+}
+
 export function CreateSlideshowPage() {
   const navigate = useNavigate();
   const { slideshowId } = useParams<{ slideshowId?: string }>();
@@ -13,7 +18,7 @@ export function CreateSlideshowPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [format, setFormat] = useState<Format>('markdown');
-  const [slides, setSlides] = useState<string[]>(['']);
+  const [slides, setSlides] = useState<SlideData[]>([{ content: '', notes: '' }]);
   const [activeSlide, setActiveSlide] = useState(0);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(isEditing);
@@ -29,7 +34,7 @@ export function CreateSlideshowPage() {
         setTitle(show.title);
         setDescription(show.description);
         setFormat(show.format);
-        setSlides(show.slides.map((s) => s.content));
+        setSlides(show.slides.map((s) => ({ content: s.content, notes: s.notes ?? '' })));
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load slideshow.');
       } finally {
@@ -38,12 +43,12 @@ export function CreateSlideshowPage() {
     })();
   }, [slideshowId]);
 
-  const updateSlide = (index: number, content: string) => {
-    setSlides((prev) => prev.map((s, i) => (i === index ? content : s)));
+  const updateSlideField = (index: number, field: keyof SlideData, value: string) => {
+    setSlides((prev) => prev.map((s, i) => (i === index ? { ...s, [field]: value } : s)));
   };
 
   const addSlide = () => {
-    setSlides((prev) => [...prev, '']);
+    setSlides((prev) => [...prev, { content: '', notes: '' }]);
     setActiveSlide(slides.length);
   };
 
@@ -66,7 +71,7 @@ export function CreateSlideshowPage() {
 
   const handleSave = async () => {
     if (!title.trim()) { setError('Title is required.'); return; }
-    if (slides.every((s) => !s.trim())) { setError('Add at least one slide with content.'); return; }
+    if (slides.every((s) => !s.content.trim())) { setError('Add at least one slide with content.'); return; }
     setSaving(true);
     setError(null);
     try {
@@ -74,7 +79,9 @@ export function CreateSlideshowPage() {
         title: title.trim(),
         description: description.trim(),
         format,
-        slides: slides.filter((s) => s.trim()).map((content) => ({ content })),
+        slides: slides
+          .filter((s) => s.content.trim())
+          .map((s) => ({ content: s.content, ...(s.notes.trim() ? { notes: s.notes.trim() } : {}) })),
       };
       if (isEditing && slideshowId) {
         await updateSlideshow(slideshowId, payload);
@@ -219,14 +226,26 @@ export function CreateSlideshowPage() {
             </span>
           </div>
           <textarea
-            value={slides[activeSlide]}
-            onChange={(e) => updateSlide(activeSlide, e.target.value)}
+            value={slides[activeSlide].content}
+            onChange={(e) => updateSlideField(activeSlide, 'content', e.target.value)}
             placeholder={format === 'markdown'
               ? '# Slide Title\n\nYour content here...\n\n- Bullet point\n- Another point'
               : '<h1>Slide Title</h1>\n<p>Your content here...</p>'}
             className="flex-1 w-full resize-none border-none p-6 font-mono text-sm focus:outline-none bg-white"
             spellCheck={false}
           />
+          <div className="border-t border-gray-200">
+            <div className="px-4 py-2 bg-gray-50">
+              <span className="text-xs font-medium text-gray-500">Speaker Notes</span>
+            </div>
+            <textarea
+              value={slides[activeSlide].notes}
+              onChange={(e) => updateSlideField(activeSlide, 'notes', e.target.value)}
+              placeholder="Add speaker notes for this slide…"
+              className="w-full h-28 resize-none border-none px-6 py-3 text-sm focus:outline-none bg-white"
+              spellCheck={false}
+            />
+          </div>
         </div>
 
         {/* Right — live preview */}
@@ -235,8 +254,8 @@ export function CreateSlideshowPage() {
             <span className="text-xs font-medium text-gray-500">Preview</span>
           </div>
           <div className="flex-1 overflow-auto bg-white">
-            {slides[activeSlide]?.trim() ? (
-              <SlideRenderer content={slides[activeSlide]} format={format} />
+            {slides[activeSlide]?.content.trim() ? (
+              <SlideRenderer content={slides[activeSlide].content} format={format} />
             ) : (
               <div className="h-full flex items-center justify-center text-gray-400 text-sm">
                 Start typing to see a preview

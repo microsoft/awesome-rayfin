@@ -114,6 +114,13 @@ export function PresenterPage() {
               />
             )}
           </div>
+          {/* Speaker notes */}
+          {slide?.notes && (
+            <div className="border-t border-gray-200 bg-gray-50 px-6 py-3 max-h-32 overflow-y-auto shrink-0">
+              <p className="text-xs font-semibold text-gray-500 mb-1">Speaker Notes</p>
+              <p className="text-sm text-gray-700 whitespace-pre-wrap">{slide.notes}</p>
+            </div>
+          )}
           {/* Controls */}
           <div className="bg-gray-100 border-t border-gray-200 px-6 py-3 flex items-center justify-between shrink-0">
             <button
