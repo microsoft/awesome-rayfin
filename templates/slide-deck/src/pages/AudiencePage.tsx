@@ -89,6 +89,7 @@ export function AudiencePage() {
             <SlideRenderer
               content={slide.content}
               format={slideshow.format as 'markdown' | 'html'}
+              theme={slideshow.theme}
             />
           )}
         </div>

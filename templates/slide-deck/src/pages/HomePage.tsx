@@ -222,6 +222,12 @@ export function HomePage() {
                         <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
                           {show.format}
                         </span>
+                        {show.theme?.name && show.theme.name !== 'Light' && (
+                         <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium text-gray-500">
+                           <span className="w-2.5 h-2.5 rounded-full border border-gray-200" style={{ backgroundColor: show.theme.backgroundColor }} />
+                           {show.theme.name}
+                         </span>
+                        )}
                       </div>
                       {user && show.user_id === user.id && (
                         <div className="flex items-center gap-1 shrink-0 ml-2">

@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createSlideshow, getSlideshow, updateSlideshow } from '@/services/slideshows';
 import { SlideRenderer } from '@/components/SlideRenderer';
+import { ThemePicker } from '@/components/ThemePicker';
+import { type SlideTheme, DEFAULT_THEME } from '@/data/themes';
 
 type Format = 'markdown' | 'html';
 
@@ -18,6 +20,7 @@ export function CreateSlideshowPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [format, setFormat] = useState<Format>('markdown');
+  const [theme, setTheme] = useState<SlideTheme>(DEFAULT_THEME);
   const [slides, setSlides] = useState<SlideData[]>([{ content: '', notes: '' }]);
   const [activeSlide, setActiveSlide] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -34,6 +37,7 @@ export function CreateSlideshowPage() {
         setTitle(show.title);
         setDescription(show.description);
         setFormat(show.format);
+        setTheme(show.theme);
         setSlides(show.slides.map((s) => ({ content: s.content, notes: s.notes ?? '' })));
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load slideshow.');
@@ -79,6 +83,7 @@ export function CreateSlideshowPage() {
         title: title.trim(),
         description: description.trim(),
         format,
+        theme,
         slides: slides
           .filter((s) => s.content.trim())
           .map((s) => ({ content: s.content, ...(s.notes.trim() ? { notes: s.notes.trim() } : {}) })),
@@ -170,6 +175,7 @@ export function CreateSlideshowPage() {
                 ))}
               </div>
             </div>
+            <ThemePicker theme={theme} onChange={setTheme} />
           </div>
 
           {/* Slide list */}
@@ -255,7 +261,7 @@ export function CreateSlideshowPage() {
           </div>
           <div className="flex-1 overflow-auto bg-white">
             {slides[activeSlide]?.content.trim() ? (
-              <SlideRenderer content={slides[activeSlide].content} format={format} />
+              <SlideRenderer content={slides[activeSlide].content} format={format} theme={theme} />
             ) : (
               <div className="h-full flex items-center justify-center text-gray-400 text-sm">
                 Start typing to see a preview

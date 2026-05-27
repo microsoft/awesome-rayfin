@@ -1,10 +1,12 @@
 import type { SlideContent } from '@/services/slideshows';
+import { type SlideTheme, THEME_PRESETS, DEFAULT_THEME } from '@/data/themes';
 
 export interface SampleSlideshow {
   title: string;
   description: string;
   format: 'markdown' | 'html';
   slides: SlideContent[];
+  theme: SlideTheme;
 }
 
 export const sampleSlideshows: SampleSlideshow[] = [
@@ -12,6 +14,7 @@ export const sampleSlideshows: SampleSlideshow[] = [
     title: 'Introduction to Rayfin',
     description: 'A sample slideshow using Markdown slides',
     format: 'markdown',
+    theme: THEME_PRESETS.find((t) => t.name === 'Dark') ?? DEFAULT_THEME,
     slides: [
       {
         content: `# Introduction to Rayfin
@@ -65,6 +68,7 @@ Define entities with TC39 decorators:
     title: 'Product Launch 2025',
     description: 'A sample slideshow using HTML slides',
     format: 'html',
+    theme: THEME_PRESETS.find((t) => t.name === 'Corporate') ?? DEFAULT_THEME,
     slides: [
       {
         content: `<div style="text-align: center;">
