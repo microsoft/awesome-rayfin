@@ -187,14 +187,22 @@ export function HomePage() {
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Slideshows</h2>
-            {slideshows.length === 0 && (
+            <div className="flex gap-2">
+              {slideshows.length === 0 && (
+                <button
+                  onClick={handleSeedSamples}
+                  className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors"
+                >
+                  Add Samples
+                </button>
+              )}
               <button
-                onClick={handleSeedSamples}
-                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+                onClick={() => navigate('/create')}
+                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors"
               >
-                Add Sample Slideshows
+                + Create Slideshow
               </button>
-            )}
+            </div>
           </div>
           {slideshows.length === 0 ? (
             <div className="bg-white rounded-xl border border-dashed border-gray-300 p-12 text-center">

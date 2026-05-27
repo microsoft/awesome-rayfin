@@ -4,6 +4,7 @@ import { AuthPage } from '@/components/AuthPage';
 import { useAuth } from '@/hooks/AuthContext';
 import { AudiencePage } from '@/pages/AudiencePage';
 import { BrowsePage } from '@/pages/BrowsePage';
+import { CreateSlideshowPage } from '@/pages/CreateSlideshowPage';
 import { HomePage } from '@/pages/HomePage';
 import { PresenterPage } from '@/pages/PresenterPage';
 
@@ -47,6 +48,14 @@ function App() {
           element={
             <AuthGuard requireAuth={true}>
               <HomePage />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/create"
+          element={
+            <AuthGuard requireAuth={true}>
+              <CreateSlideshowPage />
             </AuthGuard>
           }
         />
