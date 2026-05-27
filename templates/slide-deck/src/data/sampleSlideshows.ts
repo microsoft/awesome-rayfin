@@ -123,8 +123,8 @@ Define entities with TC39 decorators:
   <h1 style="font-size: 2.5rem; color: #1e40af;">Thank You!</h1>
   <p style="font-size: 1.25rem; color: #6b7280; margin-top: 1rem;">We can't wait for you to try it</p>
   <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
-    <div style="padding: 0.75rem 1.5rem; background: #3b82f6; color: white; border-radius: 0.75rem; font-weight: 600;">Get Early Access</div>
-    <div style="padding: 0.75rem 1.5rem; background: #f3f4f6; color: #374151; border-radius: 0.75rem; font-weight: 600;">Read the Docs</div>
+    <a href="#" style="display: inline-block; padding: 0.75rem 1.5rem; background: #3b82f6; color: white; border-radius: 0.75rem; font-weight: 600; text-decoration: none;">Get Early Access</a>
+    <a href="#" style="display: inline-block; padding: 0.75rem 1.5rem; background: #f3f4f6; color: #374151; border-radius: 0.75rem; font-weight: 600; text-decoration: none;">Read the Docs</a>
   </div>
 </div>`,
       },
