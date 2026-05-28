@@ -5,6 +5,7 @@ import { SlideRenderer } from '@/components/SlideRenderer';
 import { ThemePicker } from '@/components/ThemePicker';
 import { ImageLibrary } from '@/components/ImageLibrary';
 import { type SlideTheme, DEFAULT_THEME } from '@/data/themes';
+import { DarkModeToggle } from '@/components/DarkModeToggle';
 
 type Format = 'markdown' | 'html';
 
@@ -147,13 +148,16 @@ export function CreateSlideshowPage() {
           </button>
           <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">{isEditing ? 'Edit Slideshow' : 'Create Slideshow'}</h1>
         </div>
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors"
-        >
-          {saving ? 'Saving…' : isEditing ? 'Save Changes' : 'Save Slideshow'}
-        </button>
+        <div className="flex items-center gap-3">
+          <DarkModeToggle />
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+          >
+            {saving ? 'Saving…' : isEditing ? 'Save Changes' : 'Save Slideshow'}
+          </button>
+        </div>
       </header>
 
       {error && (
