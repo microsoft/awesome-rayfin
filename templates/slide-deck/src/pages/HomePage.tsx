@@ -14,6 +14,15 @@ export function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [joinCode, setJoinCode] = useState('');
+  const [copiedSessionId, setCopiedSessionId] = useState<string | null>(null);
+
+  const copyJoinLink = (session: SessionItem) => {
+    const url = `${window.location.origin}/join/${session.joinCode}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedSessionId(session.id);
+      setTimeout(() => setCopiedSessionId(null), 2000);
+    });
+  };
 
   const loadData = useCallback(async () => {
     try {
@@ -157,8 +166,23 @@ export function HomePage() {
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="font-medium text-gray-900 dark:text-gray-100">{session.title}</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1.5">
                         Code: <span className="font-mono font-bold text-blue-600">{session.joinCode}</span>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); copyJoinLink(session); }}
+                          className="inline-flex items-center text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                          title="Copy join link"
+                        >
+                          {copiedSessionId === session.id ? (
+                            <svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          ) : (
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                          )}
+                        </button>
                       </p>
                       <p className="text-xs text-gray-400 mt-1">
                         Slide {session.currentSlide + 1}

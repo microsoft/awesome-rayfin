@@ -6,6 +6,7 @@ import { AudiencePage } from '@/pages/AudiencePage';
 import { BrowsePage } from '@/pages/BrowsePage';
 import { CreateSlideshowPage } from '@/pages/CreateSlideshowPage';
 import { HomePage } from '@/pages/HomePage';
+import { JoinPage } from '@/pages/JoinPage';
 import { PresenterPage } from '@/pages/PresenterPage';
 
 function AuthGuard({
@@ -88,6 +89,14 @@ function App() {
           element={
             <AuthGuard requireAuth={true}>
               <AudiencePage />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/join/:joinCode"
+          element={
+            <AuthGuard requireAuth={true}>
+              <JoinPage />
             </AuthGuard>
           }
         />
