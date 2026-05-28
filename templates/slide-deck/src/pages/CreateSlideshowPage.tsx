@@ -27,6 +27,9 @@ export function CreateSlideshowPage() {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(isEditing);
   const [error, setError] = useState<string | null>(null);
+  const [editorCollapsed, setEditorCollapsed] = useState(false);
+  const [previewCollapsed, setPreviewCollapsed] = useState(false);
+  const [notesCollapsed, setNotesCollapsed] = useState(false);
   const editorRef = useRef<HTMLTextAreaElement>(null);
 
   const insertAtCursor = (snippet: string) => {
@@ -250,49 +253,113 @@ export function CreateSlideshowPage() {
           </div>
         </div>
 
-        {/* Center — editor */}
+        {/* Center + Right: Editor and Preview with shared speaker notes below */}
         <div className="flex-1 flex flex-col min-w-0">
-          <div className="px-4 py-2 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
-            <span className="text-xs font-medium text-gray-500">
-              Editing Slide {activeSlide + 1} — {format === 'markdown' ? 'Markdown' : 'HTML'}
-            </span>
-          </div>
-          <textarea
-            ref={editorRef}
-            value={slides[activeSlide].content}
-            onChange={(e) => updateSlideField(activeSlide, 'content', e.target.value)}
-            placeholder={format === 'markdown'
-              ? '# Slide Title\n\nYour content here...\n\n- Bullet point\n- Another point'
-              : '<h1>Slide Title</h1>\n<p>Your content here...</p>'}
-            className="flex-1 w-full resize-none border-none p-6 font-mono text-sm focus:outline-none bg-white"
-            spellCheck={false}
-          />
-          <div className="border-t border-gray-200">
-            <div className="px-4 py-2 bg-gray-50">
-              <span className="text-xs font-medium text-gray-500">Speaker Notes</span>
-            </div>
-            <textarea
-              value={slides[activeSlide].notes}
-              onChange={(e) => updateSlideField(activeSlide, 'notes', e.target.value)}
-              placeholder="Add speaker notes for this slide…"
-              className="w-full h-28 resize-none border-none px-6 py-3 text-sm focus:outline-none bg-white"
-              spellCheck={false}
-            />
-          </div>
-        </div>
-
-        {/* Right — live preview */}
-        <div className="w-[400px] shrink-0 border-l border-gray-200 flex flex-col">
-          <div className="px-4 py-2 border-b border-gray-200 bg-gray-50">
-            <span className="text-xs font-medium text-gray-500">Preview</span>
-          </div>
-          <div className="flex-1 overflow-auto bg-white">
-            {slides[activeSlide]?.content.trim() ? (
-              <SlideRenderer content={slides[activeSlide].content} format={format} theme={theme} />
+          {/* Editor and Preview panels */}
+          <div className="flex-1 flex min-h-0">
+            {/* Editor panel */}
+            {editorCollapsed ? (
+              <button
+                onClick={() => setEditorCollapsed(false)}
+                className="w-10 shrink-0 border-r border-gray-200 bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                title="Expand editor"
+              >
+                <span className="text-xs font-semibold text-gray-600 [writing-mode:vertical-rl] rotate-180">
+                  ✏️ Editor
+                </span>
+              </button>
             ) : (
-              <div className="h-full flex items-center justify-center text-gray-400 text-sm">
-                Start typing to see a preview
+              <div className="flex-1 flex flex-col min-w-0">
+                <div className="px-4 py-2.5 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+                  <span className="text-xs font-medium text-gray-500">
+                    Editing Slide {activeSlide + 1} — {format === 'markdown' ? 'Markdown' : 'HTML'}
+                  </span>
+                  <button
+                    onClick={() => setEditorCollapsed(true)}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                    title="Collapse editor"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                    </svg>
+                  </button>
+                </div>
+                <textarea
+                  ref={editorRef}
+                  value={slides[activeSlide].content}
+                  onChange={(e) => updateSlideField(activeSlide, 'content', e.target.value)}
+                  placeholder={format === 'markdown'
+                    ? '# Slide Title\n\nYour content here...\n\n- Bullet point\n- Another point'
+                    : '<h1>Slide Title</h1>\n<p>Your content here...</p>'}
+                  className="flex-1 w-full resize-none border-none p-6 font-mono text-sm focus:outline-none bg-white"
+                  spellCheck={false}
+                />
               </div>
+            )}
+
+            {/* Preview panel */}
+            {previewCollapsed ? (
+              <button
+                onClick={() => setPreviewCollapsed(false)}
+                className="w-10 shrink-0 border-l border-gray-200 bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                title="Expand preview"
+              >
+                <span className="text-xs font-semibold text-gray-600 [writing-mode:vertical-rl] rotate-180">
+                  👁️ Preview
+                </span>
+              </button>
+            ) : (
+              <div className={`${editorCollapsed ? 'flex-1' : 'w-[400px]'} shrink-0 border-l border-gray-200 flex flex-col`}>
+                <div className="px-4 py-2.5 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+                  <span className="text-xs font-medium text-gray-500">Preview</span>
+                  <button
+                    onClick={() => setPreviewCollapsed(true)}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                    title="Collapse preview"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="flex-1 overflow-auto bg-white">
+                  {slides[activeSlide]?.content.trim() ? (
+                    <SlideRenderer content={slides[activeSlide].content} format={format} theme={theme} />
+                  ) : (
+                    <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+                      Start typing to see a preview
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Speaker Notes — spans full width below editor/preview */}
+          <div className="border-t border-gray-200 shrink-0">
+            <button
+              onClick={() => setNotesCollapsed((c) => !c)}
+              className="w-full px-4 py-2 bg-gray-50 flex items-center justify-between hover:bg-gray-100 transition-colors"
+            >
+              <span className="text-xs font-medium text-gray-500">Speaker Notes</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className={`h-3.5 w-3.5 text-gray-400 transition-transform ${notesCollapsed ? '' : 'rotate-180'}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              </svg>
+            </button>
+            {!notesCollapsed && (
+              <textarea
+                value={slides[activeSlide].notes}
+                onChange={(e) => updateSlideField(activeSlide, 'notes', e.target.value)}
+                placeholder="Add speaker notes for this slide…"
+                className="w-full h-28 resize-none border-none px-6 py-3 text-sm focus:outline-none bg-white"
+                spellCheck={false}
+              />
             )}
           </div>
         </div>
