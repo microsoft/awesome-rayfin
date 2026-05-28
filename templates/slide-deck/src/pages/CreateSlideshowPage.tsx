@@ -300,7 +300,10 @@ export function CreateSlideshowPage() {
                     Editing Slide {activeSlide + 1} — {format === 'markdown' ? 'Markdown' : 'HTML'}
                   </span>
                   <button
-                    onClick={() => setEditorCollapsed(true)}
+                    onClick={() => {
+                      if (previewCollapsed) setPreviewCollapsed(false);
+                      setEditorCollapsed(true);
+                    }}
                     className="text-gray-400 hover:text-gray-600 transition-colors"
                     title="Collapse editor"
                   >
@@ -338,7 +341,10 @@ export function CreateSlideshowPage() {
                 <div className="px-4 py-2.5 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
                   <span className="text-xs font-medium text-gray-500">Preview</span>
                   <button
-                    onClick={() => setPreviewCollapsed(true)}
+                    onClick={() => {
+                      if (editorCollapsed) setEditorCollapsed(false);
+                      setPreviewCollapsed(true);
+                    }}
                     className="text-gray-400 hover:text-gray-600 transition-colors"
                     title="Collapse preview"
                   >
