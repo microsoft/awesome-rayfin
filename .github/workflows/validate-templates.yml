@@ -102,6 +102,7 @@ jobs:
         id: detect-templates
         run: |
           set -euo pipefail
+          NULL_SHA='0000000000000000000000000000000000000000'
 
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             base_sha="${{ github.event.pull_request.base.sha }}"
@@ -109,7 +110,7 @@ jobs:
           else
             base_sha="${{ github.event.before }}"
             head_sha="${{ github.sha }}"
-            if [ -z "$base_sha" ] || [ "$base_sha" = "0000000000000000000000000000000000000000" ]; then
+            if [ -z "$base_sha" ] || [ "$base_sha" = "$NULL_SHA" ]; then
               if git rev-parse HEAD~1 >/dev/null 2>&1; then
                 base_sha=$(git rev-parse HEAD~1)
               else
@@ -120,13 +121,16 @@ jobs:
 
           templates=$(git diff --name-only "$base_sha" "$head_sha" -- 'templates/**' \
             | awk -F/ '/^templates\/[^/]+\// {print $2}' \
-            | sort -u \
-            | tr '\n' ' ' \
-            | sed 's/[[:space:]]*$//')
+            | sort -u)
 
-          echo "templates=$templates" >> "$GITHUB_OUTPUT"
+          {
+            echo "templates<<EOF"
+            echo "$templates"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
           if [ -n "$templates" ]; then
-            echo "🧪 Touched templates: $templates"
+            echo "🧪 Touched templates: $(echo "$templates" | tr '\n' ' ')"
           else
             echo "✅ No templates changed; skipping lint/build/test."
           fi
@@ -135,7 +139,11 @@ jobs:
         if: steps.detect-templates.outputs.templates != ''
         run: |
           set -euo pipefail
-          for template in ${{ steps.detect-templates.outputs.templates }}; do
+          while IFS= read -r template; do
+            if [ -z "$template" ]; then
+              continue
+            fi
+
             if [ ! -f "templates/$template/package.json" ]; then
               echo "⏭️ Skipping templates/$template (no package.json found)"
               continue
@@ -149,4 +157,4 @@ jobs:
               npm run build
               npm test
             )
-          done
+          done <<< "${{ steps.detect-templates.outputs.templates }}"
