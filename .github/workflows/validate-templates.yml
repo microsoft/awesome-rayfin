@@ -89,31 +89,64 @@ jobs:
 
   lint-build-test:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        template:
-          - field-engineer
-          - events-app
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Install dependencies
-        working-directory: templates/${{ matrix.template }}
-        run: npm install
+      - name: Detect touched templates
+        id: detect-templates
+        run: |
+          set -euo pipefail
 
-      - name: Lint
-        working-directory: templates/${{ matrix.template }}
-        run: npm run lint
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base_sha="${{ github.event.pull_request.base.sha }}"
+            head_sha="${{ github.event.pull_request.head.sha }}"
+          else
+            base_sha="${{ github.event.before }}"
+            head_sha="${{ github.sha }}"
+            if [ -z "$base_sha" ] || [ "$base_sha" = "0000000000000000000000000000000000000000" ]; then
+              if git rev-parse HEAD~1 >/dev/null 2>&1; then
+                base_sha=$(git rev-parse HEAD~1)
+              else
+                base_sha="$head_sha"
+              fi
+            fi
+          fi
 
-      - name: Build
-        working-directory: templates/${{ matrix.template }}
-        run: npm run build
+          templates=$(git diff --name-only "$base_sha" "$head_sha" -- 'templates/**' \
+            | awk -F/ '/^templates\/[^/]+\// {print $2}' \
+            | sort -u \
+            | tr '\n' ' ' \
+            | sed 's/[[:space:]]*$//')
 
-      - name: Test
-        working-directory: templates/${{ matrix.template }}
-        run: npm test
+          echo "templates=$templates" >> "$GITHUB_OUTPUT"
+          if [ -n "$templates" ]; then
+            echo "🧪 Touched templates: $templates"
+          else
+            echo "✅ No templates changed; skipping lint/build/test."
+          fi
+
+      - name: Lint, build, and test touched templates
+        if: steps.detect-templates.outputs.templates != ''
+        run: |
+          set -euo pipefail
+          for template in ${{ steps.detect-templates.outputs.templates }}; do
+            if [ ! -f "templates/$template/package.json" ]; then
+              echo "⏭️ Skipping templates/$template (no package.json found)"
+              continue
+            fi
+
+            echo "🔎 Validating templates/$template"
+            (
+              cd "templates/$template"
+              npm install
+              npm run lint
+              npm run build
+              npm test
+            )
+          done
