@@ -30,6 +30,7 @@ export function CreateSlideshowPage() {
   const [editorCollapsed, setEditorCollapsed] = useState(false);
   const [previewCollapsed, setPreviewCollapsed] = useState(false);
   const [notesCollapsed, setNotesCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const editorRef = useRef<HTMLTextAreaElement>(null);
 
   const insertAtCursor = (snippet: string) => {
@@ -161,8 +162,31 @@ export function CreateSlideshowPage() {
 
       <div className="flex-1 flex min-h-0">
         {/* Left sidebar — metadata + slide list */}
+        {sidebarCollapsed ? (
+          <button
+            onClick={() => setSidebarCollapsed(false)}
+            className="w-10 shrink-0 border-r border-gray-200 bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-colors"
+            title="Expand sidebar"
+          >
+            <span className="text-xs font-semibold text-gray-600 [writing-mode:vertical-rl] rotate-180">
+              📋 Slides
+            </span>
+          </button>
+        ) : (
         <div className="w-72 shrink-0 border-r border-gray-200 bg-gray-50 flex flex-col overflow-y-auto">
           <div className="p-4 space-y-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-gray-600">Settings</span>
+              <button
+                onClick={() => setSidebarCollapsed(true)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+                title="Collapse sidebar"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                </svg>
+              </button>
+            </div>
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Title</label>
               <input
@@ -252,6 +276,7 @@ export function CreateSlideshowPage() {
             <ImageLibrary format={format} onInsert={insertAtCursor} />
           </div>
         </div>
+        )}
 
         {/* Center + Right: Editor and Preview with shared speaker notes below */}
         <div className="flex-1 flex flex-col min-w-0">
