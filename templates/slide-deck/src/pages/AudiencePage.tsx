@@ -37,7 +37,7 @@ export function AudiencePage() {
   if (sessionLoading || slideshowLoading || !session || !slideshow) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-500">Joining session...</div>
+        <div className="text-gray-500 dark:text-gray-400">Joining session...</div>
       </div>
     );
   }
@@ -45,8 +45,8 @@ export function AudiencePage() {
   if (!session.isActive) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <h2 className="text-2xl font-bold text-gray-900">Session Ended</h2>
-        <p className="text-gray-500">This presentation session has ended.</p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Session Ended</h2>
+        <p className="text-gray-500 dark:text-gray-400">This presentation session has ended.</p>
         <button
           onClick={() => navigate('/')}
           className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
@@ -85,7 +85,7 @@ export function AudiencePage() {
       {/* Main content */}
       <div className="flex-1 flex min-h-0">
         {/* Slide area */}
-        <div className="flex-1 bg-white overflow-auto">
+        <div className="flex-1 bg-white dark:bg-gray-900 overflow-auto">
           {slide && (
             <SlideRenderer
               content={slide.content}
@@ -101,7 +101,7 @@ export function AudiencePage() {
       </div>
 
       {/* Slide indicators */}
-      <div className="bg-gray-100 border-t border-gray-200 px-6 py-3 flex items-center justify-center shrink-0">
+      <div className="bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-6 py-3 flex items-center justify-center shrink-0">
         <div className="flex gap-1.5">
           {slideshow.slides.map((_, i) => (
             <div

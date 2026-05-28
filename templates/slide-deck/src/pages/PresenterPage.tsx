@@ -68,7 +68,7 @@ export function PresenterPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-500">Loading presentation...</div>
+        <div className="text-gray-500 dark:text-gray-400">Loading presentation...</div>
       </div>
     );
   }
@@ -80,7 +80,7 @@ export function PresenterPage() {
           <p className="text-red-600 font-medium">{error ?? 'Failed to load presentation.'}</p>
           <button
             onClick={() => navigate('/')}
-            className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors"
+            className="rounded-lg bg-gray-100 dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
           >
             ← Back to Home
           </button>
@@ -125,7 +125,7 @@ export function PresenterPage() {
       <div className="flex-1 flex min-h-0">
         {/* Slide area */}
         <div className="flex-1 flex flex-col">
-          <div className="flex-1 bg-white overflow-auto">
+          <div className="flex-1 bg-white dark:bg-gray-900 overflow-auto">
             {slide && (
               <SlideRenderer
                 content={slide.content}
@@ -136,22 +136,22 @@ export function PresenterPage() {
           </div>
           {/* Speaker notes */}
           {slide?.notes && (
-            <div className="border-t border-gray-200 bg-gray-50 px-6 py-3 max-h-32 overflow-y-auto shrink-0">
-              <p className="text-xs font-semibold text-gray-500 mb-1">Speaker Notes</p>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap">{slide.notes}</p>
+            <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-6 py-3 max-h-32 overflow-y-auto shrink-0">
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">Speaker Notes</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{slide.notes}</p>
             </div>
           )}
           {/* Controls */}
-          <div className="bg-gray-100 border-t border-gray-200 px-6 py-3 flex items-center justify-between shrink-0">
+          <div className="bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-6 py-3 flex items-center justify-between shrink-0">
             <button
               onClick={() => goToSlide(currentSlide - 1)}
               disabled={currentSlide === 0}
-              className="rounded-lg bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               ← Previous
             </button>
             <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-600 font-medium">
+              <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">
                 {currentSlide + 1} / {totalSlides}
               </span>
               <div className="flex gap-1">

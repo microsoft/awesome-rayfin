@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { DarkModeToggle } from '@/components/DarkModeToggle';
 import { useAuth } from '@/hooks/AuthContext';
 import { type SlideshowItem, getSlideshows, createSlideshow, deleteSlideshow } from '@/services/slideshows';
 import { type SessionItem, getSessions, createSession } from '@/services/sessions';
@@ -87,18 +88,19 @@ export function HomePage() {
   const activeSessions = sessions.filter((s) => s.isActive);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Slide Deck</h1>
-          <p className="text-sm text-gray-500">Interactive presentation sessions</p>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Slide Deck</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Interactive presentation sessions</p>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-500">{user?.email}</span>
+          <DarkModeToggle />
+          <span className="text-sm text-gray-500 dark:text-gray-400">{user?.email}</span>
           <button
             onClick={() => void signOut()}
-            className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-sm text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
           >
             Sign out
           </button>
@@ -121,15 +123,15 @@ export function HomePage() {
         )}
 
         {/* Join a Session */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Join a Session</h2>
+        <section className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Join a Session</h2>
           <div className="flex gap-3">
             <input
               type="text"
               value={joinCode}
               onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
               placeholder="Enter join code (e.g. ABC123)"
-              className="flex-1 max-w-xs rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono tracking-wider"
+              className="flex-1 max-w-xs rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono tracking-wider"
               maxLength={6}
             />
             <button
@@ -145,17 +147,17 @@ export function HomePage() {
         {/* Active Sessions */}
         {activeSessions.length > 0 && (
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Active Sessions</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Active Sessions</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {activeSessions.map((session) => (
                 <div
                   key={session.id}
-                  className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow"
+                  className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="font-medium text-gray-900">{session.title}</h3>
-                      <p className="text-sm text-gray-500 mt-1">
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100">{session.title}</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         Code: <span className="font-mono font-bold text-blue-600">{session.joinCode}</span>
                       </p>
                       <p className="text-xs text-gray-400 mt-1">
@@ -186,7 +188,7 @@ export function HomePage() {
         {/* Slideshows */}
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Slideshows</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Slideshows</h2>
             <div className="flex gap-2">
               {slideshows.length === 0 && (
                 <button
@@ -205,20 +207,20 @@ export function HomePage() {
             </div>
           </div>
           {slideshows.length === 0 ? (
-            <div className="bg-white rounded-xl border border-dashed border-gray-300 p-12 text-center">
-              <p className="text-gray-500">No slideshows yet. Add sample slideshows to get started!</p>
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-12 text-center">
+              <p className="text-gray-500 dark:text-gray-400">No slideshows yet. Add sample slideshows to get started!</p>
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
               {slideshows.map((show) => (
                 <div
                   key={show.id}
-                  className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow flex flex-col justify-between"
+                  className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-md transition-shadow flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-gray-900">{show.title}</h3>
+                        <h3 className="font-medium text-gray-900 dark:text-gray-100">{show.title}</h3>
                         <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
                           {show.format}
                         </span>
@@ -252,13 +254,13 @@ export function HomePage() {
                         </div>
                       )}
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">{show.description}</p>
-                    <p className="text-xs text-gray-400 mt-2">{show.slides.length} slides</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{show.description}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{show.slides.length} slides</p>
                   </div>
                   <div className="flex gap-2 mt-4">
                     <button
                       onClick={() => navigate(`/browse/${show.id}`)}
-                      className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-200 transition-colors whitespace-nowrap"
+                      className="rounded-lg bg-gray-100 dark:bg-gray-700 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors whitespace-nowrap"
                     >
                       Browse
                     </button>

@@ -47,10 +47,10 @@ export function ChatPanel({ sessionId, authorName, presenterUserId, collapsed, o
     return (
       <button
         onClick={onToggle}
-        className="h-full w-10 shrink-0 border-l border-gray-200 bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-colors"
+        className="h-full w-10 shrink-0 border-l border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         title="Open chat"
       >
-        <span className="writing-mode-vertical text-xs font-semibold text-gray-600 [writing-mode:vertical-rl] rotate-180">
+        <span className="writing-mode-vertical text-xs font-semibold text-gray-600 dark:text-gray-400 [writing-mode:vertical-rl] rotate-180">
           💬 Chat
         </span>
       </button>
@@ -58,9 +58,9 @@ export function ChatPanel({ sessionId, authorName, presenterUserId, collapsed, o
   }
 
   return (
-    <div className="flex flex-col h-full border-l border-gray-200 bg-white">
-      <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-700">Chat</h3>
+    <div className="flex flex-col h-full border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Chat</h3>
         {onToggle && (
           <button
             onClick={onToggle}
@@ -85,18 +85,18 @@ export function ChatPanel({ sessionId, authorName, presenterUserId, collapsed, o
             <span className="text-gray-400 text-xs ml-2">
               {new Date(msg.createdAt).toLocaleTimeString()}
             </span>
-            <p className="text-gray-700 mt-0.5">{msg.content}</p>
+            <p className="text-gray-700 dark:text-gray-300 mt-0.5">{msg.content}</p>
           </div>
         ))}
         <div ref={messagesEndRef} />
       </div>
-      <form onSubmit={handleSend} className="p-3 border-t border-gray-200 flex gap-2">
+      <form onSubmit={handleSend} className="p-3 border-t border-gray-200 dark:border-gray-700 flex gap-2">
         <input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type a message..."
-          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           disabled={sending}
         />
         <button

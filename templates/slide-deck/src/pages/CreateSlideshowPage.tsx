@@ -135,17 +135,17 @@ export function CreateSlideshowPage() {
   }
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shrink-0">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-3 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate('/')}
-            className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
           >
             ← Back
           </button>
-          <h1 className="text-lg font-bold text-gray-900">{isEditing ? 'Edit Slideshow' : 'Create Slideshow'}</h1>
+          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">{isEditing ? 'Edit Slideshow' : 'Create Slideshow'}</h1>
         </div>
         <button
           onClick={handleSave}
@@ -157,7 +157,7 @@ export function CreateSlideshowPage() {
       </header>
 
       {error && (
-        <div className="bg-red-50 border-b border-red-200 px-6 py-2 text-sm text-red-700">{error}</div>
+        <div className="bg-red-50 dark:bg-red-900/30 border-b border-red-200 dark:border-red-800 px-6 py-2 text-sm text-red-700 dark:text-red-400">{error}</div>
       )}
 
       <div className="flex-1 flex min-h-0">
@@ -165,7 +165,7 @@ export function CreateSlideshowPage() {
         {sidebarCollapsed ? (
           <button
             onClick={() => setSidebarCollapsed(false)}
-            className="w-10 shrink-0 border-r border-gray-200 bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-colors"
+            className="w-10 shrink-0 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             title="Expand sidebar"
           >
             <span className="text-xs font-semibold text-gray-600 [writing-mode:vertical-rl] rotate-180">
@@ -173,13 +173,13 @@ export function CreateSlideshowPage() {
             </span>
           </button>
         ) : (
-        <div className="w-72 shrink-0 border-r border-gray-200 bg-gray-50 flex flex-col overflow-y-auto">
-          <div className="p-4 space-y-4 border-b border-gray-200">
+        <div className="w-72 shrink-0 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex flex-col overflow-y-auto">
+          <div className="p-4 space-y-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-gray-600">Settings</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Settings</span>
               <button
                 onClick={() => setSidebarCollapsed(true)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                 title="Collapse sidebar"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -188,25 +188,25 @@ export function CreateSlideshowPage() {
               </button>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Title</label>
+              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Title</label>
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="My Presentation"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
+              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Description</label>
               <input
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="A brief description"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Format</label>
+              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Format</label>
               <div className="flex gap-2">
                 {(['markdown', 'html'] as const).map((f) => (
                   <button
@@ -215,7 +215,7 @@ export function CreateSlideshowPage() {
                     className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
                       format === f
                         ? 'bg-indigo-600 text-white'
-                        : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-100'
+                        : 'bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
                     }`}
                   >
                     {f === 'markdown' ? 'Markdown' : 'HTML'}
@@ -229,10 +229,10 @@ export function CreateSlideshowPage() {
           {/* Slide list */}
           <div className="flex-1 p-4 space-y-2">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600">Slides ({slides.length})</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Slides ({slides.length})</span>
               <button
                 onClick={addSlide}
-                className="text-xs font-medium text-indigo-600 hover:text-indigo-800 transition-colors"
+                className="text-xs font-medium text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors"
               >
                 + Add Slide
               </button>
@@ -243,20 +243,20 @@ export function CreateSlideshowPage() {
                 onClick={() => setActiveSlide(i)}
                 className={`group flex items-center gap-2 rounded-lg px-3 py-2 text-sm cursor-pointer transition-colors ${
                   activeSlide === i
-                    ? 'bg-indigo-100 text-indigo-800 font-medium'
-                    : 'bg-white text-gray-700 hover:bg-gray-100'
+                    ? 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-300 font-medium'
+                    : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
                 }`}
               >
                 <span className="flex-1">Slide {i + 1}</span>
                 <div className="hidden group-hover:flex items-center gap-1">
                   <button
                     onClick={(e) => { e.stopPropagation(); moveSlide(i, -1); }}
-                    className="text-gray-400 hover:text-gray-600 text-xs"
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xs"
                     title="Move up"
                   >↑</button>
                   <button
                     onClick={(e) => { e.stopPropagation(); moveSlide(i, 1); }}
-                    className="text-gray-400 hover:text-gray-600 text-xs"
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xs"
                     title="Move down"
                   >↓</button>
                   {slides.length > 1 && (
@@ -272,7 +272,7 @@ export function CreateSlideshowPage() {
           </div>
 
           {/* Image library */}
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
             <ImageLibrary format={format} onInsert={insertAtCursor} />
           </div>
         </div>
@@ -286,17 +286,17 @@ export function CreateSlideshowPage() {
             {editorCollapsed ? (
               <button
                 onClick={() => setEditorCollapsed(false)}
-                className="w-10 shrink-0 border-r border-gray-200 bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                className="w-10 shrink-0 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 title="Expand editor"
               >
-                <span className="text-xs font-semibold text-gray-600 [writing-mode:vertical-rl] rotate-180">
+                <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 [writing-mode:vertical-rl] rotate-180">
                   ✏️ Editor
                 </span>
               </button>
             ) : (
               <div className="flex-1 flex flex-col min-w-0">
-                <div className="px-4 py-2.5 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
-                  <span className="text-xs font-medium text-gray-500">
+                <div className="px-4 py-2.5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-between">
+                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
                     Editing Slide {activeSlide + 1} — {format === 'markdown' ? 'Markdown' : 'HTML'}
                   </span>
                   <button
@@ -304,7 +304,7 @@ export function CreateSlideshowPage() {
                       if (previewCollapsed) setPreviewCollapsed(false);
                       setEditorCollapsed(true);
                     }}
-                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     title="Collapse editor"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -319,7 +319,7 @@ export function CreateSlideshowPage() {
                   placeholder={format === 'markdown'
                     ? '# Slide Title\n\nYour content here...\n\n- Bullet point\n- Another point'
                     : '<h1>Slide Title</h1>\n<p>Your content here...</p>'}
-                  className="flex-1 w-full resize-none border-none p-6 font-mono text-sm focus:outline-none bg-white"
+                  className="flex-1 w-full resize-none border-none p-6 font-mono text-sm focus:outline-none bg-white dark:bg-gray-900 dark:text-gray-100"
                   spellCheck={false}
                 />
               </div>
@@ -329,23 +329,23 @@ export function CreateSlideshowPage() {
             {previewCollapsed ? (
               <button
                 onClick={() => setPreviewCollapsed(false)}
-                className="w-10 shrink-0 border-l border-gray-200 bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                className="w-10 shrink-0 border-l border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 title="Expand preview"
               >
-                <span className="text-xs font-semibold text-gray-600 [writing-mode:vertical-rl] rotate-180">
+                <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 [writing-mode:vertical-rl] rotate-180">
                   👁️ Preview
                 </span>
               </button>
             ) : (
-              <div className={`${editorCollapsed ? 'flex-1' : 'w-[400px]'} shrink-0 border-l border-gray-200 flex flex-col`}>
-                <div className="px-4 py-2.5 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
-                  <span className="text-xs font-medium text-gray-500">Preview</span>
+              <div className={`${editorCollapsed ? 'flex-1' : 'w-[400px]'} shrink-0 border-l border-gray-200 dark:border-gray-700 flex flex-col`}>
+                <div className="px-4 py-2.5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-between">
+                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Preview</span>
                   <button
                     onClick={() => {
                       if (editorCollapsed) setEditorCollapsed(false);
                       setPreviewCollapsed(true);
                     }}
-                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     title="Collapse preview"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -353,11 +353,11 @@ export function CreateSlideshowPage() {
                     </svg>
                   </button>
                 </div>
-                <div className="flex-1 overflow-auto bg-white">
+                <div className="flex-1 overflow-auto bg-white dark:bg-gray-900">
                   {slides[activeSlide]?.content.trim() ? (
                     <SlideRenderer content={slides[activeSlide].content} format={format} theme={theme} />
                   ) : (
-                    <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+                    <div className="h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm">
                       Start typing to see a preview
                     </div>
                   )}
@@ -367,12 +367,12 @@ export function CreateSlideshowPage() {
           </div>
 
           {/* Speaker Notes — spans full width below editor/preview */}
-          <div className="border-t border-gray-200 shrink-0">
+          <div className="border-t border-gray-200 dark:border-gray-700 shrink-0">
             <button
               onClick={() => setNotesCollapsed((c) => !c)}
-              className="w-full px-4 py-2 bg-gray-50 flex items-center justify-between hover:bg-gray-100 transition-colors"
+              className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
-              <span className="text-xs font-medium text-gray-500">Speaker Notes</span>
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Speaker Notes</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className={`h-3.5 w-3.5 text-gray-400 transition-transform ${notesCollapsed ? '' : 'rotate-180'}`}
@@ -388,7 +388,7 @@ export function CreateSlideshowPage() {
                 value={slides[activeSlide].notes}
                 onChange={(e) => updateSlideField(activeSlide, 'notes', e.target.value)}
                 placeholder="Add speaker notes for this slide…"
-                className="w-full h-28 resize-none border-none px-6 py-3 text-sm focus:outline-none bg-white"
+                className="w-full h-28 resize-none border-none px-6 py-3 text-sm focus:outline-none bg-white dark:bg-gray-900 dark:text-gray-100"
                 spellCheck={false}
               />
             )}
