@@ -89,23 +89,6 @@ After scaffolding, `cd` into the project. From here, **the project owns the work
 - **Deploy** — `rayfin login` → `rayfin up` → `rayfin up status`. `rayfin up` builds the app,
   deploys it, and applies pending schema migrations in one step.
 
-## Minimal guardrails before the project skill loads
-
-Just enough to avoid early mistakes — the in-project skill and docs are the source of truth:
-
-- Rayfin uses TC39 Stage 3 decorators. Never enable `experimentalDecorators` or
-  `emitDecoratorMetadata`; the scaffolder configures this correctly.
-- Every entity needs an explicit permission decorator (`@role`, `@anonymous`,
-  `@authenticated`) — entities without one are inaccessible.
-- On MSSQL, give `@text()` an explicit `max` for normal strings (e.g. `@text({ max: 200 })`);
-  `max` is capped at 4000 chars. For genuinely large blobs (data URLs, signatures), omit `max`
-  to get `NVARCHAR(MAX)` — but it cannot be uniquely indexed and has GraphQL trade-offs, so
-  don't reach for it casually. Check the in-project skill and docs before designing.
-- Use the typed client (`client.data.<Entity>`) for data access — never raw `fetch()` or
-  hand-built GraphQL.
-- Before designing entities, check known limitations via the docs
-  (`search_docs(query: 'known limitations', module: 'guide')`).
-
 ## Installing this skill
 
 This skill is published from the Awesome Rayfin gallery and works in any agent that supports
