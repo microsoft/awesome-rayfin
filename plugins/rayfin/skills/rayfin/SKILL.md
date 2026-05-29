@@ -18,6 +18,25 @@ every scaffolded project** at `.agents/skills/rayfin/SKILL.md`, alongside the `r
 server and the `rayfin docs` CLI. Those match the exact CLI/SDK versions installed in the
 project — this skill does not, so it deliberately stays thin.
 
+## Step 0 — Is this just a docs or syntax question?
+
+If the user only wants Rayfin information (decorator syntax, an API signature, a concept) and
+is **not** asking you to build, scaffold, or change an app, you do not need to scaffold a
+project. Answer from the docs:
+
+- **Preferred — the `rayfin` MCP server** (if connected): `search_docs(query: '<topic>', module: 'guide')`
+  (or `module: 'ts-sdk'`) and `get_doc(symbol: '<decorator or class>')`. It queries the live docs
+  service, so it works without a project.
+- **`rayfin docs` CLI**: resolves against the Rayfin packages installed in the current project,
+  so run it from inside a Rayfin project root:
+  `npx -y @microsoft/rayfin-cli docs search '<topic>' --module guide`. Use
+  `rayfin docs discover '<topic>'` to locate the right package when the installed corpus does
+  not cover it.
+
+Only continue to Step 1 when the user actually wants to build or modify a Rayfin app. If
+neither the MCP nor a project is available, scaffold a minimal project first (Step 2) and
+query its docs from there rather than answering decorator/API specifics from memory.
+
 ## Step 1 — Are you already in a Rayfin project?
 
 A directory is a Rayfin project if it contains a `rayfin/` folder with `rayfin.yml`, or a
@@ -25,7 +44,8 @@ A directory is a Rayfin project if it contains a `rayfin/` folder with `rayfin.y
 
 - **Yes → stop using this skill.** Defer to the project's own `.agents/skills/rayfin/SKILL.md`
   (load it if your agent has not), the `rayfin` MCP server, and `rayfin docs`. They are
-  version-matched to the installed packages; this skill is not.
+  version-matched to the installed packages; this skill is not. Do not write entity, schema, or
+  client code from memory — load that skill and the docs first.
 - **No → scaffold one first (Step 2).** Do not hand-write `rayfin.yml`, entity decorators,
   or client setup from memory — the scaffolder generates correct boilerplate (tsconfig with
   `ESNext.Decorators`, schema, auth wiring) that is easy to get subtly wrong by hand.
@@ -47,7 +67,11 @@ npx rayfin init [directory]
 
 If the user described a domain (events, field service, todo, CRUD app), scaffold from the
 closest gallery template rather than an empty project — it ships a working data model, auth,
-and UI to build on.
+and UI to build on. List what the gallery offers before choosing:
+
+```bash
+npm create @microsoft/rayfin@latest -- --list-templates
+```
 
 ## Step 3 — Hand off to the in-project tooling
 
