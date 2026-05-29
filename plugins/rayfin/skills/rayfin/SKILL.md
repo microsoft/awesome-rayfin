@@ -97,8 +97,9 @@ Just enough to avoid early mistakes — the in-project skill and docs are the so
   `emitDecoratorMetadata`; the scaffolder configures this correctly.
 - Every entity needs an explicit permission decorator (`@role`, `@anonymous`,
   `@authenticated`) — entities without one are inaccessible.
-- On MSSQL, always give `@text()` a `max` (e.g. `@text({ max: 200 })`); `NVARCHAR(MAX)`
-  breaks GraphQL schema generation.
+- On MSSQL, give `@text()` an explicit `max` for normal strings (e.g. `@text({ max: 200 })`);
+  `max` is capped at 4000 chars. For genuinely large blobs (data URLs, signatures), omit `max`
+  to get `NVARCHAR(MAX)`. Check the docs for the current trade-offs before designing.
 - Use the typed client (`client.data.<Entity>`) for data access — never raw `fetch()` or
   hand-built GraphQL.
 - Before designing entities, check known limitations via the docs
