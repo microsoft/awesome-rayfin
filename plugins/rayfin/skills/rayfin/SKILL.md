@@ -14,8 +14,10 @@ Rayfin provides auth, a typed data API, storage, and Fabric hosting.
 This skill only routes you to the real guidance. The authoritative, version-locked Rayfin
 skill ships **inside every project** at `.agents/skills/rayfin/SKILL.md`, alongside the
 `rayfin` MCP server and the `rayfin docs` CLI — all matched to the installed CLI/SDK versions.
-Your job: get into a project, then load and follow that skill. Don't write Rayfin code from
-memory.
+Your job: get into a project, then load and follow that skill. Don't answer Rayfin
+specifics from memory - schema/decorator syntax, deployment steps, and API details are
+version-locked and live in the project's own skill, MCP, and `rayfin docs`. Route there
+instead of improvising.
 
 ## Already in a Rayfin project?
 
@@ -23,8 +25,11 @@ A directory is a Rayfin project if it has a `rayfin/` folder with `rayfin.yml`, 
 `package.json` depending on `@microsoft/rayfin-*`.
 
 - **Yes →** load `.agents/skills/rayfin/SKILL.md` and use the `rayfin` MCP / `rayfin docs`.
-  That skill owns the workflow from here. Stop using this one.
-- **No →** scaffold a project first (below), then `cd` in and do the above.
+  That skill owns the workflow from here - including schema, deployment, and everything
+  else. Stop using this one.
+- **No, but there's an existing app here →** add Rayfin in place with `npx rayfin init`
+  (don't scaffold a separate new project), then load the in-project skill.
+- **No, empty directory →** scaffold a project first (below), then `cd` in and do the above.
 
 ## Scaffold a new project
 
