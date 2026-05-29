@@ -1,0 +1,31 @@
+{
+  "name": "rayfin",
+  "version": "0.1.0",
+  "description": "Get started with Rayfin from any AI coding assistant — scaffold a project with the CLI, then defer to the version-locked skill and MCP docs that ship inside the project.",
+  "author": {
+    "name": "Microsoft",
+    "url": "https://github.com/microsoft"
+  },
+  "homepage": "https://github.com/microsoft/awesome-rayfin",
+  "repository": "https://github.com/microsoft/awesome-rayfin",
+  "license": "MIT",
+  "keywords": [
+    "rayfin",
+    "fabric",
+    "baas",
+    "scaffolding",
+    "typescript",
+    "data-api-builder",
+    "graphql",
+    "auth",
+    "deployment"
+  ],
+  "skills": ["skills/rayfin"],
+  "mcpServers": {
+    "rayfin": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@microsoft/rayfin-mcp", "start"]
+    }
+  }
+}

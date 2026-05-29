@@ -72,6 +72,26 @@ The CLI reads `rayfin-template.yml` at the repo root and presents an interactive
 - **Typed Data Access** — Schema-driven GraphQL client with compile-time type checking
 - **Static Hosting** — Deploy frontends with `rayfin up staticapp deploy`
 
+### Agent Skills
+
+Teach your AI coding assistant to build with Rayfin. The `rayfin` skill is a lightweight
+bootstrap: it scaffolds a project with the CLI, then hands off to the version-locked skill,
+MCP docs, and `rayfin docs` CLI that ship inside every scaffolded project.
+
+```bash
+# CLI tools (Copilot CLI, Codex, Cursor, Gemini, Claude Code, …) — open agent-skills ecosystem
+npx skills add microsoft/awesome-rayfin
+```
+
+```bash
+# Claude Code (and other plugin-aware tools)
+/plugin marketplace add microsoft/awesome-rayfin
+/plugin install rayfin@awesome-rayfin
+```
+
+The marketplace manifest lives at [`.claude-plugin/marketplace.json`](./.claude-plugin/marketplace.json)
+and also wires up the `rayfin` [MCP server](https://github.com/modelcontextprotocol) for in-editor docs.
+
 ---
 
 ## 🌊 Community
