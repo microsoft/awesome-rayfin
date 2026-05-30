@@ -51,11 +51,15 @@ jobs:
         run: |
           npm install -g @microsoft/rayfin-cli
 
-          # Read template names from the root manifest
+          # Read template display names from each template package
           entries=$(node -e "
             const fs = require('fs');
-            const yaml = fs.readFileSync('rayfin-template.yml', 'utf8');
-            const names = [...yaml.matchAll(/^ {2}- path: .+\n {4}name: (.+)/gm)].map(m => m[1]);
+            const path = require('path');
+            const names = fs.readdirSync('templates')
+              .map((dir) => path.join('templates', dir, 'package.json'))
+              .filter((pkgPath) => fs.existsSync(pkgPath))
+              .map((pkgPath) => require(path.resolve(pkgPath)).template?.displayName)
+              .filter(Boolean);
             names.forEach(n => console.log(n));
           ")
 
@@ -63,7 +67,7 @@ jobs:
           while IFS= read -r name; do
             dir=$(mktemp -d)
             echo "📦 Scaffolding '$name' into $dir..."
-            if rayfin init -t "$(pwd)" --template-name "$name" --project-dir "$dir" --overwrite 2>&1; then
+            if rayfin init "$dir" -t "$(pwd)" --template-name "$name" --overwrite 2>&1; then
               echo "✅ $name scaffolded successfully"
 
               # Verify package.json exists in output
@@ -85,31 +89,72 @@ jobs:
 
   lint-build-test:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        template:
-          - field-engineer
-          - events-app
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Install dependencies
-        working-directory: templates/${{ matrix.template }}
-        run: npm install
+      - name: Detect touched templates
+        id: detect-templates
+        run: |
+          set -euo pipefail
+          NULL_SHA='0000000000000000000000000000000000000000'
 
-      - name: Lint
-        working-directory: templates/${{ matrix.template }}
-        run: npm run lint
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base_sha="${{ github.event.pull_request.base.sha }}"
+            head_sha="${{ github.event.pull_request.head.sha }}"
+          else
+            base_sha="${{ github.event.before }}"
+            head_sha="${{ github.sha }}"
+            if [ -z "$base_sha" ] || [ "$base_sha" = "$NULL_SHA" ]; then
+              if git rev-parse HEAD~1 >/dev/null 2>&1; then
+                base_sha=$(git rev-parse HEAD~1)
+              else
+                base_sha="$head_sha"
+              fi
+            fi
+          fi
 
-      - name: Build
-        working-directory: templates/${{ matrix.template }}
-        run: npm run build
+          templates=$(git diff --name-only "$base_sha" "$head_sha" -- 'templates/**' \
+            | awk -F/ '/^templates\/[^/]+\// {print $2}' \
+            | sort -u)
 
-      - name: Test
-        working-directory: templates/${{ matrix.template }}
-        run: npm test
+          {
+            echo "templates<<EOF"
+            echo "$templates"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          if [ -n "$templates" ]; then
+            echo "🧪 Touched templates: $(echo "$templates" | tr '\n' ' ')"
+          else
+            echo "✅ No templates changed; skipping lint/build/test."
+          fi
+
+      - name: Lint, build, and test touched templates
+        if: steps.detect-templates.outputs.templates != ''
+        run: |
+          set -euo pipefail
+          while IFS= read -r template; do
+            if [ -z "$template" ]; then
+              continue
+            fi
+
+            if [ ! -f "templates/$template/package.json" ]; then
+              echo "⏭️ Skipping templates/$template (no package.json found)"
+              continue
+            fi
+
+            echo "🔎 Validating templates/$template"
+            (
+              cd "templates/$template"
+              npm install
+              npm run lint
+              npm run build
+              npm test
+            )
+          done <<< "${{ steps.detect-templates.outputs.templates }}"

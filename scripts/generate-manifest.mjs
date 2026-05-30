@@ -17,6 +17,14 @@ import { join, resolve } from "path";
 const ROOT = resolve(import.meta.dirname, "..");
 const TEMPLATES_DIR = join(ROOT, "templates");
 
+function toYamlScalar(value) {
+  const text = String(value);
+  if (/^[\[\{!&*#?|>@`'"]/.test(text)) {
+    return `'${text.replace(/'/g, "''")}'`;
+  }
+  return text;
+}
+
 // ---------------------------------------------------------------------------
 // 1. Discover templates
 // ---------------------------------------------------------------------------
@@ -62,7 +70,7 @@ function generateRootManifest(templates) {
   const entries = templates
     .map(
       (t) =>
-        `  - path: templates/${t.dirName}\n    name: ${t.name}\n    description: ${t.description}`
+        `  - path: templates/${t.dirName}\n    name: ${toYamlScalar(t.name)}\n    description: ${toYamlScalar(t.description)}`
     )
     .join("\n");
 
@@ -83,12 +91,12 @@ ${entries}
 function generateLeafManifest(template) {
   return `apiVersion: v1
 metadata:
-  name: ${template.templateName}
-  displayName: ${template.name}
-  description: ${template.description}
+  name: ${toYamlScalar(template.templateName)}
+  displayName: ${toYamlScalar(template.name)}
+  description: ${toYamlScalar(template.description)}
 entries:
   - path: .
-    name: ${template.name}
+    name: ${toYamlScalar(template.name)}
 `;
 }
 

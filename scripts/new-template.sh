@@ -197,7 +197,9 @@ cat > "$TEMPLATE_DIR/rayfin/data/schema.ts" << 'SCHEMA'
 // Add your entity imports here
 // import { MyEntity } from './MyEntity';
 
-export const schema = {};
+export type BlankAppSchema = Record<string, never>;
+
+export const schema = [];
 SCHEMA
 
 # ── rayfin/tsconfig.json ─────────────────────────────────────────────────────
