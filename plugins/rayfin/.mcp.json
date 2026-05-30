@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "rayfin": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@microsoft/rayfin-mcp", "start"]
-    }
-  }
-}
