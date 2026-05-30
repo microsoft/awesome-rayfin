@@ -10,6 +10,9 @@ entries:
   - path: templates/field-engineer
     name: Field Engineer
     description: Field engineer task management app with Fabric authentication, data tracking, and React + Vite
+  - path: templates/slide-deck
+    name: Slide Deck
+    description: Interactive slide deck presenter with sessions, live slide tracking, and audience chat
   - path: templates/todo-local-experimental
     name: '[Experimental] Todo app with full local dev'
     description: End-to-end todo CRUD with username/password auth, a Rayfin data model, and Docker local development — a working starter that exercises the full data path without Fabric

@@ -1,0 +1,210 @@
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ChatPanel } from '@/components/ChatPanel';
+import { SlideRenderer } from '@/components/SlideRenderer';
+import { useAuth } from '@/hooks/AuthContext';
+import { type SessionItem, getSession, updateCurrentSlide, endSession } from '@/services/sessions';
+import { type SlideshowItem, getSlideshow } from '@/services/slideshows';
+
+export function PresenterPage() {
+  const { sessionId } = useParams<{ sessionId: string }>();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [session, setSession] = useState<SessionItem | null>(null);
+  const [slideshow, setSlideshow] = useState<SlideshowItem | null>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [chatCollapsed, setChatCollapsed] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const copyJoinLink = () => {
+    if (!session) return;
+    const url = `${window.location.origin}/join/${session.joinCode}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+  const [loading, setLoading] = useState(true);
+
+  const [error, setError] = useState<string | null>(null);
+
+  const loadSession = useCallback(async () => {
+    if (!sessionId) return;
+    try {
+      const sess = await getSession(sessionId);
+      if (!sess) { setError('Session not found. It may have been deleted.'); setLoading(false); return; }
+      setSession(sess);
+      setCurrentSlide(sess.currentSlide);
+      const show = await getSlideshow(sess.slideshowId);
+      if (!show) { setError('Slideshow not found for this session.'); setLoading(false); return; }
+      setSlideshow(show);
+    } catch (err) {
+      console.error('Failed to load session:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load session.');
+    } finally {
+      setLoading(false);
+    }
+  }, [sessionId]);
+
+  useEffect(() => { loadSession(); }, [loadSession]);
+
+  const goToSlide = async (index: number) => {
+    if (!sessionId || !slideshow) return;
+    const clamped = Math.max(0, Math.min(index, slideshow.slides.length - 1));
+    setCurrentSlide(clamped);
+    await updateCurrentSlide(sessionId, clamped);
+  };
+
+  const handleEnd = async () => {
+    if (!sessionId) return;
+    await endSession(sessionId);
+    navigate('/');
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        goToSlide(currentSlide + 1);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        goToSlide(currentSlide - 1);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-gray-500 dark:text-gray-400">Loading presentation...</div>
+      </div>
+    );
+  }
+
+  if (error || !session || !slideshow) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <p className="text-red-600 font-medium">{error ?? 'Failed to load presentation.'}</p>
+          <button
+            onClick={() => navigate('/')}
+            className="rounded-lg bg-gray-100 dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+          >
+            ← Back to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const slide = slideshow.slides[currentSlide];
+  const totalSlides = slideshow.slides.length;
+
+  return (
+    <div className="h-screen flex flex-col">
+      {/* Top bar */}
+      <header className="bg-gray-900 text-white px-6 py-3 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate('/')}
+            className="text-gray-400 hover:text-white transition-colors text-sm"
+          >
+            ← Back
+          </button>
+          <h1 className="font-semibold">{session.title}</h1>
+          <span className="bg-green-500/20 text-green-400 text-xs px-2 py-0.5 rounded-full">
+            LIVE
+          </span>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="text-sm flex items-center gap-2">
+            Join code: <span className="font-mono font-bold text-yellow-300 text-lg">{session.joinCode}</span>
+            <button
+              onClick={copyJoinLink}
+              className="inline-flex items-center text-gray-400 hover:text-white transition-colors"
+              title="Copy join link"
+            >
+              {copied ? (
+                <svg className="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              )}
+            </button>
+          </div>
+          <button
+            onClick={handleEnd}
+            className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 transition-colors"
+          >
+            End Session
+          </button>
+        </div>
+      </header>
+
+      {/* Main content */}
+      <div className="flex-1 flex min-h-0">
+        {/* Slide area */}
+        <div className="flex-1 flex flex-col">
+          <div className="flex-1 bg-white dark:bg-gray-900 overflow-auto">
+            {slide && (
+              <SlideRenderer
+                content={slide.content}
+                format={slideshow.format as 'markdown' | 'html'}
+                theme={slideshow.theme}
+              />
+            )}
+          </div>
+          {/* Speaker notes */}
+          {slide?.notes && (
+            <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-6 py-3 max-h-32 overflow-y-auto shrink-0">
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">Speaker Notes</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{slide.notes}</p>
+            </div>
+          )}
+          {/* Controls */}
+          <div className="bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-6 py-3 flex items-center justify-between shrink-0">
+            <button
+              onClick={() => goToSlide(currentSlide - 1)}
+              disabled={currentSlide === 0}
+              className="rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              ← Previous
+            </button>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                {currentSlide + 1} / {totalSlides}
+              </span>
+              <div className="flex gap-1">
+                {slideshow.slides.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => goToSlide(i)}
+                    className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                      i === currentSlide ? 'bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+            <button
+              onClick={() => goToSlide(currentSlide + 1)}
+              disabled={currentSlide === totalSlides - 1}
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              Next →
+            </button>
+          </div>
+        </div>
+        {/* Chat sidebar */}
+        <div className={chatCollapsed ? 'shrink-0' : 'w-80 shrink-0'}>
+          <ChatPanel sessionId={session.id} authorName={user?.name ?? 'Presenter'} presenterUserId={session.user_id} collapsed={chatCollapsed} onToggle={() => setChatCollapsed((c) => !c)} />
+        </div>
+      </div>
+    </div>
+  );
+}

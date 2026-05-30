@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: slide-deck
+  displayName: Slide Deck
+  description: Interactive slide deck presenter with sessions, live slide tracking, and audience chat
+entries:
+  - path: .
+    name: Slide Deck
