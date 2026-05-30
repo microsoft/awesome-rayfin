@@ -45,17 +45,3 @@ npx rayfin init [directory]
 Prefer a gallery template that matches the user's domain (events, field service, todo, CRUD)
 over an empty project — it ships a working data model, auth, and UI. After scaffolding, `cd`
 into the project and load its `.agents/skills/rayfin/SKILL.md`.
-
-## Installing this skill
-
-This skill is published from the Awesome Rayfin gallery and works in any agent that supports
-the open agent-skills ecosystem:
-
-```bash
-# CLI tools (Copilot CLI, Codex, Cursor, Gemini, Claude Code, …)
-npx skills add microsoft/awesome-rayfin
-
-# Claude Code (and other plugin-aware tools)
-/plugin marketplace add microsoft/awesome-rayfin
-/plugin install rayfin@awesome-rayfin
-```
