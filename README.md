@@ -46,6 +46,7 @@ The CLI reads `rayfin-template.yml` at the repo root and presents an interactive
 
 | Template | Description | Auth | Data | Stack |
 |----------|-------------|:----:|:----:|-------|
+| **[Field Technician App](./templates/field-technician)** | Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric) | ✅ | ✅ | React, Vite, Tailwind |
 | **[Slide Deck](./templates/slide-deck)** | Interactive slide deck presenter with sessions, live slide tracking, and audience chat | ✅ | ✅ | React, Vite, Tailwind |
 | **[[Experimental] Todo app with full local dev](./templates/todo-local-experimental)** | End-to-end todo CRUD with username/password auth, a Rayfin data model, and Docker local development — a working starter that exercises the full data path without Fabric | ✅ | ✅ | React, Vite, Tailwind |
 
