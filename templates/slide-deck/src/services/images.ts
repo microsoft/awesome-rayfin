@@ -23,6 +23,7 @@ export interface ImageMeta {
 
 export async function getImages(): Promise<ImageMeta[]> {
   const client = getRayfinClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated types lag behind schema
   const results = await (client.data as any).Image.select([
     'id', 'filename', 'mimeType', 'user_id', 'createdAt',
   ]).orderBy({ createdAt: 'desc' }).execute();
@@ -31,10 +32,11 @@ export async function getImages(): Promise<ImageMeta[]> {
 
 export async function getImage(id: string): Promise<ImageItem | null> {
   const client = getRayfinClient();
-  // Use select().where() because `data` is unbounded @text()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated types lag behind schema
   const results = await (client.data as any).Image.select([
     'id', 'filename', 'mimeType', 'data', 'user_id', 'createdAt',
   ]).where({ id }).execute();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const r = (results as any[])[0];
   return r ? (r as ImageItem) : null;
 }
@@ -50,6 +52,7 @@ export async function uploadImage(
 
   const base64 = await fileToBase64(file);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated types lag behind schema
   const result = await (client.data as any).Image.create({
     filename: file.name,
     mimeType: file.type,
@@ -66,6 +69,7 @@ export async function uploadImage(
 
 export async function deleteImage(id: string): Promise<void> {
   const client = getRayfinClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated types lag behind schema
   await (client.data as any).Image.delete({ id });
 }
 

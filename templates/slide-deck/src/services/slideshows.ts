@@ -30,9 +30,11 @@ function parseTheme(raw: string | undefined | null): SlideTheme {
 
 export async function getSlideshows(): Promise<SlideshowItem[]> {
   const client = getRayfinClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated types lag behind schema
   const results = await (client.data.Slideshow.select as any)([
     'id', 'title', 'description', 'format', 'slides', 'theme', 'user_id', 'createdAt',
   ]).orderBy({ createdAt: 'desc' }).execute();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return results.map((r: any) => ({
     ...r,
     slides: JSON.parse(r.slides as string) as SlideContent[],
@@ -42,9 +44,11 @@ export async function getSlideshows(): Promise<SlideshowItem[]> {
 
 export async function getSlideshow(id: string): Promise<SlideshowItem | null> {
   const client = getRayfinClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated types lag behind schema
   const results = await (client.data.Slideshow.select as any)([
     'id', 'title', 'description', 'format', 'slides', 'theme', 'user_id', 'createdAt',
   ]).where({ id }).execute();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const r = (results as any[])[0];
   if (!r) return null;
   return {
@@ -62,6 +66,7 @@ export async function createSlideshow(
   if (!session.isAuthenticated || !session.user) {
     throw new Error('Cannot create slideshow: user is not authenticated.');
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated types lag behind schema
   const result = await (client.data.Slideshow.create as any)({
     title: data.title,
     description: data.description,
@@ -84,6 +89,7 @@ export async function updateSlideshow(
   data: Pick<SlideshowItem, 'title' | 'description' | 'format' | 'slides' | 'theme'>
 ): Promise<void> {
   const client = getRayfinClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated types lag behind schema
   await (client.data.Slideshow.update as any)({ id }, {
     title: data.title,
     description: data.description,
