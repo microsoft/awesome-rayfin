@@ -89,8 +89,33 @@ npx skills add microsoft/awesome-rayfin
 /plugin install rayfin@awesome-rayfin
 ```
 
-The marketplace manifest lives at [`.claude-plugin/marketplace.json`](./.claude-plugin/marketplace.json)
-and also wires up the `rayfin` [MCP server](https://github.com/modelcontextprotocol) for in-editor docs.
+For **VS Code (GitHub Copilot agent plugins)**, add this repo as a plugin marketplace
+in your `settings.json`, then install `rayfin` from the **Agent Plugins** view
+(search `@agentPlugins` in the Extensions sidebar):
+
+```jsonc
+// settings.json — requires "chat.plugins.enabled": true
+"chat.plugins.marketplaces": ["microsoft/awesome-rayfin"]
+```
+
+Or install it directly without adding the marketplace: run **Chat: Install Plugin From Source**
+from the Command Palette and enter `https://github.com/microsoft/awesome-rayfin`.
+
+To recommend the plugin to your whole team, add it to the workspace
+`.github/copilot/settings.json`:
+
+```jsonc
+{
+  "extraKnownMarketplaces": {
+    "awesome-rayfin": { "source": { "source": "github", "repo": "microsoft/awesome-rayfin" } }
+  },
+  "enabledPlugins": { "rayfin@awesome-rayfin": true }
+}
+```
+
+The marketplace manifest lives at [`.claude-plugin/marketplace.json`](./.claude-plugin/marketplace.json).
+VS Code, the Copilot CLI, and Claude Code all auto-detect this shared plugin format, so a single
+entry works across every tool.
 
 ---
 
