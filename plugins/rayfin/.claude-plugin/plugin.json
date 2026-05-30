@@ -20,12 +20,5 @@
     "auth",
     "deployment"
   ],
-  "skills": ["skills/rayfin"],
-  "mcpServers": {
-    "rayfin": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@microsoft/rayfin-mcp", "start"]
-    }
-  }
+  "skills": ["skills/rayfin"]
 }
