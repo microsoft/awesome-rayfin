@@ -5,7 +5,7 @@
     "url": "https://github.com/microsoft"
   },
   "metadata": {
-    "description": "Official Rayfin agent skills and MCP tools for AI coding assistants",
+    "description": "Official Rayfin getting-started skill — bootstraps any AI coding assistant into a Rayfin project and hands off to the skills that ship inside it",
     "version": "0.1.0",
     "pluginRoot": "./plugins"
   },
