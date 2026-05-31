@@ -2,6 +2,12 @@
 
 Interactive slide deck presenter with sessions, live slide tracking, and audience chat.
 
+## Install this template
+
+```bash
+npm create @microsoft/rayfin -- -t https://github.com/microsoft/awesome-rayfin --template-name "Slide Deck"
+```
+
 ## Getting started
 
 ```bash

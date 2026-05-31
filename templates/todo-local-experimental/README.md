@@ -5,6 +5,12 @@
 End-to-end todo CRUD with username/password auth, a Rayfin data model, and Docker local development.
 A working starter that exercises the full data path without Fabric — sign in, create todos, toggle them, delete them.
 
+## Install this template
+
+```bash
+npm create @microsoft/rayfin -- -t https://github.com/microsoft/awesome-rayfin --template-name "[Experimental] Todo app with full local dev"
+```
+
 ## Getting started
 
 ```bash
