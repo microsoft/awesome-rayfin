@@ -5,7 +5,7 @@ Interactive slide deck presenter with sessions, live slide tracking, and audienc
 ## Install this template
 
 ```bash
-npm create @microsoft/rayfin -- -t https://github.com/microsoft/awesome-rayfin --template-name "Slide Deck"
+npm create @microsoft/rayfin -- --template https://github.com/microsoft/awesome-rayfin --template-name "Slide Deck"
 ```
 
 ## Getting started
