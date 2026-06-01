@@ -12,16 +12,16 @@
     "predev": "rayfin env --framework vite",
     "prebuild": "rayfin env --framework vite",
     "dev": "rayfin up --exclude-services staticHosting && vite",
-    "dev:local": "node scripts/check-docker-ghcr.mjs && npm run predev && npm run rayfin:dev && vite",
-    "dev:local:stop": "cross-env RAYFIN_FEATURE_FLAGS=docker-local-dev rayfin dev --stop",
-    "dev:local:down": "cross-env RAYFIN_FEATURE_FLAGS=docker-local-dev rayfin dev --down",
-    "dev:local:purge": "cross-env RAYFIN_FEATURE_FLAGS=docker-local-dev rayfin dev --purge",
+    "dev:local": "npm run predev && npm run rayfin:dev && vite",
+    "dev:local:stop": "cross-env RAYFIN_FEATURE_FLAGS=docker-local-dev RAYFIN_WEBSERVICE_IMAGE_NAME=ghcr.io/microsoft/rayfin/webservice:latest rayfin dev --stop",
+    "dev:local:down": "cross-env RAYFIN_FEATURE_FLAGS=docker-local-dev RAYFIN_WEBSERVICE_IMAGE_NAME=ghcr.io/microsoft/rayfin/webservice:latest rayfin dev --down",
+    "dev:local:purge": "cross-env RAYFIN_FEATURE_FLAGS=docker-local-dev RAYFIN_WEBSERVICE_IMAGE_NAME=ghcr.io/microsoft/rayfin/webservice:latest rayfin dev --purge",
     "up": "rayfin up",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "test": "vitest run",
-    "rayfin:dev": "cross-env RAYFIN_FEATURE_FLAGS=docker-local-dev rayfin dev",
-    "rayfin:db": "cross-env RAYFIN_FEATURE_FLAGS=docker-local-dev rayfin dev db apply"
+    "rayfin:dev": "cross-env RAYFIN_FEATURE_FLAGS=docker-local-dev RAYFIN_WEBSERVICE_IMAGE_NAME=ghcr.io/microsoft/rayfin/webservice:latest rayfin dev",
+    "rayfin:db": "cross-env RAYFIN_FEATURE_FLAGS=docker-local-dev RAYFIN_WEBSERVICE_IMAGE_NAME=ghcr.io/microsoft/rayfin/webservice:latest rayfin dev db apply"
   },
   "dependencies": {
     "@microsoft/rayfin-auth-provider-fabric": "1.33.0",
