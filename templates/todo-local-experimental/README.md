@@ -8,7 +8,7 @@ A working starter that exercises the full data path without Fabric — sign in, 
 ## Install this template
 
 ```bash
-npm create @microsoft/rayfin -- --template https://github.com/microsoft/awesome-rayfin --template-name "[Experimental] Todo app with full local dev"
+npm create @microsoft/rayfin@latest -- --template https://github.com/microsoft/awesome-rayfin --template-name "[Experimental] Todo app with full local dev"
 ```
 
 ## Getting started
