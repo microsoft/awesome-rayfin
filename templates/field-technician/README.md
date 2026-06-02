@@ -95,10 +95,86 @@ Both modes are supported simultaneously when the appropriate environment variabl
 The app manages field service operations with these entities:
 
 - **Customer** — Customer records with contact information
-- **Equipment** — Equipment tracked per customer
-- **Job** — Service jobs with status, priority, and assignment
-- **JobLog** — Activity log for each job
+- **Equipment** — Equipment tracked per job
+- **Job** — Service jobs with status, scheduling, and assignment
+- **JobLog** — Activity log entries for each job
 - **Region** — Geographic service regions
 - **TaskItem** — Checklist tasks within a job
 - **UserProfile** — User profiles with dispatcher/technician roles
 - **UserRegion** — Maps users to their assigned regions
+
+```mermaid
+erDiagram
+    Customer {
+        uuid id PK
+        text name
+        text phone
+        email email
+        text address
+    }
+
+    Region {
+        uuid id PK
+        text name
+        text description
+    }
+
+    UserProfile {
+        uuid id PK
+        uuid user_id UK
+        text displayName
+        text phone
+        set role "technician | dispatcher"
+    }
+
+    Job {
+        uuid id PK
+        text title
+        text description
+        set status "new | scheduled | investigating | in-progress | blocked | complete | abandoned"
+        date scheduledAt
+        date completedAt
+        date createdAt
+        date updatedAt
+        boolean isOnSite
+        boolean needsHelp
+        text helpDescription
+    }
+
+    JobLog {
+        uuid id PK
+        set type "note | status_change | assignment | help_request"
+        text message
+        text imageUrl
+        text actor_id
+        date createdAt
+    }
+
+    TaskItem {
+        uuid id PK
+        text description
+        boolean isComplete
+        int sortOrder
+    }
+
+    Equipment {
+        uuid id PK
+        text name
+        text serialNumber
+        text notes
+    }
+
+    UserRegion {
+        uuid id PK
+    }
+
+    Customer ||--o{ Job : "has"
+    Region ||--o{ Job : "covers"
+    UserProfile ||--o{ Job : "assigned as technician"
+    UserProfile ||--o{ Job : "created by"
+    Job ||--o{ JobLog : "logs"
+    Job ||--o{ TaskItem : "contains"
+    Job ||--o{ Equipment : "includes"
+    UserProfile ||--o{ UserRegion : "belongs to"
+    Region ||--o{ UserRegion : "assigned to"
+```
