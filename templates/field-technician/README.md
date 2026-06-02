@@ -4,17 +4,24 @@ A field service management application built with Rayfin. Features role-based da
 
 ## Getting started
 
+### Create a new project
+
+```bash
+npm create @microsoft/rayfin@latest -- --template field-technician
+```
+
+This scaffolds a new project from the template. Then install dependencies and start developing:
+
+```bash
+cd <your-project-name>
+npm install
+```
+
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) 20+
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for local development)
 - [GitHub CLI](https://cli.github.com/) authenticated with `read:packages` scope (for pulling container images)
-
-### Install dependencies
-
-```bash
-npm install
-```
 
 ### Local development (Docker)
 
