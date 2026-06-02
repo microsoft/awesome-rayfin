@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: field-technician
+  displayName: Field Technician App
+  description: Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric)
+entries:
+  - path: .
+    name: Field Technician App
