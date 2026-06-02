@@ -10,12 +10,7 @@ A field service management application built with Rayfin. Features role-based da
 npm create @microsoft/rayfin@latest -- --template field-technician
 ```
 
-This scaffolds a new project from the template. Then install dependencies and start developing:
-
-```bash
-cd <your-project-name>
-npm install
-```
+This scaffolds a new project and installs dependencies automatically.
 
 ### Prerequisites
 
