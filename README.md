@@ -46,6 +46,7 @@ The CLI reads `rayfin-template.yml` at the repo root and presents an interactive
 
 | Template | Description | Auth | Data | Stack |
 |----------|-------------|:----:|:----:|-------|
+| **[IBCS Trainer](./templates/ibcs-trainer)** | HTML5 Canvas platformer that teaches IBCS chart rules level by level, embedded in a Fabric-authenticated Rayfin app; each play-through is persisted to a typed GameStats entity | ✅ | ✅ | React, Vite, Tailwind |
 | **[Slide Deck](./templates/slide-deck)** | Interactive slide deck presenter with sessions, live slide tracking, and audience chat | ✅ | ✅ | React, Vite, Tailwind |
 | **[[Experimental] Todo app with full local dev](./templates/todo-local-experimental)** | End-to-end todo CRUD with username/password auth, a Rayfin data model, and Docker local development — a working starter that exercises the full data path without Fabric | ✅ | ✅ | React, Vite, Tailwind |
 

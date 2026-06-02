@@ -1,0 +1,51 @@
+{
+  "name": "ibcs-trainer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "template": {
+    "name": "ibcs-trainer",
+    "displayName": "IBCS Trainer",
+    "description": "HTML5 Canvas platformer that teaches IBCS chart rules level by level, embedded in a Fabric-authenticated Rayfin app; each play-through is persisted to a typed GameStats entity"
+  },
+  "scripts": {
+    "predev": "rayfin env --framework vite",
+    "prebuild": "rayfin env --framework vite",
+    "dev": "rayfin up --exclude-services staticHosting && vite",
+    "build": "tsc -b && vite build",
+    "build:fabric": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "rayfin:up": "rayfin up"
+  },
+  "dependencies": {
+    "@microsoft/rayfin-auth-provider-fabric": "^1.33.0",
+    "@microsoft/rayfin-client": "^1.33.0",
+    "@microsoft/rayfin-core": "^1.33.0",
+    "@tailwindcss/vite": "^4.1.11",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@microsoft/rayfin-cli": "^1.33.0",
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react-swc": "^4.2.2",
+    "eslint": "^9.28.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^16.0.0",
+    "jsdom": "^24.1.0",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.38.0",
+    "vite": "^7.3.2",
+    "vitest": "^3.2.4"
+  }
+}

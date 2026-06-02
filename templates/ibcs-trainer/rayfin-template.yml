@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: ibcs-trainer
+  displayName: IBCS Trainer
+  description: HTML5 Canvas platformer that teaches IBCS chart rules level by level, embedded in a Fabric-authenticated Rayfin app; each play-through is persisted to a typed GameStats entity
+entries:
+  - path: .
+    name: IBCS Trainer

@@ -4,6 +4,9 @@ metadata:
   displayName: Awesome Rayfin Templates
   description: Community-curated template gallery for Project Rayfin
 entries:
+  - path: templates/ibcs-trainer
+    name: IBCS Trainer
+    description: HTML5 Canvas platformer that teaches IBCS chart rules level by level, embedded in a Fabric-authenticated Rayfin app; each play-through is persisted to a typed GameStats entity
   - path: templates/slide-deck
     name: Slide Deck
     description: Interactive slide deck presenter with sessions, live slide tracking, and audience chat
