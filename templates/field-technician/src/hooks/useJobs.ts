@@ -125,7 +125,10 @@ export function useJobDetail(jobId: string) {
       setLogs(l);
       // Fetch customer from the FK stored on the job
       if (j) {
-        const customerId = (j as any).customer_id ?? (j as any).customer?.id;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Rayfin returns FK fields that are not represented in the generated entity type
+        const customerId = (j as any).customer_id ??
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Rayfin may also hydrate a partial relation object here
+          (j as any).customer?.id;
         if (customerId) {
           const c = await customerService.getCustomer(customerId);
           setCustomer(c);

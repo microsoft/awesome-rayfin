@@ -200,6 +200,7 @@ export function AdminPage() {
   const deleteEntity = async (entity: 'UserProfile' | 'Region' | 'Customer' | 'Job', id: string) => {
     try {
       const client = getRayfinClient();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity selection is intentional for the admin delete utility
       await client.data[entity].delete({ id } as any);
       toast.success(`Deleted ${entity}`);
       await fetchAll();

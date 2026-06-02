@@ -26,6 +26,7 @@ export class RayfinJobService implements IJobService {
     if (profiles.length === 0) throw new Error('User profile not found');
 
     const now = new Date();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Rayfin create payloads accept partial relation stubs that are not fully modeled in the generated types
     const jobData: any = {
       title: data.title,
       description: data.description,
@@ -62,6 +63,7 @@ export class RayfinJobService implements IJobService {
 
   async updateJobStatus(id: string, status: JobStatus): Promise<Job> {
     const client = getRayfinClient();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Rayfin update payload typing does not model conditional completion timestamps cleanly
     const updateData: any = { status, updatedAt: new Date() };
     if (status === 'complete' || status === 'abandoned') {
       updateData.completedAt = new Date();
@@ -71,6 +73,7 @@ export class RayfinJobService implements IJobService {
 
   async scheduleJob(id: string, scheduledAt: Date | null): Promise<Job> {
     const client = getRayfinClient();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Rayfin update payload typing does not model optional schedule transitions cleanly
     const updateData: any = { scheduledAt, updatedAt: new Date() };
     if (scheduledAt) {
       updateData.status = 'scheduled';
@@ -81,6 +84,7 @@ export class RayfinJobService implements IJobService {
   async assignTechnician(jobId: string, technicianId: string): Promise<Job> {
     const client = getRayfinClient();
     return client.data.Job.update({ id: jobId }, {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Rayfin relation updates accept id-only stubs that are not reflected in generated types
       technician: { id: technicianId } as any,
       updatedAt: new Date(),
     });
@@ -182,6 +186,7 @@ export class RayfinJobService implements IJobService {
       name: data.name,
       serialNumber: data.serialNumber,
       notes: data.notes,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Rayfin relation creates accept id-only stubs that are not reflected in generated types
       job: { id: jobId } as any,
     });
   }
@@ -217,6 +222,7 @@ export class RayfinJobService implements IJobService {
       description: data.description,
       isComplete: false,
       sortOrder: data.sortOrder,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Rayfin relation creates accept id-only stubs that are not reflected in generated types
       job: { id: jobId } as any,
     });
   }
@@ -254,6 +260,7 @@ export class RayfinJobService implements IJobService {
       imageUrl: data.imageUrl,
       actor_id: userId,
       createdAt: new Date(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Rayfin relation creates accept id-only stubs that are not reflected in generated types
       job: { id: jobId } as any,
     });
   }

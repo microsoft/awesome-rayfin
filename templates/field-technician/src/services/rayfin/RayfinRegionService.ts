@@ -30,6 +30,7 @@ export class RayfinRegionService implements IRegionService {
     if (profiles.length === 0) return [];
 
     return client.data.UserRegion
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Rayfin exposes the relation FK as region_id even though the entity type models region as an object
       .select(['id', 'region_id'] as any)
       .execute();
   }
@@ -47,7 +48,9 @@ export class RayfinRegionService implements IRegionService {
     if (profiles.length === 0) throw new Error('User profile not found');
 
     return client.data.UserRegion.create({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Rayfin relation creates accept id-only or partial relation stubs that are not reflected in generated types
       userProfile: profiles[0] as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Rayfin relation creates accept id-only or partial relation stubs that are not reflected in generated types
       region: { id: regionId } as any,
     });
   }

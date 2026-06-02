@@ -32,7 +32,12 @@ export function useRegions(): UseRegionsResult {
     }
     try {
       const myRegions = await regionService.getMyRegions();
-      setMyRegionIds(myRegions.map((ur) => (ur as any).region_id).filter(Boolean));
+      setMyRegionIds(
+        myRegions
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Rayfin returns the relation FK as region_id even though the entity type models region as an object
+          .map((ur) => (ur as any).region_id)
+          .filter(Boolean)
+      );
     } catch {
       // Non-critical — default region won't be set but list still works
     }
