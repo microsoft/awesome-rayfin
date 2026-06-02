@@ -7,6 +7,9 @@ entries:
   - path: templates/field-technician
     name: Field Technician App
     description: Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric)
+  - path: templates/ibcs-trainer
+    name: IBCS Trainer
+    description: HTML5 Canvas platformer that teaches IBCS chart rules level by level, embedded in a Fabric-authenticated Rayfin app; each play-through is persisted to a typed GameStats entity
   - path: templates/slide-deck
     name: Slide Deck
     description: Interactive slide deck presenter with sessions, live slide tracking, and audience chat
