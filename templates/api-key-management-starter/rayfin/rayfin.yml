@@ -23,4 +23,4 @@ services:
     enabled: false
   functions:
     enabled: false
-publishable_key: pk-5kiNx3d0xdRzxTNwRCFI
+publishable_key: __RAYFIN_PK__

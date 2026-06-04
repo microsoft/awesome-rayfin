@@ -2,6 +2,8 @@
   "name": "api-key-management-starter",
   "private": true,
   "version": "0.0.0",
+  "license": "MIT",
+  "author": "Microsoft and contributors",
   "type": "module",
   "template": {
     "name": "api-key-management-starter",

@@ -1,6 +1,6 @@
 import { AuthError } from '@microsoft/rayfin-client';
 
-import { getGlobalSessionExpiredHandler } from '@/hooks/AuthContext';
+import { getGlobalSessionExpiredHandler } from './sessionExpiredHandler';
 
 import { generateApiKey } from './keyGenerator';
 import { hashApiKey } from './keyHashing';

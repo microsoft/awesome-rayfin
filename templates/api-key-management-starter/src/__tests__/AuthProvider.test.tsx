@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { AuthProvider } from '@/hooks/AuthContext';
+import { AuthProvider } from '@/hooks/AuthProvider';
 import type { IAuthService } from '@/services/IAuthService';
 
 const stubAuthService: IAuthService = {

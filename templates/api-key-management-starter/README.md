@@ -20,6 +20,8 @@ npm run rayfin:db
 
 Open [http://localhost:5173](http://localhost:5173) to view the app. Create an account with any email/password.
 
+Local Docker mode pulls Rayfin development images from GitHub Container Registry. If the preflight check reports a GHCR authentication error, sign in with GitHub CLI (`gh auth login`) or run `docker login ghcr.io` with a GitHub token that has `read:packages` access.
+
 ## How it works
 
 - The app generates a key like `rk_live_<publicId>_<secret>` using crypto-safe randomness.

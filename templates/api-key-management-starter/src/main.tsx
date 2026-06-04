@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
 
 import App from '@/App';
-import { AuthProvider } from '@/hooks/AuthContext';
+import { AuthProvider } from '@/hooks/AuthProvider';
 import { bootstrapAuth } from '@/services/bootstrap';
 
 import './main.css';
