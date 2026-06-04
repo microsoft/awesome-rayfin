@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: api-key-management-starter
+  displayName: API Key Management Starter
+  description: Starter for issuing, listing, and revoking application API keys with Rayfin auth and data
+entries:
+  - path: .
+    name: API Key Management Starter

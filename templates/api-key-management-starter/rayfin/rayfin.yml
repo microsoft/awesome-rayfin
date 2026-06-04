@@ -1,0 +1,26 @@
+id: api-key-management-starter
+name: api-key-management-starter
+version: 1.0.0
+services:
+  auth:
+    enabled: true
+    fabric:
+      enabled: true
+    password:
+      enabled: true
+    allowedRedirectUris:
+      - http://localhost:5173
+      - http://localhost:5173/auth/callback
+  data:
+    enabled: true
+    dialect: mssql
+  staticHosting:
+    enabled: true
+    folder: dist
+    buildCommand: npm run build
+    indexDocument: index.html
+  storage:
+    enabled: false
+  functions:
+    enabled: false
+publishable_key: pk-5kiNx3d0xdRzxTNwRCFI
