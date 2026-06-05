@@ -8,7 +8,7 @@ Load `.agents/skills/rayfin/SKILL.md` and the `rayfin` MCP server in `.mcp.json`
 This template uses two **experimental** Rayfin features that may change or break:
 
 1. **Username/password authentication** — uses `client.auth.signIn/signUp({ email, password })` rather than the production Fabric brokered auth flow. The API surface is not yet stable and may not be fully documented.
-2. **Docker local hosting (`rayfin dev`)** — runs the full Rayfin backend locally in Docker containers. Requires the `RAYFIN_FEATURE_FLAGS=docker-local-dev` feature flag and a published container image matching the CLI version.
+2. **Docker local hosting (`rayfin dev`)** — runs the full Rayfin backend locally in Docker containers. Requires the `RAYFIN_FEATURE_FLAGS=docker-local-dev` feature flag and the `RAYFIN_WEBSERVICE_IMAGE_NAME` env var (set automatically by npm scripts).
 
 When working with auth code, refer to the existing `RayfinAuthService` implementation rather than MCP docs, since the password auth API may not be documented yet.
 

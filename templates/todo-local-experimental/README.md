@@ -35,7 +35,7 @@ Runs the entire Rayfin backend in Docker containers on your machine. No Fabric w
 npm run dev:local
 ```
 
-This starts the Docker containers (`rayfin dev`), generates Vite env files, and launches the Vite dev server. Requires Docker Desktop and `gh` CLI authenticated to ghcr.io (the pre-flight script handles this automatically).
+This starts the Docker containers (`rayfin dev`), generates Vite env files, and launches the Vite dev server. Requires Docker Desktop. The public Rayfin webservice image is pulled automatically from `ghcr.io/microsoft/rayfin/webservice:latest`.
 
 ### 2. Fabric cloud (`dev`) — requires a deployed Fabric workspace
 
@@ -72,49 +72,33 @@ npm run dev:local:down
 npm run dev:local:purge
 ```
 
-### Feature flag: `RAYFIN_FEATURE_FLAGS=docker-local-dev`
+### Environment variables for local dev
 
-Docker local hosting is gated behind the `docker-local-dev` feature flag. The `rayfin:dev` and `rayfin:db` scripts set this automatically via `cross-env`. If you invoke `rayfin dev` directly, you must set it yourself:
+Docker local hosting requires two environment variables. The npm scripts set these automatically via `cross-env`:
+
+- **`RAYFIN_FEATURE_FLAGS=docker-local-dev`** — enables the Docker local dev feature gate.
+- **`RAYFIN_WEBSERVICE_IMAGE_NAME=ghcr.io/microsoft/rayfin/webservice:latest`** — uses the public Rayfin webservice image (no authentication required).
+
+If you invoke `rayfin dev` directly, you must set both:
 
 ```bash
 # Manual invocation (equivalent to npm run rayfin:dev)
-RAYFIN_FEATURE_FLAGS=docker-local-dev rayfin dev
+RAYFIN_FEATURE_FLAGS=docker-local-dev \
+RAYFIN_WEBSERVICE_IMAGE_NAME=ghcr.io/microsoft/rayfin/webservice:latest \
+rayfin dev
 
-# Or export it for the session
+# Or export them for the session
 export RAYFIN_FEATURE_FLAGS=docker-local-dev
+export RAYFIN_WEBSERVICE_IMAGE_NAME=ghcr.io/microsoft/rayfin/webservice:latest
 rayfin dev
 rayfin dev db apply
 rayfin dev status
 ```
 
-### Debugging `check-docker-ghcr`
-
-If `npm run dev:local` fails during the pre-flight check, run the script directly with debug logs enabled:
-
-```bash
-NODE_DEBUG=rayfin_ghcr_check node scripts/check-docker-ghcr.mjs
-```
-
-This prints timing and step-level diagnostics for Docker reachability, GH auth checks, and GHCR tag verification. You can also run the full local flow with the same debug channel enabled:
-
-```bash
-NODE_DEBUG=rayfin_ghcr_check npm run dev:local
-```
-
-### Skipping `check-docker-ghcr`
-
-If you need to bypass the pre-flight checks, set `SKIP_DOCKER_CHECK` to a truthy value (`1`, `true`, `yes`, or `on`).
-
-```bash
-# One-off run
-SKIP_DOCKER_CHECK=1 npm run dev:local
-
-# Or export for the current shell session
-export SKIP_DOCKER_CHECK=1
-npm run dev:local
-```
-
-Use this only when you intentionally want to skip Docker/GHCR validation.
+> **Tip:** If Docker has a stale cached copy of the image, pull the latest manually:
+> ```bash
+> docker pull ghcr.io/microsoft/rayfin/webservice:latest
+> ```
 
 ## Project structure
 
@@ -139,8 +123,6 @@ Use this only when you intentionally want to skip Docker/GHCR validation.
 │       ├── rayfinClient.ts        # Typed Rayfin client singleton
 │       ├── bootstrap.ts           # Reads env, picks the right auth mode
 │       └── todos.ts               # Todo CRUD via Rayfin data API
-├── scripts/
-│   └── check-docker-ghcr.mjs     # Pre-flight Docker + GHCR auth check
 └── package.json
 ```
 
