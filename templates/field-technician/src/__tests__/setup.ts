@@ -18,10 +18,10 @@ const localStorageMock = {
   },
 };
 
-Object.defineProperty(global, 'localStorage', { value: localStorageMock });
+Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock });
 
 // Mock crypto.randomUUID
-Object.defineProperty(global, 'crypto', {
+Object.defineProperty(globalThis, 'crypto', {
   value: {
     randomUUID: () => 'test-uuid-' + Math.random().toString(36).substring(7),
     getRandomValues: (arr: Uint8Array) => {
