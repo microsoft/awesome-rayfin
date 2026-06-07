@@ -22,6 +22,13 @@ export interface RayfinClientConfig {
 let client: RayfinClient<ApiKeyAppSchema> | null = null;
 let localDev = false;
 
+export function isLocalBackend(apiUrl?: string): boolean {
+  if (!apiUrl) return localDev;
+
+  const { hostname } = new URL(apiUrl);
+  return hostname === 'localhost' || hostname === '127.0.0.1';
+}
+
 export function initRayfinClient(
   config: RayfinClientConfig
 ): RayfinClient<ApiKeyAppSchema> {
@@ -46,9 +53,4 @@ export function getRayfinClient(): RayfinClient<ApiKeyAppSchema> {
     );
   }
   return client;
-}
-
-/** True when the app was bootstrapped against a localhost backend. */
-export function isLocalBackend(): boolean {
-  return localDev;
 }

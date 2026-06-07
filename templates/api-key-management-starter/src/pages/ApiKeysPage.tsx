@@ -31,9 +31,16 @@ export function ApiKeysPage() {
   );
 
   const fetchKeys = useCallback(async () => {
-    const data = await getApiKeys();
-    setKeys(data);
-    setLoading(false);
+    setLoading(true);
+    try {
+      const data = await getApiKeys();
+      setKeys(data);
+    } catch (err) {
+      console.error('Error fetching API keys:', err);
+      setError('Failed to fetch API keys. Please check your session.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {

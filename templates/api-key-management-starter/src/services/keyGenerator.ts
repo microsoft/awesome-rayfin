@@ -2,13 +2,19 @@ const KEY_PREFIX = 'rk_live';
 const PUBLIC_ID_LENGTH = 8;
 const SECRET_LENGTH = 32;
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+const MAX_VALID_BYTE = 256 - (256 % ALPHABET.length);
 
-function randomString(length: number): string {
-  const bytes = new Uint8Array(length);
-  crypto.getRandomValues(bytes);
+export function randomString(length: number): string {
   let output = '';
-  for (const byte of bytes) {
-    output += ALPHABET[byte % ALPHABET.length];
+  while (output.length < length) {
+    const bytes = new Uint8Array((length - output.length) * 2);
+    crypto.getRandomValues(bytes);
+
+    for (const byte of bytes) {
+      if (byte >= MAX_VALID_BYTE) continue;
+      output += ALPHABET[byte % ALPHABET.length];
+      if (output.length === length) break;
+    }
   }
   return output;
 }

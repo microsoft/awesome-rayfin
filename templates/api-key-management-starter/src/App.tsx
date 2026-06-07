@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
+import { AuthCallback } from '@/components/AuthCallback';
 import { AuthPage } from '@/components/AuthPage';
 import { useAuth } from '@/hooks/AuthContext';
 import { ApiKeysPage } from '@/pages/ApiKeysPage';
@@ -32,6 +33,7 @@ function App() {
     <BrowserRouter>
       {/* ensure all new routes require auth */}
       <Routes>
+        <Route path="/auth/callback" element={<AuthCallback />} />
         <Route
           path="/auth"
           element={

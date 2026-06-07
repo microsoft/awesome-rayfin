@@ -1,6 +1,6 @@
 import type { IAuthService } from './IAuthService';
 import { RayfinAuthService } from './RayfinAuthService';
-import { initRayfinClient } from './rayfinClient';
+import { initRayfinClient, isLocalBackend } from './rayfinClient';
 
 /**
  * Read VITE_* env vars, initialize the Rayfin client, and return the
@@ -18,8 +18,8 @@ export function bootstrapAuth(): IAuthService {
   const fabricPortalUrl = import.meta.env.VITE_FABRIC_PORTAL_URL;
 
   // If the API URL points to localhost, use password auth; otherwise Fabric.
-  const apiHost = new URL(apiUrl).hostname;
-  const useFabric = apiHost !== 'localhost' && apiHost !== '127.0.0.1';
+  const localDev = isLocalBackend(apiUrl);
+  const useFabric = !localDev;
 
   if (!publishableKey && useFabric) {
     throw new Error(
@@ -31,7 +31,7 @@ export function bootstrapAuth(): IAuthService {
     baseUrl: apiUrl.endsWith('/') ? apiUrl : `${apiUrl}/`,
     publishableKey: publishableKey ?? 'local-dev-key',
     functionsBaseUrl: import.meta.env.VITE_RAYFIN_FUNCTIONS_URL,
-    localDev: false,
+    localDev,
   });
 
   if (useFabric) {
