@@ -1,0 +1,28 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-emerald-50: oklch(0.969 0.014 162.38);
+  --color-emerald-100: oklch(0.936 0.03 165.13);
+  --color-emerald-600: oklch(0.605 0.166 167.09);
+  --color-amber-400: oklch(0.78 0.144 79.39);
+  --color-amber-500: oklch(0.744 0.157 74.98);
+  --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}

@@ -4,6 +4,9 @@ metadata:
   displayName: Awesome Rayfin Templates
   description: Community-curated template gallery for Project Rayfin
 entries:
+  - path: templates/api-key-management-starter
+    name: API Key Management Starter
+    description: Starter for issuing, listing, and revoking application API keys with Rayfin auth and data
   - path: templates/field-technician
     name: Field Technician App
     description: Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric)
