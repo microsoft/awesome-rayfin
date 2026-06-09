@@ -16,3 +16,6 @@ entries:
   - path: templates/todo-local-experimental
     name: '[Experimental] Todo app with full local dev'
     description: End-to-end todo CRUD with username/password auth, a Rayfin data model, and Docker local development — a working starter that exercises the full data path without Fabric
+  - path: templates/zensical-docs
+    name: Zensical Docs
+    description: Documentation site built with Zensical and deployed to Microsoft Fabric as a static app via Rayfin
