@@ -4,6 +4,9 @@ metadata:
   displayName: Awesome Rayfin Templates
   description: Community-curated template gallery for Project Rayfin
 entries:
+  - path: templates/angular-blankapp
+    name: Angular Blank App
+    description: Bare-bones Fabric-authenticated Angular + Material app — sign-in, routing, and a placeholder home page, with no data layer to remove
   - path: templates/field-technician
     name: Field Technician App
     description: Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric)
