@@ -7,6 +7,9 @@ entries:
   - path: templates/angular-blankapp
     name: Angular Blank App
     description: Bare-bones Fabric-authenticated Angular + Material app — sign-in, routing, and a placeholder home page, with no data layer to remove
+  - path: templates/angular-dashboard
+    name: Angular Dashboard App
+    description: Responsive Angular Material dashboard — top navbar + collapsible side menu, Project/Task data model, and optional one-click GitHub Issues/PRs sync for a public repo.
   - path: templates/field-technician
     name: Field Technician App
     description: Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric)

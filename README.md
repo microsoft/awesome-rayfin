@@ -47,6 +47,7 @@ The CLI reads `rayfin-template.yml` at the repo root and presents an interactive
 | Template | Description | Auth | Data | Stack |
 |----------|-------------|:----:|:----:|-------|
 | **[Angular Blank App](./templates/angular-blankapp)** | Bare-bones Fabric-authenticated Angular + Material app — sign-in, routing, and a placeholder home page, with no data layer to remove | ✅ | ✅ | Angular, Material |
+| **[Angular Dashboard App](./templates/angular-dashboard)** | Responsive Angular Material dashboard — top navbar + collapsible side menu, Project/Task data model, and optional one-click GitHub Issues/PRs sync for a public repo. | ✅ | ✅ | Angular, Material |
 | **[Field Technician App](./templates/field-technician)** | Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric) | ✅ | ✅ | React, Vite, Tailwind |
 | **[IBCS Trainer](./templates/ibcs-trainer)** | HTML5 Canvas platformer that teaches IBCS chart rules level by level, embedded in a Fabric-authenticated Rayfin app; each play-through is persisted to a typed GameStats entity | ✅ | ✅ | React, Vite, Tailwind |
 | **[Power BI Fixer](./templates/pbi-fixer)** | Fabric-authenticated workspace that inspects, documents, and fixes Power BI semantic models and reports — a best-practice analyzer with one-click and batch fixes, a report explorer with PBIR diffs, AI-assisted metadata cleanup, and a free IBCS visual, all powered server-side by Fabric User Data Functions | ✅ | — | React, Vite, Tailwind |
