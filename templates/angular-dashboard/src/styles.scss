@@ -1,0 +1,626 @@
+@use '@angular/material' as mat;
+
+/* ─────────────────────────────────────────────────────────────────────
+ * Material 3 base theme. We keep the engine but override every visible
+ * token in the :root block below so the result looks nothing like
+ * "default Material". The base palette is yellow only because it's the
+ * closest hue to our acid-lime accent — it never actually shows.
+ * ─────────────────────────────────────────────────────────────────── */
+html {
+  /* Browser-native colour-scheme syncs scrollbars / form controls.
+   * Default to dark; the light-theme variant flips it via the
+   * [data-theme='light'] selector above. */
+  color-scheme: dark;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$yellow-palette,
+        tertiary: mat.$green-palette,
+        theme-type: dark,
+      ),
+      typography: 'DM Sans',
+      density: -1,
+    )
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * Design tokens — Editorial Ink.
+ *
+ * Two themes, one set of semantic tokens. Components should reference
+ * --accent for text/border accents (legible on either theme) and --lime
+ * only for solid fills that have dark text overlaid (which are punchy on
+ * both themes).
+ * ─────────────────────────────────────────────────────────────────── */
+:root {
+  /* Surfaces (dark default) */
+  --ink-bg: #0a0911;
+  --ink-surface: #15131c;
+  --ink-elevated: #1d1a26;
+  --ink-elevated-2: #25212f;
+  --ink-border: #2a2532;
+  --ink-border-soft: #1f1b27;
+
+  /* Text */
+  --cream: #f4ecdf;
+  --cream-muted: #a39db1;
+  --cream-dim: #6b6677;
+
+  /* Lime — solid fill only. Same in both themes (always dark text on top). */
+  --lime: #d4ff3a;
+  --lime-bright: #e8ff66;
+  --lime-on: #0a0911; /* Foreground for text/icons over solid lime fills. */
+
+  /* Accent — for text, hover-text, borders. Flips per theme. */
+  --accent: var(--lime);
+  --accent-soft: rgba(212, 255, 58, 0.12);
+  --accent-border: rgba(212, 255, 58, 0.25);
+  --accent-glow: rgba(212, 255, 58, 0.35);
+  --accent-shadow: 0 14px 36px -10px rgba(212, 255, 58, 0.45);
+
+  /* Semantic */
+  --rose: #fb7185;
+  --rose-soft: rgba(251, 113, 133, 0.14);
+  --amber: #fbbf24;
+  --amber-soft: rgba(251, 191, 36, 0.14);
+  --emerald: #34d399;
+  --emerald-soft: rgba(52, 211, 153, 0.14);
+
+  /* Type */
+  --font-display: 'Fraunces', ui-serif, Georgia, serif;
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+
+  --text-display: clamp(2.5rem, 5vw, 4rem);
+  --text-headline: clamp(1.5rem, 2.5vw, 2rem);
+  --text-title: 1.125rem;
+  --text-body: 0.9375rem;
+  --text-small: 0.8125rem;
+  --text-caption: 0.6875rem;
+
+  /* Spacing */
+  --gap-xs: 0.5rem;
+  --gap-sm: 0.75rem;
+  --gap-md: 1rem;
+  --gap-lg: 1.5rem;
+  --gap-xl: 2.5rem;
+  --gap-2xl: 4rem;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --d-1: 80ms;
+  --d-2: 160ms;
+  --d-3: 280ms;
+
+  /* Ambient glows for the body background — slightly different per theme. */
+  --bg-glow-1: radial-gradient(ellipse at top, rgba(212, 255, 58, 0.04), transparent 60%);
+  --bg-glow-2: radial-gradient(ellipse at bottom right, rgba(124, 90, 255, 0.05), transparent 50%);
+
+  /* Material 3 token overrides (dark). */
+  --mat-sys-primary: var(--accent);
+  /* --ink-bg flips with theme (dark ink in dark mode → cream paper in
+   * light mode), which gives the right contrast on top of --accent
+   * regardless of theme. */
+  --mat-sys-on-primary: var(--ink-bg);
+  --mat-sys-primary-container: var(--accent-soft);
+  --mat-sys-on-primary-container: var(--accent);
+  --mat-sys-secondary: var(--cream);
+  --mat-sys-on-secondary: var(--ink-bg);
+  --mat-sys-secondary-container: var(--ink-elevated);
+  --mat-sys-on-secondary-container: var(--cream);
+  --mat-sys-tertiary: var(--emerald);
+  --mat-sys-on-tertiary: var(--ink-bg);
+  --mat-sys-surface: var(--ink-bg);
+  --mat-sys-on-surface: var(--cream);
+  --mat-sys-surface-variant: var(--ink-surface);
+  --mat-sys-on-surface-variant: var(--cream-muted);
+  --mat-sys-surface-container-lowest: var(--ink-bg);
+  --mat-sys-surface-container-low: var(--ink-bg);
+  --mat-sys-surface-container: var(--ink-surface);
+  --mat-sys-surface-container-high: var(--ink-elevated);
+  --mat-sys-surface-container-highest: var(--ink-elevated-2);
+  --mat-sys-outline: var(--ink-border);
+  --mat-sys-outline-variant: var(--ink-border-soft);
+  --mat-sys-error: var(--rose);
+  --mat-sys-on-error: var(--ink-bg);
+  --mat-sys-background: var(--ink-bg);
+  --mat-sys-on-background: var(--cream);
+  --mat-sys-inverse-surface: var(--cream);
+  --mat-sys-inverse-on-surface: var(--ink-bg);
+  --mat-sys-shadow: rgba(0, 0, 0, 0.5);
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * Light theme — "Editorial Paper".
+ * Warm paper background, deep-ink text, olive accent (lime in solid
+ * fills only). All component CSS keeps working as-is.
+ * ─────────────────────────────────────────────────────────────────── */
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --ink-bg: #faf6ef;
+  --ink-surface: #ffffff;
+  --ink-elevated: #f4eee0;
+  --ink-elevated-2: #ebe4d2;
+  --ink-border: #e0d8c5;
+  --ink-border-soft: #ede8d8;
+
+  --cream: #1a1726;
+  --cream-muted: #5a5562;
+  --cream-dim: #8a8593;
+
+  /* Lime stays as the fill (still punchy over paper); accent is olive. */
+  --accent: #587a00;
+  --accent-soft: rgba(88, 122, 0, 0.1);
+  --accent-border: rgba(88, 122, 0, 0.3);
+  --accent-glow: rgba(212, 255, 58, 0.55);
+  --accent-shadow: 0 14px 36px -10px rgba(0, 0, 0, 0.12);
+
+  /* Slightly different semantic shades for better legibility on light. */
+  --rose: #d63864;
+  --rose-soft: rgba(214, 56, 100, 0.12);
+  --amber: #b58200;
+  --amber-soft: rgba(181, 130, 0, 0.12);
+  --emerald: #0e8552;
+  --emerald-soft: rgba(14, 133, 82, 0.12);
+
+  --bg-glow-1: radial-gradient(
+    ellipse at top,
+    rgba(212, 255, 58, 0.25),
+    transparent 60%
+  );
+  --bg-glow-2: radial-gradient(
+    ellipse at bottom right,
+    rgba(124, 90, 255, 0.06),
+    transparent 50%
+  );
+
+  /* Material 3 re-bindings under light (most tokens pull from --ink-* /
+   * --cream-* which already flipped). Only the inverse pair changes. */
+  --mat-sys-inverse-surface: var(--ink-elevated-2);
+  --mat-sys-inverse-on-surface: var(--cream);
+  --mat-sys-shadow: rgba(20, 18, 26, 0.18);
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * Base reset + global typography.
+ * ─────────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--ink-bg);
+  color: var(--cream);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.55;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg-glow-1), var(--bg-glow-2), var(--ink-bg);
+  background-attachment: fixed;
+  transition: background-color var(--d-3) var(--ease-out),
+    color var(--d-3) var(--ease-out);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--ink-bg);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-variation-settings: 'opsz' 96, 'SOFT' 30;
+  letter-spacing: -0.025em;
+  margin: 0;
+  color: var(--cream);
+}
+
+h1 {
+  font-size: var(--text-display);
+  line-height: 1.05;
+}
+
+h2 {
+  font-size: var(--text-headline);
+  line-height: 1.1;
+  font-variation-settings: 'opsz' 72, 'SOFT' 40;
+}
+
+h3 {
+  font-size: var(--text-title);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--d-1) var(--ease-out);
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * Editorial utilities — used by components.
+ * ─────────────────────────────────────────────────────────────────── */
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+}
+
+.serif {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 96, 'SOFT' 30;
+  letter-spacing: -0.025em;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.muted {
+  color: var(--cream-muted);
+}
+
+.dim {
+  color: var(--cream-dim);
+}
+
+/* Pill — used for status chips and the toolbar sync badge. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 1.5rem;
+  padding: 0 0.625rem;
+  border-radius: var(--radius-pill);
+  background: var(--ink-elevated);
+  color: var(--cream-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid var(--ink-border);
+}
+
+.pill--lime {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent-border);
+}
+
+.pill--rose {
+  background: var(--rose-soft);
+  color: var(--rose);
+  border-color: rgba(251, 113, 133, 0.25);
+}
+
+.pill--amber {
+  background: var(--amber-soft);
+  color: var(--amber);
+  border-color: rgba(251, 191, 36, 0.25);
+}
+
+.pill--emerald {
+  background: var(--emerald-soft);
+  color: var(--emerald);
+  border-color: rgba(52, 211, 153, 0.25);
+}
+
+/* Status dot — for table rows and lists. */
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.dot--open {
+  background: var(--emerald);
+  box-shadow: 0 0 0 3px var(--emerald-soft);
+}
+
+.dot--in_progress {
+  background: var(--amber);
+  box-shadow: 0 0 0 3px var(--amber-soft);
+}
+
+.dot--closed {
+  background: var(--cream-dim);
+  box-shadow: 0 0 0 3px rgba(107, 102, 119, 0.2);
+}
+
+/* Editorial card — used as the foundation for KPI / list cards. */
+.editorial-card {
+  position: relative;
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.025),
+      rgba(255, 255, 255, 0)
+    ),
+    var(--ink-surface);
+  border: 1px solid var(--ink-border);
+  border-radius: var(--radius-lg);
+  padding: var(--gap-lg);
+  transition: border-color var(--d-2) var(--ease-out),
+    transform var(--d-2) var(--ease-out);
+}
+
+.editorial-card:hover {
+  border-color: var(--accent-border);
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * Loading skeletons — shimmer-less, just a pulsing mat surface.
+ * ─────────────────────────────────────────────────────────────────── */
+.skeleton {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    var(--ink-elevated) 0%,
+    var(--ink-elevated-2) 50%,
+    var(--ink-elevated) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--radius-sm);
+  animation: skeletonShift 1.4s ease-in-out infinite;
+}
+
+.skeleton--line {
+  height: 0.875rem;
+}
+
+.skeleton--text {
+  height: 1.125rem;
+  border-radius: 4px;
+}
+
+.skeleton--pill {
+  height: 1.25rem;
+  width: 4rem;
+  border-radius: var(--radius-pill);
+}
+
+.skeleton--card {
+  height: 9rem;
+  border-radius: var(--radius-lg);
+}
+
+@keyframes skeletonShift {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+/* Page enter animation. */
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter > * {
+  animation: pageEnter 280ms var(--ease-out) both;
+}
+
+.page-enter > *:nth-child(1) { animation-delay: 0ms; }
+.page-enter > *:nth-child(2) { animation-delay: 50ms; }
+.page-enter > *:nth-child(3) { animation-delay: 100ms; }
+.page-enter > *:nth-child(4) { animation-delay: 150ms; }
+.page-enter > *:nth-child(5) { animation-delay: 200ms; }
+
+/* ─────────────────────────────────────────────────────────────────────
+ * Material component overrides — push a few stubborn defaults toward
+ * the editorial palette without disabling the framework.
+ * ─────────────────────────────────────────────────────────────────── */
+
+/* Buttons: tighter radius, mono caps label, no uppercase transform from
+ * Material — we apply our own where wanted. */
+.mat-mdc-button,
+.mat-mdc-flat-button,
+.mat-mdc-stroked-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-outlined-button {
+  --mdc-filled-button-container-shape: 8px;
+  --mdc-outlined-button-container-shape: 8px;
+  --mdc-text-button-container-shape: 8px;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
+.mat-mdc-icon-button {
+  --mdc-icon-button-state-layer-size: 40px;
+}
+
+/* Card overrides — remove the default raised look. */
+.mat-mdc-card.mat-mdc-card-outlined {
+  --mdc-outlined-card-container-color: var(--ink-surface);
+  --mdc-outlined-card-outline-color: var(--ink-border);
+  --mdc-outlined-card-container-shape: 16px;
+}
+
+/* Form fields — tighter, no fill, lime focus. */
+.mat-mdc-form-field {
+  --mdc-outlined-text-field-outline-color: var(--ink-border);
+  --mdc-outlined-text-field-hover-outline-color: var(--cream-dim);
+  --mdc-outlined-text-field-focus-outline-color: var(--accent);
+  --mdc-outlined-text-field-label-text-color: var(--cream-muted);
+  --mdc-outlined-text-field-input-text-color: var(--cream);
+  --mdc-outlined-text-field-focus-label-text-color: var(--accent);
+}
+
+/* Table — remove the heavy default. */
+.mat-mdc-table {
+  --mat-table-background-color: transparent;
+  --mat-table-header-headline-color: var(--cream-dim);
+  --mat-table-row-item-label-text-color: var(--cream);
+  --mat-table-row-item-outline-color: var(--ink-border-soft);
+}
+
+.mat-mdc-header-cell {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  border-bottom: 1px solid var(--ink-border);
+}
+
+.mat-mdc-row {
+  transition: background var(--d-1) var(--ease-out);
+}
+
+.mat-mdc-row:hover {
+  background: var(--ink-elevated);
+}
+
+.mat-mdc-cell {
+  border-bottom: 1px solid var(--ink-border-soft);
+  color: var(--cream);
+}
+
+/* Toolbar — strip the default chrome; we draw our own. */
+.mat-toolbar {
+  background: transparent;
+  color: var(--cream);
+  border-bottom: 1px solid var(--ink-border);
+  font-family: var(--font-sans);
+}
+
+/* Sidenav container background. */
+.mat-drawer-container,
+.mat-sidenav-container {
+  background: var(--ink-bg);
+  color: var(--cream);
+}
+
+.mat-drawer,
+.mat-sidenav {
+  background: var(--ink-bg);
+  color: var(--cream);
+  border-right: 1px solid var(--ink-border);
+}
+
+/* Menus, dialogs: dark surface. */
+.mat-mdc-menu-panel,
+.mat-mdc-dialog-container .mat-mdc-dialog-surface {
+  background: var(--ink-elevated) !important;
+  color: var(--cream);
+  border: 1px solid var(--ink-border);
+  border-radius: var(--radius-md);
+}
+
+.mat-mdc-menu-item {
+  color: var(--cream);
+}
+
+.mat-mdc-menu-item:hover {
+  background: var(--ink-elevated-2);
+}
+
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: var(--ink-elevated);
+  --mdc-snackbar-supporting-text-color: var(--cream);
+}
+
+/* Progress bar — slimmer, accent colour. */
+.mat-mdc-progress-bar {
+  --mdc-linear-progress-active-indicator-color: var(--accent);
+  --mdc-linear-progress-track-color: var(--ink-elevated);
+  height: 2px;
+}
+
+/* Spinner — accent colour. */
+.mat-mdc-progress-spinner {
+  --mat-progress-spinner-active-indicator-color: var(--accent);
+}
+
+/* Tooltip — softer. */
+.mat-mdc-tooltip {
+  --mdc-plain-tooltip-container-color: var(--ink-elevated-2);
+  --mdc-plain-tooltip-supporting-text-color: var(--cream);
+  --mdc-plain-tooltip-supporting-text-font: var(--font-mono);
+  --mdc-plain-tooltip-supporting-text-size: 11px;
+}
+
+/* Chips — refined caps. */
+.mat-mdc-chip {
+  --mdc-chip-elevated-container-color: var(--ink-elevated);
+  --mdc-chip-label-text-color: var(--cream);
+  --mdc-chip-outline-color: var(--ink-border);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--radius-pill) !important;
+}
+
+/* Divider — barely there. */
+.mat-divider {
+  --mat-divider-color: var(--ink-border-soft);
+}
+
+/* List items in sidenav nav. */
+.mat-mdc-list-item {
+  --mdc-list-list-item-label-text-color: var(--cream-muted);
+  --mdc-list-list-item-hover-state-layer-color: transparent;
+  --mdc-list-list-item-focus-state-layer-color: transparent;
+}
+
+/* Reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

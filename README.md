@@ -46,6 +46,7 @@ The CLI reads `rayfin-template.yml` at the repo root and presents an interactive
 
 | Template | Description | Auth | Data | Stack |
 |----------|-------------|:----:|:----:|-------|
+| **[Angular Dashboard App](./templates/angular-dashboard)** | Responsive Angular Material dashboard — top navbar + collapsible side menu, Project/Task data model, and optional one-click GitHub Issues/PRs sync for a public repo. | ✅ | ✅ | Angular, Material |
 | **[Field Technician App](./templates/field-technician)** | Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric) | ✅ | ✅ | React, Vite, Tailwind |
 | **[IBCS Trainer](./templates/ibcs-trainer)** | HTML5 Canvas platformer that teaches IBCS chart rules level by level, embedded in a Fabric-authenticated Rayfin app; each play-through is persisted to a typed GameStats entity | ✅ | ✅ | React, Vite, Tailwind |
 | **[Slide Deck](./templates/slide-deck)** | Interactive slide deck presenter with sessions, live slide tracking, and audience chat | ✅ | ✅ | React, Vite, Tailwind |

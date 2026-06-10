@@ -1,0 +1,26 @@
+id: angular-dashboard
+name: angular-dashboard
+version: 1.0.0
+services:
+  auth:
+    enabled: true
+    fabric:
+      enabled: true
+    password:
+      enabled: true
+    allowedRedirectUris:
+      - http://localhost:5173
+      - https://grand-fog-4052b9371f-swedencentral.webapp.fabricapps.net
+  data:
+    enabled: true
+    dialect: mssql
+  storage:
+    enabled: false
+  staticHosting:
+    enabled: true
+    folder: dist
+    buildCommand: npm run build:fabric
+    indexDocument: index.html
+  functions:
+    enabled: false
+publishable_key: pk-gUE05HImFYighX1OmTfb
