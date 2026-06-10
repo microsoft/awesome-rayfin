@@ -49,7 +49,7 @@ The CLI reads `rayfin-template.yml` at the repo root and presents an interactive
 | **[Field Technician App](./templates/field-technician)** | Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric) | ✅ | ✅ | React, Vite, Tailwind |
 | **[IBCS Trainer](./templates/ibcs-trainer)** | HTML5 Canvas platformer that teaches IBCS chart rules level by level, embedded in a Fabric-authenticated Rayfin app; each play-through is persisted to a typed GameStats entity | ✅ | ✅ | React, Vite, Tailwind |
 | **[Slide Deck](./templates/slide-deck)** | Interactive slide deck presenter with sessions, live slide tracking, and audience chat | ✅ | ✅ | React, Vite, Tailwind |
-| **[Blank App](./templates/static-blankapp)** | Bare-bones Rayfin app with authentication, but without any JS or CSS framework and a tiny TypeScript entry point | ✅ | ✅ | React, Vite |
+| **[Blank App](./templates/static-blankapp)** | Bare-bones Rayfin app with authentication, but without any JS or CSS framework and a tiny TypeScript entry point | ✅ | ✅ | TypeScript, Vite |
 | **[[Experimental] Todo app with full local dev](./templates/todo-local-experimental)** | End-to-end todo CRUD with username/password auth, a Rayfin data model, and Docker local development — a working starter that exercises the full data path without Fabric | ✅ | ✅ | React, Vite, Tailwind |
 
 > **Adding a template?** See the [Contributing Guide](CONTRIBUTING.md).
