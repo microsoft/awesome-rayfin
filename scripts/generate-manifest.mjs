@@ -124,7 +124,6 @@ function updateReadmeTable(templates) {
       // Read manifest.json for auth/data info if available
       let auth = "✅";
       let data = "—";
-      let stack = "React, Vite";
       const manifestPath = join(TEMPLATES_DIR, t.dirName, "manifest.json");
       if (existsSync(manifestPath)) {
         try {
@@ -133,13 +132,22 @@ function updateReadmeTable(templates) {
           data = manifest.services?.data ? "✅" : "—";
         } catch { /* use defaults */ }
       }
-      // Check for tailwind in package.json
+      // Infer stack from dependencies
       const pkgPath = join(TEMPLATES_DIR, t.dirName, "package.json");
       const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
       const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
-      if (allDeps["tailwindcss"] || allDeps["@tailwindcss/vite"]) {
-        stack = "React, Vite, Tailwind";
+      const stackParts = [];
+      if (allDeps["@angular/core"]) stackParts.push("Angular");
+      else if (allDeps["react"]) stackParts.push("React");
+      else if (allDeps["typescript"]) stackParts.push("TypeScript");
+      if (allDeps["@angular/material"]) stackParts.push("Material");
+      if (allDeps["vite"] || allDeps["@vitejs/plugin-react-swc"] || allDeps["@vitejs/plugin-react"]) {
+        stackParts.push("Vite");
       }
+      if (allDeps["tailwindcss"] || allDeps["@tailwindcss/vite"]) {
+        stackParts.push("Tailwind");
+      }
+      const stack = stackParts.length > 0 ? stackParts.join(", ") : "—";
       return `| **[${t.name}](./templates/${t.dirName})** | ${t.description} | ${auth} | ${data} | ${stack} |`;
     })
     .join("\n");
