@@ -1,0 +1,20 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": ".temp/compiled",
+    "rootDir": ".",
+    "declaration": true,
+    "composite": true,
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
+    "module": "nodenext",
+    "moduleResolution": "nodenext"
+  },
+  "include": [
+    "**/*"
+  ],
+  "exclude": [
+    ".temp/**/*",
+    "functions/**/*"
+  ]
+}
