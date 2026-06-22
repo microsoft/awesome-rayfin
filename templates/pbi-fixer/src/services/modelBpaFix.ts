@@ -73,7 +73,7 @@ function indentOf(line: string): number {
 function declName(line: string, keyword: string): string | null {
   const trimmed = line.replace(/^\t*/, '');
   if (!new RegExp(`^${keyword}[\\s]`).test(trimmed)) return null;
-  let rest = trimmed.slice(keyword.length).replace(/^\s+/, '');
+  const rest = trimmed.slice(keyword.length).replace(/^\s+/, '');
   if (rest.startsWith("'")) {
     const end = rest.indexOf("'", 1);
     return end < 0 ? null : rest.slice(1, end);

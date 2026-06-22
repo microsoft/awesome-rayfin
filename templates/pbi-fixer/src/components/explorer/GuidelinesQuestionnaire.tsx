@@ -20,6 +20,9 @@ import {
   Body1Strong,
   Caption1,
   Subtitle2,
+  Dropdown,
+  Option,
+  Spinner,
 } from '@fluentui/react-components';
 import {
   Sparkle20Regular,
@@ -31,19 +34,48 @@ import {
   Copy16Regular,
   ArrowResetRegular,
   Edit16Regular,
+  CloudArrowUp16Regular,
+  CloudArrowDown16Regular,
+  PeopleTeam16Regular,
 } from '@fluentui/react-icons';
 import {
   GUIDELINE_QUESTIONS,
   QUESTION_CATEGORIES,
   formatAnswerValue,
+  GUIDELINES_STORAGE_KEY,
+  GUIDELINES_ANSWERS_EVENT,
   type Answer,
 } from './guidelinesQuestions';
+import { udf, type NamedItem } from '@/services/udfClient';
+import { getStorageToken, PbiSignInRequiredError } from '@/services/fabricAuth';
 
-const STORAGE_KEY = 'pbi-fixer:guidelines-answers:v1';
+const STORAGE_KEY = GUIDELINES_STORAGE_KEY;
+const SYNC_TARGET_KEY = 'pbi-fixer:guidelines-sync-target:v1';
 
 interface Store {
   answers: Record<string, Answer>;
   completed: boolean;
+}
+
+interface SyncTarget {
+  workspaceId: string;
+  lakehouseId: string;
+}
+
+function loadSyncTarget(): SyncTarget {
+  try {
+    const raw = localStorage.getItem(SYNC_TARGET_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as Partial<SyncTarget>;
+      return {
+        workspaceId: parsed.workspaceId ?? '',
+        lakehouseId: parsed.lakehouseId ?? '',
+      };
+    }
+  } catch {
+    /* ignore corrupt storage */
+  }
+  return { workspaceId: '', lakehouseId: '' };
 }
 
 function loadStore(): Store {
@@ -188,6 +220,41 @@ const useStyles = makeStyles({
     color: tokens.colorNeutralForeground3,
     fontStyle: 'italic',
   },
+  syncCard: {
+    display: 'flex',
+    flexDirection: 'column',
+    ...shorthands.borderRadius('10px'),
+    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke2),
+    backgroundColor: tokens.colorNeutralBackground1,
+  },
+  syncHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    columnGap: '8px',
+    width: '100%',
+    ...shorthands.padding('12px', '14px'),
+    ...shorthands.border('none'),
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    textAlign: 'left',
+    color: tokens.colorNeutralForeground1,
+    ':hover': { backgroundColor: tokens.colorNeutralBackground2Hover },
+  },
+  syncBody: {
+    display: 'flex',
+    flexDirection: 'column',
+    rowGap: '10px',
+    ...shorthands.padding('0', '14px', '14px', '14px'),
+  },
+  syncRow: {
+    display: 'flex',
+    alignItems: 'center',
+    columnGap: '8px',
+    flexWrap: 'wrap',
+  },
+  syncMsg: {
+    color: tokens.colorNeutralForeground2,
+  },
 });
 
 export function GuidelinesQuestionnaire() {
@@ -197,6 +264,18 @@ export function GuidelinesQuestionnaire() {
   const [index, setIndex] = useState(0);
   const [copied, setCopied] = useState(false);
 
+  // --- Team sync (OneLake) — everything below is lazy: nothing here runs until
+  // the user opens the sync section or clicks a button, so there is zero
+  // network or token cost for users who never use team sync. ---
+  const initialTarget = loadSyncTarget();
+  const [syncOpen, setSyncOpen] = useState(false);
+  const [workspaces, setWorkspaces] = useState<NamedItem[] | null>(null);
+  const [lakehouses, setLakehouses] = useState<NamedItem[] | null>(null);
+  const [workspaceId, setWorkspaceId] = useState(initialTarget.workspaceId);
+  const [lakehouseId, setLakehouseId] = useState(initialTarget.lakehouseId);
+  const [syncBusy, setSyncBusy] = useState(false);
+  const [syncMsg, setSyncMsg] = useState<string | null>(null);
+
   const total = GUIDELINE_QUESTIONS.length;
 
   useEffect(() => {
@@ -205,7 +284,20 @@ export function GuidelinesQuestionnaire() {
     } catch {
       /* ignore quota / privacy-mode errors */
     }
+    // Let the rendered guidelines below re-read answers and update live.
+    window.dispatchEvent(new Event(GUIDELINES_ANSWERS_EVENT));
   }, [store]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        SYNC_TARGET_KEY,
+        JSON.stringify({ workspaceId, lakehouseId }),
+      );
+    } catch {
+      /* ignore quota / privacy-mode errors */
+    }
+  }, [workspaceId, lakehouseId]);
 
   const answeredCount = useMemo(
     () =>
@@ -255,12 +347,132 @@ export function GuidelinesQuestionnaire() {
       }
       lines.push('');
     }
-    try {
-      await navigator.clipboard.writeText(lines.join('\n').trim());
+    const text = lines.join('\n').trim();
+    const flagCopied = () => {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1800);
+    };
+    // Preferred path: async Clipboard API (needs a secure context + permission).
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        flagCopied();
+        return;
+      }
     } catch {
-      /* clipboard not available */
+      /* fall through to execCommand — common inside Fabric iframes */
+    }
+    // Fallback: hidden textarea + execCommand, which works without the
+    // clipboard-write permission policy that an embedded iframe may deny.
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (ok) flagCopied();
+    } catch {
+      /* clipboard genuinely unavailable */
+    }
+  };
+
+  // --- Team sync (OneLake) handlers ---
+  const errText = (e: unknown) =>
+    e instanceof Error ? e.message : String(e);
+
+  const loadLakehouses = async (wsId: string) => {
+    const res = await udf.fabricProxy<{ value: NamedItem[] }>(
+      'fabric',
+      `/workspaces/${wsId}/lakehouses`,
+    );
+    setLakehouses(res.value.map((l) => ({ id: l.id, displayName: l.displayName })));
+  };
+
+  const connectSync = async () => {
+    setSyncBusy(true);
+    setSyncMsg(null);
+    try {
+      const ws = await udf.listWorkspaces();
+      setWorkspaces(ws);
+      if (workspaceId && ws.some((w) => w.id === workspaceId)) {
+        await loadLakehouses(workspaceId);
+      }
+    } catch (e) {
+      setSyncMsg(errText(e));
+    } finally {
+      setSyncBusy(false);
+    }
+  };
+
+  const onPickWorkspace = async (wsId: string) => {
+    setWorkspaceId(wsId);
+    setLakehouseId('');
+    setLakehouses(null);
+    setSyncMsg(null);
+    setSyncBusy(true);
+    try {
+      await loadLakehouses(wsId);
+    } catch (e) {
+      setSyncMsg(errText(e));
+    } finally {
+      setSyncBusy(false);
+    }
+  };
+
+  // Storage-audience consent may be needed the first time; retry once after an
+  // interactive popup (this runs inside a button click, so the popup is allowed).
+  const withStorageConsent = async (fn: () => Promise<void>) => {
+    try {
+      await fn();
+    } catch (e) {
+      if (e instanceof PbiSignInRequiredError) {
+        await getStorageToken({ interactive: true });
+        await fn();
+      } else {
+        throw e;
+      }
+    }
+  };
+
+  const saveToOneLake = async () => {
+    if (!workspaceId || !lakehouseId) return;
+    setSyncBusy(true);
+    setSyncMsg(null);
+    try {
+      await withStorageConsent(async () => {
+        const res = await udf.saveGuidelines(workspaceId, lakehouseId, store);
+        setSyncMsg(`Saved ${answeredCount} answers to OneLake (${res.bytes} bytes).`);
+      });
+    } catch (e) {
+      setSyncMsg(errText(e));
+    } finally {
+      setSyncBusy(false);
+    }
+  };
+
+  const loadFromOneLake = async () => {
+    if (!workspaceId || !lakehouseId) return;
+    setSyncBusy(true);
+    setSyncMsg(null);
+    try {
+      await withStorageConsent(async () => {
+        const res = await udf.loadGuidelines<Store>(workspaceId, lakehouseId);
+        if (res.found && res.payload && typeof res.payload === 'object') {
+          const p = res.payload;
+          setStore({ answers: p.answers ?? {}, completed: Boolean(p.completed) });
+          setSyncMsg("Loaded your team's conventions from OneLake.");
+        } else {
+          setSyncMsg('No team conventions saved in this lakehouse yet.');
+        }
+      });
+    } catch (e) {
+      setSyncMsg(errText(e));
+    } finally {
+      setSyncBusy(false);
     }
   };
 
@@ -448,6 +660,101 @@ export function GuidelinesQuestionnaire() {
     );
   };
 
+  const renderSync = () => {
+    const wsName = workspaces?.find((w) => w.id === workspaceId)?.displayName ?? '';
+    const lhName = lakehouses?.find((l) => l.id === lakehouseId)?.displayName ?? '';
+    return (
+      <div className={styles.syncCard}>
+        <button
+          type="button"
+          className={styles.syncHeader}
+          onClick={() => setSyncOpen((o) => !o)}
+          aria-expanded={syncOpen}
+        >
+          <PeopleTeam16Regular />
+          <Body1Strong>Team sync (OneLake)</Body1Strong>
+          <span className={styles.navSpacer} />
+          {syncOpen ? <ChevronDown20Regular /> : <ChevronRight20Regular />}
+        </button>
+
+        {syncOpen && (
+          <div className={styles.syncBody}>
+            <Caption1>
+              Store these conventions as a JSON file in a lakehouse so your whole team shares one
+              set of rules. Your local answers stay as a cache; saving and loading is always
+              manual.
+            </Caption1>
+
+            {workspaces === null ? (
+              <Button
+                icon={syncBusy ? <Spinner size="tiny" /> : <PeopleTeam16Regular />}
+                disabled={syncBusy}
+                onClick={connectSync}
+              >
+                {syncBusy ? 'Connecting…' : 'Connect'}
+              </Button>
+            ) : (
+              <>
+                <Dropdown
+                  placeholder="Select workspace"
+                  value={wsName}
+                  selectedOptions={workspaceId ? [workspaceId] : []}
+                  disabled={syncBusy}
+                  onOptionSelect={(_, d) => {
+                    if (d.optionValue) void onPickWorkspace(d.optionValue);
+                  }}
+                >
+                  {workspaces.map((w) => (
+                    <Option key={w.id} value={w.id} text={w.displayName}>
+                      {w.displayName}
+                    </Option>
+                  ))}
+                </Dropdown>
+
+                <Dropdown
+                  placeholder={lakehouses === null ? 'Select a workspace first' : 'Select lakehouse'}
+                  value={lhName}
+                  selectedOptions={lakehouseId ? [lakehouseId] : []}
+                  disabled={syncBusy || lakehouses === null || lakehouses.length === 0}
+                  onOptionSelect={(_, d) => {
+                    if (d.optionValue) setLakehouseId(d.optionValue);
+                  }}
+                >
+                  {(lakehouses ?? []).map((l) => (
+                    <Option key={l.id} value={l.id} text={l.displayName}>
+                      {l.displayName}
+                    </Option>
+                  ))}
+                </Dropdown>
+
+                <div className={styles.syncRow}>
+                  <Button
+                    appearance="primary"
+                    icon={<CloudArrowUp16Regular />}
+                    disabled={syncBusy || !lakehouseId}
+                    onClick={saveToOneLake}
+                  >
+                    Save to OneLake
+                  </Button>
+                  <Button
+                    icon={<CloudArrowDown16Regular />}
+                    disabled={syncBusy || !lakehouseId}
+                    onClick={loadFromOneLake}
+                  >
+                    Load from team
+                  </Button>
+                  {syncBusy && <Spinner size="tiny" />}
+                </div>
+              </>
+            )}
+
+            {syncMsg && <Caption1 className={styles.syncMsg}>{syncMsg}</Caption1>}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className={styles.panel}>
       <button
@@ -472,7 +779,16 @@ export function GuidelinesQuestionnaire() {
         </span>
       </button>
 
-      <div className={styles.body}>{expanded ? renderWizard() : renderCollapsedBody()}</div>
+      <div className={styles.body}>
+        {expanded ? (
+          renderWizard()
+        ) : (
+          <>
+            {renderCollapsedBody()}
+            {renderSync()}
+          </>
+        )}
+      </div>
     </div>
   );
 }

@@ -29,10 +29,8 @@ import {
 } from '@fluentui/react-icons';
 import { BORDER_COLOR, GRAY_COLOR, SECTION_BG } from '@/explorer/theme';
 import {
-  exportPrototypeToPbir,
   exportPrototypeToExcalidraw,
   exportPrototypeToSvg,
-  downloadJson,
   downloadText,
   PROTOTYPE_VISUAL_FILL,
   type PrototypeDocument,
@@ -40,6 +38,7 @@ import {
   type PrototypeVisual,
   type VisualType,
 } from '@/services/prototypeApi';
+import { downloadPrototypePbip } from '@/services/pbirExport';
 
 export interface ForwardPrototypeProps {
   workspaceId: string;
@@ -297,7 +296,9 @@ export function ForwardPrototype({ workspaceId, datasetId, datasetName }: Forwar
   }, [pages, datasetName, datasetId, workspaceId]);
 
   const exportPbir = useCallback(() => {
-    downloadJson('forward-prototype.pbir.json', exportPrototypeToPbir(buildDoc()));
+    const doc = buildDoc();
+    const base = (doc.reportName || 'forward-prototype').replace(/[^A-Za-z0-9._-]+/g, '_') || 'forward-prototype';
+    downloadPrototypePbip(doc, base);
   }, [buildDoc]);
   const exportExcalidraw = useCallback(() => {
     downloadText('forward-prototype.excalidraw', exportPrototypeToExcalidraw(buildDoc()), 'application/json');

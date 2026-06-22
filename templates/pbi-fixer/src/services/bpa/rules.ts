@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Faithful TS port of `_model_bpa_rules.py` plus PKG-3 detect-only rules.
 // Rules retain their Python semantics: predicate returns `true` to flag
 // a violation. `obj` is a scope-specific wrapper (see engine.ts), `tom`

@@ -672,7 +672,7 @@ async function addMeasureTablesInternal(
       continue;
     }
     existing.add(name);
-    let base = sanitizeFileName(name);
+    const base = sanitizeFileName(name);
     let file = base;
     let n = 2;
     while (usedFiles.has(file.toLowerCase())) file = `${base} ${n++}`;

@@ -17,7 +17,7 @@
 // calculated tables so they populate.
 
 import { loadDefinitionParts, saveDefinitionParts } from './fabricRest';
-import { triggerRefresh } from './refreshModel';
+import { triggerRefresh, getRefreshHistory, waitForLatestRefresh } from './refreshModel';
 import docTemplate from '@/assets/docTemplate.json';
 
 // --------------------------------------------------------------------------- //
@@ -37,6 +37,7 @@ export interface DocPageResult {
 }
 
 export interface DocRefreshResult {
+  ok: boolean;
   detail: string;
 }
 
@@ -113,9 +114,25 @@ const DOC_TABLES: DocTableSpec[] = [
       { friendly: 'To Cardinality', source: '[ToCardinality]', type: 'string' },
     ],
   },
+  // A measures listing the documentation page groups by display folder. Built
+  // with the same SELECTCOLUMNS pattern as the other doc tables.
+  {
+    name: '_Model Measures',
+    infoView: 'INFO.VIEW.MEASURES()',
+    columns: [
+      { friendly: 'Measure Display Folder', source: '[DisplayFolder]', type: 'string' },
+      { friendly: 'Measure Description', source: '[Description]', type: 'string' },
+      { friendly: 'Default Format String', source: '[FormatString]', type: 'string' },
+    ],
+  },
 ];
 
-const DOC_TABLE_NAMES = DOC_TABLES.map((t) => t.name);
+// The icon / title / count helper measures the documentation page binds to.
+// They live on a dedicated `_Doc Measures` host table (created below) and are
+// not part of DOC_TABLES because they are measures, not SELECTCOLUMNS columns.
+const MEASURE_HOST_TABLE = '_Doc Measures';
+
+const DOC_TABLE_NAMES = [...DOC_TABLES.map((t) => t.name), MEASURE_HOST_TABLE];
 
 // --------------------------------------------------------------------------- //
 // Small TMDL helpers (kept local so this service stays self-contained)
@@ -182,27 +199,136 @@ function buildDocTableTmdl(spec: DocTableSpec): string {
 }
 
 // --------------------------------------------------------------------------- //
+// Measure-host TMDL builder
+// --------------------------------------------------------------------------- //
+
+/**
+ * The icon / title / count measures the documentation page binds to (entity
+ * `_Doc Measures`). The icon measures read the live `INFO.VIEW.*` attributes for
+ * the row currently shown in each documentation visual, so they evaluate per
+ * row without needing extra columns on the doc tables. Titles are static labels
+ * for the page's section headers.
+ */
+const HOST_MEASURES: { name: string; expr: string }[] = [
+  { name: 'Title - Tables', expr: '"Tables"' },
+  { name: 'Title - Columns', expr: '"Columns"' },
+  { name: 'Title - Measures', expr: '"Measures"' },
+  { name: 'Title - Relationships', expr: '"Relationships"' },
+  {
+    name: 'Column Count',
+    expr: `VAR _t = SELECTEDVALUE('_Tables'[Table Name]) RETURN IF(ISBLANK(_t), BLANK(), COUNTROWS(FILTER('_Columns', '_Columns'[Table Name] = _t)))`,
+  },
+  {
+    name: 'Table Is Visible Icon',
+    expr: `VAR _t = SELECTEDVALUE('_Tables'[Table Name]) VAR _h = MAXX(FILTER(INFO.VIEW.TABLES(), [Name] = _t), IF([IsHidden], 1, 0)) RETURN IF(ISBLANK(_t), BLANK(), IF(_h = 1, "✗", "✓"))`,
+  },
+  {
+    name: 'Table Is Calculation Group Icon',
+    expr: `VAR _t = SELECTEDVALUE('_Tables'[Table Name]) VAR _g = MAXX(FILTER(INFO.VIEW.TABLES(), [Name] = _t), IF(NOT ISBLANK([CalculationGroupPrecedence]), 1, 0)) RETURN IF(ISBLANK(_t), BLANK(), IF(_g = 1, "✓", BLANK()))`,
+  },
+  {
+    name: 'Table Refresh Enabled Icon',
+    expr: `VAR _t = SELECTEDVALUE('_Tables'[Table Name]) VAR _i = MAXX(FILTER(INFO.VIEW.TABLES(), [Name] = _t), IF([StorageMode] = "Import", 1, 0)) RETURN IF(ISBLANK(_t), BLANK(), IF(_i = 1, "✓", BLANK()))`,
+  },
+  {
+    name: 'Column Is Visible Icon',
+    expr: `VAR _c = SELECTEDVALUE('_Columns'[Column Name]) VAR _t = SELECTEDVALUE('_Columns'[Table Name]) VAR _h = MAXX(FILTER(INFO.VIEW.COLUMNS(), [Name] = _c && [Table] = _t), IF([IsHidden], 1, 0)) RETURN IF(ISBLANK(_c), BLANK(), IF(_h = 1, "✗", "✓"))`,
+  },
+  {
+    name: 'Column Is Key Icon',
+    expr: `VAR _c = SELECTEDVALUE('_Columns'[Column Name]) VAR _t = SELECTEDVALUE('_Columns'[Table Name]) VAR _k = MAXX(FILTER(INFO.VIEW.COLUMNS(), [Name] = _c && [Table] = _t), IF([IsKey], 1, 0)) RETURN IF(ISBLANK(_c), BLANK(), IF(_k = 1, "✓", BLANK()))`,
+  },
+  {
+    name: 'Column Is Unique Icon',
+    expr: `VAR _c = SELECTEDVALUE('_Columns'[Column Name]) VAR _t = SELECTEDVALUE('_Columns'[Table Name]) VAR _u = MAXX(FILTER(INFO.VIEW.COLUMNS(), [Name] = _c && [Table] = _t), IF([IsUnique], 1, 0)) RETURN IF(ISBLANK(_c), BLANK(), IF(_u = 1, "✓", BLANK()))`,
+  },
+  {
+    name: 'Measure Is Visible Icon',
+    expr: `VAR _m = SELECTEDVALUE('_DAX Measures'[Name]) VAR _t = SELECTEDVALUE('_DAX Measures'[Table Name]) VAR _h = MAXX(FILTER(INFO.VIEW.MEASURES(), [Name] = _m && [Table] = _t), IF([IsHidden], 1, 0)) RETURN IF(ISBLANK(_m), BLANK(), IF(_h = 1, "✗", "✓"))`,
+  },
+  {
+    name: 'Relationship Is Active Icon',
+    expr: `VAR _ft = SELECTEDVALUE('_Relationships'[From Table]) VAR _fc = SELECTEDVALUE('_Relationships'[From Column]) VAR _tt = SELECTEDVALUE('_Relationships'[To Table]) VAR _tc = SELECTEDVALUE('_Relationships'[To Column]) VAR _a = MAXX(FILTER(INFO.VIEW.RELATIONSHIPS(), [FromTable] = _ft && [FromColumn] = _fc && [ToTable] = _tt && [ToColumn] = _tc), IF([IsActive], 1, 0)) RETURN IF(ISBLANK(_ft), BLANK(), IF(_a = 1, "✓", BLANK()))`,
+  },
+  {
+    name: 'Relationship Cardinality Icon',
+    expr: `VAR _ft = SELECTEDVALUE('_Relationships'[From Table]) VAR _fc = SELECTEDVALUE('_Relationships'[From Column]) VAR _tt = SELECTEDVALUE('_Relationships'[To Table]) VAR _tc = SELECTEDVALUE('_Relationships'[To Column]) VAR _r = FILTER(INFO.VIEW.RELATIONSHIPS(), [FromTable] = _ft && [FromColumn] = _fc && [ToTable] = _tt && [ToColumn] = _tc) VAR _from = CONCATENATEX(_r, [FromCardinality]) VAR _to = CONCATENATEX(_r, [ToCardinality]) RETURN IF(ISBLANK(_ft), BLANK(), IF(_from = "Many", "*", IF(_from = "One", "1", _from)) & " : " & IF(_to = "Many", "*", IF(_to = "One", "1", _to)))`,
+  },
+  {
+    name: 'Relationship Cross Filtering Behaviour Icon',
+    expr: `VAR _ft = SELECTEDVALUE('_Relationships'[From Table]) VAR _fc = SELECTEDVALUE('_Relationships'[From Column]) VAR _tt = SELECTEDVALUE('_Relationships'[To Table]) VAR _tc = SELECTEDVALUE('_Relationships'[To Column]) VAR _cf = CONCATENATEX(FILTER(INFO.VIEW.RELATIONSHIPS(), [FromTable] = _ft && [FromColumn] = _fc && [ToTable] = _tt && [ToColumn] = _tc), [CrossFilteringBehavior]) RETURN IF(ISBLANK(_ft), BLANK(), SWITCH(_cf, "OneDirection", "→", "BothDirections", "↔", "Both", "↔", "Automatic", "⇄", _cf))`,
+  },
+];
+
+/**
+ * Build the `_Doc Measures` host table: a one-row calculated table carrying the
+ * documentation page's icon / title / count measures.
+ */
+function buildMeasureHostTmdl(): string {
+  const t = quoteName(MEASURE_HOST_TABLE);
+  const lines: string[] = [`table ${t}`, `\tlineageTag: ${uuid()}`, ``];
+
+  lines.push(
+    `\tcolumn Value`,
+    `\t\tisHidden`,
+    `\t\tdataType: int64`,
+    `\t\tlineageTag: ${uuid()}`,
+    `\t\tsummarizeBy: none`,
+    `\t\tsourceColumn: [Value]`,
+    ``,
+    `\t\tannotation SummarizationSetBy = Automatic`,
+    ``
+  );
+
+  for (const m of HOST_MEASURES) {
+    lines.push(`\tmeasure ${quoteName(m.name)} = ${m.expr}`, `\t\tlineageTag: ${uuid()}`, ``);
+  }
+
+  lines.push(
+    `\tpartition ${t} = calculated`,
+    `\t\tmode: import`,
+    `\t\tsource = ROW("Value", 1)`,
+    ``,
+    `\tannotation PBI_Id = ${uuid().replace(/-/g, '')}`,
+    ``
+  );
+
+  return lines.join('\n');
+}
+
+// --------------------------------------------------------------------------- //
 // 1. Documentation tables
 // --------------------------------------------------------------------------- //
 
 /**
- * Add the four documentation tables to the model. Tables that already exist are
- * left untouched and reported as skipped, so the action is safe to re-run.
+ * Add the documentation tables to the model: the four `INFO.VIEW.*` tables
+ * (`_Tables`, `_Columns`, `_DAX Measures`, `_Relationships`), the `_Model
+ * Measures` listing, and the `_Doc Measures` host table carrying the icon /
+ * title / count measures the documentation page binds to. Tables that already
+ * exist are left untouched and reported as skipped, so the action is safe to
+ * re-run.
+ *
+ * `onProgress` receives short status messages for each stage so the UI can show
+ * what the (multi-second) operation is currently doing.
  */
 export async function addDocumentationTables(
   workspaceId: string,
-  datasetId: string
+  datasetId: string,
+  onProgress?: (msg: string) => void
 ): Promise<DocTablesResult> {
+  const step = (msg: string) => onProgress?.(msg);
   if (!workspaceId || !datasetId) {
     return { created: [], skipped: [], changed: 0, detail: 'Select a workspace and a semantic model first.' };
   }
 
+  step('Reading the model definition…');
   const parts = await loadDefinitionParts('model', workspaceId, datasetId);
   const modelPart = parts.find((p) => /\/model\.tmdl$/i.test(p.path) && !p.binary);
   if (!modelPart) {
     return { created: [], skipped: [], changed: 0, detail: 'model.tmdl part not found.' };
   }
 
+  step('Checking which documentation tables already exist…');
   const sampleTablePart = parts.find((p) => /\/tables\/[^/]+\.tmdl$/i.test(p.path));
   const tablesDir = sampleTablePart
     ? sampleTablePart.path.replace(/\/[^/]+\.tmdl$/i, '')
@@ -218,12 +344,19 @@ export async function addDocumentationTables(
   const skipped: string[] = [];
   const modelLines = modelPart.text.split('\n');
 
-  for (const spec of DOC_TABLES) {
+  // The four SELECTCOLUMNS doc tables + the `_Model Measures` listing, plus the
+  // `_Doc Measures` measure host. Each is created only if it does not yet exist.
+  const buildSpecs: { name: string; tmdl: () => string }[] = [
+    ...DOC_TABLES.map((spec) => ({ name: spec.name, tmdl: () => buildDocTableTmdl(spec) })),
+    { name: MEASURE_HOST_TABLE, tmdl: buildMeasureHostTmdl },
+  ];
+
+  for (const spec of buildSpecs) {
     if (tableExists(spec.name)) {
       skipped.push(spec.name);
       continue;
     }
-    edits[`${tablesDir}/${sanitizeFileName(spec.name)}.tmdl`] = buildDocTableTmdl(spec);
+    edits[`${tablesDir}/${sanitizeFileName(spec.name)}.tmdl`] = spec.tmdl();
 
     let lastRef = -1;
     for (let i = 0; i < modelLines.length; i++) {
@@ -240,12 +373,15 @@ export async function addDocumentationTables(
       created,
       skipped,
       changed: 0,
-      detail: 'All four documentation tables already exist — nothing to add.',
+      detail: 'All documentation tables already exist — nothing to add.',
     };
   }
 
+  step(`Building TMDL for ${created.length} table(s): ${created.join(', ')}…`);
   edits[modelPart.path] = modelLines.join('\n');
+  step(`Writing ${created.length} table(s) to the model (this can take a moment)…`);
   const changed = await saveDefinitionParts('model', workspaceId, datasetId, edits);
+  step('Finishing up…');
 
   return {
     created,
@@ -349,25 +485,51 @@ export async function addDocumentationPage(
 // 3. Refresh the documentation tables so they populate
 // --------------------------------------------------------------------------- //
 
-/** Trigger a full refresh scoped to the documentation tables that exist. */
+/**
+ * Trigger a full refresh scoped to the documentation tables that exist, then
+ * wait for it to finish. `onProgress` is called as soon as the refresh has been
+ * accepted (so the UI can show "started") and the returned detail reflects the
+ * final, completed (or failed) status.
+ */
 export async function refreshDocumentationTables(
   workspaceId: string,
   datasetId: string,
-  tables: string[] = DOC_TABLE_NAMES
+  tables: string[] = DOC_TABLE_NAMES,
+  onProgress?: (msg: string) => void
 ): Promise<DocRefreshResult> {
   if (!workspaceId || !datasetId) {
-    return { detail: 'Select a workspace and a semantic model first.' };
+    return { ok: false, detail: 'Select a workspace and a semantic model first.' };
   }
   if (tables.length === 0) {
-    return { detail: 'No documentation tables to refresh.' };
+    return { ok: false, detail: 'No documentation tables to refresh.' };
   }
+
+  // Capture the current newest refresh so we can tell the new one apart.
+  const before = await getRefreshHistory(workspaceId, datasetId, 1);
+  const baselineRequestId = before[0]?.requestId;
+
   const r = await triggerRefresh(
     workspaceId,
     datasetId,
     tables.map((t) => ({ table: t })),
     'full'
   );
-  return { detail: r.detail };
+  onProgress?.(`${r.detail} Waiting for it to finish…`);
+
+  const result = await waitForLatestRefresh(workspaceId, datasetId, baselineRequestId);
+  if (result.timedOut) {
+    return {
+      ok: false,
+      detail: `${r.detail} Still running after the wait window — check Refresh history for the final status.`,
+    };
+  }
+  if (result.ok) {
+    return { ok: true, detail: `Refresh of ${tables.length} object(s) completed successfully.` };
+  }
+  return {
+    ok: false,
+    detail: `Refresh finished with status "${result.status}". Check Refresh history for details.`,
+  };
 }
 
 export { DOC_TABLE_NAMES };

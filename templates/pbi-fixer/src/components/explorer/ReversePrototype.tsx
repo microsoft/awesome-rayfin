@@ -1,7 +1,8 @@
 // ReversePrototype — load an existing PBI report (PBIR), extract its pages and
 // visuals (position / size / type / title) into a portable layout document,
-// render a read-only wireframe gallery, then export it as PBIR-lite JSON, an
-// Excalidraw scene, or an SVG that drag-drops into Figma.
+// render a read-only wireframe gallery, then export it as a real, deployable
+// PBIP project (.pbip.zip), an Excalidraw scene, or an SVG that drag-drops into
+// Figma.
 //
 // Adapted from the Fabric Developer Hub "Reverse Prototype" page. Driven by the
 // workspaceId + reportId selected in the connection bar; reads the PBIR
@@ -30,14 +31,13 @@ import { BORDER_COLOR, ICON_ACCENT, GRAY_COLOR, SECTION_BG } from '@/explorer/th
 import { loadReportDefinition } from '@/services/fabricRest';
 import {
   reportToPrototypeDocument,
-  exportPrototypeToPbir,
   exportPrototypeToExcalidraw,
   exportPrototypeToSvg,
-  downloadJson,
   downloadText,
   PROTOTYPE_VISUAL_FILL,
   type PrototypeDocument,
 } from '@/services/prototypeApi';
+import { downloadPrototypePbip } from '@/services/pbirExport';
 
 const useStyles = makeStyles({
   root: { display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, ...shorthands.gap('8px') },
@@ -176,11 +176,12 @@ export const ReversePrototype: React.FC<ReversePrototypeProps> = ({
 
   const safeName = (reportName || 'report').replace(/[^A-Za-z0-9._-]+/g, '_') || 'report';
 
-  const onExportJson = () => {
+  const onExportPbir = () => {
     if (!doc) return;
-    const json = exportPrototypeToPbir(doc);
-    downloadJson(`${safeName}.reverse-prototype.json`, json);
-    setStatus(`Exported ${safeName}.reverse-prototype.json (${json.length.toLocaleString()} chars).`);
+    const size = downloadPrototypePbip(doc, `${safeName}.reverse`);
+    setStatus(
+      `Exported ${safeName}.reverse.pbip.zip (${(size / 1024).toFixed(1)} KB) — unzip, then open the .pbip in Power BI Desktop or import the .Report into a Fabric workspace.`
+    );
   };
   const onExportExcalidraw = () => {
     if (!doc) return;
@@ -226,10 +227,11 @@ export const ReversePrototype: React.FC<ReversePrototypeProps> = ({
         <Button
           icon={<ArrowDownload20Regular />}
           appearance="primary"
-          onClick={onExportJson}
+          onClick={onExportPbir}
           disabled={!doc || pageCount === 0}
+          title="Deployable PBIP project (.pbip.zip) — open in Power BI Desktop"
         >
-          Export JSON
+          Export PBIR
         </Button>
         <Button
           icon={<ArrowDownload20Regular />}

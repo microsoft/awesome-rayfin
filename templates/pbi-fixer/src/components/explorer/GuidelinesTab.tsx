@@ -6,7 +6,7 @@
 // a table of contents, numbered sections and nested checklists — styled with
 // Fluent UI v9 tokens so it matches the rest of the Power BI Fixer shell.
 
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState, Fragment } from 'react';
 import {
   makeStyles,
   shorthands,
@@ -30,6 +30,14 @@ import {
 } from '@fluentui/react-icons';
 import type { ReactElement, ReactNode } from 'react';
 import { GuidelinesQuestionnaire } from './GuidelinesQuestionnaire';
+import {
+  loadGuidelineAnswers,
+  teamAnswer,
+  defaultPlaceholder,
+  GUIDELINES_STORAGE_KEY,
+  GUIDELINES_ANSWERS_EVENT,
+  type Answer,
+} from './guidelinesQuestions';
 
 // ---------------------------------------------------------------------------
 // Content model
@@ -276,7 +284,7 @@ const SECTIONS: GuideSection[] = [
           {
             marker: '1.',
             title: 'Use measure tables as a container',
-            text: 'Use the name "Measure" (not "Measures").',
+            text: 'Use the measure container table named "{{measure-table-name}}" (singular, not "Measures").',
             children: [
               { marker: 'a.', text: 'A measure table is theoretically not needed if all columns in the fact table are hidden (fully denormalized).' },
               { marker: 'b.', text: 'In all other cases, strongly create a measure table to store measures — also beneficial during development.' },
@@ -315,10 +323,10 @@ const SECTIONS: GuideSection[] = [
         num: '2.5',
         title: 'Naming Conventions',
         items: [
-          { marker: '1.', text: 'Everything clean "Title Case" and no table prefix like "Fact" or "Dim".' },
+          { marker: '1.', text: 'Use {{naming-casing}} for visible objects; table prefixes: {{dim-fact-prefix}}.' },
           { marker: '2.', text: 'Objects should not start or end with a space.' },
-          { marker: '3.', text: 'Object names must not contain special characters.' },
-          { marker: '4.', text: 'Column references should be fully qualified, e.g. TableName[Column Name].' },
+          { marker: '3.', text: 'Special characters in object names: {{special-chars}}.' },
+          { marker: '4.', text: 'Reference qualification: {{reference-qualification}} (e.g. TableName[Column Name], [Measure Name]).' },
           { marker: '5.', text: 'Measure references should be unqualified, e.g. [Measure Name].' },
           { marker: '6.', text: 'Provide descriptive business names for tables, columns and measures without overly short abbreviations.' },
           {
@@ -492,8 +500,8 @@ const SECTIONS: GuideSection[] = [
             marker: '',
             title: 'Visible objects',
             children: [
-              { marker: '•', text: 'Words in visible objects must always be separated by spaces.' },
-              { marker: '•', text: 'Title Case is mandatory for all visible objects.' },
+              { marker: '•', text: 'Words in visible objects separated by spaces: {{words-spaces}}.' },
+              { marker: '•', text: 'Casing for all visible objects: {{naming-casing}}.' },
               { marker: '•', text: 'Prohibited characters: [ ] { } \' " = & * : ; . / \\ # @ ! _ = ^.' },
               {
                 marker: '•',
@@ -895,13 +903,89 @@ const useStyles = makeStyles({
   },
   itemBody: { color: tokens.colorNeutralForeground1 },
   footnote: { color: tokens.colorNeutralForeground3, fontSize: tokens.fontSizeBase200 },
+  teamValue: {
+    fontWeight: 600,
+    color: tokens.colorBrandForeground1,
+    backgroundColor: tokens.colorBrandBackground2,
+    ...shorthands.borderRadius('4px'),
+    ...shorthands.padding('0', '5px'),
+    whiteSpace: 'nowrap',
+  },
+  placeholderValue: {
+    color: tokens.colorNeutralForeground3,
+    fontStyle: 'italic',
+    ...shorthands.borderBottom('1px', 'dotted', tokens.colorNeutralStroke1),
+  },
 });
 
 // ---------------------------------------------------------------------------
 // Renderers
 // ---------------------------------------------------------------------------
 
-function ItemList({ items, nested }: { items: GuideItem[]; nested?: boolean }) {
+/** Live team answers, re-read whenever the questionnaire persists a change. */
+function useGuidelineAnswers(): Record<string, Answer> {
+  const [answers, setAnswers] = useState<Record<string, Answer>>(loadGuidelineAnswers);
+  useEffect(() => {
+    const refresh = () => setAnswers(loadGuidelineAnswers());
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === GUIDELINES_STORAGE_KEY) refresh();
+    };
+    window.addEventListener(GUIDELINES_ANSWERS_EVENT, refresh);
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener(GUIDELINES_ANSWERS_EVENT, refresh);
+      window.removeEventListener('storage', onStorage);
+    };
+  }, []);
+  return answers;
+}
+
+const TOKEN_RE = /(\{\{[a-z0-9-]+\}\})/i;
+
+/**
+ * Replace `{{question-id}}` tokens in a guideline string with the team's
+ * answer (highlighted) or a muted default placeholder when unanswered. Non-string
+ * ReactNodes (already-built JSX) pass through unchanged.
+ */
+function renderWithTokens(
+  node: ReactNode,
+  answers: Record<string, Answer>,
+  styles: ReturnType<typeof useStyles>,
+): ReactNode {
+  if (typeof node !== 'string' || !TOKEN_RE.test(node)) return node;
+  return node.split(TOKEN_RE).map((part, i) => {
+    const m = part.match(/^\{\{([a-z0-9-]+)\}\}$/i);
+    if (!m) return <Fragment key={i}>{part}</Fragment>;
+    const qid = m[1];
+    const team = teamAnswer(answers, qid);
+    if (team) {
+      return (
+        <span key={i} className={styles.teamValue} title="Your team's convention">
+          {team}
+        </span>
+      );
+    }
+    return (
+      <span
+        key={i}
+        className={styles.placeholderValue}
+        title="Default — set your team's convention in 'Customize these guidelines for your team' above"
+      >
+        {defaultPlaceholder(qid)}
+      </span>
+    );
+  });
+}
+
+function ItemList({
+  items,
+  answers,
+  nested,
+}: {
+  items: GuideItem[];
+  answers: Record<string, Answer>;
+  nested?: boolean;
+}) {
   const styles = useStyles();
   return (
     <div className={nested ? styles.nested : styles.list}>
@@ -909,9 +993,13 @@ function ItemList({ items, nested }: { items: GuideItem[]; nested?: boolean }) {
         <div key={i} className={styles.item}>
           {it.marker !== '' && <span className={styles.marker}>{it.marker ?? '•'}</span>}
           <div className={styles.itemBody}>
-            {it.title && <Body1Strong>{it.title}</Body1Strong>}
-            {it.title && it.text ? <Body1> — {it.text}</Body1> : it.text ? <Body1>{it.text}</Body1> : null}
-            {it.children && <ItemList items={it.children} nested />}
+            {it.title && <Body1Strong>{renderWithTokens(it.title, answers, styles)}</Body1Strong>}
+            {it.title && it.text ? (
+              <Body1> — {renderWithTokens(it.text, answers, styles)}</Body1>
+            ) : it.text ? (
+              <Body1>{renderWithTokens(it.text, answers, styles)}</Body1>
+            ) : null}
+            {it.children && <ItemList items={it.children} answers={answers} nested />}
           </div>
         </div>
       ))}
@@ -921,6 +1009,7 @@ function ItemList({ items, nested }: { items: GuideItem[]; nested?: boolean }) {
 
 export function GuidelinesTab() {
   const styles = useStyles();
+  const answers = useGuidelineAnswers();
 
   const scrollTo = useCallback((id: string) => {
     document.getElementById(`guideline-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -977,7 +1066,7 @@ export function GuidelinesTab() {
                   <Subtitle2>{sub.title}</Subtitle2>
                 </div>
                 {sub.intro && <Body1 className={styles.subIntro}>{sub.intro}</Body1>}
-                <ItemList items={sub.items} />
+                <ItemList items={sub.items} answers={answers} />
               </div>
             ))}
             <Divider />

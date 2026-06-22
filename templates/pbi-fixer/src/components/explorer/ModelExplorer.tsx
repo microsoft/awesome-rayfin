@@ -71,6 +71,7 @@ import {
   scanDisplayFolders,
   applyDisplayFolders,
   DEFAULT_ORGANIZE_OPTIONS,
+  type FolderAssignment,
 } from '@/services/displayFolders';
 import { setColumnProperty, setTableProperty, setMeasureProperty, setModelProperty, setPartitionExpression } from '@/services/modelPropertyEditor';
 import { triggerRefresh, type RefreshObject, type RefreshType } from '@/services/refreshModel';
@@ -425,10 +426,21 @@ export interface ModelExplorerModel {
   datasetName: string;
 }
 
+/** The lens tabs shown inside Model Explorer. */
+export type ModelViewTab = 'explorer' | 'tmdl' | 'translations' | 'memory' | 'bpa';
+
 export interface ModelExplorerProps {
   workspaceId: string;
   /** Every selected model-bearing pair — all are loaded into the tree. */
   models: ModelExplorerModel[];
+  /**
+   * Optional controlled lens selection (Explorer / TMDL / Translations /
+   * Memory Analyzer / Model BPA). When provided, the parent owns the active
+   * lens — used by the left nav to deep-link into a specific lens.
+   */
+  viewTab?: ModelViewTab;
+  /** Notified whenever the lens changes, so a parent can mirror it. */
+  onViewTabChange?: (tab: ModelViewTab) => void;
 }
 
 /** A loaded model: its dataset id, display name and parsed data. */
@@ -526,9 +538,41 @@ function barePathForKey(bare: string): string | null {
   return null;
 }
 
+/**
+ * Immutably set the `displayFolder` of every column / measure named by a folder
+ * plan in loaded model data. Used to preview an "organize display folders"
+ * proposal directly in the tree (objects move into their new folders) before
+ * anything is written, and to revert that preview on discard (folder `''`).
+ */
+function applyFolderAssignments(data: ModelData, assignments: FolderAssignment[]): ModelData {
+  const tables = { ...data.tables };
+  for (const a of assignments) {
+    const t = tables[a.table];
+    if (!t) continue;
+    if (a.kind === 'column') {
+      const col = t.columns[a.name];
+      if (!col) continue;
+      tables[a.table] = {
+        ...t,
+        columns: { ...t.columns, [a.name]: { ...col, displayFolder: a.folder } },
+      };
+    } else {
+      const meas = t.measures[a.name];
+      if (!meas) continue;
+      tables[a.table] = {
+        ...t,
+        measures: { ...t.measures, [a.name]: { ...meas, displayFolder: a.folder } },
+      };
+    }
+  }
+  return { ...data, tables };
+}
+
 export const ModelExplorer: React.FC<ModelExplorerProps> = ({
   workspaceId,
   models,
+  viewTab: controlledViewTab,
+  onViewTabChange,
 }) => {
   const styles = useStyles();
 
@@ -545,7 +589,18 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
   const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number; key: string } | null>(null);
   const [fixing, setFixing] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [viewTab, setViewTab] = useState<'explorer' | 'tmdl' | 'translations' | 'memory' | 'bpa'>('explorer');
+  // Lens selection: controlled by the parent when `viewTab` is supplied,
+  // otherwise driven by internal state. Either way clicking a lens tab updates
+  // internal state and notifies the parent so deep-linking stays in sync.
+  const [viewTabInternal, setViewTabInternal] = useState<ModelViewTab>('explorer');
+  const viewTab = controlledViewTab ?? viewTabInternal;
+  const setViewTab = useCallback(
+    (t: ModelViewTab) => {
+      setViewTabInternal(t);
+      onViewTabChange?.(t);
+    },
+    [onViewTabChange]
+  );
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [savingProp, setSavingProp] = useState(false);
   const [savingExpr, setSavingExpr] = useState(false);
@@ -584,6 +639,14 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
   const [frRegex, setFrRegex] = useState(false);
   // Display folders: contextual auto-organize of the selected scope.
   const [dfBusy, setDfBusy] = useState(false);
+  // Staged "organize display folders" proposal: previewed in the tree, written
+  // only when the user clicks the blue Save button.
+  const [dfStaged, setDfStaged] = useState<{
+    datasetId: string;
+    datasetName: string;
+    assignments: FolderAssignment[];
+  } | null>(null);
+  const [dfSaving, setDfSaving] = useState(false);
 
   // Replace a single loaded model in place (after a fix / property edit reload).
   const setModelEntry = useCallback((id: string, data: ModelData) => {
@@ -653,6 +716,18 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
     const path = barePathForKey(bare);
     return path == null ? null : `${id}${MODEL_KEY_SEP}${path}`;
   }, []);
+
+  // Namespaced object paths of objects in the staged display-folder proposal,
+  // so the tree can flag each moved column / measure with a blue dot.
+  const dfPendingPaths = useMemo(() => {
+    const set = new Set<string>();
+    if (!dfStaged) return set;
+    for (const a of dfStaged.assignments) {
+      const bare = a.kind === 'column' ? `${a.table}[${a.name}]` : `[${a.name}]`;
+      set.add(`${dfStaged.datasetId}${MODEL_KEY_SEP}${bare}`);
+    }
+    return set;
+  }, [dfStaged]);
 
   const findingsForKey = useCallback(
     (key: string): BpaFinding[] => {
@@ -1116,8 +1191,10 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
   );
 
   // Auto-organize columns + measures into display folders for the selected
-  // scope. Scans the model, keeps only the in-scope assignments, then applies
-  // them in a single TMDL round-trip and reloads the owning model.
+  // scope. This only *proposes* the change: it scans the model, keeps the
+  // in-scope assignments, and previews them directly in the tree (objects move
+  // into their new folders) without writing anything. The user reviews the tree
+  // and commits with the blue Save button — keeping the action fast and visible.
   const handleOrganizeFolders = useCallback(
     async (key: string) => {
       const scope = dfScopeForKey(key);
@@ -1127,7 +1204,7 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
       if (!scope || !workspaceId || !datasetId) return;
       setCtxMenu(null);
       setDfBusy(true);
-      setStatus({ msg: `Organizing display folders for ${scope.label}…`, color: GRAY_COLOR });
+      setStatus({ msg: `Scanning ${scope.label} for display folders…`, color: GRAY_COLOR });
       try {
         const plan = await scanDisplayFolders(workspaceId, datasetId, name, {
           ...DEFAULT_ORGANIZE_OPTIONS,
@@ -1145,9 +1222,31 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
           });
           return;
         }
-        const res = await applyDisplayFolders(workspaceId, datasetId, assignments);
-        setStatus({ msg: res.detail, color: res.changed > 0 ? '#34c759' : '#2563eb' });
-        if (res.changed > 0) await reloadModelAndCache(datasetId, name);
+        // Preview in the tree: patch the in-memory model so objects appear in
+        // their proposed folders, and expand the affected tables so the change
+        // is visible. Nothing is written until the user clicks Save.
+        setModelsData((prev) =>
+          prev.map((m) => (m.id === datasetId ? { ...m, data: applyFolderAssignments(m.data, assignments) } : m))
+        );
+        const affectedTables = new Set(assignments.map((a) => a.table));
+        setExpanded((prev) => {
+          const next = new Set(prev);
+          const pfx = datasetId + MODEL_KEY_SEP;
+          for (const tName of affectedTables) {
+            next.add(pfx + tName);
+            const md = modelsData.find((m) => m.id === datasetId)?.data;
+            if (md) {
+              const patched = applyFolderAssignments(md, assignments);
+              for (const fk of foldableTableFolderKeys(patched, tName)) next.add(pfx + fk);
+            }
+          }
+          return next;
+        });
+        setDfStaged({ datasetId, datasetName: name, assignments });
+        setStatus({
+          msg: `Proposed ${assignments.length} display-folder change${assignments.length === 1 ? '' : 's'} across ${affectedTables.size} table${affectedTables.size === 1 ? '' : 's'}. Review the tree, then Save.`,
+          color: '#2563eb',
+        });
       } catch (err) {
         setStatus({
           msg: `Organize failed: ${err instanceof Error ? err.message : String(err)}`,
@@ -1157,8 +1256,43 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
         setDfBusy(false);
       }
     },
-    [dfScopeForKey, workspaceId, activeDatasetId, activeDatasetName, modelsData, reloadModelAndCache]
+    [dfScopeForKey, workspaceId, activeDatasetId, activeDatasetName, modelsData]
   );
+
+  // Commit the staged display-folder proposal in one TMDL round-trip. The tree
+  // already shows the change (previewed on propose), so no reload is needed.
+  const handleSaveFolders = useCallback(async () => {
+    if (!dfStaged || dfSaving) return;
+    const { datasetId, assignments } = dfStaged;
+    setDfSaving(true);
+    setStatus({ msg: `Saving ${assignments.length} display-folder change(s)…`, color: GRAY_COLOR });
+    try {
+      const res = await applyDisplayFolders(workspaceId, datasetId, assignments);
+      setDfStaged(null);
+      setStatus({ msg: res.detail, color: res.changed > 0 ? '#34c759' : '#2563eb' });
+    } catch (err) {
+      setStatus({
+        msg: `Save failed: ${err instanceof Error ? err.message : String(err)}`,
+        color: '#ff3b30',
+      });
+    } finally {
+      setDfSaving(false);
+    }
+  }, [dfStaged, dfSaving, workspaceId]);
+
+  // Discard the staged proposal: revert the tree preview (objects back to no
+  // folder) and clear the staged plan. Nothing was written, so this is local.
+  const handleDiscardFolders = useCallback(() => {
+    if (!dfStaged || dfSaving) return;
+    const { datasetId, assignments } = dfStaged;
+    const reverts = assignments.map((a) => ({ ...a, folder: '' }));
+    setModelsData((prev) =>
+      prev.map((m) => (m.id === datasetId ? { ...m, data: applyFolderAssignments(m.data, reverts) } : m))
+    );
+    setDfStaged(null);
+    setStatus({ msg: 'Discarded the staged display-folder changes.', color: '#2563eb' });
+  }, [dfStaged, dfSaving]);
+
 
   // Create the Direct Lake warm-up notebook and open it for a manual "Run all".
   const handleCreateWarm = useCallback(async () => {
@@ -1985,8 +2119,8 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
         <Tooltip
           content={
             dfSelScope
-              ? `Auto-organize ${dfSelScope.label} into display folders`
-              : 'Select the model, a table, column or measure to auto-organize its display folders'
+              ? `Propose display folders for ${dfSelScope.label} — preview in the tree, then Save`
+              : 'Select the model, a table, column or measure to propose its display folders'
           }
           relationship="label"
         >
@@ -2143,6 +2277,7 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
               const path = key ? objectPathForKey(key) : null;
               const hasFix = !!path && fixablePaths.has(path);
               const hasIssue = !!path && issuePaths.has(path);
+              const isStagedFolder = !!path && dfPendingPaths.has(path);
               return (
                 <div
                   key={option}
@@ -2178,6 +2313,18 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
                         height: '7px',
                         borderRadius: '50%',
                         backgroundColor: hasFix ? ICON_ACCENT : GRAY_COLOR,
+                        flexShrink: 0,
+                      }}
+                    />
+                  )}
+                  {isStagedFolder && (
+                    <span
+                      title="Staged display-folder change — Save to apply"
+                      style={{
+                        width: '7px',
+                        height: '7px',
+                        borderRadius: '50%',
+                        backgroundColor: '#2563eb',
                         flexShrink: 0,
                       }}
                     />
@@ -2237,6 +2384,46 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
                 onClick={handleDiscardAllMeasures}
               >
                 Discard all
+              </Button>
+            </div>
+          )}
+          {dfStaged && (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 12px',
+                marginBottom: '8px',
+                borderRadius: '6px',
+                background: '#e8f0fe',
+                border: '1px solid #aecbfa',
+                fontFamily: FONT_FAMILY,
+                fontSize: '13px',
+              }}
+            >
+              <FolderSwap20Regular primaryFill="#2563eb" style={{ flexShrink: 0 }} />
+              <span style={{ color: '#1a4480' }}>
+                {dfStaged.assignments.length} display-folder change
+                {dfStaged.assignments.length === 1 ? '' : 's'} proposed — shown in the tree (blue dots)
+              </span>
+              <div className={styles.grow} />
+              <Button
+                appearance="primary"
+                size="small"
+                icon={dfSaving ? <Spinner size="tiny" /> : <Save20Regular />}
+                disabled={dfSaving}
+                onClick={handleSaveFolders}
+              >
+                Save ({dfStaged.assignments.length})
+              </Button>
+              <Button
+                appearance="subtle"
+                size="small"
+                disabled={dfSaving}
+                onClick={handleDiscardFolders}
+              >
+                Discard
               </Button>
             </div>
           )}
@@ -2684,7 +2871,7 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
                   <CtxDivider />
                   <CtxItem
                     label="Organize display folders"
-                    title={`Auto-organize columns & measures in ${scope.label} into display folders`}
+                    title={`Propose display folders for columns & measures in ${scope.label} — preview in the tree, then Save`}
                     dotColor={ICON_ACCENT}
                     disabled={dfBusy}
                     onClick={() => void handleOrganizeFolders(ctxMenu.key)}

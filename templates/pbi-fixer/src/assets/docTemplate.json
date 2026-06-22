@@ -200,7 +200,7 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Measure"
+                      "Entity": "_Doc Measures"
                     }
                   },
                   "Property": "Column Is Visible Icon"
@@ -215,7 +215,7 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Measure"
+                      "Entity": "_Doc Measures"
                     }
                   },
                   "Property": "Column Is Unique Icon"
@@ -230,7 +230,7 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Measure"
+                      "Entity": "_Doc Measures"
                     }
                   },
                   "Property": "Column Is Key Icon"
@@ -534,7 +534,7 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Measure"
+                      "Entity": "_Doc Measures"
                     }
                   },
                   "Property": "Title - Columns"
@@ -587,7 +587,7 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Measure"
+                      "Entity": "_Doc Measures"
                     }
                   },
                   "Property": "Title - Columns"
@@ -651,7 +651,7 @@
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Measure"
+                "Entity": "_Doc Measures"
               }
             },
             "Property": "Column Count"
@@ -663,7 +663,7 @@
           "From": [
             {
               "Name": "k",
-              "Entity": "Measure",
+              "Entity": "_Doc Measures",
               "Type": 0
             }
           ],
@@ -792,7 +792,7 @@
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Measure"
+                "Entity": "_Doc Measures"
               }
             },
             "Property": "Column Is Visible Icon"
@@ -807,7 +807,7 @@
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Measure"
+                "Entity": "_Doc Measures"
               }
             },
             "Property": "Column Is Unique Icon"
@@ -822,7 +822,7 @@
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Measure"
+                "Entity": "_Doc Measures"
               }
             },
             "Property": "Column Is Key Icon"
@@ -970,7 +970,7 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Measure"
+                      "Entity": "_Doc Measures"
                     }
                   },
                   "Property": "Measure Is Visible Icon"
@@ -2666,7 +2666,7 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Measure"
+                      "Entity": "_Doc Measures"
                     }
                   },
                   "Property": "Title - Measures"
@@ -2754,7 +2754,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Model Measures"
+                "Entity": "_Model Measures"
               }
             },
             "Property": "Measure Display Folder"
@@ -2770,7 +2770,7 @@
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Measure"
+                "Entity": "_Doc Measures"
               }
             },
             "Property": "Measure Is Visible Icon"
@@ -2983,7 +2983,7 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Measure"
+                      "Entity": "_Doc Measures"
                     }
                   },
                   "Property": "Table Is Visible Icon"
@@ -2998,7 +2998,7 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Measure"
+                      "Entity": "_Doc Measures"
                     }
                   },
                   "Property": "Table Is Calculation Group Icon"
@@ -3262,7 +3262,7 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Measure"
+                      "Entity": "_Doc Measures"
                     }
                   },
                   "Property": "Title - Tables"
@@ -3367,7 +3367,7 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Measure"
+                      "Entity": "_Doc Measures"
                     }
                   },
                   "Property": "Title - Tables"
@@ -3408,7 +3408,7 @@
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Measure"
+                "Entity": "_Doc Measures"
               }
             },
             "Property": "Table Refresh Enabled Icon"
@@ -3424,7 +3424,7 @@
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Measure"
+                "Entity": "_Doc Measures"
               }
             },
             "Property": "Table Is Calculation Group Icon"
@@ -3529,7 +3529,7 @@
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Measure"
+                "Entity": "_Doc Measures"
               }
             },
             "Property": "Table Is Visible Icon"
@@ -4271,7 +4271,7 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Measure"
+                      "Entity": "_Doc Measures"
                     }
                   },
                   "Property": "Relationship Is Active Icon"
@@ -4286,7 +4286,7 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Measure"
+                      "Entity": "_Doc Measures"
                     }
                   },
                   "Property": "Relationship Cardinality Icon"
@@ -4301,7 +4301,7 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Measure"
+                      "Entity": "_Doc Measures"
                     }
                   },
                   "Property": "Relationship Cross Filtering Behaviour Icon"
@@ -4554,7 +4554,7 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Measure"
+                      "Entity": "_Doc Measures"
                     }
                   },
                   "Property": "Title - Relationships"
@@ -4638,7 +4638,7 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Measure"
+                      "Entity": "_Doc Measures"
                     }
                   },
                   "Property": "Title - Relationships"
@@ -4672,7 +4672,7 @@
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Measure"
+                "Entity": "_Doc Measures"
               }
             },
             "Property": "Relationship Cardinality Icon"
@@ -4687,7 +4687,7 @@
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Measure"
+                "Entity": "_Doc Measures"
               }
             },
             "Property": "Relationship Cross Filtering Behaviour Icon"
@@ -4702,7 +4702,7 @@
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Measure"
+                "Entity": "_Doc Measures"
               }
             },
             "Property": "Relationship Is Active Icon"
@@ -5185,7 +5185,7 @@
                     "From": [
                       {
                         "Name": "k",
-                        "Entity": "Measure",
+                        "Entity": "_Doc Measures",
                         "Type": 0
                       }
                     ],
@@ -5218,7 +5218,7 @@
                     "Measure": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Measure"
+                          "Entity": "_Doc Measures"
                         }
                       },
                       "Property": "Column Count"
@@ -5258,7 +5258,7 @@
                     "Column": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Model Measures"
+                          "Entity": "_Model Measures"
                         }
                       },
                       "Property": "Measure Display Folder"
@@ -5531,7 +5531,7 @@
                     "Measure": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Measure"
+                          "Entity": "_Doc Measures"
                         }
                       },
                       "Property": "Table Refresh Enabled Icon"
@@ -5755,7 +5755,7 @@
                     "From": [
                       {
                         "Name": "k",
-                        "Entity": "Measure",
+                        "Entity": "_Doc Measures",
                         "Type": 0
                       }
                     ],
@@ -5788,7 +5788,7 @@
                     "Measure": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Measure"
+                          "Entity": "_Doc Measures"
                         }
                       },
                       "Property": "Column Count"
@@ -5828,7 +5828,7 @@
                     "Column": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Model Measures"
+                          "Entity": "_Model Measures"
                         }
                       },
                       "Property": "Measure Display Folder"
@@ -6098,7 +6098,7 @@
                     "Measure": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Measure"
+                          "Entity": "_Doc Measures"
                         }
                       },
                       "Property": "Table Refresh Enabled Icon"
@@ -6322,7 +6322,7 @@
                     "From": [
                       {
                         "Name": "k",
-                        "Entity": "Measure",
+                        "Entity": "_Doc Measures",
                         "Type": 0
                       }
                     ],
@@ -6355,7 +6355,7 @@
                     "Measure": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Measure"
+                          "Entity": "_Doc Measures"
                         }
                       },
                       "Property": "Column Count"
@@ -6395,7 +6395,7 @@
                     "Column": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Model Measures"
+                          "Entity": "_Model Measures"
                         }
                       },
                       "Property": "Measure Display Folder"
@@ -6665,7 +6665,7 @@
                     "Measure": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Measure"
+                          "Entity": "_Doc Measures"
                         }
                       },
                       "Property": "Table Refresh Enabled Icon"
@@ -6891,7 +6891,7 @@
                     "From": [
                       {
                         "Name": "k",
-                        "Entity": "Measure",
+                        "Entity": "_Doc Measures",
                         "Type": 0
                       }
                     ],
@@ -6924,7 +6924,7 @@
                     "Measure": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Measure"
+                          "Entity": "_Doc Measures"
                         }
                       },
                       "Property": "Column Count"
@@ -6964,7 +6964,7 @@
                     "Column": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Model Measures"
+                          "Entity": "_Model Measures"
                         }
                       },
                       "Property": "Measure Display Folder"
@@ -7237,7 +7237,7 @@
                     "Measure": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Measure"
+                          "Entity": "_Doc Measures"
                         }
                       },
                       "Property": "Table Refresh Enabled Icon"

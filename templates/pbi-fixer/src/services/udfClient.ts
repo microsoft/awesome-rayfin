@@ -12,7 +12,7 @@
  */
 import { getUdfConfig } from '@/config/udfConfig';
 
-import { getFabricToken, PbiSignInRequiredError } from './fabricAuth';
+import { getFabricToken, getStorageToken, PbiSignInRequiredError } from './fabricAuth';
 
 /**
  * Raised when a Fabric call fails because the backing capacity is paused /
@@ -97,6 +97,21 @@ async function invoke<T>(url: string, params: Record<string, unknown>): Promise<
 async function invokeRaw<T>(url: string, params: Record<string, unknown>): Promise<T> {
   const token = await getFabricToken();
   return invokeWithBody<T>(url, params, token);
+}
+
+/**
+ * Like `invoke`, but injects a Storage-audience token as `onelakeToken` in the
+ * body (for OneLake DFS calls, which reject the Power BI token) while still
+ * using the Power BI token as the invocation bearer. Both tokens are acquired
+ * silently; a first-time Storage consent surfaces as `PbiSignInRequiredError`
+ * so the caller can retry from a user gesture.
+ */
+async function invokeWithStorage<T>(
+  url: string,
+  params: Record<string, unknown>
+): Promise<T> {
+  const [bearer, onelakeToken] = await Promise.all([getFabricToken(), getStorageToken()]);
+  return invokeWithBody<T>(url, { ...params, onelakeToken }, bearer);
 }
 
 async function invokeWithBody<T>(
@@ -302,7 +317,7 @@ export const udf = {
   ): Promise<{ html: string }> =>
     invokeRaw<{ html: string }>(getUdfConfig().urls.githubLandingHtml, {
       githubToken,
-      context: JSON.stringify(context),
+      pageContext: JSON.stringify(context),
     }),
 
   /** Propose a folder name per workspace item (workspace cleanup) via GitHub
@@ -318,6 +333,28 @@ export const udf = {
         githubToken,
         items: JSON.stringify(items),
       }
+    ),
+
+  /** Read the team's shared guideline conventions JSON blob from a lakehouse.
+   *  Returns `{ found, payload }`; `found:false` means no file exists yet. */
+  loadGuidelines: <T = unknown>(
+    workspaceId: string,
+    lakehouseId: string
+  ): Promise<{ found: boolean; payload: T | null }> =>
+    invokeWithStorage<{ found: boolean; payload: T | null }>(
+      getUdfConfig().urls.loadGuidelines,
+      { workspaceId, lakehouseId }
+    ),
+
+  /** Write the team's shared guideline conventions JSON blob to a lakehouse. */
+  saveGuidelines: (
+    workspaceId: string,
+    lakehouseId: string,
+    payload: unknown
+  ): Promise<{ saved: boolean; bytes: number }> =>
+    invokeWithStorage<{ saved: boolean; bytes: number }>(
+      getUdfConfig().urls.saveGuidelines,
+      { workspaceId, lakehouseId, payload: JSON.stringify(payload) }
     ),
 };
 

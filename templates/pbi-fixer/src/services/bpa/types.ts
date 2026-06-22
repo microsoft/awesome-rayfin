@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Faithful TS port of `sempy_labs._model_bpa_rules`. Public types only.
 //
 // Each rule is evaluated against an "object" of a particular *scope*

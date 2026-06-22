@@ -98,3 +98,45 @@ export async function getRefreshHistory(
   );
   return data.value ?? [];
 }
+
+/** Refresh-history statuses that mean the refresh has stopped running. */
+const TERMINAL_STATUSES = new Set(['Completed', 'Failed', 'Disabled', 'Cancelled']);
+
+export interface RefreshWaitResult {
+  /** Final status as reported by the refresh history (e.g. "Completed"). */
+  status: string;
+  /** True when the refresh finished successfully. */
+  ok: boolean;
+  /** Whether polling gave up before a terminal status was observed. */
+  timedOut: boolean;
+}
+
+/**
+ * Poll the dataset refresh history until the most recent refresh reaches a
+ * terminal status. Pass `baselineRequestId` (the newest request id captured
+ * *before* triggering the refresh) so we wait for the *new* refresh to appear
+ * rather than reading a previous, already-completed one.
+ */
+export async function waitForLatestRefresh(
+  workspaceId: string,
+  datasetId: string,
+  baselineRequestId?: string,
+  opts: { intervalMs?: number; timeoutMs?: number } = {}
+): Promise<RefreshWaitResult> {
+  const intervalMs = opts.intervalMs ?? 1500;
+  const timeoutMs = opts.timeoutMs ?? 120_000;
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    const history = await getRefreshHistory(workspaceId, datasetId, 1);
+    const latest = history[0];
+    const isNew = !!latest && latest.requestId !== baselineRequestId;
+    const status = latest?.status ?? '';
+    if (isNew && status && TERMINAL_STATUSES.has(status)) {
+      return { status, ok: status === 'Completed', timedOut: false };
+    }
+    await new Promise((r) => setTimeout(r, intervalMs));
+  }
+  return { status: 'Unknown', ok: false, timedOut: true };
+}
+

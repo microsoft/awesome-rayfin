@@ -67,6 +67,7 @@ export interface VisualProperties {
   title: string;
   x: number;
   y: number;
+  z: number;
   width: number;
   height: number;
   hidden: boolean;
@@ -125,6 +126,7 @@ export function getVisualProperties(reportData: ReportData, key: string): Visual
     title: v.title,
     x: v.x,
     y: v.y,
+    z: v.z,
     width: v.width,
     height: v.height,
     hidden: v.hidden,

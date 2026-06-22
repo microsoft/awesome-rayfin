@@ -80,6 +80,12 @@ function guidToKind(guid: string): IbcsOrientation | null {
   return null;
 }
 
+/** Public helper: the IBCS orientation kind ('column' | 'bar') of an IBCS
+ *  Multi-Tier custom-visual GUID, or null when the type is not one of them. */
+export function ibcsKindOf(visualType: string): IbcsOrientation | null {
+  return guidToKind(visualType);
+}
+
 const VISUAL_PATH_RE = /definition\/pages\/([^/]+)\/visuals\/([^/]+)\/visual\.json$/;
 
 /** Scan a report for IBCS Multi-Tier visuals and report which ones disagree
@@ -190,5 +196,68 @@ export async function applyIbcsOrientation(
         : updated.length === 0
           ? 'All IBCS visuals already follow the rule (or none were found).'
           : 'No change was written.',
+  };
+}
+
+/** Flip the orientation of a SINGLE IBCS Multi-Tier visual to match its
+ *  category dimension (time → column, structure → bar). One round trip. */
+export async function applyIbcsOrientationToVisual(
+  workspaceId: string,
+  reportId: string,
+  page: string,
+  visualName: string
+): Promise<IbcsFixResult> {
+  const parts = await loadDefinitionParts('report', workspaceId, reportId);
+  const edits: Record<string, string> = {};
+  const updated: IbcsVisualInfo[] = [];
+
+  for (const part of parts) {
+    if (part.binary) continue;
+    const m = VISUAL_PATH_RE.exec(part.path);
+    if (!m || m[1] !== page || m[2] !== visualName) continue;
+
+    let doc: Record<string, unknown>;
+    try {
+      doc = JSON.parse(part.text) as Record<string, unknown>;
+    } catch {
+      break;
+    }
+    const visual = (doc.visual ?? {}) as Record<string, unknown>;
+    const vType = String(visual.visualType ?? '');
+    const kind = guidToKind(vType);
+    if (!kind) break;
+
+    const category = findCategoryColumn(visual);
+    if (!category) break;
+    const recommended: IbcsOrientation = isTimeProperty(category) ? 'column' : 'bar';
+    if (recommended === kind) break;
+
+    const newGuid = recommended === 'column' ? IBCS_COLUMN_GUID : IBCS_BAR_GUID;
+    const newText = part.text.replace(`"${vType}"`, `"${newGuid}"`);
+    if (newText === part.text) break;
+
+    edits[part.path] = newText;
+    updated.push({
+      page: m[1],
+      visual: m[2],
+      category,
+      current: kind,
+      recommended,
+      needsChange: true,
+    });
+    break;
+  }
+
+  const changed = Object.keys(edits).length
+    ? await saveDefinitionParts('report', workspaceId, reportId, edits)
+    : 0;
+
+  return {
+    changed,
+    updated,
+    detail:
+      changed > 0
+        ? `Re-oriented the IBCS visual to ${updated[0]?.recommended ?? ''} to match its category axis.`
+        : 'The IBCS visual already follows the time-horizontal / category-vertical rule.',
   };
 }

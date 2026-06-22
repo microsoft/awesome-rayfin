@@ -54,6 +54,15 @@ PBI_BASE = "https://api.powerbi.com/v1.0/myorg"
 # proxy cannot be abused as an open SSRF relay.
 PROXY_HOSTS = {"fabric": FABRIC_BASE, "pbi": PBI_BASE}
 
+# OneLake DFS endpoint. Team-shared guideline conventions are persisted as a
+# single small JSON blob in a chosen lakehouse so a whole team sees the same
+# conventions (vs. per-browser localStorage). OneLake ONLY accepts
+# Storage-audience tokens, so these calls use a separate ``onelakeToken`` (the
+# browser acquires scope ``https://storage.azure.com/.default``) rather than the
+# Power BI token used everywhere else.
+ONELAKE_BASE = "https://onelake.dfs.fabric.microsoft.com"
+GUIDELINES_FILE = "Files/pbi-fixer-guidelines-conventions.json"
+
 TARGET_W = 1280
 TARGET_H = 720
 PIE_TYPES = {"pieChart", "donutChart", "funnel"}
@@ -105,6 +114,22 @@ def _request(fabric_token: str, url: str, method: str = "GET",
     req.add_header("Content-Type", "application/json")
     try:
         with urllib.request.urlopen(req, timeout=100) as r:
+            return _Resp(r.status, dict(r.headers), r.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        return _Resp(e.code, dict(e.headers), e.read().decode("utf-8"))
+
+
+def _onelake_request(onelake_token: str, url: str, method: str = "GET",
+                     data: bytes | None = None,
+                     headers: dict | None = None) -> _Resp:
+    """Call a OneLake DFS (ADLS Gen2) endpoint with a Storage-audience token."""
+    req = urllib.request.Request(url=url, data=data, method=method)
+    req.add_header("Authorization", f"Bearer {onelake_token}")
+    if headers:
+        for k, v in headers.items():
+            req.add_header(k, v)
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
             return _Resp(r.status, dict(r.headers), r.read().decode("utf-8"))
     except urllib.error.HTTPError as e:
         return _Resp(e.code, dict(e.headers), e.read().decode("utf-8"))
@@ -413,6 +438,76 @@ def fabric_proxy(fabricToken: str, api: str, path: str, method: str = "GET",
 
 
 # --------------------------------------------------------------------------- #
+# Guideline conventions — team-shared persistence in OneLake (Storage token)
+# --------------------------------------------------------------------------- #
+@udf.function()
+def load_guidelines(onelakeToken: str, workspaceId: str,
+                    lakehouseId: str) -> dict:
+    """Read the team's guideline conventions JSON blob from a lakehouse.
+
+    Returns ``{"found": bool, "payload": <parsed json|null>}``. A missing file
+    (first use) yields ``{"found": False, "payload": None}`` rather than an
+    error. ``onelakeToken`` must be a Storage-audience token; the file lives at
+    ``<workspaceId>/<lakehouseId>/Files/pbi-fixer-guidelines-conventions.json``.
+    """
+    url = f"{ONELAKE_BASE}/{workspaceId}/{lakehouseId}/{GUIDELINES_FILE}"
+    resp = _onelake_request(onelakeToken, url, "GET")
+    if resp.status == 404:
+        return {"found": False, "payload": None}
+    if resp.status >= 400:
+        raise RuntimeError(f"OneLake read failed ({resp.status}): {resp.text}")
+    try:
+        payload = json.loads(resp.text) if resp.text else None
+    except (ValueError, TypeError):
+        payload = None
+    return {"found": payload is not None, "payload": payload}
+
+
+@udf.function()
+def save_guidelines(onelakeToken: str, workspaceId: str, lakehouseId: str,
+                    payload: str) -> dict:
+    """Write the team's guideline conventions JSON blob to a lakehouse.
+
+    ``payload`` is a JSON string (the questionnaire store). The blob is created
+    / overwritten via the standard ADLS Gen2 create -> append -> flush sequence
+    at ``<workspaceId>/<lakehouseId>/Files/pbi-fixer-guidelines-conventions.json``.
+    ``onelakeToken`` must be a Storage-audience token. Returns
+    ``{"saved": True, "bytes": <int>}``.
+    """
+    try:
+        parsed = json.loads(payload) if payload else {}
+    except (ValueError, TypeError):
+        raise ValueError("payload must be a JSON string")
+    content = json.dumps(parsed, ensure_ascii=False).encode("utf-8")
+    base = f"{ONELAKE_BASE}/{workspaceId}/{lakehouseId}/{GUIDELINES_FILE}"
+
+    # 1. create (overwrites/truncates any existing file)
+    created = _onelake_request(onelakeToken, f"{base}?resource=file", "PUT")
+    if created.status >= 400:
+        raise RuntimeError(
+            f"OneLake create failed ({created.status}): {created.text}"
+        )
+    # 2. append the bytes at offset 0
+    appended = _onelake_request(
+        onelakeToken, f"{base}?action=append&position=0", "PATCH",
+        data=content, headers={"Content-Type": "application/octet-stream"},
+    )
+    if appended.status >= 400:
+        raise RuntimeError(
+            f"OneLake append failed ({appended.status}): {appended.text}"
+        )
+    # 3. flush, committing exactly the bytes written
+    flushed = _onelake_request(
+        onelakeToken, f"{base}?action=flush&position={len(content)}", "PATCH",
+    )
+    if flushed.status >= 400:
+        raise RuntimeError(
+            f"OneLake flush failed ({flushed.status}): {flushed.text}"
+        )
+    return {"saved": True, "bytes": len(content)}
+
+
+# --------------------------------------------------------------------------- #
 # GitHub device-flow + Copilot helpers (stdlib urllib)
 # --------------------------------------------------------------------------- #
 def _github_form_post(url: str, fields: dict, auth: str | None = None) -> tuple:
@@ -696,7 +791,7 @@ def _strip_code_fence(text: str) -> str:
 
 
 @udf.function()
-def github_landing_html(githubToken: str, context: str) -> dict:
+def github_landing_html(githubToken: str, pageContext: str) -> dict:
     """Author a bespoke full-bleed HTML landing page for a Power BI report.
 
     ``context`` is a JSON-object string of the shape produced by the app:
@@ -709,7 +804,7 @@ def github_landing_html(githubToken: str, context: str) -> dict:
     call.
     """
     try:
-        ctx = json.loads(context) if context else {}
+        ctx = json.loads(pageContext) if pageContext else {}
     except (ValueError, TypeError):
         ctx = {}
     if not isinstance(ctx, dict):

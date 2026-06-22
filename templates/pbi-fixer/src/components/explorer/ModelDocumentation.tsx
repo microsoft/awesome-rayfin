@@ -65,6 +65,21 @@ const useStyles = makeStyles({
   cardHint: { fontSize: '12px', color: GRAY_COLOR },
   row: { display: 'flex', alignItems: 'center', ...shorthands.gap('12px'), flexWrap: 'wrap' },
   tableList: { fontSize: '12px', color: '#333', margin: 0, paddingLeft: '18px' },
+  step: { display: 'flex', alignItems: 'center', ...shorthands.gap('6px'), fontSize: '12px', color: ICON_ACCENT },
+  stepBadge: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '22px',
+    height: '22px',
+    flexShrink: 0,
+    ...shorthands.borderRadius('50%'),
+    backgroundColor: ICON_ACCENT,
+    color: '#ffffff',
+    fontSize: '12px',
+    fontWeight: '700',
+  },
+  intro: { fontSize: '12px', color: GRAY_COLOR, flexShrink: 0 },
 });
 
 export function ModelDocumentation({
@@ -79,9 +94,11 @@ export function ModelDocumentation({
   const reportReady = !!reportId;
 
   const [tablesBusy, setTablesBusy] = useState(false);
+  const [tablesStep, setTablesStep] = useState('');
   const [tablesResult, setTablesResult] = useState<Result | null>(null);
 
   const [refreshBusy, setRefreshBusy] = useState(false);
+  const [refreshStep, setRefreshStep] = useState('');
   const [refreshResult, setRefreshResult] = useState<Result | null>(null);
 
   const [pageBusy, setPageBusy] = useState(false);
@@ -90,26 +107,30 @@ export function ModelDocumentation({
   const runAddTables = useCallback(async () => {
     setTablesBusy(true);
     setTablesResult(null);
+    setTablesStep('Starting…');
     try {
-      const r = await addDocumentationTables(workspaceId, datasetId);
+      const r = await addDocumentationTables(workspaceId, datasetId, setTablesStep);
       setTablesResult({ ok: r.changed > 0 || r.created.length === 0, text: r.detail });
     } catch (e) {
       setTablesResult({ ok: false, text: e instanceof Error ? e.message : String(e) });
     } finally {
       setTablesBusy(false);
+      setTablesStep('');
     }
   }, [workspaceId, datasetId]);
 
   const runRefresh = useCallback(async () => {
     setRefreshBusy(true);
     setRefreshResult(null);
+    setRefreshStep('Starting refresh…');
     try {
-      const r = await refreshDocumentationTables(workspaceId, datasetId);
-      setRefreshResult({ ok: true, text: r.detail });
+      const r = await refreshDocumentationTables(workspaceId, datasetId, undefined, setRefreshStep);
+      setRefreshResult({ ok: r.ok, text: r.detail });
     } catch (e) {
       setRefreshResult({ ok: false, text: e instanceof Error ? e.message : String(e) });
     } finally {
       setRefreshBusy(false);
+      setRefreshStep('');
     }
   }, [workspaceId, datasetId]);
 
@@ -133,12 +154,14 @@ export function ModelDocumentation({
         <span className={styles.status}>
           {modelReady ? `Model documentation · ${datasetName}` : 'Select a semantic model first.'}
         </span>
+        <span className={styles.intro}>· Three steps: 1 Add tables → 2 Refresh → 3 Add page</span>
       </div>
 
       <div className={styles.body}>
         {/* 1 — Documentation tables */}
         <div className={styles.card}>
           <div className={styles.cardHead}>
+            <span className={styles.stepBadge}>1</span>
             <Table20Regular style={{ color: ICON_ACCENT }} />
             <span className={styles.cardTitle}>Add documentation tables</span>
           </div>
@@ -169,6 +192,12 @@ export function ModelDocumentation({
             >
               Add documentation tables
             </Button>
+            {tablesBusy && tablesStep && (
+              <span className={styles.step}>
+                <Spinner size="tiny" />
+                {tablesStep}
+              </span>
+            )}
           </div>
           {tablesResult && (
             <MessageBar intent={tablesResult.ok ? 'success' : 'error'}>
@@ -180,6 +209,7 @@ export function ModelDocumentation({
         {/* 2 — Refresh */}
         <div className={styles.card}>
           <div className={styles.cardHead}>
+            <span className={styles.stepBadge}>2</span>
             <ArrowSync20Regular style={{ color: ICON_ACCENT }} />
             <span className={styles.cardTitle}>Refresh documentation tables</span>
           </div>
@@ -196,6 +226,12 @@ export function ModelDocumentation({
             >
               Refresh documentation tables
             </Button>
+            {refreshBusy && refreshStep && (
+              <span className={styles.step}>
+                <Spinner size="tiny" />
+                {refreshStep}
+              </span>
+            )}
           </div>
           {refreshResult && (
             <MessageBar intent={refreshResult.ok ? 'success' : 'error'}>
@@ -207,6 +243,7 @@ export function ModelDocumentation({
         {/* 3 — Documentation page */}
         <div className={styles.card}>
           <div className={styles.cardHead}>
+            <span className={styles.stepBadge}>3</span>
             <DocumentArrowRight20Regular style={{ color: ICON_ACCENT }} />
             <span className={styles.cardTitle}>Add documentation page to the report</span>
           </div>

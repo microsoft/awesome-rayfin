@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Engine that mirrors the surface of Python's `TOMWrapper` (`tom.*`)
 // closely enough that the ported rule predicates stay readable and
 // 1:1 with the source. ModelData (TMDL-derived) is the only required

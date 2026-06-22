@@ -509,3 +509,47 @@ export function formatAnswerValue(q: GuidelineQuestion, a: Answer | undefined): 
   if (a.other?.trim()) parts.push(a.other.trim());
   return parts.length ? parts.join(' · ') : null;
 }
+
+// ---------------------------------------------------------------------------
+// Shared team-answer access — used by both the questionnaire (writer) and the
+// rendered guideline body (reader), so a team's answers flow into the prose
+// below as live placeholders.
+// ---------------------------------------------------------------------------
+
+/** localStorage key holding the team's questionnaire answers. */
+export const GUIDELINES_STORAGE_KEY = 'pbi-fixer:guidelines-answers:v1';
+
+/** Window event dispatched whenever answers are persisted, so the rendered
+ *  guidelines can re-read storage and update without a reload. */
+export const GUIDELINES_ANSWERS_EVENT = 'pbi-fixer:guidelines-answers-changed';
+
+const QUESTION_BY_ID = new Map(GUIDELINE_QUESTIONS.map((q) => [q.id, q]));
+
+/** Read the persisted team answers from localStorage (empty if none / corrupt). */
+export function loadGuidelineAnswers(): Record<string, Answer> {
+  try {
+    const raw = localStorage.getItem(GUIDELINES_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as { answers?: Record<string, Answer> };
+      return parsed.answers ?? {};
+    }
+  } catch {
+    /* ignore corrupt / unavailable storage */
+  }
+  return {};
+}
+
+/** The team's answer for a question id, or null when it has not been answered. */
+export function teamAnswer(answers: Record<string, Answer>, qid: string): string | null {
+  const q = QUESTION_BY_ID.get(qid);
+  return q ? formatAnswerValue(q, answers[qid]) : null;
+}
+
+/** The neutral default shown in a placeholder slot before the team answers. */
+export function defaultPlaceholder(qid: string): string {
+  const q = QUESTION_BY_ID.get(qid);
+  if (!q) return '';
+  if (q.options?.length) return q.options[0];
+  return (q.placeholder ?? '').replace(/^e\.g\.\s*/i, '').trim();
+}
+

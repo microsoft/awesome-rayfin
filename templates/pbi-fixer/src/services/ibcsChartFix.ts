@@ -221,6 +221,46 @@ function familyAllowed(family: ChartFamily, options: ChartFixOptions): boolean {
   );
 }
 
+/** Public detector: the IBCS chart family of a native cartesian visualType,
+ *  or null when the type is not a native bar / column / line chart. */
+export function chartFamilyOf(visualType: string): ChartFamily | null {
+  return familyOf(visualType);
+}
+
+/** Apply IBCS format (+ optional re-orient) to a single parsed visual doc.
+ *  Mutates `doc` in place; returns what changed. */
+function fixVisualDoc(
+  doc: ObjMap,
+  options: ChartFixOptions
+): { touched: boolean; formatted: number; reoriented: number } {
+  const visual = (doc.visual ?? {}) as ObjMap;
+  const currentType = String(visual.visualType ?? '');
+  const family = familyOf(currentType);
+  if (!family || !familyAllowed(family, options)) {
+    return { touched: false, formatted: 0, reoriented: 0 };
+  }
+
+  const category = findCategoryColumn(visual);
+  const target = options.reorient ? recommendFamily(family, category) : family;
+
+  let touched = false;
+  let reoriented = 0;
+  if (target !== family) {
+    const newType = convertVisualType(currentType, target);
+    if (newType !== currentType) {
+      visual.visualType = newType;
+      reoriented = 1;
+      touched = true;
+    }
+  }
+  let formatted = 0;
+  if (applyIbcsFormat(visual, target)) {
+    formatted = 1;
+    touched = true;
+  }
+  return { touched, formatted, reoriented };
+}
+
 /** Scan a report's native cartesian charts and report which need IBCS
  *  formatting and/or an orientation change. */
 export async function scanChartFixes(
@@ -297,22 +337,9 @@ export async function applyChartFixes(
     const family = familyOf(currentType);
     if (!family || !familyAllowed(family, options)) continue;
 
-    const category = findCategoryColumn(visual);
-    const target = options.reorient ? recommendFamily(family, category) : family;
-
-    let touched = false;
-    if (target !== family) {
-      const newType = convertVisualType(currentType, target);
-      if (newType !== currentType) {
-        visual.visualType = newType;
-        reoriented += 1;
-        touched = true;
-      }
-    }
-    if (applyIbcsFormat(visual, target)) {
-      formatted += 1;
-      touched = true;
-    }
+    const { touched, formatted: f, reoriented: r } = fixVisualDoc(doc, options);
+    formatted += f;
+    reoriented += r;
 
     if (touched) {
       edits[part.path] = JSON.stringify(doc, null, 2);
@@ -334,6 +361,53 @@ export async function applyChartFixes(
         : formatted === 0 && reoriented === 0
           ? 'All native charts already follow the IBCS style (or none were found).'
           : 'No change was written.',
+  };
+}
+
+/** Apply IBCS formatting (+ optional orientation) to a SINGLE native cartesian
+ *  chart, identified by its page + visual internal name. One round trip. */
+export async function applyChartFixToVisual(
+  workspaceId: string,
+  reportId: string,
+  page: string,
+  visualName: string,
+  options: ChartFixOptions = DEFAULT_CHART_FIX_OPTIONS
+): Promise<ChartFixResult> {
+  const parts = await loadDefinitionParts('report', workspaceId, reportId);
+  const edits: Record<string, string> = {};
+  let formatted = 0;
+  let reoriented = 0;
+
+  for (const part of parts) {
+    if (part.binary) continue;
+    const m = VISUAL_PATH_RE.exec(part.path);
+    if (!m || m[1] !== page || m[2] !== visualName) continue;
+    let doc: ObjMap;
+    try {
+      doc = JSON.parse(part.text) as ObjMap;
+    } catch {
+      continue;
+    }
+    const { touched, formatted: f, reoriented: r } = fixVisualDoc(doc, options);
+    formatted += f;
+    reoriented += r;
+    if (touched) edits[part.path] = JSON.stringify(doc, null, 2);
+    break;
+  }
+
+  const changed = Object.keys(edits).length
+    ? await saveDefinitionParts('report', workspaceId, reportId, edits)
+    : 0;
+
+  return {
+    changed,
+    formatted,
+    reoriented,
+    detail:
+      changed > 0
+        ? `IBCS-styled the chart` +
+          (reoriented > 0 ? ' and re-oriented it to match its category axis.' : '.')
+        : 'The chart already follows the IBCS style.',
   };
 }
 

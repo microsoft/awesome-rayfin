@@ -11,6 +11,8 @@ import {
   Checkbox,
   Field,
   SpinButton,
+  Dropdown,
+  Option,
   makeStyles,
   shorthands,
 } from '@fluentui/react-components';
@@ -26,8 +28,45 @@ import { FONT_FAMILY, BORDER_COLOR, GRAY_COLOR, ICON_ACCENT, SECTION_BG, HOVER_B
 import { buildReportTree, getPageProperties, getVisualProperties } from '@/explorer/reportTree';
 import { filterTreeOptions } from '@/explorer/treeUtils';
 import { loadReportDefinition, saveReportDefinition, type ReportEdits } from '@/services/fabricRest';
+import { chartFamilyOf, applyChartFixToVisual, DEFAULT_CHART_FIX_OPTIONS } from '@/services/ibcsChartFix';
+import { applyIbcsOrientationToVisual, ibcsKindOf } from '@/services/ibcsVisualFix';
 import { ReportPreview } from './ReportPreview';
 import { LiveReportPreview } from './LiveReportPreview';
+
+// Catalog of Power BI PBIR `visual.visualType` values offered in the chart-type
+// picker. Cartesian types (column/bar/line/area/combo/scatter/ribbon/waterfall)
+// share field wells and swap cleanly; non-cartesian types (table/matrix/card/
+// slicer/map/gauge/funnel) may need their field wells reworked after a swap.
+const VISUAL_TYPE_CHOICES: { type: string; label: string }[] = [
+  { type: 'columnChart', label: 'Stacked column' },
+  { type: 'clusteredColumnChart', label: 'Clustered column' },
+  { type: 'hundredPercentStackedColumnChart', label: '100% stacked column' },
+  { type: 'barChart', label: 'Stacked bar' },
+  { type: 'clusteredBarChart', label: 'Clustered bar' },
+  { type: 'hundredPercentStackedBarChart', label: '100% stacked bar' },
+  { type: 'lineChart', label: 'Line' },
+  { type: 'areaChart', label: 'Area' },
+  { type: 'stackedAreaChart', label: 'Stacked area' },
+  { type: 'lineClusteredColumnComboChart', label: 'Line & clustered column' },
+  { type: 'lineStackedColumnComboChart', label: 'Line & stacked column' },
+  { type: 'ribbonChart', label: 'Ribbon' },
+  { type: 'waterfallChart', label: 'Waterfall' },
+  { type: 'scatterChart', label: 'Scatter' },
+  { type: 'pieChart', label: 'Pie' },
+  { type: 'donutChart', label: 'Donut' },
+  { type: 'treemap', label: 'Treemap' },
+  { type: 'funnel', label: 'Funnel' },
+  { type: 'gauge', label: 'Gauge' },
+  { type: 'card', label: 'Card' },
+  { type: 'cardVisual', label: 'Card (new)' },
+  { type: 'multiRowCard', label: 'Multi-row card' },
+  { type: 'kpi', label: 'KPI' },
+  { type: 'tableEx', label: 'Table' },
+  { type: 'pivotTable', label: 'Matrix' },
+  { type: 'slicer', label: 'Slicer' },
+  { type: 'map', label: 'Map' },
+  { type: 'filledMap', label: 'Filled map' },
+];
 
 const useStyles = makeStyles({
   root: { display: 'flex', flexDirection: 'column', height: '100%', ...shorthands.gap('8px') },
@@ -262,14 +301,21 @@ export const ReportExplorer: React.FC<ReportExplorerProps> = ({
     (
       pageName: string,
       visualName: string,
-      field: 'hidden' | 'x' | 'y' | 'width' | 'height',
-      value: number | boolean
+      field: 'hidden' | 'x' | 'y' | 'z' | 'width' | 'height' | 'visualType' | 'title',
+      value: number | boolean | string
     ) => {
       setReportData((prev) => {
         if (!prev) return prev;
         const next = structuredClone(prev) as ReportData;
         const v = next.pages[pageName]?.visuals[visualName];
-        if (v) (v as unknown as Record<string, unknown>)[field] = value;
+        if (v) {
+          if (field === 'visualType') {
+            v.type = value as string;
+            v.displayType = value as string;
+          } else {
+            (v as unknown as Record<string, unknown>)[field] = value;
+          }
+        }
         return next;
       });
       const k = `${pageName}:${visualName}`;
@@ -305,6 +351,42 @@ export const ReportExplorer: React.FC<ReportExplorerProps> = ({
       setSaving(false);
     }
   }, [hasPending, workspaceId, reportId, pendingPages, pendingVisuals]);
+
+  // ---- context-sensitive "available fixes" (right-click on a visual) --------
+  const runVisualFix = useCallback(
+    async (fixId: string, pageName: string, visualName: string) => {
+      setCtxMenu(null);
+      if (!workspaceId || !reportId) {
+        setStatus({ msg: 'Select a workspace and report first', color: '#ff3b30' });
+        return;
+      }
+      setStatus({ msg: 'Applying fix...', color: GRAY_COLOR });
+      try {
+        let detail = '';
+        if (fixId === 'ibcs-style') {
+          const r = await applyChartFixToVisual(workspaceId, reportId, pageName, visualName, {
+            ...DEFAULT_CHART_FIX_OPTIONS,
+            reorient: false,
+          });
+          detail = r.detail;
+        } else if (fixId === 'ibcs-style-reorient') {
+          const r = await applyChartFixToVisual(workspaceId, reportId, pageName, visualName, {
+            ...DEFAULT_CHART_FIX_OPTIONS,
+            reorient: true,
+          });
+          detail = r.detail;
+        } else if (fixId === 'ibcs-orient') {
+          const r = await applyIbcsOrientationToVisual(workspaceId, reportId, pageName, visualName);
+          detail = r.detail;
+        }
+        setStatus({ msg: detail || 'Fix applied', color: '#34c759' });
+        await handleLoad();
+      } catch (err) {
+        setStatus({ msg: `Fix failed: ${err instanceof Error ? err.message : String(err)}`, color: '#ff3b30' });
+      }
+    },
+    [workspaceId, reportId, handleLoad]
+  );
 
   return (
     <div className={styles.root}>
@@ -501,10 +583,48 @@ export const ReportExplorer: React.FC<ReportExplorerProps> = ({
 
               {visualProps && (
                 <>
-                  <PropRow label="Type" value={visualProps.displayType} />
                   <PropRow label="Internal Name" value={visualProps.internalName} />
                   <PropRow label="Page" value={visualProps.pageName} />
-                  <PropRow label="Title" value={visualProps.title} />
+                  <Field label="Chart type" className={styles.editField}>
+                    <Dropdown
+                      value={
+                        VISUAL_TYPE_CHOICES.find((c) => c.type === visualProps.type)?.label ??
+                        visualProps.type
+                      }
+                      selectedOptions={[visualProps.type]}
+                      onOptionSelect={(_, d) =>
+                        d.optionValue &&
+                        editVisual(
+                          visualProps.pageName,
+                          visualProps.internalName,
+                          'visualType',
+                          d.optionValue
+                        )
+                      }
+                    >
+                      {/* Keep the current type selectable even if it is not in the catalog. */}
+                      {!VISUAL_TYPE_CHOICES.some((c) => c.type === visualProps.type) &&
+                        visualProps.type && (
+                          <Option key={visualProps.type} value={visualProps.type}>
+                            {visualProps.type}
+                          </Option>
+                        )}
+                      {VISUAL_TYPE_CHOICES.map((c) => (
+                        <Option key={c.type} value={c.type} text={c.label}>
+                          {c.label} ({c.type})
+                        </Option>
+                      ))}
+                    </Dropdown>
+                  </Field>
+                  <Field label="Title" className={styles.editField}>
+                    <Input
+                      value={visualProps.title}
+                      placeholder="(auto)"
+                      onChange={(_, d) =>
+                        editVisual(visualProps.pageName, visualProps.internalName, 'title', d.value)
+                      }
+                    />
+                  </Field>
                   <Field label="X" className={styles.editField}>
                     <SpinButton
                       value={visualProps.x}
@@ -536,6 +656,15 @@ export const ReportExplorer: React.FC<ReportExplorerProps> = ({
                       onChange={(_, d) =>
                         d.value != null &&
                         editVisual(visualProps.pageName, visualProps.internalName, 'height', d.value)
+                      }
+                    />
+                  </Field>
+                  <Field label="Z-order" className={styles.editField}>
+                    <SpinButton
+                      value={visualProps.z}
+                      min={0}
+                      onChange={(_, d) =>
+                        d.value != null && editVisual(visualProps.pageName, visualProps.internalName, 'z', d.value)
                       }
                     />
                   </Field>
@@ -663,6 +792,26 @@ export const ReportExplorer: React.FC<ReportExplorerProps> = ({
                       ))}
                     </>
                   )}
+                  {vp &&
+                    (() => {
+                      const fixes = visualFixesFor(vp.type);
+                      if (fixes.length === 0) return null;
+                      return (
+                        <>
+                          <CtxDivider />
+                          <CtxHeader label="Available fixes" />
+                          {fixes.map((f) => (
+                            <CtxItem
+                              key={f.id}
+                              dotColor="#34c759"
+                              label={f.label}
+                              title="Apply this IBCS fix to the selected visual"
+                              onClick={() => runVisualFix(f.id, vp.pageName, vp.internalName)}
+                            />
+                          ))}
+                        </>
+                      );
+                    })()}
                 </>
               );
             })()}
@@ -676,6 +825,19 @@ export const ReportExplorer: React.FC<ReportExplorerProps> = ({
 const CtxDivider: React.FC = () => (
   <div style={{ height: '1px', backgroundColor: BORDER_COLOR, margin: '4px 0' }} />
 );
+
+// Context-sensitive list of fixes applicable to a given PBIR visualType.
+function visualFixesFor(visualType: string): { id: string; label: string }[] {
+  const fixes: { id: string; label: string }[] = [];
+  if (chartFamilyOf(visualType)) {
+    fixes.push({ id: 'ibcs-style', label: 'Apply IBCS chart style' });
+    fixes.push({ id: 'ibcs-style-reorient', label: 'Apply IBCS style + re-orient' });
+  }
+  if (ibcsKindOf(visualType)) {
+    fixes.push({ id: 'ibcs-orient', label: 'Fix IBCS orientation (match category)' });
+  }
+  return fixes;
+}
 
 const CtxHeader: React.FC<{ label: string }> = ({ label }) => (
   <div

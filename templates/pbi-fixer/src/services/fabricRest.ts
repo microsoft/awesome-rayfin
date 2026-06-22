@@ -828,6 +828,44 @@ async function getReportDefinition(
   return resp.definition?.parts ?? [];
 }
 
+/**
+ * Read a visual's title text from its PBIR `visualContainerObjects.title`
+ * literal expression. Returns '' when the title is unset or bound to a
+ * non-literal expression (e.g. a measure).
+ */
+function extractVisualTitle(visual: Record<string, unknown>): string {
+  const titleArr = (visual.visualContainerObjects as Record<string, unknown> | undefined)
+    ?.title as unknown[] | undefined;
+  const props = (titleArr?.[0] as Record<string, unknown> | undefined)?.properties as
+    | Record<string, unknown>
+    | undefined;
+  const text = props?.text as Record<string, unknown> | undefined;
+  const value = (
+    (text?.expr as Record<string, unknown> | undefined)?.Literal as
+      | Record<string, unknown>
+      | undefined
+  )?.Value;
+  if (typeof value !== 'string') return '';
+  // PBIR literals wrap strings in single quotes and escape inner quotes as ''.
+  const m = value.match(/^'(.*)'$/s);
+  return (m ? m[1] : value).replace(/''/g, "'");
+}
+
+/**
+ * Write a literal title onto a visual's `visualContainerObjects.title`,
+ * preserving any other title sub-properties already present.
+ */
+function applyVisualTitle(visual: Record<string, unknown>, title: string): void {
+  const vco = (visual.visualContainerObjects ?? {}) as Record<string, unknown>;
+  const titleArr = (vco.title as unknown[] | undefined) ?? [];
+  const first = (titleArr[0] ?? {}) as Record<string, unknown>;
+  const props = (first.properties ?? {}) as Record<string, unknown>;
+  props.text = { expr: { Literal: { Value: `'${title.replace(/'/g, "''")}'` } } };
+  first.properties = props;
+  vco.title = [first, ...titleArr.slice(1)];
+  visual.visualContainerObjects = vco;
+}
+
 export async function loadReportDefinition(
   workspaceId: string,
   reportId: string
@@ -887,24 +925,18 @@ export async function loadReportDefinition(
     const visual = (visualJson.visual ?? {}) as Record<string, unknown>;
     const vType = (visual.visualType as string) ?? '';
 
-    const title =
-      ((
-        (
-          ((visual.visualContainerObjects as Record<string, unknown>)?.title as unknown[])?.[0] as
-            | Record<string, unknown>
-            | undefined
-        )?.properties as Record<string, unknown>
-      )?.text as Record<string, unknown>)?.toString?.() ?? '';
+    const title = extractVisualTitle(visual);
 
     const info: VisualInfo = {
       type: vType,
       displayType: vType,
       x: position.x ?? 0,
       y: position.y ?? 0,
+      z: position.z ?? 0,
       width: position.width ?? 0,
       height: position.height ?? 0,
       hidden: (visualJson.isHidden as boolean) ?? false,
-      title: typeof title === 'string' && title !== '[object Object]' ? title : '',
+      title,
     };
     page.visuals[visualName] = info;
     page.visualCount++;
@@ -929,7 +961,16 @@ export interface ReportEdits {
   /** keyed by `${pageName}:${visualName}` */
   visuals?: Record<
     string,
-    Partial<{ hidden: boolean; x: number; y: number; width: number; height: number }>
+    Partial<{
+      hidden: boolean;
+      x: number;
+      y: number;
+      z: number;
+      width: number;
+      height: number;
+      visualType: string;
+      title: string;
+    }>
   >;
 }
 
@@ -977,9 +1018,16 @@ export async function saveReportDefinition(
       const pos = (doc.position ?? {}) as Record<string, number>;
       if (e.x !== undefined) pos.x = e.x;
       if (e.y !== undefined) pos.y = e.y;
+      if (e.z !== undefined) pos.z = e.z;
       if (e.width !== undefined) pos.width = e.width;
       if (e.height !== undefined) pos.height = e.height;
       doc.position = pos;
+      if (e.visualType !== undefined || e.title !== undefined) {
+        const visual = (doc.visual ?? {}) as Record<string, unknown>;
+        if (e.visualType !== undefined) visual.visualType = e.visualType;
+        if (e.title !== undefined) applyVisualTitle(visual, e.title);
+        doc.visual = visual;
+      }
       part.payload = encodePart(doc);
       changed++;
     }

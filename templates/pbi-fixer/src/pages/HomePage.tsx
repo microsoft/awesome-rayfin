@@ -51,9 +51,13 @@ import {
   SignOut20Regular,
   ChevronDown20Regular,
   ChevronRight20Regular,
+  ChevronDown16Regular,
+  ChevronRight16Regular,
   Info20Regular,
   History20Regular,
   Code20Regular,
+  Gauge20Regular,
+  Globe20Regular,
 } from '@fluentui/react-icons';
 
 import { useAuth } from '@/hooks/AuthContext';
@@ -72,7 +76,7 @@ import {
 } from '@/services/ibcsVisualFix';
 import { signInToPbi, PbiSignInRequiredError } from '@/services/fabricAuth';
 import { ICON_ACCENT, GRAY_COLOR, BORDER_COLOR } from '@/explorer/theme';
-import { ModelExplorer } from '@/components/explorer/ModelExplorer';
+import { ModelExplorer, type ModelViewTab } from '@/components/explorer/ModelExplorer';
 import { ReportExplorer } from '@/components/explorer/ReportExplorer';
 
 // Heavier, rarely-the-first-view tabs are code-split and loaded on first visit
@@ -121,6 +125,9 @@ const HistoryTab = lazy(() =>
 );
 const MetricViewMigration = lazy(() =>
   import('@/components/explorer/MetricViewMigration').then((m) => ({ default: m.MetricViewMigration }))
+);
+const TmdlRunner = lazy(() =>
+  import('@/components/explorer/TmdlRunner').then((m) => ({ default: m.TmdlRunner }))
 );
 const ModelDocumentation = lazy(() =>
   import('@/components/explorer/ModelDocumentation').then((m) => ({ default: m.ModelDocumentation }))
@@ -234,7 +241,6 @@ const useStyles = makeStyles({
   tabBody: { flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', ...shorthands.padding('8px', '0') },
   // Main tab bar can dock top (default), left, right or bottom.
   tabsRegion: { flex: 1, minHeight: 0, display: 'flex', ...shorthands.gap('12px') },
-  tabsRegionTop: { flexDirection: 'column' },
   tabsRegionBottom: { flexDirection: 'column-reverse' },
   tabsRegionLeft: { flexDirection: 'row' },
   tabsRegionRight: { flexDirection: 'row-reverse' },
@@ -294,6 +300,27 @@ const useStyles = makeStyles({
   },
   navGroupChevron: { display: 'flex', flexShrink: 0, color: GRAY_COLOR },
   navSub: { display: 'flex', flexDirection: 'column', ...shorthands.gap('1px'), paddingLeft: '16px' },
+  // Subtopic header (tier 2): lighter/smaller than a group header, collapsible.
+  navSubtopicHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    ...shorthands.gap('4px'),
+    ...shorthands.padding('4px', '6px'),
+    ...shorthands.border('none'),
+    ...shorthands.borderRadius('4px'),
+    backgroundColor: 'transparent',
+    color: GRAY_COLOR,
+    fontSize: '11px',
+    fontWeight: '600',
+    letterSpacing: '0.02em',
+    cursor: 'pointer',
+    textAlign: 'left',
+    width: '100%',
+    marginTop: '2px',
+    ':hover': { backgroundColor: tokens.colorNeutralBackground1Hover },
+  },
+  navSubtopicChevron: { display: 'flex', flexShrink: 0, color: GRAY_COLOR },
+  navSubtopicItems: { display: 'flex', flexDirection: 'column', ...shorthands.gap('1px'), paddingLeft: '12px' },
   // Row pairing an explorer entry with its expand/collapse chevron.
   navParentRow: { display: 'flex', alignItems: 'center' },
   navParentChevron: {
@@ -312,19 +339,6 @@ const useStyles = makeStyles({
   navItemGrow: { flexGrow: 1, width: 'auto', minWidth: 0 },
   dockControl: { display: 'flex', alignItems: 'center', ...shorthands.gap('2px') },
   navFooter: { marginTop: 'auto', paddingTop: '8px' },
-  dockSwitchBtn: {
-    display: 'flex',
-    alignItems: 'center',
-    ...shorthands.gap('6px'),
-    ...shorthands.padding('4px', '8px'),
-    ...shorthands.border('none'),
-    ...shorthands.borderRadius('4px'),
-    backgroundColor: 'transparent',
-    color: GRAY_COLOR,
-    fontSize: '11px',
-    cursor: 'pointer',
-    ':hover': { backgroundColor: tokens.colorNeutralBackground1Hover, color: tokens.colorNeutralForeground1 },
-  },
   // Explorer docking surface: supports both side-by-side and stacked layouts.
   splitWrap: { flex: 1, minHeight: 0, display: 'flex', alignItems: 'stretch', position: 'relative' },
   splitWrapHorizontal: { flexDirection: 'row' },
@@ -432,59 +446,130 @@ const useStyles = makeStyles({
   },
 });
 
-type TabValue = 'model' | 'report' | 'descriptions' | 'field-parameters' | 'refresh-tools' | 'perspectives' | 'diagram' | 'metric-view' | 'documentation' | 'cleanup' | 'forward-prototype' | 'sempy' | 'jumpstart' | 'rayfin-apps' | 'monitoring' | 'workspace-editor' | 'history' | 'guidelines' | 'about';
-type TabDock = 'top' | 'left';
+type TabValue = 'model' | 'report' | 'descriptions' | 'field-parameters' | 'refresh-tools' | 'perspectives' | 'diagram' | 'metric-view' | 'tmdl-runner' | 'documentation' | 'cleanup' | 'forward-prototype' | 'sempy' | 'jumpstart' | 'rayfin-apps' | 'monitoring' | 'workspace-editor' | 'history' | 'guidelines' | 'about';
 // Sub-views nested inside the Report Explorer tab. IBCS, Fixers, BPA, Reverse
 // Prototype and the PBIR source view all live under Report Explorer as sub-tabs
 // so the report explorer stays the anchor view and is never lost.
 type ReportSub = 'explorer' | 'ibcs' | 'fixers' | 'bpa' | 'reverse' | 'pbir' | 'landing';
 
-// A nav entry may optionally deep-link into a Report Explorer sub-tab. When
-// `sub` is set, clicking it opens the Report tab and selects that sub-view.
-type NavItemDef = { value: TabValue; label: string; icon: ReactElement; sub?: ReportSub };
-type NavGroupDef = { id: string; label: string; items: NavItemDef[] };
+// A nav entry may optionally deep-link into a lens of an already-loaded object:
+//  - `sub` opens the Report tab and selects that Report Explorer sub-view.
+//  - `modelView` opens the Model tab and selects that Model Explorer lens
+//    (Explorer / TMDL / Translations / Memory Analyzer / Model BPA).
+type NavItemDef = { value: TabValue; label: string; icon: ReactElement; sub?: ReportSub; modelView?: ModelViewTab };
+// A subtopic clusters tool items by intent (verb) and is independently
+// collapsible (tier 2). Tier hierarchy: Group (1) › Subtopic (2) › Tool (3).
+type NavSubtopicDef = { id: string; label: string; items: NavItemDef[] };
+// A group may mix direct tool items (no subtopic expander) with collapsible
+// subtopics — e.g. Workspace keeps Sempy Runner / Workspace Editor as direct
+// items and only clusters Deploy.
+type NavGroupDef = { id: string; label: string; items?: NavItemDef[]; subtopics?: NavSubtopicDef[] };
 
-// Left-nav information architecture.
+// Left-nav information architecture (three tiers).
 //
 // Principle — left nav vs. top tabs:
-//  - Left-nav items are distinct *tools/destinations*. Each owns its own
-//    workflow and load lifecycle, and is exposed individually. Pure section
-//    headers (Model / Report / Workspace) group them; the header itself does
-//    not navigate — the first item under it (the Explorer) is the entry view.
+//  - Left-nav items are distinct *tools/destinations*, grouped (tier 1) and
+//    clustered by intent into collapsible subtopics (tier 2). Pure section
+//    headers (Model / Report / Workspace) and subtopic headers do not
+//    navigate; the tool items under them do.
 //  - Top tabs (inside Model/Report Explorer: Explorer · TMDL · Translations ·
 //    Memory Analyzer · Model BPA, and the report sub-views) are *lenses on the
-//    one already-loaded object*. They share the loaded model/report state, so
-//    switching them is a view change, not a task change — which is exactly why
-//    they stay as top tabs and are NOT promoted to separate left-nav tools.
+//    one already-loaded object*. Some lenses are ALSO surfaced as nav items
+//    (e.g. Memory Analyzer, Model BPA, Translations) that deep-link into the
+//    lens via `modelView` / `sub`; the lens tabs themselves stay too.
 const NAV_GROUPS: NavGroupDef[] = [
   {
     id: 'model',
     label: 'Model',
-    items: [
-      { value: 'model', label: 'Model Explorer', icon: <Database20Regular /> },
-      { value: 'cleanup', label: 'Unused Cleanup', icon: <Broom20Regular /> },
-      { value: 'descriptions', label: 'Descriptions', icon: <DocumentText20Regular /> },
-      { value: 'field-parameters', label: 'Field Parameters', icon: <Options20Regular /> },
-      { value: 'refresh-tools', label: 'Add to Model', icon: <ArrowSync20Regular /> },
-      { value: 'perspectives', label: 'Perspectives', icon: <Eye20Regular /> },
-      { value: 'diagram', label: 'Model Diagram', icon: <Organization20Regular /> },
-      { value: 'metric-view', label: 'Metric View Migration', icon: <DatabaseArrowRight20Regular /> },
-      { value: 'documentation', label: 'Model Documentation', icon: <BookInformation20Regular /> },
-      { value: 'history', label: 'History & Undo', icon: <History20Regular /> },
+    subtopics: [
+      {
+        id: 'explore',
+        label: 'Explore',
+        items: [
+          { value: 'model', modelView: 'explorer', label: 'Model Explorer', icon: <Database20Regular /> },
+          { value: 'diagram', label: 'Model Diagram', icon: <Organization20Regular /> },
+        ],
+      },
+      {
+        id: 'analyze',
+        label: 'Analyze',
+        items: [
+          { value: 'model', modelView: 'memory', label: 'Memory Analyzer', icon: <Gauge20Regular /> },
+          { value: 'model', modelView: 'bpa', label: 'Model BPA', icon: <ShieldCheckmark20Regular /> },
+        ],
+      },
+      {
+        id: 'build',
+        label: 'Build / Add',
+        items: [
+          { value: 'refresh-tools', label: 'Add to Model', icon: <ArrowSync20Regular /> },
+          { value: 'field-parameters', label: 'Field Parameters', icon: <Options20Regular /> },
+          { value: 'metric-view', label: 'Metric View Migration', icon: <DatabaseArrowRight20Regular /> },
+          { value: 'model', modelView: 'translations', label: 'Translations', icon: <Globe20Regular /> },
+          { value: 'perspectives', label: 'Perspectives', icon: <Eye20Regular /> },
+        ],
+      },
+      {
+        id: 'maintain',
+        label: 'Maintain',
+        items: [
+          { value: 'cleanup', label: 'Unused Cleanup', icon: <Broom20Regular /> },
+          { value: 'descriptions', label: 'Descriptions', icon: <DocumentText20Regular /> },
+        ],
+      },
+      {
+        id: 'source',
+        label: 'Source / Advanced',
+        items: [
+          { value: 'tmdl-runner', label: 'TMDL Runner', icon: <Code20Regular /> },
+          { value: 'history', label: 'History & Undo', icon: <History20Regular /> },
+        ],
+      },
     ],
   },
   {
     id: 'report',
     label: 'Report',
-    items: [
-      { value: 'report', sub: 'explorer', label: 'Report Explorer', icon: <DocumentBulletList20Regular /> },
-      { value: 'report', sub: 'ibcs', label: 'IBCS', icon: <ChartMultiple20Regular /> },
-      { value: 'report', sub: 'fixers', label: 'Fixers', icon: <Wrench20Regular /> },
-      { value: 'report', sub: 'bpa', label: 'Report BPA', icon: <ShieldCheckmark20Regular /> },
-      { value: 'report', sub: 'reverse', label: 'Reverse Prototype', icon: <ArrowImport20Regular /> },
-      { value: 'report', sub: 'landing', label: 'Landing Page', icon: <Sparkle20Regular /> },
-      { value: 'report', sub: 'pbir', label: 'PBIR Source', icon: <Code20Regular /> },
-      { value: 'forward-prototype', label: 'Forward Prototype', icon: <ArrowExport20Regular /> },
+    subtopics: [
+      {
+        id: 'explore',
+        label: 'Explore',
+        items: [
+          { value: 'report', sub: 'explorer', label: 'Report Explorer', icon: <DocumentBulletList20Regular /> },
+          { value: 'report', sub: 'pbir', label: 'PBIR View', icon: <Code20Regular /> },
+        ],
+      },
+      {
+        id: 'analyze',
+        label: 'Analyze',
+        items: [
+          { value: 'report', sub: 'bpa', label: 'Report BPA', icon: <ShieldCheckmark20Regular /> },
+        ],
+      },
+      {
+        id: 'improve',
+        label: 'Improve',
+        items: [
+          { value: 'report', sub: 'fixers', label: 'Fixers', icon: <Wrench20Regular /> },
+          { value: 'report', sub: 'ibcs', label: 'IBCS', icon: <ChartMultiple20Regular /> },
+        ],
+      },
+      {
+        id: 'add-page',
+        label: 'Add Page',
+        items: [
+          { value: 'report', sub: 'landing', label: 'Landing Page', icon: <Sparkle20Regular /> },
+          { value: 'documentation', label: 'Add Documentation Page', icon: <BookInformation20Regular /> },
+        ],
+      },
+      {
+        id: 'prototype',
+        label: 'Prototype',
+        items: [
+          { value: 'report', sub: 'reverse', label: 'Reverse Prototype', icon: <ArrowImport20Regular /> },
+          { value: 'forward-prototype', label: 'Forward Prototype', icon: <ArrowExport20Regular /> },
+        ],
+      },
     ],
   },
   {
@@ -493,9 +578,17 @@ const NAV_GROUPS: NavGroupDef[] = [
     items: [
       { value: 'sempy', label: 'Sempy Runner', icon: <PlayCircle20Regular /> },
       { value: 'workspace-editor', label: 'Workspace Editor', icon: <FolderSwap20Regular /> },
-      { value: 'jumpstart', label: 'Jumpstart', icon: <Rocket20Regular /> },
-      { value: 'rayfin-apps', label: 'Rayfin Apps', icon: <Apps20Regular /> },
-      { value: 'monitoring', label: 'Monitoring', icon: <PulseSquare20Regular /> },
+    ],
+    subtopics: [
+      {
+        id: 'deploy',
+        label: 'Deploy',
+        items: [
+          { value: 'jumpstart', label: 'Jumpstart', icon: <Rocket20Regular /> },
+          { value: 'rayfin-apps', label: 'Rayfin Apps', icon: <Apps20Regular /> },
+          { value: 'monitoring', label: 'Monitoring', icon: <PulseSquare20Regular /> },
+        ],
+      },
     ],
   },
 ];
@@ -521,6 +614,11 @@ export function HomePage() {
     setReportSubVisited((prev) => (prev.has(next) ? prev : new Set(prev).add(next)));
   }, []);
 
+  // Model Explorer lens selection (Explorer / TMDL / Translations / Memory /
+  // BPA). Owned here so the left nav can deep-link into a specific lens; the
+  // ModelExplorer mirrors user-driven lens changes back via onViewTabChange.
+  const [modelView, setModelView] = useState<ModelViewTab>('explorer');
+
   // Persisted light/dark theme preference for the whole app shell.
   const [dark, setDark] = useState<boolean>(() => {
     try { return localStorage.getItem('pbiFixer.theme') === 'dark'; } catch { return false; }
@@ -534,19 +632,6 @@ export function HomePage() {
   useEffect(() => {
     setCurrentUser(user?.name || user?.email || null);
   }, [user]);
-
-  // Where the main tab bar is docked: left (default) or top.
-  const [tabDock, setTabDock] = useState<TabDock>(() => {
-    try {
-      const v = localStorage.getItem('pbiFixer.tabDock');
-      return v === 'top' ? 'top' : 'left';
-    } catch {
-      return 'left';
-    }
-  });
-  useEffect(() => {
-    try { localStorage.setItem('pbiFixer.tabDock', tabDock); } catch { /* ignore */ }
-  }, [tabDock]);
 
   // Which collapsible nav groups are expanded (vertical dock only). Model and
   // Report start open so their Explorers are visible; Workspace stays collapsed.
@@ -568,10 +653,60 @@ export function HomePage() {
     });
   }, []);
 
+  // Which collapsible nav subtopics (tier 2) are expanded, keyed
+  // `${groupId}:${subtopicId}`. The two anchor Explore clusters start open so
+  // the Model/Report Explorers are reachable in one click.
+  const [navSubtopicsOpen, setNavSubtopicsOpen] = useState<Set<string>>(() => {
+    try {
+      const v = localStorage.getItem('pbiFixer.navSubtopics.v1');
+      if (v) return new Set(JSON.parse(v) as string[]);
+    } catch { /* ignore */ }
+    return new Set<string>(['model:explore', 'report:explore']);
+  });
+  useEffect(() => {
+    try { localStorage.setItem('pbiFixer.navSubtopics.v1', JSON.stringify([...navSubtopicsOpen])); } catch { /* ignore */ }
+  }, [navSubtopicsOpen]);
+  const toggleNavSubtopic = useCallback((key: string) => {
+    setNavSubtopicsOpen((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      return next;
+    });
+  }, []);
+
   const selectTab = useCallback((next: TabValue) => {
     setTab(next);
     setVisited((prev) => (prev.has(next) ? prev : new Set(prev).add(next)));
   }, []);
+
+  // Render one nav tool item (tier 3). Handles the active-state highlight and
+  // the deep-link wiring for Report sub-views (`sub`) and Model lenses
+  // (`modelView`).
+  const renderNavItem = useCallback(
+    (it: NavItemDef): ReactElement => {
+      const active = it.sub
+        ? tab === it.value && reportSub === it.sub
+        : it.value === 'model'
+          ? tab === 'model' && modelView === (it.modelView ?? 'explorer')
+          : tab === it.value;
+      return (
+        <button
+          key={it.sub ?? it.modelView ?? it.value}
+          type="button"
+          className={mergeClasses(styles.navItem, active && styles.navItemActive)}
+          onClick={() => {
+            selectTab(it.value);
+            if (it.sub) selectReportSub(it.sub);
+            if (it.value === 'model') setModelView(it.modelView ?? 'explorer');
+          }}
+        >
+          <span className={active ? styles.navItemIconActive : styles.navItemIcon}>{it.icon}</span>
+          {it.label}
+        </button>
+      );
+    },
+    [tab, reportSub, modelView, styles, selectTab, selectReportSub]
+  );
 
   const [workspaces, setWorkspaces] = useState<NamedItem[]>([]);
   const [pairs, setPairs] = useState<ReportModelPair[]>([]);
@@ -1394,13 +1529,7 @@ export function HomePage() {
             {busy && <Spinner size="tiny" label="Loading…" />}
           </div>
 
-          <div
-            className={mergeClasses(
-              styles.tabsRegion,
-              tabDock === 'top' ? styles.tabsRegionTop : styles.tabsRegionLeft
-            )}
-          >
-          {tabDock === 'left' ? (
+          <div className={mergeClasses(styles.tabsRegion, styles.tabsRegionLeft)}>
             <div className={styles.nav}>
               {NAV_GROUPS.map((g) => {
                 const open = navGroupsOpen.has(g.id);
@@ -1419,23 +1548,29 @@ export function HomePage() {
                     </button>
                     {open && (
                       <div className={styles.navSub}>
-                        {g.items.map((it) => {
-                          const active = it.sub
-                            ? tab === it.value && reportSub === it.sub
-                            : tab === it.value;
+                        {g.items?.map(renderNavItem)}
+                        {g.subtopics?.map((st) => {
+                          const stKey = `${g.id}:${st.id}`;
+                          const stOpen = navSubtopicsOpen.has(stKey);
                           return (
-                            <button
-                              key={it.sub ?? it.value}
-                              type="button"
-                              className={mergeClasses(styles.navItem, active && styles.navItemActive)}
-                              onClick={() => {
-                                selectTab(it.value);
-                                if (it.sub) selectReportSub(it.sub);
-                              }}
-                            >
-                              <span className={active ? styles.navItemIconActive : styles.navItemIcon}>{it.icon}</span>
-                              {it.label}
-                            </button>
+                            <div key={st.id}>
+                              <button
+                                type="button"
+                                className={styles.navSubtopicHeader}
+                                onClick={() => toggleNavSubtopic(stKey)}
+                                aria-expanded={stOpen}
+                              >
+                                <span className={styles.navSubtopicChevron}>
+                                  {stOpen ? <ChevronDown16Regular /> : <ChevronRight16Regular />}
+                                </span>
+                                {st.label}
+                              </button>
+                              {stOpen && (
+                                <div className={styles.navSubtopicItems}>
+                                  {st.items.map(renderNavItem)}
+                                </div>
+                              )}
+                            </div>
                           );
                         })}
                       </div>
@@ -1464,68 +1599,8 @@ export function HomePage() {
                   </span>
                   About
                 </button>
-                <button
-                  type="button"
-                  className={styles.dockSwitchBtn}
-                  onClick={() => setTabDock('top')}
-                  title="Switch tabs to the top bar"
-                >
-                  ▲ Top bar
-                </button>
               </div>
             </div>
-          ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
-            <button
-              type="button"
-              className={styles.dockSwitchBtn}
-              onClick={() => setTabDock('left')}
-              title="Switch tabs to the side bar"
-              style={{ alignSelf: 'flex-start', marginBottom: 4 }}
-            >
-              ◀ Side bar
-            </button>
-          <TabList
-            vertical={false}
-            style={{ flexShrink: 0 }}
-            selectedValue={tab}
-            onTabSelect={(_: SelectTabEvent, d: SelectTabData) => {
-              selectTab(d.value as TabValue);
-            }}
-          >
-            <Tab value="model" icon={<Database20Regular />}>
-              Model Explorer
-            </Tab>
-            <Tab value="report" icon={<DocumentBulletList20Regular />}>
-              Report Explorer
-            </Tab>
-            <Tab value="metric-view" icon={<DatabaseArrowRight20Regular />}>
-              Metric View Migration
-            </Tab>
-            <Tab value="documentation" icon={<BookInformation20Regular />}>
-              Model Documentation
-            </Tab>
-            <Tab value="forward-prototype" icon={<ArrowExport20Regular />}>
-              Forward Prototype
-            </Tab>
-            <Tab value="sempy" icon={<PlayCircle20Regular />}>
-              Sempy Runner
-            </Tab>
-            <Tab value="workspace-editor" icon={<FolderSwap20Regular />}>
-              Workspace Editor
-            </Tab>
-            <Tab value="jumpstart" icon={<Rocket20Regular />}>
-              Jumpstart
-            </Tab>
-            <Tab value="rayfin-apps" icon={<Apps20Regular />}>
-              Rayfin Apps
-            </Tab>
-            <Tab value="monitoring" icon={<PulseSquare20Regular />}>
-              Monitoring
-            </Tab>
-          </TabList>
-          </div>
-          )}
 
           <div className={styles.tabBody}>
             <Suspense
@@ -1541,7 +1616,12 @@ export function HomePage() {
                 first visit to avoid eager loads/embeds. */}
             {visited.has('model') && (
               <div style={{ display: tab === 'model' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
-                <ModelExplorer workspaceId={workspaceId} models={modelExplorerModels} />
+                <ModelExplorer
+                  workspaceId={workspaceId}
+                  models={modelExplorerModels}
+                  viewTab={modelView}
+                  onViewTabChange={setModelView}
+                />
               </div>
             )}
 
@@ -1575,7 +1655,7 @@ export function HomePage() {
                     Landing Page
                   </Tab>
                   <Tab value="pbir" icon={<Code20Regular />}>
-                    PBIR Source
+                    PBIR View
                   </Tab>
                 </TabList>
 
@@ -1683,6 +1763,11 @@ export function HomePage() {
             {visited.has('metric-view') && (
               <div style={{ display: tab === 'metric-view' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
                 <MetricViewMigration workspaceId={workspaceId} datasetId={datasetId} datasetName={datasetName} />
+              </div>
+            )}
+            {visited.has('tmdl-runner') && (
+              <div style={{ display: tab === 'tmdl-runner' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+                <TmdlRunner workspaceId={workspaceId} datasetId={datasetId} datasetName={datasetName} />
               </div>
             )}
             {visited.has('documentation') && (

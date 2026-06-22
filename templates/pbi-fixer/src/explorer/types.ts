@@ -127,6 +127,7 @@ export interface VisualInfo {
   displayType: string;
   x: number;
   y: number;
+  z: number;
   width: number;
   height: number;
   hidden: boolean;

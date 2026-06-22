@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // WS-P — Sempy Runner catalog.
 //
 // Hand-curated subset of semantic-link / semantic-link-labs functions

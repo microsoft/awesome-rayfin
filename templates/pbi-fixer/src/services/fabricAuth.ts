@@ -20,6 +20,15 @@ import { getUdfConfig } from '@/config/udfConfig';
 const PBI_SCOPE = 'https://analysis.windows.net/powerbi/api/.default';
 
 /**
+ * Storage-audience scope. OneLake's DFS endpoint only accepts tokens in the
+ * `Storage` audience (the Power BI token above is rejected), so the team-shared
+ * guideline-conventions read/write acquires this scope separately. Requires the
+ * SPA app registration to be granted the Azure Storage `user_impersonation`
+ * delegated permission (one-time admin consent).
+ */
+const STORAGE_SCOPE = 'https://storage.azure.com/.default';
+
+/**
  * Thrown when a Power BI token cannot be obtained silently and an interactive
  * sign-in is required. Interactive sign-in opens a popup, which browsers block
  * unless it is started from a user gesture — and which is also blocked inside
@@ -101,4 +110,35 @@ export async function getFabricToken(
  */
 export async function signInToPbi(loginHint?: string): Promise<void> {
   await getFabricToken({ interactive: true, loginHint });
+}
+
+/**
+ * Acquire a Storage-audience access token for OneLake DFS calls.
+ *
+ * Same pattern as {@link getFabricToken}: silent by default (throws
+ * {@link PbiSignInRequiredError} when an interactive consent would be needed),
+ * and an interactive popup fallback that MUST be triggered from a user gesture.
+ * The first acquisition needs the Azure Storage delegated permission consented
+ * on the SPA app registration.
+ */
+export async function getStorageToken(
+  opts: { interactive?: boolean; loginHint?: string } = {}
+): Promise<string> {
+  const pca = await getPca();
+  const request = { scopes: [STORAGE_SCOPE], account: account ?? undefined };
+
+  try {
+    const result = await pca.acquireTokenSilent(request);
+    account = result.account;
+    return result.accessToken;
+  } catch {
+    if (!opts.interactive) throw new PbiSignInRequiredError();
+    const result = await pca.acquireTokenPopup({
+      scopes: [STORAGE_SCOPE],
+      loginHint: opts.loginHint,
+      prompt: 'select_account',
+    });
+    account = result.account;
+    return result.accessToken;
+  }
 }
