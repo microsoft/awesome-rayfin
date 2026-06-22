@@ -18,7 +18,24 @@ export interface PropertySaveResult {
 
 /** Boolean properties: true → `prop: true`, false → omit the line (absence
  *  means false). The Power BI TMDL importer rejects bare flag keywords. */
-const BOOLEAN_PROPS = new Set(['isHidden', 'isKey']);
+const BOOLEAN_PROPS = new Set([
+  'isHidden',
+  'isKey',
+  // Table-level TE2-parity flags.
+  'isPrivate',
+  'excludeFromModelRefresh',
+  'excludeFromAutomaticAggregations',
+  'showAsVariationsOnly',
+  // Column-level flag.
+  'isAvailableInMdx',
+  // Model-level flags.
+  'discourageImplicitMeasures',
+  'discourageCompositeModels',
+  'forceUniqueNames',
+  'fastCombine',
+  'legacyRedirects',
+  'returnErrorValuesAsNull',
+]);
 
 // --------------------------------------------------------------------------- //
 // TMDL primitives (mirrors measureEditor / modelBpaFix)
@@ -424,7 +441,151 @@ export async function setMeasureProperty(
       values.isHidden = Boolean(value);
       break;
     default:
-      return { changed: 0, detail: `Property "${prop}" is not editable on a measure.` };
+      // Advanced scalar properties (dataCategory, lineageTag, sourceLineageTag)
+      // are not part of MeasureValues — edit the measure block in TMDL directly,
+      // preserving the DAX expression and every other line.
+      return setMeasureBlockProperty(workspaceId, datasetId, table, measure, prop, value);
   }
   return updateMeasure(workspaceId, datasetId, table, measure, values);
+}
+
+/** Locate a `measure` block (indent 1) inside the bounds of one table. */
+function findMeasureBlock(lines: string[], table: string, measure: string): Block | null {
+  const tBlock = findTableBlock(lines, table);
+  if (!tBlock) return null;
+  let start = -1;
+  for (let i = tBlock.start + 1; i < tBlock.end; i++) {
+    if (indentOf(lines[i]) === 1 && declName(lines[i], 'measure') === measure) {
+      start = i;
+      break;
+    }
+  }
+  if (start < 0) return null;
+  let end = tBlock.end;
+  for (let j = start + 1; j < tBlock.end; j++) {
+    if (lines[j].trim() !== '' && indentOf(lines[j]) <= 1) {
+      end = j;
+      break;
+    }
+  }
+  return { start, end };
+}
+
+/** Anchor for a new scalar prop inside a measure block: after the last scalar
+ *  property line (never after an annotation / changedProperty marker, and never
+ *  inside the `= DAX` expression body). Falls back to the declaration line. */
+function lastMeasurePropIndex(lines: string[], block: Block): number {
+  let anchor = block.start;
+  for (let i = block.start + 1; i < block.end; i++) {
+    if (/^\t{2}[A-Za-z_]\w*\s*:\s/.test(lines[i])) anchor = i;
+  }
+  return anchor;
+}
+
+/** Set one advanced scalar / boolean property directly on a measure block. */
+async function setMeasureBlockProperty(
+  workspaceId: string,
+  datasetId: string,
+  table: string,
+  measure: string,
+  prop: string,
+  value: string | boolean
+): Promise<PropertySaveResult> {
+  const parts = await loadDefinitionParts('model', workspaceId, datasetId);
+  for (const part of parts) {
+    if (part.binary) continue;
+    const lines = part.text.split('\n');
+    const block = findMeasureBlock(lines, table, measure);
+    if (!block) continue;
+    const changedLines = setBlockProperty(
+      lines,
+      block,
+      2,
+      lastMeasurePropIndex(lines, block),
+      prop,
+      value
+    );
+    if (!changedLines) {
+      return { changed: 0, detail: `Measure ${table}[${measure}] already up to date.` };
+    }
+    const changed = await saveDefinitionParts('model', workspaceId, datasetId, {
+      [part.path]: lines.join('\n'),
+    });
+    return {
+      changed,
+      detail: changed > 0 ? `Updated ${prop} on ${table}[${measure}].` : 'No change written.',
+    };
+  }
+  return { changed: 0, detail: `Measure ${table}[${measure}] was not found in the model definition.` };
+}
+
+/** Locate the top-level `model` declaration block (`definition/model.tmdl`). */
+function findModelBlock(lines: string[]): Block | null {
+  let start = -1;
+  for (let i = 0; i < lines.length; i++) {
+    if (indentOf(lines[i]) === 0 && declName(lines[i], 'model') !== null) {
+      start = i;
+      break;
+    }
+  }
+  if (start < 0) return null;
+  // The model block owns every indent-1 line until the next top-level decl.
+  let end = lines.length;
+  for (let j = start + 1; j < lines.length; j++) {
+    if (lines[j].trim() !== '' && indentOf(lines[j]) === 0) {
+      end = j;
+      break;
+    }
+  }
+  return { start, end };
+}
+
+/** Anchor for a new model-level scalar prop: after the last indent-1 scalar
+ *  property (before `ref`/`annotation` markers). Falls back to the decl line. */
+function lastModelPropIndex(lines: string[], block: Block): number {
+  let anchor = block.start;
+  for (let i = block.start + 1; i < block.end; i++) {
+    if (/^\t[A-Za-z_]\w*\s*:\s/.test(lines[i])) anchor = i;
+  }
+  return anchor;
+}
+
+/**
+ * Set one model-level property (`culture`, `collation`, `defaultMode`,
+ * `discourageImplicitMeasures`, …). `description` rewrites the leading `///`
+ * comment block. Scalars / booleans are written at indent 1 inside the `model`
+ * block. The model TMDL part is `definition/model.tmdl`.
+ */
+export async function setModelProperty(
+  workspaceId: string,
+  datasetId: string,
+  prop: string,
+  value: string | boolean
+): Promise<PropertySaveResult> {
+  const parts = await loadDefinitionParts('model', workspaceId, datasetId);
+  for (const part of parts) {
+    if (part.binary) continue;
+    if (!/(^|\/)model\.tmdl$/i.test(part.path)) continue;
+    const lines = part.text.split('\n');
+    const block = findModelBlock(lines);
+    if (!block) continue;
+
+    let changedLines: boolean;
+    if (prop === 'description') {
+      changedLines = setDescription(lines, block.start, 0, String(value));
+    } else {
+      changedLines = setBlockProperty(lines, block, 1, lastModelPropIndex(lines, block), prop, value);
+    }
+    if (!changedLines) {
+      return { changed: 0, detail: 'Model already up to date.' };
+    }
+    const changed = await saveDefinitionParts('model', workspaceId, datasetId, {
+      [part.path]: lines.join('\n'),
+    });
+    return {
+      changed,
+      detail: changed > 0 ? `Updated ${prop} on the model.` : 'No change written.',
+    };
+  }
+  return { changed: 0, detail: 'Model definition (model.tmdl) was not found.' };
 }

@@ -72,7 +72,7 @@ import {
   applyDisplayFolders,
   DEFAULT_ORGANIZE_OPTIONS,
 } from '@/services/displayFolders';
-import { setColumnProperty, setTableProperty, setMeasureProperty, setPartitionExpression } from '@/services/modelPropertyEditor';
+import { setColumnProperty, setTableProperty, setMeasureProperty, setModelProperty, setPartitionExpression } from '@/services/modelPropertyEditor';
 import { triggerRefresh, type RefreshObject, type RefreshType } from '@/services/refreshModel';
 import { createWarmNotebook, runWarmNotebook } from '@/services/directLakeWarm';
 import { isGithubSignedIn, startGithubDeviceFlow, type DeviceFlowHandle } from '@/services/githubAuth';
@@ -362,6 +362,23 @@ const EditBoolRow: React.FC<{
 /** TMDL `summarizeBy` tokens offered in the column property dropdown. */
 const SUMMARIZE_OPTIONS = ['none', 'sum', 'average', 'min', 'max', 'count', 'distinctCount'];
 
+/** Enum option lists for TE2-parity property dropdowns. */
+const DATATYPE_OPTIONS = [
+  'string',
+  'int64',
+  'double',
+  'decimal',
+  'dateTime',
+  'boolean',
+  'binary',
+  'variant',
+];
+const DEFAULTMODE_OPTIONS = ['import', 'directQuery', 'dual', 'directLake', 'push'];
+const DIRECTLAKE_BEHAVIOR_OPTIONS = ['automatic', 'directLakeOnly', 'directQueryOnly'];
+const DEFAULTDATAVIEW_OPTIONS = ['full', 'sample'];
+const PBI_DATASOURCE_VERSION_OPTIONS = ['powerBI_V1', 'powerBI_V2', 'powerBI_V3'];
+const DSV_OVERRIDE_OPTIONS = ['disallow', 'allow'];
+
 /** Normalise an INFO.VIEW SummarizeBy value (e.g. "Sum") to its TMDL token. */
 function normalizeSummarizeBy(v: string): string {
   const s = (v || '').trim();
@@ -468,12 +485,18 @@ function foldableModelKeys(md: ModelData): string[] {
  */
 function patchModelProperty(
   data: ModelData,
-  kind: 'column' | 'measure' | 'table',
+  kind: 'column' | 'measure' | 'table' | 'model',
   table: string,
   name: string,
   prop: string,
   value: string | boolean
 ): ModelData {
+  if (kind === 'model') {
+    return {
+      ...data,
+      modelProperties: { ...data.modelProperties, [prop]: value },
+    };
+  }
   const t = data.tables[table];
   if (!t) return data;
   if (kind === 'table') {
@@ -1346,7 +1369,7 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
   // then reload the owning model so the tree + properties reflect the saved state.
   const handleEditProperty = useCallback(
     async (
-      kind: 'column' | 'measure' | 'table',
+      kind: 'column' | 'measure' | 'table' | 'model',
       table: string,
       name: string,
       prop: string,
@@ -1364,7 +1387,9 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
             ? await setMeasureProperty(workspaceId, id, table, name, prop, value)
             : kind === 'column'
               ? await setColumnProperty(workspaceId, id, table, name, prop, value)
-              : await setTableProperty(workspaceId, id, table, prop, value);
+              : kind === 'model'
+                ? await setModelProperty(workspaceId, id, prop, value)
+                : await setTableProperty(workspaceId, id, table, prop, value);
         // Optimistic update: patch the changed field in-memory and skip the
         // full model reload. The save result is authoritative, so a metadata
         // edit no longer pays for a getDefinition export + INFO.VIEW requery.
@@ -1517,7 +1542,13 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
           <PropGroupLabel label="General" />
           <PropRow label="Table" value={parts[1]} />
           <PropRow label="Name" value={parts[2]} />
-          <PropRow label="Data Type" value={c.dataType} />
+          <EditSelectRow
+            label="Data Type"
+            value={c.dataType || 'string'}
+            options={DATATYPE_OPTIONS}
+            disabled={savingProp || !!c.expression}
+            onSave={(v) => handleEditProperty('column', parts[1], parts[2], 'dataType', v)}
+          />
           <PropRow label="Column Type" value={c.type} />
           <EditSelectRow
             label="Summarize By"
@@ -1525,6 +1556,13 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
             options={SUMMARIZE_OPTIONS}
             disabled={savingProp}
             onSave={(v) => handleEditProperty('column', parts[1], parts[2], 'summarizeBy', v)}
+          />
+          <EditTextRow
+            label="Format String"
+            value={c.formatString ?? ''}
+            placeholder="(default)"
+            disabled={savingProp}
+            onSave={(v) => handleEditProperty('column', parts[1], parts[2], 'formatString', v)}
           />
           <EditTextRow
             label="Display Folder"
@@ -1547,6 +1585,12 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
                 disabled={savingProp}
                 onSave={(v) => handleEditProperty('column', parts[1], parts[2], 'isKey', v)}
               />
+              <EditBoolRow
+                label="Is Available In MDX"
+                value={c.isAvailableInMdx ?? true}
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('column', parts[1], parts[2], 'isAvailableInMdx', v)}
+              />
               <EditTextRow
                 label="Data Category"
                 value={c.dataCategory}
@@ -1560,6 +1604,20 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
                 placeholder="(column name)"
                 disabled={savingProp}
                 onSave={(v) => handleEditProperty('column', parts[1], parts[2], 'sortByColumn', v)}
+              />
+              <EditTextRow
+                label="Lineage Tag"
+                value={c.lineageTag ?? ''}
+                placeholder="(auto)"
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('column', parts[1], parts[2], 'lineageTag', v)}
+              />
+              <EditTextRow
+                label="Source Lineage Tag"
+                value={c.sourceLineageTag ?? ''}
+                placeholder="(none)"
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('column', parts[1], parts[2], 'sourceLineageTag', v)}
               />
               <PropGroupLabel label="Advanced (read-only)" />
               <PropRow label="Encoding Hint" value={c.encodingHint || 'Default'} />
@@ -1592,6 +1650,66 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
           />
           {showAdvanced && (
             <>
+              <PropGroupLabel label="Options" />
+              <EditTextRow
+                label="Data Category"
+                value={t.dataCategory ?? ''}
+                placeholder="(none)"
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('table', parts[1], parts[1], 'dataCategory', v)}
+              />
+              <EditBoolRow
+                label="Private"
+                value={t.isPrivate ?? false}
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('table', parts[1], parts[1], 'isPrivate', v)}
+              />
+              <EditBoolRow
+                label="Exclude From Model Refresh"
+                value={t.excludeFromModelRefresh ?? false}
+                disabled={savingProp}
+                onSave={(v) =>
+                  handleEditProperty('table', parts[1], parts[1], 'excludeFromModelRefresh', v)
+                }
+              />
+              <EditBoolRow
+                label="Exclude From Automatic Aggregations"
+                value={t.excludeFromAutomaticAggregations ?? false}
+                disabled={savingProp}
+                onSave={(v) =>
+                  handleEditProperty(
+                    'table',
+                    parts[1],
+                    parts[1],
+                    'excludeFromAutomaticAggregations',
+                    v
+                  )
+                }
+              />
+              <EditBoolRow
+                label="Show As Variations Only"
+                value={t.showAsVariationsOnly ?? false}
+                disabled={savingProp}
+                onSave={(v) =>
+                  handleEditProperty('table', parts[1], parts[1], 'showAsVariationsOnly', v)
+                }
+              />
+              <EditTextRow
+                label="Lineage Tag"
+                value={t.lineageTag ?? ''}
+                placeholder="(auto)"
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('table', parts[1], parts[1], 'lineageTag', v)}
+              />
+              <EditTextRow
+                label="Source Lineage Tag"
+                value={t.sourceLineageTag ?? ''}
+                placeholder="(none)"
+                disabled={savingProp}
+                onSave={(v) =>
+                  handleEditProperty('table', parts[1], parts[1], 'sourceLineageTag', v)
+                }
+              />
               <PropGroupLabel label="Advanced (read-only)" />
               <PropRow label="Columns" value={String(Object.keys(t.columns).length)} />
               <PropRow label="Measures" value={String(Object.keys(t.measures).length)} />
@@ -1614,10 +1732,155 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
         <>
           <PropGroupLabel label="General" />
           <PropRow label="Name" value={modelData.datasetName || tableName} />
-          <PropRow label="Default Mode" value={mp.defaultMode || 'Import'} />
           <PropRow label="Compatibility Level" value={mp.compatibilityLevel} />
+          <EditSelectRow
+            label="Default Mode"
+            value={(mp.defaultMode || 'import').replace(/^([A-Z])/, (m) => m.toLowerCase())}
+            options={DEFAULTMODE_OPTIONS}
+            disabled={savingProp}
+            onSave={(v) => handleEditProperty('model', '', '', 'defaultMode', v)}
+          />
+          <EditTextRow
+            label="Culture"
+            value={mp.culture ?? ''}
+            placeholder="(e.g. en-US)"
+            disabled={savingProp}
+            onSave={(v) => handleEditProperty('model', '', '', 'culture', v)}
+          />
           {showAdvanced && (
             <>
+              <PropGroupLabel label="Data Access Options" />
+              <EditBoolRow
+                label="Enable Fast Combine"
+                value={mp.fastCombine ?? false}
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('model', '', '', 'fastCombine', v)}
+              />
+              <EditBoolRow
+                label="Enable Legacy Redirects"
+                value={mp.legacyRedirects ?? false}
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('model', '', '', 'legacyRedirects', v)}
+              />
+              <EditBoolRow
+                label="Return Error Values As Null"
+                value={mp.returnErrorValuesAsNull ?? false}
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('model', '', '', 'returnErrorValuesAsNull', v)}
+              />
+              <PropGroupLabel label="Options" />
+              <EditTextRow
+                label="Collation"
+                value={mp.collation ?? ''}
+                placeholder="(default)"
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('model', '', '', 'collation', v)}
+              />
+              <EditTextRow
+                label="Source Query Culture"
+                value={mp.sourceQueryCulture ?? ''}
+                placeholder="(inherits Culture)"
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('model', '', '', 'sourceQueryCulture', v)}
+              />
+              <EditSelectRow
+                label="Default Data View"
+                value={mp.defaultDataView ?? 'full'}
+                options={DEFAULTDATAVIEW_OPTIONS}
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('model', '', '', 'defaultDataView', v)}
+              />
+              <EditSelectRow
+                label="Default Power BI Data Source Version"
+                value={mp.defaultPowerBIDataSourceVersion ?? 'powerBI_V3'}
+                options={PBI_DATASOURCE_VERSION_OPTIONS}
+                disabled={savingProp}
+                onSave={(v) =>
+                  handleEditProperty('model', '', '', 'defaultPowerBIDataSourceVersion', v)
+                }
+              />
+              <EditSelectRow
+                label="Direct Lake Behavior"
+                value={mp.directLakeBehavior ?? 'automatic'}
+                options={DIRECTLAKE_BEHAVIOR_OPTIONS}
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('model', '', '', 'directLakeBehavior', v)}
+              />
+              <EditSelectRow
+                label="Data Source Variables Override Behavior"
+                value={mp.dataSourceVariablesOverrideBehavior ?? 'disallow'}
+                options={DSV_OVERRIDE_OPTIONS}
+                disabled={savingProp}
+                onSave={(v) =>
+                  handleEditProperty('model', '', '', 'dataSourceVariablesOverrideBehavior', v)
+                }
+              />
+              <EditTextRow
+                label="Default Measure"
+                value={mp.defaultMeasure ?? ''}
+                placeholder="(none)"
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('model', '', '', 'defaultMeasure', v)}
+              />
+              <EditTextRow
+                label="Storage Location"
+                value={mp.storageLocation ?? ''}
+                placeholder="(default)"
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('model', '', '', 'storageLocation', v)}
+              />
+              <EditTextRow
+                label="Max Parallelism Per Query"
+                value={mp.maxParallelismPerQuery ?? ''}
+                placeholder="(default)"
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('model', '', '', 'maxParallelismPerQuery', v)}
+              />
+              <EditTextRow
+                label="Max Parallelism Per Refresh"
+                value={mp.maxParallelismPerRefresh ?? ''}
+                placeholder="(default)"
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('model', '', '', 'maxParallelismPerRefresh', v)}
+              />
+              <EditTextRow
+                label="Data Source Default Max Connections"
+                value={mp.dataSourceDefaultMaxConnections ?? ''}
+                placeholder="(default)"
+                disabled={savingProp}
+                onSave={(v) =>
+                  handleEditProperty('model', '', '', 'dataSourceDefaultMaxConnections', v)
+                }
+              />
+              <EditTextRow
+                label="Disable Auto Exists"
+                value={mp.disableAutoExists ?? ''}
+                placeholder="(default)"
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('model', '', '', 'disableAutoExists', v)}
+              />
+              <EditBoolRow
+                label="Discourage Implicit Measures"
+                value={mp.discourageImplicitMeasures ?? false}
+                disabled={savingProp}
+                onSave={(v) =>
+                  handleEditProperty('model', '', '', 'discourageImplicitMeasures', v)
+                }
+              />
+              <EditBoolRow
+                label="Discourage Composite Models"
+                value={mp.discourageCompositeModels ?? false}
+                disabled={savingProp}
+                onSave={(v) =>
+                  handleEditProperty('model', '', '', 'discourageCompositeModels', v)
+                }
+              />
+              <EditBoolRow
+                label="Force Unique Names"
+                value={mp.forceUniqueNames ?? false}
+                disabled={savingProp}
+                onSave={(v) => handleEditProperty('model', '', '', 'forceUniqueNames', v)}
+              />
               <PropGroupLabel label="Advanced (read-only)" />
               <PropRow label="Tables" value={String(Object.keys(modelData.tables).length)} />
               <PropRow label="Relationships" value={String(modelData.relationships.length)} />

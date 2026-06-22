@@ -16,6 +16,12 @@ export interface ColumnInfo {
   sortByColumn: string;
   encodingHint: string;
   isNullable: boolean;
+  // TE2-parity advanced properties (read from TMDL; optional so existing
+  // construction sites stay valid).
+  formatString?: string;
+  isAvailableInMdx?: boolean;
+  lineageTag?: string;
+  sourceLineageTag?: string;
 }
 
 export interface MeasureInfo {
@@ -24,6 +30,12 @@ export interface MeasureInfo {
   description: string;
   displayFolder: string;
   isHidden: boolean;
+  // TE2-parity advanced properties (read from TMDL).
+  dataCategory?: string;
+  detailRowsExpression?: string;
+  formatStringExpression?: string;
+  lineageTag?: string;
+  sourceLineageTag?: string;
 }
 
 export interface HierarchyInfo {
@@ -62,11 +74,41 @@ export interface TableInfo {
   hierarchies: Record<string, HierarchyInfo>;
   calcItems: Record<string, CalcItemInfo>;
   partitions: PartitionInfo[];
+  // TE2-parity advanced properties (read from TMDL).
+  dataCategory?: string;
+  isPrivate?: boolean;
+  excludeFromModelRefresh?: boolean;
+  excludeFromAutomaticAggregations?: boolean;
+  showAsVariationsOnly?: boolean;
+  alternateSourcePrecedence?: string;
+  lineageTag?: string;
+  sourceLineageTag?: string;
 }
 
 export interface ModelProperties {
   compatibilityLevel: string;
   defaultMode: string;
+  // TE2-parity model-level options (read from TMDL).
+  culture?: string;
+  collation?: string;
+  sourceQueryCulture?: string;
+  defaultDataView?: string;
+  defaultPowerBIDataSourceVersion?: string;
+  directLakeBehavior?: string;
+  dataSourceVariablesOverrideBehavior?: string;
+  defaultMeasure?: string;
+  storageLocation?: string;
+  mAttributes?: string;
+  disableAutoExists?: string;
+  dataSourceDefaultMaxConnections?: string;
+  maxParallelismPerQuery?: string;
+  maxParallelismPerRefresh?: string;
+  discourageImplicitMeasures?: boolean;
+  discourageCompositeModels?: boolean;
+  forceUniqueNames?: boolean;
+  fastCombine?: boolean;
+  legacyRedirects?: boolean;
+  returnErrorValuesAsNull?: boolean;
 }
 
 export interface ModelData {

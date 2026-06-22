@@ -333,6 +333,191 @@ function parseTmdlPartitions(parts: RawDefinitionPart[]): Record<string, TmdlPar
   return out;
 }
 
+// --------------------------------------------------------------------------- //
+// TMDL scalar property scanning (TE2-parity advanced properties)
+// --------------------------------------------------------------------------- //
+
+/** Read `key: value` / bare-flag scalar properties at a given indent within a
+ *  line range, keeping only keys in `wanted`. A bare flag (`key` with no value)
+ *  is treated as `true`. */
+function readScalarsAtIndent(
+  lines: string[],
+  start: number,
+  end: number,
+  indent: number,
+  wanted: Set<string>
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (let i = start; i < end; i++) {
+    if (tmdlIndent(lines[i]) !== indent) continue;
+    const t = lines[i].replace(/^\t*/, '');
+    const kv = /^([A-Za-z_]\w*)\s*:\s*(.*)$/.exec(t);
+    if (kv) {
+      if (wanted.has(kv[1])) out[kv[1]] = kv[2].trim();
+      continue;
+    }
+    const bare = /^([A-Za-z_]\w*)\s*$/.exec(t);
+    if (bare && wanted.has(bare[1])) out[bare[1]] = 'true';
+  }
+  return out;
+}
+
+const TABLE_SCALAR_KEYS = new Set([
+  'dataCategory',
+  'isPrivate',
+  'excludeFromModelRefresh',
+  'excludeFromAutomaticAggregations',
+  'showAsVariationsOnly',
+  'alternateSourcePrecedence',
+  'lineageTag',
+  'sourceLineageTag',
+]);
+const COLUMN_SCALAR_KEYS = new Set([
+  'formatString',
+  'dataType',
+  'isAvailableInMdx',
+  'lineageTag',
+  'sourceLineageTag',
+]);
+const MEASURE_SCALAR_KEYS = new Set([
+  'dataCategory',
+  'lineageTag',
+  'sourceLineageTag',
+]);
+const MODEL_SCALAR_KEYS = new Set([
+  'culture',
+  'collation',
+  'sourceQueryCulture',
+  'defaultDataView',
+  'defaultPowerBIDataSourceVersion',
+  'directLakeBehavior',
+  'dataSourceVariablesOverrideBehavior',
+  'defaultMeasure',
+  'storageLocation',
+  'mAttributes',
+  'disableAutoExists',
+  'dataSourceDefaultMaxConnections',
+  'maxParallelismPerQuery',
+  'maxParallelismPerRefresh',
+  'discourageImplicitMeasures',
+  'discourageCompositeModels',
+  'forceUniqueNames',
+  'fastCombine',
+  'legacyRedirects',
+  'returnErrorValuesAsNull',
+  'defaultMode',
+]);
+
+function tmdlBool(v: string | undefined): boolean {
+  return v != null && v.toLowerCase() === 'true';
+}
+
+/** Merge TE2-parity advanced scalar properties from the model's TMDL parts into
+ *  the already-built `modelData`. INFO.VIEW does not expose most of these, so
+ *  the TMDL definition is the only reliable source. Best-effort: any parse miss
+ *  simply leaves the field undefined. */
+function applyTmdlScalars(parts: RawDefinitionPart[], modelData: ModelData): void {
+  for (const part of parts) {
+    if (part.binary) continue;
+    const lines = part.text.split('\n');
+
+    // Model-level properties (definition/model.tmdl).
+    if (/^definition\/model\.tmdl$/i.test(part.path)) {
+      const mp = readScalarsAtIndent(lines, 0, lines.length, 1, MODEL_SCALAR_KEYS);
+      const p = modelData.modelProperties;
+      if (mp.culture) p.culture = mp.culture;
+      if (mp.collation) p.collation = mp.collation;
+      if (mp.sourceQueryCulture) p.sourceQueryCulture = mp.sourceQueryCulture;
+      if (mp.defaultDataView) p.defaultDataView = mp.defaultDataView;
+      if (mp.defaultPowerBIDataSourceVersion)
+        p.defaultPowerBIDataSourceVersion = mp.defaultPowerBIDataSourceVersion;
+      if (mp.directLakeBehavior) p.directLakeBehavior = mp.directLakeBehavior;
+      if (mp.dataSourceVariablesOverrideBehavior)
+        p.dataSourceVariablesOverrideBehavior = mp.dataSourceVariablesOverrideBehavior;
+      if (mp.defaultMeasure) p.defaultMeasure = mp.defaultMeasure;
+      if (mp.storageLocation) p.storageLocation = mp.storageLocation;
+      if (mp.mAttributes) p.mAttributes = mp.mAttributes;
+      if (mp.disableAutoExists) p.disableAutoExists = mp.disableAutoExists;
+      if (mp.dataSourceDefaultMaxConnections)
+        p.dataSourceDefaultMaxConnections = mp.dataSourceDefaultMaxConnections;
+      if (mp.maxParallelismPerQuery) p.maxParallelismPerQuery = mp.maxParallelismPerQuery;
+      if (mp.maxParallelismPerRefresh) p.maxParallelismPerRefresh = mp.maxParallelismPerRefresh;
+      if (mp.defaultMode && !p.defaultMode) p.defaultMode = mp.defaultMode;
+      p.discourageImplicitMeasures = tmdlBool(mp.discourageImplicitMeasures);
+      p.discourageCompositeModels = tmdlBool(mp.discourageCompositeModels);
+      p.forceUniqueNames = tmdlBool(mp.forceUniqueNames);
+      p.fastCombine = tmdlBool(mp.fastCombine);
+      p.legacyRedirects = tmdlBool(mp.legacyRedirects);
+      p.returnErrorValuesAsNull = tmdlBool(mp.returnErrorValuesAsNull);
+      continue;
+    }
+
+    // Table / column / measure properties (definition/tables/*.tmdl).
+    if (!/^definition\/tables\/.+\.tmdl$/i.test(part.path)) continue;
+
+    let tableName: string | null = null;
+    for (const line of lines) {
+      if (tmdlIndent(line) === 0) {
+        const n = tmdlDeclName(line, 'table');
+        if (n) {
+          tableName = n;
+          break;
+        }
+      }
+    }
+    if (!tableName) continue;
+    const table = modelData.tables[tableName];
+    if (!table) continue;
+
+    // Table-level scalars are the indent-1 `key: value` lines (column / measure
+    // / partition / hierarchy decls carry a name and never match the regex).
+    const ts = readScalarsAtIndent(lines, 0, lines.length, 1, TABLE_SCALAR_KEYS);
+    if (ts.dataCategory) table.dataCategory = ts.dataCategory;
+    if (ts.alternateSourcePrecedence)
+      table.alternateSourcePrecedence = ts.alternateSourcePrecedence;
+    if (ts.lineageTag) table.lineageTag = ts.lineageTag;
+    if (ts.sourceLineageTag) table.sourceLineageTag = ts.sourceLineageTag;
+    table.isPrivate = tmdlBool(ts.isPrivate);
+    table.excludeFromModelRefresh = tmdlBool(ts.excludeFromModelRefresh);
+    table.excludeFromAutomaticAggregations = tmdlBool(ts.excludeFromAutomaticAggregations);
+    table.showAsVariationsOnly = tmdlBool(ts.showAsVariationsOnly);
+
+    // Per-column and per-measure scalars from their indent-2 child blocks.
+    for (let i = 0; i < lines.length; i++) {
+      if (tmdlIndent(lines[i]) !== 1) continue;
+      const colName = tmdlDeclName(lines[i], 'column');
+      const measName = tmdlDeclName(lines[i], 'measure');
+      if (colName === null && measName === null) continue;
+      let blockEnd = lines.length;
+      for (let j = i + 1; j < lines.length; j++) {
+        if (lines[j].trim() !== '' && tmdlIndent(lines[j]) <= 1) {
+          blockEnd = j;
+          break;
+        }
+      }
+      if (colName !== null) {
+        const col = table.columns[colName];
+        if (col) {
+          const cs = readScalarsAtIndent(lines, i + 1, blockEnd, 2, COLUMN_SCALAR_KEYS);
+          if (cs.formatString) col.formatString = cs.formatString;
+          if (cs.dataType && !col.dataType) col.dataType = cs.dataType;
+          if (cs.lineageTag) col.lineageTag = cs.lineageTag;
+          if (cs.sourceLineageTag) col.sourceLineageTag = cs.sourceLineageTag;
+          col.isAvailableInMdx = cs.isAvailableInMdx == null ? true : tmdlBool(cs.isAvailableInMdx);
+        }
+      } else if (measName !== null) {
+        const meas = table.measures[measName];
+        if (meas) {
+          const ms = readScalarsAtIndent(lines, i + 1, blockEnd, 2, MEASURE_SCALAR_KEYS);
+          if (ms.dataCategory) meas.dataCategory = ms.dataCategory;
+          if (ms.lineageTag) meas.lineageTag = ms.lineageTag;
+          if (ms.sourceLineageTag) meas.sourceLineageTag = ms.sourceLineageTag;
+        }
+      }
+    }
+  }
+}
+
 /** Load tables / columns / measures / relationships through INFO.VIEW DAX. */
 async function loadModelViaInfoView(
   workspaceId: string,
@@ -459,6 +644,9 @@ async function loadModelViaInfoView(
         anyDirectLake = true;
       }
     }
+    // TE2-parity advanced scalar properties (lineageTag, isPrivate, model-level
+    // options, …) come from the same TMDL parts — merge them in.
+    if (parts) applyTmdlScalars(parts, modelData);
   } catch {
     // TMDL export unavailable (e.g. capacity paused) — leave partitions empty.
   }
@@ -848,14 +1036,21 @@ function encodeText(text: string): string {
 // --------------------------------------------------------------------------- //
 // Definition-parts cache
 // --------------------------------------------------------------------------- //
-// `getDefinition` is a heavyweight long-running export (TMDL/PBIR). A single
-// property edit fetches it twice (once in the property editor, once inside
-// `saveDefinitionParts`), and rapid sequential edits re-export it every time.
-// A short-lived, write-through cache of the raw parts (base64 payloads incl.
-// binary) collapses those redundant exports. Every successful save rewrites the
-// cache so it stays authoritative; an explicit model reload invalidates it.
+// `getDefinition` is a heavyweight long-running export (TMDL/PBIR) — measured at
+// ~25-31s per call through the `fabric_proxy` double hop. A single property edit
+// otherwise fetches it twice (once in the property editor, once inside
+// `saveDefinitionParts`), turning every edit into get + update (~55-79s).
+//
+// The cache is therefore SESSION-SCOPED, not time-boxed: the initial model load
+// already exports the definition once (in `loadModelViaInfoView`), so every
+// later edit reuses those parts and pays only the unavoidable `updateDefinition`
+// (~24s) instead of re-exporting first. Authoritative-ness is kept two ways:
+//   • every successful save write-throughs the just-written parts, and
+//   • an explicit model (re)load calls `invalidateDefinitionCache`,
+// so stale state cannot outlive an intentional refresh. The long TTL is only a
+// safety net against a session that stays open for hours.
 
-const DEFINITION_CACHE_TTL_MS = 30_000;
+const DEFINITION_CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6h — effectively session-scoped
 const definitionCache = new Map<string, { parts: DefinitionPart[]; ts: number }>();
 
 function defCacheKey(kind: DefinitionKind, workspaceId: string, itemId: string): string {
