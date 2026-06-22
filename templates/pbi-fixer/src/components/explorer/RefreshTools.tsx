@@ -1,15 +1,17 @@
-// RefreshTools — refresh-policy / last-refresh / calendar adders for the model.
+// RefreshTools — "Add to Model" tools: tables, M functions, refresh policies and
+// calculation groups written straight into the live semantic model.
 //
-// PKG-9 (C4/C5/C7/C9). Four self-contained cards:
+// PKG-9 cards:
 //   C4  Last Refresh (LocalNow)  — a one-row table stamped via DateTime.LocalNow().
 //   C5  Last Refresh (CET/CEST)  — UTC→Europe/Berlin via a shared DST-aware M fn.
 //   C7  Calendar function        — Lars Schreiber's "Kalenderfunktion" shared M fn.
 //   C9  Incremental refresh      — scan import tables, attach a basic policy with
 //                                  RangeStart/RangeEnd parameters + date filter.
+//   CG  Calculation groups       — ready-made Time Intelligence / Units templates.
 //
 // Each action mutates the live model definition through a single TMDL round-trip.
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Button,
   Spinner,
@@ -29,6 +31,7 @@ import {
   CalendarLtr20Regular,
   ArrowSync20Regular,
   Search20Regular,
+  Table20Regular,
 } from '@fluentui/react-icons';
 import { BORDER_COLOR, ICON_ACCENT, GRAY_COLOR } from '@/explorer/theme';
 import {
@@ -36,8 +39,12 @@ import {
   addCalendarFunction,
   scanIncrementalRefreshTargets,
   addIncrementalRefresh,
+  analyzeModel,
+  addCalculationGroup,
+  listCalcGroupTemplates,
   type IncrRefreshTarget,
   type RefreshGranularity,
+  type ModelAnalysis,
 } from '@/services/ibcsModel';
 
 export interface RefreshToolsProps {
@@ -52,6 +59,9 @@ interface Result {
 }
 
 const GRANULARITIES: RefreshGranularity[] = ['day', 'month', 'quarter', 'year'];
+
+const SEP = '\u0000';
+const CG_TEMPLATES = listCalcGroupTemplates();
 
 const useStyles = makeStyles({
   root: { display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, ...shorthands.gap('10px') },
@@ -108,6 +118,15 @@ export function RefreshTools({ workspaceId, datasetId, datasetName }: RefreshToo
   const [refreshGran, setRefreshGran] = useState<RefreshGranularity>('day');
   const [c9Busy, setC9Busy] = useState(false);
   const [c9Result, setC9Result] = useState<Result | null>(null);
+
+  // CG — Calculation groups (Time Intelligence / Units).
+  const [analysis, setAnalysis] = useState<ModelAnalysis | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [dateRef, setDateRef] = useState('');
+  const [cgTemplateId, setCgTemplateId] = useState(CG_TEMPLATES[0].id);
+  const [cgTableName, setCgTableName] = useState(CG_TEMPLATES[0].name);
+  const [addingCg, setAddingCg] = useState(false);
+  const [cgResult, setCgResult] = useState<Result | null>(null);
 
   const selectedTarget = useMemo(
     () => targets.find((t) => t.table === c9Table) ?? null,
@@ -204,12 +223,88 @@ export function RefreshTools({ workspaceId, datasetId, datasetName }: RefreshToo
     }
   }, [canApplyC9, workspaceId, datasetId, c9Table, c9Col, storePeriods, storeGran, refreshPeriods, refreshGran]);
 
+  const loadAnalysis = useCallback(async () => {
+    if (!datasetId) return;
+    setAnalyzing(true);
+    try {
+      const data = await analyzeModel(workspaceId, datasetId);
+      setAnalysis(data);
+      const def =
+        data.calendarTables[0] != null
+          ? `${data.calendarTables[0].table}${SEP}${data.calendarTables[0].dateColumn}`
+          : data.dateColumns[0] != null
+            ? `${data.dateColumns[0].table}${SEP}${data.dateColumns[0].column}`
+            : '';
+      setDateRef(def);
+    } catch {
+      // Date dropdown stays empty; the card shows a hint to pick a column.
+    } finally {
+      setAnalyzing(false);
+    }
+  }, [workspaceId, datasetId]);
+
+  useEffect(() => {
+    void loadAnalysis();
+  }, [loadAnalysis]);
+
+  const dateOptions = useMemo(() => {
+    if (!analysis) return [] as { value: string; label: string; marked: boolean }[];
+    const seen = new Set<string>();
+    const opts: { value: string; label: string; marked: boolean }[] = [];
+    for (const c of analysis.calendarTables) {
+      const v = `${c.table}${SEP}${c.dateColumn}`;
+      if (seen.has(v)) continue;
+      seen.add(v);
+      opts.push({ value: v, label: `${c.table}[${c.dateColumn}]`, marked: true });
+    }
+    for (const d of analysis.dateColumns) {
+      const v = `${d.table}${SEP}${d.column}`;
+      if (seen.has(v)) continue;
+      seen.add(v);
+      opts.push({ value: v, label: `${d.table}[${d.column}]`, marked: false });
+    }
+    return opts;
+  }, [analysis]);
+
+  const cgTemplate = CG_TEMPLATES.find((t) => t.id === cgTemplateId) ?? CG_TEMPLATES[0];
+
+  const onPickTemplate = (id: string) => {
+    setCgTemplateId(id);
+    const tpl = CG_TEMPLATES.find((t) => t.id === id);
+    if (tpl) setCgTableName(tpl.name);
+    setCgResult(null);
+  };
+
+  const canAddCg =
+    ready && !addingCg && !!cgTableName.trim() && (!cgTemplate.needsDate || !!dateRef);
+
+  const runAddCalcGroup = useCallback(async () => {
+    if (!canAddCg) return;
+    const [calendarTable, dateColumn] = dateRef.split(SEP);
+    setAddingCg(true);
+    setCgResult(null);
+    try {
+      const r = await addCalculationGroup(workspaceId, datasetId, {
+        templateId: cgTemplate.id,
+        tableName: cgTableName,
+        calendarTable: cgTemplate.needsDate ? calendarTable : undefined,
+        dateColumn: cgTemplate.needsDate ? dateColumn : undefined,
+      });
+      setCgResult({ ok: r.changed > 0 || !r.created, text: r.detail });
+      await loadAnalysis();
+    } catch (e) {
+      setCgResult({ ok: false, text: e instanceof Error ? e.message : String(e) });
+    } finally {
+      setAddingCg(false);
+    }
+  }, [canAddCg, dateRef, workspaceId, datasetId, cgTemplate, cgTableName, loadAnalysis]);
+
   return (
     <div className={styles.root}>
       <div className={styles.toolbar}>
         <ArrowSync20Regular style={{ color: ICON_ACCENT }} />
         <span className={styles.status}>
-          {ready ? `Refresh & last-refresh tools · ${datasetName}` : 'Select a semantic model first.'}
+          {ready ? `Add-to-model tools · ${datasetName}` : 'Select a semantic model first.'}
         </span>
       </div>
 
@@ -440,6 +535,80 @@ export function RefreshTools({ workspaceId, datasetId, datasetName }: RefreshToo
           {c9Result && (
             <MessageBar intent={c9Result.ok ? 'success' : 'error'}>
               <MessageBarBody>{c9Result.text}</MessageBarBody>
+            </MessageBar>
+          )}
+        </div>
+
+        {/* CG — Calculation groups */}
+        <div className={styles.card}>
+          <div className={styles.cardHead}>
+            <Table20Regular style={{ color: ICON_ACCENT }} />
+            <span className={styles.cardTitle}>Calculation group templates</span>
+          </div>
+          <Text className={styles.cardHint}>
+            Adds a ready-made calculation group that switches every measure at once — no
+            per-measure copies. <b>Time Intelligence</b> (Current, MTD, QTD, YTD, PY, YoY, YoY %)
+            needs a date column; <b>Units</b> (units / thousands / millions / billions) works on
+            any measure.
+          </Text>
+          {analysis && analysis.calcGroups.length > 0 && (
+            <Text className={styles.cardHint}>Existing: {analysis.calcGroups.join(', ')}</Text>
+          )}
+          <div className={styles.row}>
+            <div className={styles.field}>
+              <label className={styles.label}>Template</label>
+              <Dropdown
+                style={{ minWidth: '220px' }}
+                value={cgTemplate.name + (cgTemplate.needsDate ? ' · time intelligence' : ' · scaling')}
+                selectedOptions={[cgTemplate.id]}
+                onOptionSelect={(_, d) => onPickTemplate(d.optionValue ?? cgTemplate.id)}
+              >
+                {CG_TEMPLATES.map((t) => (
+                  <Option key={t.id} value={t.id} text={t.name}>
+                    {t.name} · {t.items.length} items
+                  </Option>
+                ))}
+              </Dropdown>
+            </div>
+            {cgTemplate.needsDate && (
+              <div className={styles.field}>
+                <label className={styles.label}>Date column</label>
+                <Dropdown
+                  className={styles.sel}
+                  disabled={dateOptions.length === 0}
+                  placeholder={analyzing ? 'Analysing…' : 'Select a date column'}
+                  value={dateOptions.find((o) => o.value === dateRef)?.label ?? ''}
+                  selectedOptions={[dateRef]}
+                  onOptionSelect={(_, d) => setDateRef(d.optionValue ?? '')}
+                >
+                  {dateOptions.map((o) => (
+                    <Option key={o.value} value={o.value} text={o.label}>
+                      {o.label}{o.marked ? ' · marked' : ''}
+                    </Option>
+                  ))}
+                </Dropdown>
+              </div>
+            )}
+            <div className={styles.field}>
+              <label className={styles.label}>Table name</label>
+              <Input value={cgTableName} onChange={(_, d) => setCgTableName(d.value)} />
+            </div>
+            <Button
+              appearance="primary"
+              icon={addingCg ? <Spinner size="tiny" /> : <Table20Regular />}
+              disabled={!canAddCg}
+              onClick={runAddCalcGroup}
+            >
+              Add calculation group
+            </Button>
+          </div>
+          <Text className={styles.cardHint}>{cgTemplate.description}</Text>
+          {cgTemplate.needsDate && !dateRef && (
+            <span className={styles.cardHint}>Pick a date column first.</span>
+          )}
+          {cgResult && (
+            <MessageBar intent={cgResult.ok ? 'success' : 'warning'}>
+              <MessageBarBody>{cgResult.text}</MessageBarBody>
             </MessageBar>
           )}
         </div>

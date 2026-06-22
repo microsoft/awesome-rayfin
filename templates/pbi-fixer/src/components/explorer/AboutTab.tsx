@@ -95,28 +95,8 @@ export function AboutTab() {
           <Title3>Authors</Title3>
           <ul className={styles.list}>
             <li>
-              <Body1Strong>Lukasz Obst</Body1Strong>
-              <Body1> — creator &amp; maintainer.</Body1>{' '}
-              <Link
-                href="https://www.linkedin.com/in/lukasz-obst-3672083a2/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.inlineLink}
-              >
-                LinkedIn <Open16Regular />
-              </Link>
-            </li>
-            <li>
               <Body1Strong>Alexander Korn</Body1Strong>
-              <Body1> — creator &amp; maintainer.</Body1>{' '}
-              <Link
-                href="https://www.linkedin.com/in/alexanderkorn/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.inlineLink}
-              >
-                LinkedIn <Open16Regular />
-              </Link>
+              <Body1> — creator &amp; maintainer. LinkedIn: https://www.linkedin.com/in/alexanderkorn/</Body1>
             </li>
           </ul>
         </section>
@@ -125,6 +105,10 @@ export function AboutTab() {
         <section className={styles.section}>
           <Title3>Acknowledgements</Title3>
           <ul className={styles.list}>
+            <li>
+              <Body1Strong>Lukasz Obst</Body1Strong>
+              <Body1> — for his contributions to the project. LinkedIn: https://www.linkedin.com/in/lukasz-obst-3672083a2/</Body1>
+            </li>
             <li>
               <Body1Strong>Michael Kovalsky</Body1Strong>
               <Body1>

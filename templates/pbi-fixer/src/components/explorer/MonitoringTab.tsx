@@ -244,6 +244,12 @@ export function MonitoringTab({ workspaceId, workspaceName }: MonitoringTabProps
 
           {enabled ? (
             <>
+              <MessageBar intent="success">
+                <MessageBarBody>
+                  The “{status?.eventhouseName ?? MONITORING_EVENTHOUSE_NAME}” Eventhouse is active
+                  in this workspace.
+                </MessageBarBody>
+              </MessageBar>
               <Text className={styles.hint}>
                 Monitoring is enabled. The values below are the parameters for the report template.
               </Text>

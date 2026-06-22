@@ -680,3 +680,185 @@ def github_comment_m(githubToken: str, steps: str) -> dict:
     if len(result) < len(snippets):
         result.extend([""] * (len(snippets) - len(result)))
     return {"comments": result[:len(snippets)]}
+
+
+def _strip_code_fence(text: str) -> str:
+    """Remove a leading/trailing Markdown code fence if the model wrapped the
+    HTML in ```html ... ```."""
+    s = text.strip()
+    if s.startswith("```"):
+        nl = s.find("\n")
+        if nl != -1:
+            s = s[nl + 1:]
+        if s.rstrip().endswith("```"):
+            s = s.rstrip()[:-3]
+    return s.strip()
+
+
+@udf.function()
+def github_landing_html(githubToken: str, context: str) -> dict:
+    """Author a bespoke full-bleed HTML landing page for a Power BI report.
+
+    ``context`` is a JSON-object string of the shape produced by the app:
+    ``{"title", "subtitle", "pages": [...], "kpis": [{"label","value"}],
+    "accent", "ink"}``. Returns ``{"html": "<div class=\\"landing-root\\">...
+    </div>"}`` — a single self-contained fragment whose CSS is fully scoped
+    under ``.landing-root`` so it cannot leak into the host page. The HTML is
+    later embedded verbatim into an HTML Content visual via a report-level
+    measure. The GitHub token is exchanged for a Copilot token server-side per
+    call.
+    """
+    try:
+        ctx = json.loads(context) if context else {}
+    except (ValueError, TypeError):
+        ctx = {}
+    if not isinstance(ctx, dict):
+        ctx = {}
+    title = str(ctx.get("title") or "Report")
+    subtitle = str(ctx.get("subtitle") or "")
+    pages = ctx.get("pages") if isinstance(ctx.get("pages"), list) else []
+    kpis = ctx.get("kpis") if isinstance(ctx.get("kpis"), list) else []
+    accent = str(ctx.get("accent") or "#2563eb")
+    ink = str(ctx.get("ink") or "#0b1d3a")
+
+    copilot = _copilot_token(githubToken)
+    system = (
+        "You are a senior front-end designer. You produce ONE self-contained "
+        "HTML fragment for a full-bleed 1920x1080 landing page that introduces "
+        "a Power BI report. STRICT RULES:\n"
+        "1. Output ONLY the HTML fragment — no Markdown, no code fences, no "
+        "commentary.\n"
+        "2. The fragment MUST be a single root element <div class=\"landing-"
+        "root\"> ... </div> containing exactly one <style> block followed by "
+        "the markup.\n"
+        "3. EVERY CSS selector MUST be prefixed with .landing-root so styles "
+        "cannot leak (e.g. '.landing-root .hero {...}'). Do not style html, "
+        "body, or use global selectors.\n"
+        "4. Inside .landing-root, create a stage element positioned 'absolute' "
+        "with inset:0 that fills the visual, with a rich gradient background "
+        "derived from the accent and ink colours. Use only inline web-safe "
+        "fonts ('Segoe UI', system-ui, sans-serif).\n"
+        "5. Compose a strong hero: a small uppercase eyebrow, the report title "
+        "as a large headline, the subtitle, a row of KPI tiles (one per kpi, "
+        "showing value prominently and label below), and a tidy grid of cards "
+        "for the report pages (numbered). Omit a section gracefully if its data "
+        "is empty.\n"
+        "6. No external resources, no <script>, no images, no network calls — "
+        "CSS only. Keep it elegant, high-contrast and accessible.\n"
+        "7. Use the accent colour for highlights and the ink colour as the dark "
+        "base."
+    )
+    user = json.dumps(
+        {
+            "title": title,
+            "subtitle": subtitle,
+            "pages": [str(p) for p in pages][:8],
+            "kpis": [
+                {"label": str(k.get("label", "")), "value": str(k.get("value", ""))}
+                for k in kpis
+                if isinstance(k, dict)
+            ][:4],
+            "accent": accent,
+            "ink": ink,
+        },
+        ensure_ascii=False,
+    )
+    body = {
+        "model": TRANSLATE_MODEL,
+        "messages": [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        "temperature": 0.4,
+        "stream": False,
+    }
+    data = _copilot_chat(copilot, body)
+    content = (
+        data.get("choices", [{}])[0].get("message", {}).get("content", "")
+    )
+    html = _strip_code_fence(content or "")
+    if "landing-root" not in html:
+        html = f'<div class="landing-root">{html}</div>'
+    return {"html": html}
+
+
+@udf.function()
+def github_tidy_workspace(githubToken: str, items: str) -> dict:
+    """Propose a tidy folder name for each workspace item using GitHub Copilot.
+
+    ``items`` is a JSON-array string of ``{"id", "name", "type"}`` objects (the
+    items that live loose in the chosen scope). Returns
+    ``{"assignments": [{"id", "folder"}, ...]}`` — one short, human-readable
+    folder name per item that groups related items together (by subject /
+    project / domain, not just by raw type). The browser creates each distinct
+    folder and moves the items into it. The GitHub token is exchanged for a
+    Copilot token server-side per call.
+    """
+    try:
+        item_list = json.loads(items) if items else []
+    except (ValueError, TypeError):
+        item_list = []
+    if not isinstance(item_list, list) or not item_list:
+        return {"assignments": []}
+
+    clean = [
+        {
+            "id": str(it.get("id", "")),
+            "name": str(it.get("name", "")),
+            "type": str(it.get("type", "")),
+        }
+        for it in item_list
+        if isinstance(it, dict) and it.get("id")
+    ]
+    if not clean:
+        return {"assignments": []}
+
+    copilot = _copilot_token(githubToken)
+    system = (
+        "You organise a Microsoft Fabric workspace by grouping items into "
+        "folders. You are given a list of items, each with an id, a display "
+        "name and a Fabric item type. Assign EVERY item to ONE folder. STRICT "
+        "RULES:\n"
+        "1. Prefer grouping by subject / project / data domain inferred from "
+        "the names (e.g. 'Sales', 'Finance', 'HR', 'Marketing'), keeping a "
+        "report and its semantic model together.\n"
+        "2. Fall back to grouping by item type (e.g. 'Notebooks', 'Data "
+        "pipelines') when a name carries no clear subject.\n"
+        "3. Use short Title Case folder names (1-3 words). Reuse the SAME "
+        "folder name for items that belong together. Aim for a sensible number "
+        "of folders, not one per item.\n"
+        "4. Output ONLY a JSON object of the exact shape "
+        '{"assignments": [{"id": "...", "folder": "..."}]} with one entry per '
+        "input item, using the exact ids given. No commentary, no code fences."
+    )
+    user = json.dumps({"items": clean}, ensure_ascii=False)
+    body = {
+        "model": TRANSLATE_MODEL,
+        "messages": [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        "temperature": 0.2,
+        "response_format": {"type": "json_object"},
+        "stream": False,
+    }
+    data = _copilot_chat(copilot, body)
+    content = (
+        data.get("choices", [{}])[0].get("message", {}).get("content", "")
+    )
+    try:
+        parsed = json.loads(content) if content else {}
+    except (ValueError, TypeError):
+        parsed = {}
+    raw = parsed.get("assignments") if isinstance(parsed, dict) else None
+    valid_ids = {c["id"] for c in clean}
+    assignments = []
+    if isinstance(raw, list):
+        for a in raw:
+            if not isinstance(a, dict):
+                continue
+            aid = str(a.get("id", ""))
+            folder = str(a.get("folder", "")).strip()
+            if aid in valid_ids and folder:
+                assignments.append({"id": aid, "folder": folder})
+    return {"assignments": assignments}

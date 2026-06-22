@@ -291,7 +291,50 @@ export const udf = {
       githubToken,
       steps: JSON.stringify(steps),
     }),
+
+  /** Generate a full landing-page HTML fragment for a report via GitHub
+   *  Copilot. `context` carries the report title, page list, KPI tiles and the
+   *  accent colour; the response is a single self-contained HTML string scoped
+   *  under `.landing-root`. */
+  githubLandingHtml: (
+    githubToken: string,
+    context: LandingHtmlContext
+  ): Promise<{ html: string }> =>
+    invokeRaw<{ html: string }>(getUdfConfig().urls.githubLandingHtml, {
+      githubToken,
+      context: JSON.stringify(context),
+    }),
+
+  /** Propose a folder name per workspace item (workspace cleanup) via GitHub
+   *  Copilot. `items` carry id + name + type; the response assigns each id to a
+   *  short, human-readable folder name. */
+  githubTidyWorkspace: (
+    githubToken: string,
+    items: TidyItem[]
+  ): Promise<{ assignments: { id: string; folder: string }[] }> =>
+    invokeRaw<{ assignments: { id: string; folder: string }[] }>(
+      getUdfConfig().urls.githubTidyWorkspace,
+      {
+        githubToken,
+        items: JSON.stringify(items),
+      }
+    ),
 };
+
+export interface TidyItem {
+  id: string;
+  name: string;
+  type: string;
+}
+
+export interface LandingHtmlContext {
+  title: string;
+  subtitle: string;
+  pages: string[];
+  kpis: { label: string; value: string }[];
+  accent: string;
+  ink: string;
+}
 
 export interface GithubDeviceStart {
   deviceCode: string;

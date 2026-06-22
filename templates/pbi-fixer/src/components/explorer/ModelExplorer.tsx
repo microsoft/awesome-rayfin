@@ -3,7 +3,7 @@
 // workspaceId + datasetId already selected in the connection bar (no name
 // resolution), reading through the server-side fabric_proxy UDF.
 
-import React, { useState, useCallback, useMemo, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef, Suspense, lazy } from 'react';
 import {
   Button,
   Input,
@@ -59,10 +59,12 @@ import {
   loadMeasures,
   createMeasure,
   updateMeasure,
+  updateMeasures,
   deleteMeasure,
   formatAllMeasures,
   findReplaceInMeasures,
   type MeasureValues,
+  type MeasureBatchEdit,
 } from '@/services/measureEditor';
 import { formatDax } from '@/services/daxFormat';
 import {
@@ -262,6 +264,20 @@ const EMPTY_MEASURE: MeasureValues = {
   description: '',
   isHidden: false,
 };
+
+/**
+ * A staged ("pending") edit to an existing measure. Edits are accumulated in a
+ * map keyed by `${modelId}::${table}::${originalName}` so the user can change
+ * several measures and commit them all with one batch save.
+ */
+interface PendingMeasure {
+  id: string;
+  modelName: string;
+  table: string;
+  /** Name the measure had when staging began (identifies the block to rewrite). */
+  originalName: string;
+  values: MeasureValues;
+}
 
 /** Uppercase sub-heading that groups related property rows. */
 const PropGroupLabel: React.FC<{ label: string }> = ({ label }) => {
@@ -525,6 +541,14 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
   const [measureBaseline, setMeasureBaseline] = useState<MeasureValues>(EMPTY_MEASURE);
   const [savingMeasure, setSavingMeasure] = useState(false);
   const [confirmDeleteMeasure, setConfirmDeleteMeasure] = useState(false);
+  // Staged edits to existing measures — edit several, then commit with one save.
+  const [pendingMeasures, setPendingMeasures] = useState<Record<string, PendingMeasure>>({});
+  // Mirror of the staged edits read by the selection-sync effect without making
+  // that effect re-run (and clobber the form) on every keystroke.
+  const pendingRef = useRef<Record<string, PendingMeasure>>({});
+  useEffect(() => {
+    pendingRef.current = pendingMeasures;
+  }, [pendingMeasures]);
   // Bulk utilities: format-all + find/replace.
   const [bulkOpen, setBulkOpen] = useState(false);
   const [bulkBusy, setBulkBusy] = useState(false);
@@ -745,10 +769,44 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
       description: measure.description || '',
       isHidden: !!measure.isHidden,
     };
-    setMeasureForm(vals);
+    // A staged edit for this measure (if any) wins over the model values so
+    // unsaved changes survive switching between measures.
+    const staged = pendingRef.current[selMeasureId];
+    setMeasureForm(staged ? staged.values : vals);
     setMeasureBaseline(vals);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selMeasureId]);
+
+  // Keep the staged-edits map in sync with the form: as the user edits an
+  // existing measure, record (or clear) its pending entry. Driven by the form
+  // value so edits are captured live, without losing them on selection change.
+  useEffect(() => {
+    if (isNewMeasure || !selectedMeasure || !selMeasureId) return;
+    const dirty = JSON.stringify(measureForm) !== JSON.stringify(measureBaseline);
+    const { id, table, name } = selectedMeasure;
+    const modelName = modelsData.find((m) => m.id === id)?.name ?? '';
+    setPendingMeasures((prev) => {
+      if (dirty) {
+        const entry: PendingMeasure = {
+          id,
+          modelName,
+          table,
+          originalName: name,
+          values: measureForm,
+        };
+        const existing = prev[selMeasureId];
+        if (existing && JSON.stringify(existing.values) === JSON.stringify(measureForm)) return prev;
+        return { ...prev, [selMeasureId]: entry };
+      }
+      if (selMeasureId in prev) {
+        const next = { ...prev };
+        delete next[selMeasureId];
+        return next;
+      }
+      return prev;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [measureForm, measureBaseline, selMeasureId, isNewMeasure]);
 
   // When the expression hydrates after selection, fill it in if still untouched.
   useEffect(() => {
@@ -790,6 +848,10 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
     return true;
   }, [savingMeasure, measureDirty, measureForm, isNewMeasure, newMeasureTable]);
 
+  // Staged existing-measure edits, ready for a single batch commit.
+  const pendingMeasureList = useMemo(() => Object.values(pendingMeasures), [pendingMeasures]);
+  const pendingMeasureCount = pendingMeasureList.length;
+
   // Reload one model into the tree + drop its cached measure expressions.
   const reloadModelAndCache = useCallback(
     async (id: string, name: string) => {
@@ -805,20 +867,55 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
     [workspaceId, setModelEntry]
   );
 
+  // Patch just-saved measures into the in-memory tree WITHOUT re-querying the
+  // server. The DAX and properties we wrote are already known locally, so a full
+  // `loadModelData` (many executeQueries + a TMDL getDefinition export) after
+  // every save is pure latency. Patching locally keeps saves snappy and leaves
+  // the definition-parts cache warm for the next edit.
+  const applyLocalMeasureEdits = useCallback(
+    (
+      id: string,
+      edits: { table: string; originalName: string; values: MeasureValues }[]
+    ) => {
+      setModelsData((prev) =>
+        prev.map((m) => {
+          if (m.id !== id || !m.data) return m;
+          const tables = { ...m.data.tables };
+          for (const e of edits) {
+            const tbl = tables[e.table];
+            if (!tbl) continue;
+            const measures = { ...tbl.measures };
+            if (e.originalName && e.originalName !== e.values.name) delete measures[e.originalName];
+            measures[e.values.name] = {
+              expression: e.values.expression,
+              formatString: e.values.formatString,
+              description: e.values.description,
+              displayFolder: e.values.displayFolder,
+              isHidden: e.values.isHidden,
+            };
+            tables[e.table] = { ...tbl, measures };
+          }
+          return { ...m, data: { ...m.data, tables } };
+        })
+      );
+    },
+    []
+  );
+
   const handleSaveMeasure = useCallback(async () => {
     if (!canSaveMeasure) return;
     const id = isNewMeasure ? activeDatasetId : selectedMeasure?.id;
     if (!id) return;
     const table = isNewMeasure ? newMeasureTable : selectedMeasure!.table;
     const originalName = isNewMeasure ? '' : selectedMeasure!.name;
-    const modelName = modelsData.find((m) => m.id === id)?.name ?? '';
     setSavingMeasure(true);
     setStatus({ msg: isNewMeasure ? 'Creating measure…' : 'Saving measure…', color: GRAY_COLOR });
     try {
       const res = isNewMeasure
         ? await createMeasure(workspaceId, id, table, measureForm)
         : await updateMeasure(workspaceId, id, table, originalName, measureForm);
-      await reloadModelAndCache(id, modelName);
+      // Patch the tree locally instead of a full model reload.
+      applyLocalMeasureEdits(id, [{ table, originalName, values: measureForm }]);
       // Seed the cache with the saved DAX so the form keeps showing it.
       setMeasureExprCache((prev) => ({
         ...prev,
@@ -841,12 +938,74 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
     isNewMeasure,
     activeDatasetId,
     selectedMeasure,
-    modelsData,
     newMeasureTable,
     workspaceId,
     measureForm,
-    reloadModelAndCache,
+    applyLocalMeasureEdits,
   ]);
+
+  // Commit every staged measure edit. Edits are grouped by model so each model
+  // is rewritten with a single TMDL load + save (instead of one per measure).
+  const handleSaveAllMeasures = useCallback(async () => {
+    if (pendingMeasureList.length === 0 || savingMeasure) return;
+    const byModel = new Map<string, { edits: MeasureBatchEdit[] }>();
+    for (const p of pendingMeasureList) {
+      const g = byModel.get(p.id) ?? { edits: [] };
+      g.edits.push({ table: p.table, originalName: p.originalName, values: p.values });
+      byModel.set(p.id, g);
+    }
+    // Remember the current selection's staged edit before we clear the map so we
+    // can retarget the tree if the open measure was renamed.
+    const curStaged = pendingRef.current[selMeasureId];
+    setSavingMeasure(true);
+    setStatus({
+      msg: `Saving ${pendingMeasureList.length} measure change${pendingMeasureList.length === 1 ? '' : 's'}…`,
+      color: GRAY_COLOR,
+    });
+    try {
+      let totalChanged = 0;
+      const details: string[] = [];
+      for (const [id, group] of byModel) {
+        const res = await updateMeasures(workspaceId, id, group.edits);
+        totalChanged += res.changed;
+        details.push(res.detail);
+        // Patch the tree locally instead of a full model reload per model.
+        applyLocalMeasureEdits(id, group.edits);
+        // Seed the cache with the saved DAX so forms keep showing it.
+        setMeasureExprCache((prev) => {
+          const next = { ...prev };
+          for (const e of group.edits) next[`${id}::${e.table}::${e.values.name}`] = e.values.expression;
+          return next;
+        });
+      }
+      if (curStaged) {
+        setMeasureBaseline(curStaged.values);
+        if (curStaged.values.name !== curStaged.originalName) {
+          setSelectedKey(
+            `${curStaged.id}${MODEL_KEY_SEP}measure:${curStaged.table}:${curStaged.values.name}`
+          );
+        }
+      }
+      setPendingMeasures({});
+      setStatus({ msg: details.join(' '), color: totalChanged > 0 ? '#34c759' : '#2563eb' });
+    } catch (err) {
+      setStatus({
+        msg: `Save failed: ${err instanceof Error ? err.message : String(err)}`,
+        color: '#ff3b30',
+      });
+    } finally {
+      setSavingMeasure(false);
+    }
+  }, [pendingMeasureList, savingMeasure, selMeasureId, workspaceId, applyLocalMeasureEdits]);
+
+  // Drop every staged measure edit and reset the open form to its model values.
+  const handleDiscardAllMeasures = useCallback(() => {
+    if (savingMeasure) return;
+    setPendingMeasures({});
+    setMeasureForm(measureBaseline);
+    setConfirmDeleteMeasure(false);
+    setStatus({ msg: 'Discarded all staged measure changes.', color: '#2563eb' });
+  }, [savingMeasure, measureBaseline]);
 
   const handleDeleteMeasure = useCallback(async () => {
     if (!selectedMeasure) return;
@@ -1780,6 +1939,44 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
         </div>
 
         <div className={styles.rightPanel}>
+          {pendingMeasureCount > 0 && (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 12px',
+                marginBottom: '8px',
+                borderRadius: '6px',
+                background: '#fff7e6',
+                border: '1px solid #ffd591',
+                fontFamily: FONT_FAMILY,
+                fontSize: '13px',
+              }}
+            >
+              <span style={{ color: '#8a5a00' }}>
+                {pendingMeasureCount} unsaved measure change{pendingMeasureCount === 1 ? '' : 's'} staged
+              </span>
+              <div className={styles.grow} />
+              <Button
+                appearance="primary"
+                size="small"
+                icon={savingMeasure ? <Spinner size="tiny" /> : <Save20Regular />}
+                disabled={savingMeasure}
+                onClick={handleSaveAllMeasures}
+              >
+                Save all ({pendingMeasureCount})
+              </Button>
+              <Button
+                appearance="subtle"
+                size="small"
+                disabled={savingMeasure}
+                onClick={handleDiscardAllMeasures}
+              >
+                Discard all
+              </Button>
+            </div>
+          )}
           {isNewMeasure || selectedMeasure ? (
             <div className={styles.measurePanel}>
               <div className={styles.measureHead}>
@@ -1897,14 +2094,25 @@ export const ModelExplorer: React.FC<ModelExplorerProps> = ({
               />
 
               <div className={styles.mActions}>
-                <Button
-                  appearance="primary"
-                  icon={savingMeasure ? <Spinner size="tiny" /> : <Save20Regular />}
-                  disabled={!canSaveMeasure}
-                  onClick={handleSaveMeasure}
-                >
-                  {isNewMeasure ? 'Create measure' : 'Save'}
-                </Button>
+                {isNewMeasure ? (
+                  <Button
+                    appearance="primary"
+                    icon={savingMeasure ? <Spinner size="tiny" /> : <Save20Regular />}
+                    disabled={!canSaveMeasure}
+                    onClick={handleSaveMeasure}
+                  >
+                    Create measure
+                  </Button>
+                ) : (
+                  <Button
+                    appearance="primary"
+                    icon={savingMeasure ? <Spinner size="tiny" /> : <Save20Regular />}
+                    disabled={savingMeasure || pendingMeasureCount === 0}
+                    onClick={handleSaveAllMeasures}
+                  >
+                    {pendingMeasureCount > 0 ? `Save all (${pendingMeasureCount})` : 'Save all'}
+                  </Button>
+                )}
                 <Button
                   appearance="subtle"
                   disabled={savingMeasure || !measureDirty}

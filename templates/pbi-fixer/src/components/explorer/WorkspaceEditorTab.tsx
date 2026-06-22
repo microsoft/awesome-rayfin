@@ -22,6 +22,10 @@ import {
   DialogContent,
   DialogActions,
   Divider,
+  RadioGroup,
+  Radio,
+  Switch,
+  Link,
   makeStyles,
   mergeClasses,
   shorthands,
@@ -38,6 +42,10 @@ import {
   ChevronDown20Regular,
   Folder20Regular,
   FolderAdd20Regular,
+  Broom20Regular,
+  Sparkle20Regular,
+  Open20Regular,
+  Apps20Regular,
 } from '@fluentui/react-icons';
 
 import {
@@ -50,6 +58,25 @@ import {
   type WorkspaceContents,
   type WorkspaceFolder,
 } from '@/services/workspaceEditor';
+import {
+  planCleanup,
+  buildAiCleanupPlan,
+  applyCleanupPlan,
+  type CleanupGroup,
+  type CleanupMode,
+  type CleanupResult,
+} from '@/services/workspaceCleanup';
+import {
+  planTopics,
+  buildAiTopicPlan,
+  createOrgApp,
+  isOrgAppReport,
+  type TopicGroup,
+  type TopicMode,
+  type OrgAppStepResult,
+} from '@/services/orgAppBuilder';
+import { startGithubDeviceFlow, isGithubSignedIn } from '@/services/githubAuth';
+import { GithubAuthRequiredError } from '@/services/mCommenter';
 import { PbiSignInRequiredError } from '@/services/fabricAuth';
 import { BORDER_COLOR, SECTION_BG, GRAY_COLOR, ICON_ACCENT } from '@/explorer/theme';
 
@@ -119,6 +146,46 @@ const useStyles = makeStyles({
   field: { display: 'flex', flexDirection: 'column', ...shorthands.gap('4px'), marginBottom: '10px' },
   fieldLabel: { fontSize: '12px', fontWeight: 600 },
   resultList: { display: 'flex', flexDirection: 'column', ...shorthands.gap('4px'), maxHeight: '220px', overflowY: 'auto' },
+  planList: { display: 'flex', flexDirection: 'column', ...shorthands.gap('8px'), maxHeight: '320px', overflowY: 'auto' },
+  planGroup: {
+    ...shorthands.border('1px', 'solid', BORDER_COLOR),
+    ...shorthands.borderRadius('6px'),
+    ...shorthands.overflow('hidden'),
+  },
+  planGroupHead: {
+    display: 'flex',
+    alignItems: 'center',
+    ...shorthands.gap('6px'),
+    ...shorthands.padding('6px', '10px'),
+    backgroundColor: SECTION_BG,
+    borderBottom: `1px solid ${BORDER_COLOR}`,
+    fontWeight: 600,
+    fontSize: '13px',
+  },
+  planGroupName: { flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+  planItem: {
+    display: 'flex',
+    alignItems: 'center',
+    ...shorthands.gap('6px'),
+    ...shorthands.padding('4px', '10px'),
+    fontSize: '12px',
+    color: GRAY_COLOR,
+  },
+  signin: {
+    display: 'flex',
+    flexDirection: 'column',
+    ...shorthands.gap('4px'),
+    ...shorthands.padding('8px', '12px'),
+    ...shorthands.borderRadius('6px'),
+    backgroundColor: SECTION_BG,
+    border: `1px solid ${BORDER_COLOR}`,
+  },
+  code: {
+    fontFamily: 'Consolas, monospace',
+    fontSize: '18px',
+    fontWeight: 700,
+    letterSpacing: '0.12em',
+  },
   resultRow: { display: 'flex', alignItems: 'center', ...shorthands.gap('6px'), fontSize: '13px' },
   dangerBox: {
     ...shorthands.padding('8px', '12px'),
@@ -333,6 +400,29 @@ export function WorkspaceEditorTab({ workspaceId, workspaceName }: WorkspaceEdit
   const [nfParent, setNfParent] = useState<string>(ROOT);
   const [nfBusy, setNfBusy] = useState(false);
   const [nfError, setNfError] = useState<string | null>(null);
+
+  // Tidy-up dialog (organise loose items into freshly created folders)
+  const [tidyOpen, setTidyOpen] = useState(false);
+  const [tidyScope, setTidyScope] = useState<string>(ROOT);
+  const [tidyMode, setTidyMode] = useState<CleanupMode>('type');
+  const [tidyUseAi, setTidyUseAi] = useState(false);
+  const [tidyPlan, setTidyPlan] = useState<CleanupGroup[] | null>(null);
+  const [tidyBusy, setTidyBusy] = useState(false);
+  const [tidyResults, setTidyResults] = useState<CleanupResult[] | null>(null);
+  const [tidyError, setTidyError] = useState<string | null>(null);
+  const [tidyDevice, setTidyDevice] = useState<{ userCode: string; verificationUri: string } | null>(null);
+
+  // Org-app dialog (package reports into an org app with one audience per topic)
+  const [orgOpen, setOrgOpen] = useState(false);
+  const [orgName, setOrgName] = useState('');
+  const [orgScope, setOrgScope] = useState<string>(ROOT);
+  const [orgMode, setOrgMode] = useState<TopicMode>('folder');
+  const [orgUseAi, setOrgUseAi] = useState(false);
+  const [orgPlan, setOrgPlan] = useState<TopicGroup[] | null>(null);
+  const [orgBusy, setOrgBusy] = useState(false);
+  const [orgResults, setOrgResults] = useState<OrgAppStepResult[] | null>(null);
+  const [orgError, setOrgError] = useState<string | null>(null);
+  const [orgDevice, setOrgDevice] = useState<{ userCode: string; verificationUri: string } | null>(null);
 
   const load = useCallback(async () => {
     if (!workspaceId) {
@@ -685,6 +775,151 @@ export function WorkspaceEditorTab({ workspaceId, workspaceName }: WorkspaceEdit
     }
   }, [nfName, nfParent, workspaceId, load]);
 
+  // ---- Tidy up (organise loose items into folders) -------------------------
+  // Items that live directly in the chosen scope (root or one folder). Items
+  // already inside a subfolder of the scope are left untouched.
+  const tidyScopeFolderId = tidyScope === ROOT ? undefined : tidyScope;
+  const tidyScopeItems = useMemo(
+    () => items.filter((it) => (it.folderId ?? undefined) === tidyScopeFolderId),
+    [items, tidyScopeFolderId]
+  );
+
+  const openTidy = () => {
+    setTidyScope(ROOT);
+    setTidyMode('type');
+    setTidyUseAi(false);
+    setTidyPlan(null);
+    setTidyResults(null);
+    setTidyError(null);
+    setTidyDevice(null);
+    setTidyOpen(true);
+  };
+
+  const beginTidySignIn = useCallback(async () => {
+    setTidyDevice(null);
+    try {
+      const handle = await startGithubDeviceFlow();
+      setTidyDevice({ userCode: handle.userCode, verificationUri: handle.verificationUri });
+      handle.completion
+        .then(() => {
+          setTidyDevice(null);
+          setTidyError('Signed in to GitHub. Click "Preview plan" again to generate the AI grouping.');
+        })
+        .catch((e: unknown) => setTidyError(e instanceof Error ? e.message : String(e)));
+    } catch (e) {
+      setTidyError(e instanceof Error ? e.message : String(e));
+    }
+  }, []);
+
+  const previewTidy = useCallback(async () => {
+    setTidyBusy(true);
+    setTidyError(null);
+    setTidyResults(null);
+    try {
+      const plan = tidyUseAi
+        ? await buildAiCleanupPlan(tidyScopeItems)
+        : planCleanup(tidyScopeItems, tidyMode);
+      setTidyPlan(plan);
+    } catch (e) {
+      if (e instanceof GithubAuthRequiredError) await beginTidySignIn();
+      else setTidyError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setTidyBusy(false);
+    }
+  }, [tidyUseAi, tidyScopeItems, tidyMode, beginTidySignIn]);
+
+  const applyTidy = useCallback(async () => {
+    if (!tidyPlan || tidyPlan.length === 0) return;
+    setTidyBusy(true);
+    setTidyError(null);
+    try {
+      const results = await applyCleanupPlan(workspaceId, tidyPlan, tidyScopeFolderId, folders);
+      setTidyResults(results);
+      await load();
+    } catch (e) {
+      setTidyError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setTidyBusy(false);
+    }
+  }, [tidyPlan, workspaceId, tidyScopeFolderId, folders, load]);
+
+  // ---- Create org app (package reports + audiences per topic) ---------------
+  // Reports in scope: the whole workspace (root) or one folder + its subfolders.
+  const orgScopePath = useMemo(
+    () => (orgScope === ROOT ? undefined : folders.find((f) => f.id === orgScope)?.path),
+    [orgScope, folders]
+  );
+  const orgScopeReports = useMemo(
+    () =>
+      items.filter((it) => {
+        if (!isOrgAppReport(it.type)) return false;
+        if (orgScope === ROOT) return true;
+        if (orgScopePath === undefined) return false;
+        return it.folderPath === orgScopePath || it.folderPath.startsWith(`${orgScopePath} / `);
+      }),
+    [items, orgScope, orgScopePath]
+  );
+
+  const openOrgApp = () => {
+    setOrgName(workspaceName ? `${workspaceName} App` : 'Org app');
+    setOrgScope(ROOT);
+    setOrgMode('folder');
+    setOrgUseAi(false);
+    setOrgPlan(null);
+    setOrgResults(null);
+    setOrgError(null);
+    setOrgDevice(null);
+    setOrgOpen(true);
+  };
+
+  const beginOrgSignIn = useCallback(async () => {
+    setOrgDevice(null);
+    try {
+      const handle = await startGithubDeviceFlow();
+      setOrgDevice({ userCode: handle.userCode, verificationUri: handle.verificationUri });
+      handle.completion
+        .then(() => {
+          setOrgDevice(null);
+          setOrgError('Signed in to GitHub. Click "Preview app" again to generate the AI topics.');
+        })
+        .catch((e: unknown) => setOrgError(e instanceof Error ? e.message : String(e)));
+    } catch (e) {
+      setOrgError(e instanceof Error ? e.message : String(e));
+    }
+  }, []);
+
+  const previewOrgApp = useCallback(async () => {
+    setOrgBusy(true);
+    setOrgError(null);
+    setOrgResults(null);
+    try {
+      const plan = orgUseAi
+        ? await buildAiTopicPlan(orgScopeReports)
+        : planTopics(orgScopeReports, orgMode);
+      setOrgPlan(plan);
+    } catch (e) {
+      if (e instanceof GithubAuthRequiredError) await beginOrgSignIn();
+      else setOrgError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setOrgBusy(false);
+    }
+  }, [orgUseAi, orgScopeReports, orgMode, beginOrgSignIn]);
+
+  const applyOrgApp = useCallback(async () => {
+    if (!orgPlan || orgPlan.length === 0) return;
+    setOrgBusy(true);
+    setOrgError(null);
+    try {
+      const { results } = await createOrgApp(workspaceId, orgName, orgPlan);
+      setOrgResults(results);
+      await load();
+    } catch (e) {
+      setOrgError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setOrgBusy(false);
+    }
+  }, [orgPlan, workspaceId, orgName, load]);
+
   if (!workspaceId) {
     return (
       <div className={styles.root}>
@@ -732,6 +967,12 @@ export function WorkspaceEditorTab({ workspaceId, workspaceName }: WorkspaceEdit
         <div className={styles.actions}>
           <Button icon={<FolderAdd20Regular />} disabled={busy} onClick={openNewFolder}>
             New folder
+          </Button>
+          <Button icon={<Broom20Regular />} disabled={busy || items.length === 0} onClick={openTidy}>
+            Tidy up
+          </Button>
+          <Button icon={<Apps20Regular />} disabled={busy || items.length === 0} onClick={openOrgApp}>
+            Create org app
           </Button>
           <Button appearance="primary" icon={<Copy20Regular />} disabled={selected.size === 0 || busy} onClick={openCopy}>
             Copy ({selected.size})
@@ -833,6 +1074,312 @@ export function WorkspaceEditorTab({ workspaceId, workspaceName }: WorkspaceEdit
               >
                 {nfBusy ? 'Creating…' : 'Create folder'}
               </Button>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
+
+      {/* -------------------------------------------------------------- Tidy up */}
+      <Dialog open={tidyOpen} onOpenChange={(_, d) => setTidyOpen(d.open)}>
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>
+              <Broom20Regular style={{ color: ICON_ACCENT, verticalAlign: 'middle', marginRight: 6 }} />
+              Tidy up workspace
+            </DialogTitle>
+            <DialogContent>
+              {tidyResults ? (
+                <ResultsView results={tidyResults} />
+              ) : tidyPlan ? (
+                <>
+                  <Text size={200} style={{ color: GRAY_COLOR }}>
+                    {tidyPlan.length === 0
+                      ? 'Nothing to organise in this scope.'
+                      : `${tidyPlan.reduce((n, g) => n + g.items.length, 0)} item${
+                          tidyPlan.reduce((n, g) => n + g.items.length, 0) === 1 ? '' : 's'
+                        } will move into ${tidyPlan.length} folder${tidyPlan.length === 1 ? '' : 's'}.`}
+                  </Text>
+                  <div className={styles.planList} style={{ marginTop: 8 }}>
+                    {tidyPlan.map((g) => (
+                      <div key={g.folder} className={styles.planGroup}>
+                        <div className={styles.planGroupHead}>
+                          <Folder20Regular style={{ color: ICON_ACCENT }} />
+                          <span className={styles.planGroupName}>{g.folder}</span>
+                          <Badge appearance="tint" color="informative">
+                            {g.items.length}
+                          </Badge>
+                        </div>
+                        {g.items.map((it) => (
+                          <div key={it.id} className={styles.planItem}>
+                            <ChevronRight20Regular />
+                            <span>{it.displayName}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className={styles.field}>
+                    <span className={styles.fieldLabel}>Scope</span>
+                    <FolderTreePicker
+                      folders={folders}
+                      value={tidyScope}
+                      onChange={setTidyScope}
+                      topNodes={[{ value: ROOT, label: 'Workspace root' }]}
+                    />
+                    <Text size={200} style={{ color: GRAY_COLOR }}>
+                      {tidyScopeItems.length} loose item{tidyScopeItems.length === 1 ? '' : 's'} directly in this scope. Items
+                      already inside subfolders are left untouched.
+                    </Text>
+                  </div>
+
+                  <div className={styles.field}>
+                    <Switch
+                      checked={tidyUseAi}
+                      onChange={(_, d) => setTidyUseAi(d.checked)}
+                      label={
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                          <Sparkle20Regular style={{ color: ICON_ACCENT }} />
+                          Group with AI (by subject / project)
+                        </span>
+                      }
+                    />
+                    <Text size={200} style={{ color: GRAY_COLOR }}>
+                      {tidyUseAi
+                        ? 'Copilot suggests folders grouping related items (e.g. a report with its semantic model). Requires GitHub sign-in.'
+                        : 'Pick a simple grouping rule below.'}
+                    </Text>
+                  </div>
+
+                  {!tidyUseAi && (
+                    <div className={styles.field}>
+                      <span className={styles.fieldLabel}>Group by</span>
+                      <RadioGroup value={tidyMode} onChange={(_, d) => setTidyMode(d.value as CleanupMode)}>
+                        <Radio value="type" label="Type of item (recommended)" />
+                        <Radio value="name" label="Name prefix" />
+                      </RadioGroup>
+                    </div>
+                  )}
+
+                  {tidyDevice && (
+                    <div className={styles.signin}>
+                      <Text size={200} style={{ color: GRAY_COLOR }}>
+                        Enter this code at GitHub to sign in:
+                      </Text>
+                      <span className={styles.code}>{tidyDevice.userCode}</span>
+                      <Link href={tidyDevice.verificationUri} target="_blank" rel="noreferrer">
+                        <Open20Regular style={{ verticalAlign: 'middle', marginRight: 4 }} />
+                        {tidyDevice.verificationUri}
+                      </Link>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {tidyError && (
+                <MessageBar intent="error" style={{ marginTop: 8 }}>
+                  <MessageBarBody>{tidyError}</MessageBarBody>
+                </MessageBar>
+              )}
+            </DialogContent>
+            <DialogActions>
+              {tidyResults ? (
+                <Button appearance="primary" onClick={() => setTidyOpen(false)}>
+                  Done
+                </Button>
+              ) : tidyPlan ? (
+                <>
+                  <Button appearance="secondary" onClick={() => setTidyPlan(null)} disabled={tidyBusy}>
+                    Back
+                  </Button>
+                  <Button
+                    appearance="primary"
+                    icon={tidyBusy ? <Spinner size="tiny" /> : <FolderArrowRight20Regular />}
+                    disabled={tidyBusy || tidyPlan.length === 0}
+                    onClick={() => void applyTidy()}
+                  >
+                    {tidyBusy ? 'Organising…' : 'Apply'}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button appearance="secondary" onClick={() => setTidyOpen(false)} disabled={tidyBusy}>
+                    Cancel
+                  </Button>
+                  {tidyUseAi && !isGithubSignedIn() && !tidyDevice && (
+                    <Button appearance="secondary" onClick={() => void beginTidySignIn()} disabled={tidyBusy}>
+                      Sign in to GitHub
+                    </Button>
+                  )}
+                  <Button
+                    appearance="primary"
+                    icon={tidyBusy ? <Spinner size="tiny" /> : <Broom20Regular />}
+                    disabled={tidyBusy || tidyScopeItems.length === 0}
+                    onClick={() => void previewTidy()}
+                  >
+                    {tidyBusy ? 'Planning…' : 'Preview plan'}
+                  </Button>
+                </>
+              )}
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
+
+      {/* ------------------------------------------------------------ Org app */}
+      <Dialog open={orgOpen} onOpenChange={(_, d) => setOrgOpen(d.open)}>
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>
+              <Apps20Regular style={{ color: ICON_ACCENT, verticalAlign: 'middle', marginRight: 6 }} />
+              Create org app
+            </DialogTitle>
+            <DialogContent>
+              {orgResults ? (
+                <ResultsView results={orgResults} />
+              ) : orgPlan ? (
+                <>
+                  <Text size={200} style={{ color: GRAY_COLOR }}>
+                    {orgPlan.length === 0
+                      ? 'No reports found in this scope.'
+                      : `"${orgName.trim() || 'Org app'}" — ${orgPlan.reduce(
+                          (n, g) => n + g.reports.length,
+                          0
+                        )} report${
+                          orgPlan.reduce((n, g) => n + g.reports.length, 0) === 1 ? '' : 's'
+                        } across ${orgPlan.length} audience${orgPlan.length === 1 ? '' : 's'}.`}
+                  </Text>
+                  <div className={styles.planList} style={{ marginTop: 8 }}>
+                    {orgPlan.map((g) => (
+                      <div key={g.topic} className={styles.planGroup}>
+                        <div className={styles.planGroupHead}>
+                          <Apps20Regular style={{ color: ICON_ACCENT }} />
+                          <span className={styles.planGroupName}>{g.topic}</span>
+                          <Badge appearance="tint" color="informative">
+                            {g.reports.length}
+                          </Badge>
+                        </div>
+                        {g.reports.map((r) => (
+                          <div key={r.id} className={styles.planItem}>
+                            <ChevronRight20Regular />
+                            <span>{r.displayName}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className={styles.field}>
+                    <span className={styles.fieldLabel}>App name</span>
+                    <Input value={orgName} onChange={(_, d) => setOrgName(d.value)} />
+                  </div>
+
+                  <div className={styles.field}>
+                    <span className={styles.fieldLabel}>Reports to include</span>
+                    <FolderTreePicker
+                      folders={folders}
+                      value={orgScope}
+                      onChange={setOrgScope}
+                      topNodes={[{ value: ROOT, label: 'Whole workspace' }]}
+                    />
+                    <Text size={200} style={{ color: GRAY_COLOR }}>
+                      {orgScopeReports.length} report{orgScopeReports.length === 1 ? '' : 's'} in this scope
+                      {orgScope === ROOT ? '' : ' (folder and its subfolders)'}.
+                    </Text>
+                  </div>
+
+                  <div className={styles.field}>
+                    <Switch
+                      checked={orgUseAi}
+                      onChange={(_, d) => setOrgUseAi(d.checked)}
+                      label={
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                          <Sparkle20Regular style={{ color: ICON_ACCENT }} />
+                          Group topics with AI (by subject)
+                        </span>
+                      }
+                    />
+                    <Text size={200} style={{ color: GRAY_COLOR }}>
+                      {orgUseAi
+                        ? 'Copilot groups the reports into topic-based audiences. Requires GitHub sign-in.'
+                        : 'Pick a simple grouping rule below. One audience is created per topic.'}
+                    </Text>
+                  </div>
+
+                  {!orgUseAi && (
+                    <div className={styles.field}>
+                      <span className={styles.fieldLabel}>Group by</span>
+                      <RadioGroup value={orgMode} onChange={(_, d) => setOrgMode(d.value as TopicMode)}>
+                        <Radio value="folder" label="Folder (recommended)" />
+                        <Radio value="name" label="Name prefix" />
+                      </RadioGroup>
+                    </div>
+                  )}
+
+                  {orgDevice && (
+                    <div className={styles.signin}>
+                      <Text size={200} style={{ color: GRAY_COLOR }}>
+                        Enter this code at GitHub to sign in:
+                      </Text>
+                      <span className={styles.code}>{orgDevice.userCode}</span>
+                      <Link href={orgDevice.verificationUri} target="_blank" rel="noreferrer">
+                        <Open20Regular style={{ verticalAlign: 'middle', marginRight: 4 }} />
+                        {orgDevice.verificationUri}
+                      </Link>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {orgError && (
+                <MessageBar intent="error" style={{ marginTop: 8 }}>
+                  <MessageBarBody>{orgError}</MessageBarBody>
+                </MessageBar>
+              )}
+            </DialogContent>
+            <DialogActions>
+              {orgResults ? (
+                <Button appearance="primary" onClick={() => setOrgOpen(false)}>
+                  Done
+                </Button>
+              ) : orgPlan ? (
+                <>
+                  <Button appearance="secondary" onClick={() => setOrgPlan(null)} disabled={orgBusy}>
+                    Back
+                  </Button>
+                  <Button
+                    appearance="primary"
+                    icon={orgBusy ? <Spinner size="tiny" /> : <Apps20Regular />}
+                    disabled={orgBusy || orgPlan.length === 0 || !orgName.trim()}
+                    onClick={() => void applyOrgApp()}
+                  >
+                    {orgBusy ? 'Creating…' : 'Create app'}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button appearance="secondary" onClick={() => setOrgOpen(false)} disabled={orgBusy}>
+                    Cancel
+                  </Button>
+                  {orgUseAi && !isGithubSignedIn() && !orgDevice && (
+                    <Button appearance="secondary" onClick={() => void beginOrgSignIn()} disabled={orgBusy}>
+                      Sign in to GitHub
+                    </Button>
+                  )}
+                  <Button
+                    appearance="primary"
+                    icon={orgBusy ? <Spinner size="tiny" /> : <Apps20Regular />}
+                    disabled={orgBusy || orgScopeReports.length === 0 || !orgName.trim()}
+                    onClick={() => void previewOrgApp()}
+                  >
+                    {orgBusy ? 'Planning…' : 'Preview app'}
+                  </Button>
+                </>
+              )}
             </DialogActions>
           </DialogBody>
         </DialogSurface>

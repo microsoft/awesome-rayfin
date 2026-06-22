@@ -1,6 +1,7 @@
 import { RayfinClient } from '@microsoft/rayfin-client';
 
 import type { BlankAppSchema } from '../../rayfin/data/schema';
+import type { AppFunctionsSchema } from '../../rayfin/functions/src/types';
 
 export interface RayfinClientConfig {
   baseUrl: string;
@@ -19,16 +20,16 @@ export interface RayfinClientConfig {
   localDev: boolean;
 }
 
-let client: RayfinClient<BlankAppSchema> | null = null;
+let client: RayfinClient<BlankAppSchema, AppFunctionsSchema> | null = null;
 let localDev = false;
 
 export function initRayfinClient(
   config: RayfinClientConfig
-): RayfinClient<BlankAppSchema> {
+): RayfinClient<BlankAppSchema, AppFunctionsSchema> {
   if (client) {
     throw new Error('Rayfin client is already initialized.');
   }
-  client = new RayfinClient<BlankAppSchema>({
+  client = new RayfinClient<BlankAppSchema, AppFunctionsSchema>({
     baseUrl: config.baseUrl,
     publishableKey: config.publishableKey,
     functionsBaseUrl: config.functionsBaseUrl,
@@ -39,7 +40,7 @@ export function initRayfinClient(
   return client;
 }
 
-export function getRayfinClient(): RayfinClient<BlankAppSchema> {
+export function getRayfinClient(): RayfinClient<BlankAppSchema, AppFunctionsSchema> {
   if (!client) {
     throw new Error(
       'Rayfin client not initialized. Call bootstrapAuth() first.'

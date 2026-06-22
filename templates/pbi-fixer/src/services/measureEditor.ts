@@ -332,6 +332,87 @@ export async function updateMeasure(
   return { changed: 0, detail: `Measure ${table}[${originalName}] was not found in the model definition.` };
 }
 
+/** One staged edit for {@link updateMeasures}. */
+export interface MeasureBatchEdit {
+  /** Table that owns the measure. */
+  table: string;
+  /** Current declared name (identifies the block; supports rename). */
+  originalName: string;
+  /** New values to write. */
+  values: MeasureValues;
+}
+
+/**
+ * Update many existing measures in a single TMDL round-trip.
+ *
+ * The whole model definition is loaded once, every edit is applied in memory
+ * (each block is re-located fresh so line shifts from earlier edits are handled
+ * correctly) and the changed parts are written back with one save call. This is
+ * the batch path behind the explorer's "save all staged measure changes"
+ * action: it keeps N measure edits to a single load + single save instead of N
+ * of each, so staging multiple edits is cheaper than saving them one by one.
+ */
+export async function updateMeasures(
+  workspaceId: string,
+  datasetId: string,
+  edits: MeasureBatchEdit[]
+): Promise<MeasureSaveResult> {
+  if (edits.length === 0) return { changed: 0, detail: 'No measure changes to save.' };
+
+  const parts = await loadDefinitionParts('model', workspaceId, datasetId);
+  // One mutable line buffer per text part; null for binary parts we skip.
+  const buffers = parts.map((p) => (p.binary ? null : p.text.split('\n')));
+  const dirtyParts = new Set<number>();
+  const applied: string[] = [];
+  const missing: string[] = [];
+
+  for (const edit of edits) {
+    let done = false;
+    for (let pi = 0; pi < parts.length; pi++) {
+      const lines = buffers[pi];
+      if (!lines) continue;
+      const tIdx = findTableDecl(lines, edit.table);
+      if (tIdx < 0) continue;
+      const tEnd = tableBlockEnd(lines, tIdx);
+      const block = findMeasureBlock(lines, tIdx, tEnd, edit.originalName);
+      if (!block) continue;
+      const preserved = lines
+        .slice(block.exprEnd + 1, block.end)
+        .filter((l) => l.trim() !== '' && !isManagedProp(l));
+      const rebuilt = buildMeasureBlock(edit.values, preserved);
+      lines.splice(block.descStart, block.end - block.descStart, ...rebuilt);
+      dirtyParts.add(pi);
+      applied.push(`${edit.table}[${edit.values.name}]`);
+      done = true;
+      break;
+    }
+    if (!done) missing.push(`${edit.table}[${edit.originalName}]`);
+  }
+
+  if (dirtyParts.size === 0) {
+    return {
+      changed: 0,
+      detail: missing.length
+        ? `No measures saved — not found: ${missing.join(', ')}.`
+        : 'No change was written (model already up to date).',
+    };
+  }
+
+  const payload: Record<string, string> = {};
+  for (const pi of dirtyParts) {
+    const lines = buffers[pi];
+    if (lines) payload[parts[pi].path] = lines.join('\n');
+  }
+  const changed = await saveDefinitionParts('model', workspaceId, datasetId, payload);
+
+  let detail =
+    changed > 0
+      ? `Saved ${applied.length} measure${applied.length === 1 ? '' : 's'}.`
+      : 'No change was written (model already up to date).';
+  if (missing.length) detail += ` Not found: ${missing.join(', ')}.`;
+  return { changed, detail };
+}
+
 /** Create a new measure on `table`. Fails if the name already exists. */
 export async function createMeasure(
   workspaceId: string,

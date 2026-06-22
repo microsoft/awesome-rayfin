@@ -20,7 +20,6 @@ import {
   ArrowCollapseAll20Regular,
   Save20Regular,
   ChartMultiple20Regular,
-  Code20Regular,
 } from '@fluentui/react-icons';
 import type { ReportData, PageInfo } from '@/explorer/types';
 import { FONT_FAMILY, BORDER_COLOR, GRAY_COLOR, ICON_ACCENT, SECTION_BG, HOVER_BG } from '@/explorer/theme';
@@ -29,7 +28,6 @@ import { filterTreeOptions } from '@/explorer/treeUtils';
 import { loadReportDefinition, saveReportDefinition, type ReportEdits } from '@/services/fabricRest';
 import { ReportPreview } from './ReportPreview';
 import { LiveReportPreview } from './LiveReportPreview';
-import { DefinitionSource } from './DefinitionSource';
 
 const useStyles = makeStyles({
   root: { display: 'flex', flexDirection: 'column', height: '100%', ...shorthands.gap('8px') },
@@ -148,7 +146,6 @@ export const ReportExplorer: React.FC<ReportExplorerProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [previewMode, setPreviewMode] = useState<'live' | 'wireframe'>('live');
   const [liveError, setLiveError] = useState<string | null>(null);
-  const [showSource, setShowSource] = useState(false);
   const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number; key: string } | null>(null);
 
   const [pendingPages, setPendingPages] = useState<NonNullable<ReportEdits['pages']>>({});
@@ -310,7 +307,7 @@ export const ReportExplorer: React.FC<ReportExplorerProps> = ({
   }, [hasPending, workspaceId, reportId, pendingPages, pendingVisuals]);
 
   return (
-    <div className={styles.root} style={showSource ? { overflowY: 'auto' } : undefined}>
+    <div className={styles.root}>
       <div className={styles.toolbar}>
         <Button
           appearance="primary"
@@ -344,14 +341,6 @@ export const ReportExplorer: React.FC<ReportExplorerProps> = ({
             Discard
           </Button>
         )}
-        <Button
-          appearance={showSource ? 'primary' : 'subtle'}
-          icon={<Code20Regular />}
-          onClick={() => setShowSource((v) => !v)}
-          disabled={!reportId}
-        >
-          {showSource ? 'Hide PBIR View' : 'PBIR View'}
-        </Button>
         {status.msg && (
           <span className={styles.statusBar} style={{ background: `${status.color}1a`, color: status.color }}>
             {status.msg}
@@ -359,10 +348,7 @@ export const ReportExplorer: React.FC<ReportExplorerProps> = ({
         )}
       </div>
 
-      <div
-        className={styles.mainLayout}
-        style={showSource ? { minHeight: 420, flexShrink: 0 } : undefined}
-      >
+      <div className={styles.mainLayout}>
         <div className={styles.treePanel}>
           <Input
             placeholder="Filter tree..."
@@ -602,12 +588,6 @@ export const ReportExplorer: React.FC<ReportExplorerProps> = ({
           </div>
         </div>
       </div>
-
-      {showSource && reportId && (
-        <div style={{ marginTop: 8, height: 480, minHeight: 480, flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
-          <DefinitionSource workspaceId={workspaceId} reportId={reportId} only="report" />
-        </div>
-      )}
 
       {ctxMenu && (
         <div

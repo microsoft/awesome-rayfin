@@ -136,20 +136,47 @@ function findObjectBlock(
   return null;
 }
 
-/** Anchor (last property line at indent >= 2 that is not an annotation) after
- *  which a fresh property is inserted. Falls back to the declaration line. */
-function lastPropIndex(lines: string[], block: ObjectBlock): number {
-  let anchor = block.start;
-  for (let i = block.start + 1; i < block.end; i++) {
-    if (
-      indentOf(lines[i]) >= 2 &&
-      lines[i].trim() !== '' &&
-      !lines[i].trimStart().startsWith('annotation')
-    ) {
-      anchor = i;
+/** Recognised TMDL property / sub-block keywords on a column or measure. Used to
+ *  tell a real property line apart from a multi-line expression body line. */
+const KNOWN_PROP_RE =
+  /^\t\t(formatString|displayFolder|description|isHidden|lineageTag|sourceLineageTag|formatStringDefinition|detailRowsDefinition|kpi|dataType|dataCategory|summarizeBy|sourceColumn|sortByColumn|displayName|isNameInferred|isDataTypeInferred|isKey|isUnique|isDefaultLabel|isDefaultImage|relatedColumnDetails|variation|annotation|extendedProperty|changedProperty)\b/;
+
+function isKnownProp(line: string): boolean {
+  return KNOWN_PROP_RE.test(line);
+}
+
+/**
+ * Index of the last expression line of the object block (== the declaration line
+ * when the expression is inline or absent). Mirrors the measure editor so a
+ * `displayFolder:` property is never inserted *inside* a multi-line DAX/M
+ * expression — doing so corrupts the TMDL and the import fails with an
+ * "Invalid indentation was detected!" error.
+ */
+function expressionEnd(lines: string[], block: ObjectBlock): number {
+  const start = block.start;
+  const declTrim = lines[start].replace(/\s+$/, '');
+  // Fenced expression: ``` … ```
+  if (declTrim.endsWith('```')) {
+    for (let j = start + 1; j < block.end; j++) {
+      if (lines[j].trim() === '```') return j;
     }
+    return start;
   }
-  return anchor;
+  const eq = declTrim.indexOf('=');
+  const afterEq = eq >= 0 ? declTrim.slice(eq + 1).trim() : '';
+  // Indented continuation: `name =` with the body on the following indent>=2
+  // lines (everything up to the first recognised property line).
+  if (eq >= 0 && afterEq === '') {
+    let end = start;
+    for (let j = start + 1; j < block.end; j++) {
+      if (lines[j].trim() === '') continue;
+      if (indentOf(lines[j]) >= 2 && !isKnownProp(lines[j])) end = j;
+      else break;
+    }
+    return end;
+  }
+  // Inline expression or a plain column with no expression.
+  return start;
 }
 
 /** Render a TMDL string property value, escaping embedded quotes. */
@@ -160,7 +187,9 @@ function quoteValue(value: string): string {
 /**
  * Insert or replace the `displayFolder:` line on the object block in `lines`.
  * Returns true when a change was made. The block is re-located by name so the
- * caller can apply many edits to the same `lines` array in sequence.
+ * caller can apply many edits to the same `lines` array in sequence. The new
+ * line is placed immediately after the object's expression, never inside a
+ * multi-line expression body.
  */
 function setDisplayFolder(
   lines: string[],
@@ -176,15 +205,21 @@ function setDisplayFolder(
   if (!block) return false;
 
   const desired = `\t\tdisplayFolder: ${quoteValue(folder)}`;
+  const exprEnd = expressionEnd(lines, block);
+
+  // Replace an existing displayFolder line (only in the property region, after
+  // the expression — so a `displayFolder` token inside DAX is never matched).
   const re = /^\t\tdisplayFolder\b/;
-  for (let i = block.start + 1; i < block.end; i++) {
+  for (let i = exprEnd + 1; i < block.end; i++) {
     if (re.test(lines[i])) {
       if (lines[i] === desired) return false;
       lines[i] = desired;
       return true;
     }
   }
-  lines.splice(lastPropIndex(lines, block) + 1, 0, desired);
+
+  // Otherwise insert it as the first property line after the expression.
+  lines.splice(exprEnd + 1, 0, desired);
   return true;
 }
 

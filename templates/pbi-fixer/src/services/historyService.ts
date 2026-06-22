@@ -16,6 +16,8 @@
 // available for this app, drop in a second `HistoryStore` implementation that
 // POSTs to the auto-generated REST entities — no caller changes required.
 
+import { createRayfinHistoryStore, isRayfinHistoryConfigured } from './historyStoreRayfin';
+
 export type HistoryItemKind = 'model' | 'report';
 
 /** One row per applied fix (DB-1, append-only audit trail). */
@@ -76,7 +78,7 @@ export interface FixLogFilter {
   result?: 'ok' | 'fail';
 }
 
-interface HistoryStore {
+export interface HistoryStore {
   putFix(e: FixLogEntry): Promise<void>;
   putSnapshot(s: SnapshotEntry): Promise<void>;
   putScan(r: ScanRecord): Promise<void>;
@@ -258,7 +260,29 @@ const idbStore: HistoryStore = {
   },
 };
 
-const store: HistoryStore = idbStore;
+// --------------------------------------------------------------------------- //
+// Storage backend selection
+// --------------------------------------------------------------------------- //
+// Defaults to the self-contained IndexedDB store, so behaviour and performance
+// are unchanged when no Rayfin-managed database is provisioned. When the app is
+// configured with VITE_HISTORY_DB=rayfin and the data client is live, the
+// drop-in DAB-backed store is used instead — same interface, no caller changes.
+
+let resolvedStore: HistoryStore | null = null;
+function getStore(): HistoryStore {
+  if (resolvedStore) return resolvedStore;
+  const rayfin = createRayfinHistoryStore();
+  if (rayfin) {
+    resolvedStore = rayfin;
+    return rayfin;
+  }
+  // No remote store available. Use IndexedDB now, but only lock it in as the
+  // final choice when a remote store was never intended — so enabling the DB
+  // later (after async bootstrap) can still upgrade the backend on a later call.
+  if (isRayfinHistoryConfigured()) return idbStore;
+  resolvedStore = idbStore;
+  return idbStore;
+}
 
 // --------------------------------------------------------------------------- //
 // Current user (set once from the app shell so write hooks stay dependency-free)
@@ -324,7 +348,7 @@ export interface RecordScanInput {
 export function logFix(input: LogFixInput): void {
   void (async () => {
     try {
-      await store.putFix({ id: uid(), ts: Date.now(), user: currentUser, ...input });
+      await getStore().putFix({ id: uid(), ts: Date.now(), user: currentUser, ...input });
     } catch (e) {
       warn('logFix', e);
     }
@@ -342,7 +366,7 @@ export function saveSnapshot(input: SaveSnapshotInput): void {
         return;
       }
       const before = await gzip(input.before);
-      await store.putSnapshot({
+      await getStore().putSnapshot({
         id: input.id,
         ts: Date.now(),
         workspaceId: input.workspaceId,
@@ -354,7 +378,7 @@ export function saveSnapshot(input: SaveSnapshotInput): void {
         before,
         size,
       });
-      await store.pruneSnapshots(MAX_SNAPSHOTS);
+      await getStore().pruneSnapshots(MAX_SNAPSHOTS);
     } catch (e) {
       warn('saveSnapshot', e);
     }
@@ -365,7 +389,7 @@ export function saveSnapshot(input: SaveSnapshotInput): void {
 export function recordScan(input: RecordScanInput): void {
   void (async () => {
     try {
-      await store.putScan({
+      await getStore().putScan({
         id: uid(),
         ts: Date.now(),
         total: input.error + input.warning + input.info,
@@ -382,7 +406,7 @@ export function recordScan(input: RecordScanInput): void {
 // --------------------------------------------------------------------------- //
 
 export async function listFixLog(filter: FixLogFilter = {}): Promise<FixLogEntry[]> {
-  const rows = await store.listFix();
+  const rows = await getStore().listFix();
   return rows.filter(
     (r) =>
       (!filter.workspaceId || r.workspaceId === filter.workspaceId) &&
@@ -393,7 +417,7 @@ export async function listFixLog(filter: FixLogFilter = {}): Promise<FixLogEntry
 }
 
 export async function listScans(filter: { workspaceId?: string; itemId?: string } = {}): Promise<ScanRecord[]> {
-  const rows = await store.listScans();
+  const rows = await getStore().listScans();
   return rows.filter(
     (r) => (!filter.workspaceId || r.workspaceId === filter.workspaceId) && (!filter.itemId || r.itemId === filter.itemId)
   );
@@ -402,7 +426,7 @@ export async function listScans(filter: { workspaceId?: string; itemId?: string 
 /** Resolve a snapshot and return its decompressed pre-fix text, ready to write
  *  back through the existing surgical patch path. */
 export async function getSnapshotText(id: string): Promise<{ snapshot: SnapshotEntry; text: string } | undefined> {
-  const snapshot = await store.getSnapshot(id);
+  const snapshot = await getStore().getSnapshot(id);
   if (!snapshot) return undefined;
   const text = await gunzip(snapshot.before);
   return { snapshot, text };
@@ -411,7 +435,7 @@ export async function getSnapshotText(id: string): Promise<{ snapshot: SnapshotE
 export function markReverted(fixId: string): void {
   void (async () => {
     try {
-      await store.updateFix(fixId, { reverted: true });
+      await getStore().updateFix(fixId, { reverted: true });
     } catch (e) {
       warn('markReverted', e);
     }
@@ -419,5 +443,5 @@ export function markReverted(fixId: string): void {
 }
 
 export async function clearHistory(): Promise<void> {
-  await store.clear();
+  await getStore().clear();
 }

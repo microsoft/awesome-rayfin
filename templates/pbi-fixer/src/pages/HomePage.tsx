@@ -34,6 +34,7 @@ import {
   ArrowExport20Regular,
   ShieldCheckmark20Regular,
   ChartMultiple20Regular,
+  Sparkle20Regular,
   Rocket20Regular,
   PulseSquare20Regular,
   Apps20Regular,
@@ -52,6 +53,7 @@ import {
   ChevronRight20Regular,
   Info20Regular,
   History20Regular,
+  Code20Regular,
 } from '@fluentui/react-icons';
 
 import { useAuth } from '@/hooks/AuthContext';
@@ -96,6 +98,9 @@ const ReportStructFix = lazy(() =>
 const ReportBpa = lazy(() =>
   import('@/components/explorer/ReportBpa').then((m) => ({ default: m.ReportBpa }))
 );
+const LandingPage = lazy(() =>
+  import('@/components/explorer/LandingPage').then((m) => ({ default: m.LandingPage }))
+);
 const DescriptionsTab = lazy(() =>
   import('@/components/explorer/DescriptionsTab').then((m) => ({ default: m.DescriptionsTab }))
 );
@@ -137,6 +142,12 @@ const WorkspaceEditorTab = lazy(() =>
 );
 const AboutTab = lazy(() =>
   import('@/components/explorer/AboutTab').then((m) => ({ default: m.AboutTab }))
+);
+const GuidelinesTab = lazy(() =>
+  import('@/components/explorer/GuidelinesTab').then((m) => ({ default: m.GuidelinesTab }))
+);
+const DefinitionSource = lazy(() =>
+  import('@/components/explorer/DefinitionSource').then((m) => ({ default: m.DefinitionSource }))
 );
 
 const FIXERS: { id: string; label: string; description: string }[] = [
@@ -421,29 +432,40 @@ const useStyles = makeStyles({
   },
 });
 
-type TabValue = 'model' | 'report' | 'descriptions' | 'field-parameters' | 'refresh-tools' | 'perspectives' | 'diagram' | 'metric-view' | 'documentation' | 'cleanup' | 'prototype' | 'forward-prototype' | 'sempy' | 'jumpstart' | 'rayfin-apps' | 'monitoring' | 'workspace-editor' | 'history' | 'about';
+type TabValue = 'model' | 'report' | 'descriptions' | 'field-parameters' | 'refresh-tools' | 'perspectives' | 'diagram' | 'metric-view' | 'documentation' | 'cleanup' | 'forward-prototype' | 'sempy' | 'jumpstart' | 'rayfin-apps' | 'monitoring' | 'workspace-editor' | 'history' | 'guidelines' | 'about';
 type TabDock = 'top' | 'left';
-// Sub-views nested inside the Report Explorer tab. IBCS and Fixers used to be
-// top-level tabs; they now live under Report Explorer as sub-tabs.
-type ReportSub = 'explorer' | 'ibcs' | 'fixers' | 'bpa';
+// Sub-views nested inside the Report Explorer tab. IBCS, Fixers, BPA, Reverse
+// Prototype and the PBIR source view all live under Report Explorer as sub-tabs
+// so the report explorer stays the anchor view and is never lost.
+type ReportSub = 'explorer' | 'ibcs' | 'fixers' | 'bpa' | 'reverse' | 'pbir' | 'landing';
 
-type NavItemDef = { value: TabValue; label: string; icon: ReactElement };
+// A nav entry may optionally deep-link into a Report Explorer sub-tab. When
+// `sub` is set, clicking it opens the Report tab and selects that sub-view.
+type NavItemDef = { value: TabValue; label: string; icon: ReactElement; sub?: ReportSub };
 type NavGroupDef = { id: string; label: string; items: NavItemDef[] };
-// An explorer tab that doubles as an expandable header: clicking the label
-// navigates to the tab, the chevron expands/collapses its nested tools below.
-type NavSectionDef = { parent: NavItemDef; groupId: string; items: NavItemDef[] };
 
-// Top-level explorer sections. Their tools expand directly beneath the
-// explorer entry (no separate "Model tools"/"Report tools" header).
-const NAV_SECTIONS: NavSectionDef[] = [
+// Left-nav information architecture.
+//
+// Principle — left nav vs. top tabs:
+//  - Left-nav items are distinct *tools/destinations*. Each owns its own
+//    workflow and load lifecycle, and is exposed individually. Pure section
+//    headers (Model / Report / Workspace) group them; the header itself does
+//    not navigate — the first item under it (the Explorer) is the entry view.
+//  - Top tabs (inside Model/Report Explorer: Explorer · TMDL · Translations ·
+//    Memory Analyzer · Model BPA, and the report sub-views) are *lenses on the
+//    one already-loaded object*. They share the loaded model/report state, so
+//    switching them is a view change, not a task change — which is exactly why
+//    they stay as top tabs and are NOT promoted to separate left-nav tools.
+const NAV_GROUPS: NavGroupDef[] = [
   {
-    parent: { value: 'model', label: 'Model Explorer', icon: <Database20Regular /> },
-    groupId: 'model-tools',
+    id: 'model',
+    label: 'Model',
     items: [
+      { value: 'model', label: 'Model Explorer', icon: <Database20Regular /> },
       { value: 'cleanup', label: 'Unused Cleanup', icon: <Broom20Regular /> },
       { value: 'descriptions', label: 'Descriptions', icon: <DocumentText20Regular /> },
       { value: 'field-parameters', label: 'Field Parameters', icon: <Options20Regular /> },
-      { value: 'refresh-tools', label: 'Refresh Tools', icon: <ArrowSync20Regular /> },
+      { value: 'refresh-tools', label: 'Add to Model', icon: <ArrowSync20Regular /> },
       { value: 'perspectives', label: 'Perspectives', icon: <Eye20Regular /> },
       { value: 'diagram', label: 'Model Diagram', icon: <Organization20Regular /> },
       { value: 'metric-view', label: 'Metric View Migration', icon: <DatabaseArrowRight20Regular /> },
@@ -452,20 +474,22 @@ const NAV_SECTIONS: NavSectionDef[] = [
     ],
   },
   {
-    parent: { value: 'report', label: 'Report Explorer', icon: <DocumentBulletList20Regular /> },
-    groupId: 'report-tools',
+    id: 'report',
+    label: 'Report',
     items: [
-      { value: 'prototype', label: 'Reverse Prototype', icon: <ArrowImport20Regular /> },
+      { value: 'report', sub: 'explorer', label: 'Report Explorer', icon: <DocumentBulletList20Regular /> },
+      { value: 'report', sub: 'ibcs', label: 'IBCS', icon: <ChartMultiple20Regular /> },
+      { value: 'report', sub: 'fixers', label: 'Fixers', icon: <Wrench20Regular /> },
+      { value: 'report', sub: 'bpa', label: 'Report BPA', icon: <ShieldCheckmark20Regular /> },
+      { value: 'report', sub: 'reverse', label: 'Reverse Prototype', icon: <ArrowImport20Regular /> },
+      { value: 'report', sub: 'landing', label: 'Landing Page', icon: <Sparkle20Regular /> },
+      { value: 'report', sub: 'pbir', label: 'PBIR Source', icon: <Code20Regular /> },
       { value: 'forward-prototype', label: 'Forward Prototype', icon: <ArrowExport20Regular /> },
     ],
   },
-];
-
-// Remaining collapsible group(s) shown below the explorer sections.
-const NAV_GROUPS: NavGroupDef[] = [
   {
-    id: 'automation',
-    label: 'Automation',
+    id: 'workspace',
+    label: 'Workspace',
     items: [
       { value: 'sempy', label: 'Sempy Runner', icon: <PlayCircle20Regular /> },
       { value: 'workspace-editor', label: 'Workspace Editor', icon: <FolderSwap20Regular /> },
@@ -524,16 +548,17 @@ export function HomePage() {
     try { localStorage.setItem('pbiFixer.tabDock', tabDock); } catch { /* ignore */ }
   }, [tabDock]);
 
-  // Which collapsible nav groups are expanded (vertical dock only). Collapsed by default.
+  // Which collapsible nav groups are expanded (vertical dock only). Model and
+  // Report start open so their Explorers are visible; Workspace stays collapsed.
   const [navGroupsOpen, setNavGroupsOpen] = useState<Set<string>>(() => {
     try {
-      const v = localStorage.getItem('pbiFixer.navGroups');
+      const v = localStorage.getItem('pbiFixer.navGroups.v2');
       if (v) return new Set(JSON.parse(v) as string[]);
     } catch { /* ignore */ }
-    return new Set<string>();
+    return new Set<string>(['model', 'report']);
   });
   useEffect(() => {
-    try { localStorage.setItem('pbiFixer.navGroups', JSON.stringify([...navGroupsOpen])); } catch { /* ignore */ }
+    try { localStorage.setItem('pbiFixer.navGroups.v2', JSON.stringify([...navGroupsOpen])); } catch { /* ignore */ }
   }, [navGroupsOpen]);
   const toggleNavGroup = useCallback((id: string) => {
     setNavGroupsOpen((prev) => {
@@ -589,6 +614,13 @@ export function HomePage() {
     () => workspaces.find((w) => w.id === workspaceId)?.displayName ?? '',
     [workspaces, workspaceId]
   );
+  // Keep the workspace input showing the selected name. `wsText` doubles as the
+  // free-text filter while searching, so whenever the selected workspace
+  // changes — including after a reload, once the workspace list finishes
+  // loading — restore the name so the field never appears blank.
+  useEffect(() => {
+    setWsText(workspaceName);
+  }, [workspaceName]);
   // First selected pair drives the single-target tabs (explorers, editors).
   const primaryKey = pairKeys[0] ?? '';
   const selectedPair = useMemo(
@@ -631,6 +663,12 @@ export function HomePage() {
       : pairKeys.length === 1
         ? selectedPair?.name ?? ''
         : `${pairKeys.length} selected`;
+  // Mirror the workspace behaviour for the report/model picker: keep the field
+  // showing the current selection summary and only deviate while the user is
+  // actively typing a filter. Resyncs whenever the selection changes.
+  useEffect(() => {
+    setPairQuery(pairValue);
+  }, [pairValue]);
 
   // Workspaces filtered by the typed text. When the input still shows the
   // selected name (not actively searching) we keep the full list available.
@@ -654,8 +692,11 @@ export function HomePage() {
   }, [pairs]);
 
   // Folder groups filtered by the typed search text (empty groups dropped).
+  // While the field still shows the current selection summary (the user hasn't
+  // started typing a new filter) the whole list stays available.
   const pairGroupsFiltered = useMemo(() => {
-    const q = pairQuery.trim().toLowerCase();
+    const raw = pairQuery.trim().toLowerCase();
+    const q = raw === pairValue.toLowerCase() ? '' : raw;
     if (!q) return pairGroups;
     return pairGroups
       .map(
@@ -663,7 +704,7 @@ export function HomePage() {
           [folder, items.filter((p) => p.name.toLowerCase().includes(q))] as [string, ReportModelPair[]]
       )
       .filter(([, items]) => items.length > 0);
-  }, [pairGroups, pairQuery]);
+  }, [pairGroups, pairQuery, pairValue]);
 
   // Load workspaces. Surfaces a "Sign in to Power BI" gate when a token can't
   // be acquired silently (e.g. first run, or embedded in the Fabric portal
@@ -1301,21 +1342,22 @@ export function HomePage() {
               </Text>
               <Combobox
                 multiselect
-                placeholder={
-                  busy === 'items'
-                    ? 'Loading…'
-                    : pairKeys.length > 0
-                      ? pairValue
-                      : 'Search report(s) / model(s)'
-                }
+                placeholder={busy === 'items' ? 'Loading…' : 'Search report(s) / model(s)'}
                 value={pairQuery}
                 selectedOptions={pairKeys}
                 onChange={(ev) => setPairQuery(ev.target.value)}
                 onOptionSelect={(_, d) => {
-                  setPairKeys(d.selectedOptions);
-                  setPairQuery('');
+                  const keys = d.selectedOptions;
+                  setPairKeys(keys);
+                  const text =
+                    keys.length === 0
+                      ? ''
+                      : keys.length === 1
+                        ? pairs.find((p) => p.key === keys[0])?.name ?? ''
+                        : `${keys.length} selected`;
+                  setPairQuery(text);
                 }}
-                onBlur={() => setPairQuery('')}
+                onBlur={() => setPairQuery(pairValue)}
                 disabled={!workspaceId || busy === 'items'}
               >
                 {pairGroupsFiltered.length === 0 ? (
@@ -1360,52 +1402,6 @@ export function HomePage() {
           >
           {tabDock === 'left' ? (
             <div className={styles.nav}>
-              {NAV_SECTIONS.map((section) => {
-                const open = navGroupsOpen.has(section.groupId);
-                const parentActive = tab === section.parent.value;
-                return (
-                  <div key={section.groupId}>
-                    <div className={styles.navParentRow}>
-                      <button
-                        type="button"
-                        className={styles.navParentChevron}
-                        onClick={() => toggleNavGroup(section.groupId)}
-                        aria-expanded={open}
-                        aria-label={open ? `Collapse ${section.parent.label}` : `Expand ${section.parent.label}`}
-                        title={open ? `Collapse ${section.parent.label}` : `Expand ${section.parent.label}`}
-                      >
-                        {open ? <ChevronDown20Regular /> : <ChevronRight20Regular />}
-                      </button>
-                      <button
-                        type="button"
-                        className={mergeClasses(styles.navItem, styles.navItemGrow, parentActive && styles.navItemActive)}
-                        onClick={() => selectTab(section.parent.value)}
-                      >
-                        <span className={parentActive ? styles.navItemIconActive : styles.navItemIcon}>{section.parent.icon}</span>
-                        {section.parent.label}
-                      </button>
-                    </div>
-                    {open && (
-                      <div className={styles.navSub}>
-                        {section.items.map((it) => {
-                          const active = tab === it.value;
-                          return (
-                            <button
-                              key={it.value}
-                              type="button"
-                              className={mergeClasses(styles.navItem, active && styles.navItemActive)}
-                              onClick={() => selectTab(it.value)}
-                            >
-                              <span className={active ? styles.navItemIconActive : styles.navItemIcon}>{it.icon}</span>
-                              {it.label}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
               {NAV_GROUPS.map((g) => {
                 const open = navGroupsOpen.has(g.id);
                 return (
@@ -1424,13 +1420,18 @@ export function HomePage() {
                     {open && (
                       <div className={styles.navSub}>
                         {g.items.map((it) => {
-                          const active = tab === it.value;
+                          const active = it.sub
+                            ? tab === it.value && reportSub === it.sub
+                            : tab === it.value;
                           return (
                             <button
-                              key={it.value}
+                              key={it.sub ?? it.value}
                               type="button"
                               className={mergeClasses(styles.navItem, active && styles.navItemActive)}
-                              onClick={() => selectTab(it.value)}
+                              onClick={() => {
+                                selectTab(it.value);
+                                if (it.sub) selectReportSub(it.sub);
+                              }}
                             >
                               <span className={active ? styles.navItemIconActive : styles.navItemIcon}>{it.icon}</span>
                               {it.label}
@@ -1443,6 +1444,16 @@ export function HomePage() {
                 );
               })}
               <div className={styles.navFooter}>
+                <button
+                  type="button"
+                  className={mergeClasses(styles.navItem, tab === 'guidelines' && styles.navItemActive)}
+                  onClick={() => selectTab('guidelines')}
+                >
+                  <span className={tab === 'guidelines' ? styles.navItemIconActive : styles.navItemIcon}>
+                    <BookInformation20Regular />
+                  </span>
+                  Guidelines
+                </button>
                 <button
                   type="button"
                   className={mergeClasses(styles.navItem, tab === 'about' && styles.navItemActive)}
@@ -1493,9 +1504,6 @@ export function HomePage() {
             </Tab>
             <Tab value="documentation" icon={<BookInformation20Regular />}>
               Model Documentation
-            </Tab>
-            <Tab value="prototype" icon={<ArrowImport20Regular />}>
-              Reverse Prototype
             </Tab>
             <Tab value="forward-prototype" icon={<ArrowExport20Regular />}>
               Forward Prototype
@@ -1560,6 +1568,15 @@ export function HomePage() {
                   <Tab value="bpa" icon={<ShieldCheckmark20Regular />}>
                     BPA
                   </Tab>
+                  <Tab value="reverse" icon={<ArrowImport20Regular />}>
+                    Reverse Prototype
+                  </Tab>
+                  <Tab value="landing" icon={<Sparkle20Regular />}>
+                    Landing Page
+                  </Tab>
+                  <Tab value="pbir" icon={<Code20Regular />}>
+                    PBIR Source
+                  </Tab>
                 </TabList>
 
                 <div style={{ display: reportSub === 'explorer' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
@@ -1609,6 +1626,24 @@ export function HomePage() {
                     />
                   </div>
                 )}
+
+                {reportSubVisited.has('reverse') && (
+                  <div style={{ display: reportSub === 'reverse' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+                    <ReversePrototype workspaceId={workspaceId} reportId={reportId} reportName={reportName} />
+                  </div>
+                )}
+
+                {reportSubVisited.has('landing') && (
+                  <div style={{ display: reportSub === 'landing' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+                    <LandingPage workspaceId={workspaceId} reportId={reportId} reportName={reportName} datasetId={datasetId} datasetName={datasetName} />
+                  </div>
+                )}
+
+                {reportSubVisited.has('pbir') && (
+                  <div style={{ display: reportSub === 'pbir' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+                    <DefinitionSource workspaceId={workspaceId} reportId={reportId} only="report" autoLoad />
+                  </div>
+                )}
               </div>
             )}
 
@@ -1621,6 +1656,12 @@ export function HomePage() {
             {visited.has('field-parameters') && (
               <div style={{ display: tab === 'field-parameters' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
                 <FieldParameters workspaceId={workspaceId} datasetId={datasetId} datasetName={datasetName} />
+              </div>
+            )}
+
+            {visited.has('refresh-tools') && (
+              <div style={{ display: tab === 'refresh-tools' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+                <RefreshTools workspaceId={workspaceId} datasetId={datasetId} datasetName={datasetName} />
               </div>
             )}
 
@@ -1655,21 +1696,10 @@ export function HomePage() {
                 />
               </div>
             )}
-            {visited.has('refresh-tools') && (
-              <div style={{ display: tab === 'refresh-tools' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
-                <RefreshTools workspaceId={workspaceId} datasetId={datasetId} datasetName={datasetName} />
-              </div>
-            )}
 
             {visited.has('cleanup') && (
               <div style={{ display: tab === 'cleanup' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
                 <UnusedCleanup workspaceId={workspaceId} datasetId={datasetId} datasetName={datasetName} />
-              </div>
-            )}
-
-            {visited.has('prototype') && (
-              <div style={{ display: tab === 'prototype' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
-                <ReversePrototype workspaceId={workspaceId} reportId={reportId} reportName={reportName} />
               </div>
             )}
 
@@ -1714,6 +1744,11 @@ export function HomePage() {
               </div>
             )}
 
+            {visited.has('guidelines') && (
+              <div style={{ display: tab === 'guidelines' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+                <GuidelinesTab />
+              </div>
+            )}
             {visited.has('about') && (
               <div style={{ display: tab === 'about' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
                 <AboutTab />

@@ -21,6 +21,8 @@ export interface UdfConfig {
     githubDevicePoll: string;
     githubTranslate: string;
     githubCommentM: string;
+    githubLandingHtml: string;
+    githubTidyWorkspace: string;
   };
 }
 
@@ -56,6 +58,8 @@ export function getUdfConfig(): UdfConfig {
   const githubDevicePoll = deriveUdf('github_device_poll');
   const githubTranslate = deriveUdf('github_translate');
   const githubCommentM = deriveUdf('github_comment_m');
+  const githubLandingHtml = deriveUdf('github_landing_html');
+  const githubTidyWorkspace = deriveUdf('github_tidy_workspace');
 
   return {
     tenantId,
@@ -69,6 +73,8 @@ export function getUdfConfig(): UdfConfig {
       githubDevicePoll,
       githubTranslate,
       githubCommentM,
+      githubLandingHtml,
+      githubTidyWorkspace,
     },
   };
 }

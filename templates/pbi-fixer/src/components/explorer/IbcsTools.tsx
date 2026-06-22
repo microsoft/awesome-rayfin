@@ -34,7 +34,6 @@ import {
   DataTrending20Regular,
   ChartMultiple20Regular,
   CheckmarkCircle20Filled,
-  Table20Regular,
   ArrowSort20Regular,
   Calculator20Regular,
   TableAdd20Regular,
@@ -44,11 +43,9 @@ import {
   analyzeModel,
   addCalendarTable,
   generateTimeIntelligence,
-  addCalculationGroup,
   addMeasureTableEmpty,
   addMeasureTables3WithIcons,
   addMeasuresFromColumns,
-  listCalcGroupTemplates,
   type ModelAnalysis,
   type TimeIntelMeasure,
 } from '@/services/ibcsModel';
@@ -79,9 +76,6 @@ const IBCS_VISUALS = [
 ];
 
 const SEP = '\u0000';
-
-// Calculation-group templates (Time Intelligence, Units).
-const CG_TEMPLATES = listCalcGroupTemplates();
 
 const useStyles = makeStyles({
   root: { display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, ...shorthands.gap('10px') },
@@ -176,12 +170,6 @@ export function IbcsTools({ workspaceId, datasetId, reportId }: IbcsToolsProps) 
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [generating, setGenerating] = useState(false);
   const [genResult, setGenResult] = useState<CalResult | null>(null);
-
-  // Calculation group templates.
-  const [cgTemplateId, setCgTemplateId] = useState(CG_TEMPLATES[0].id);
-  const [cgTableName, setCgTableName] = useState(CG_TEMPLATES[0].name);
-  const [addingCg, setAddingCg] = useState(false);
-  const [cgResult, setCgResult] = useState<CalResult | null>(null);
 
   // Measure tables & explicit measures (PKG-7).
   const [richCal, setRichCal] = useState(false);
@@ -378,39 +366,6 @@ export function IbcsTools({ workspaceId, datasetId, reportId }: IbcsToolsProps) 
       setGenerating(false);
     }
   }, [canGenerate, dateRef, workspaceId, datasetId, baseMeasures, doPY, doAbs, doPct, folder, load]);
-
-  const cgTemplate = CG_TEMPLATES.find((t) => t.id === cgTemplateId) ?? CG_TEMPLATES[0];
-
-  const onPickTemplate = (id: string) => {
-    setCgTemplateId(id);
-    const tpl = CG_TEMPLATES.find((t) => t.id === id);
-    if (tpl) setCgTableName(tpl.name);
-    setCgResult(null);
-  };
-
-  const canAddCg = !addingCg && !!cgTableName.trim() && (!cgTemplate.needsDate || !!dateRef);
-
-  const runAddCalcGroup = useCallback(async () => {
-    if (!canAddCg) return;
-    const [calendarTable, dateColumn] = dateRef.split(SEP);
-    setAddingCg(true);
-    setCgResult(null);
-    setError(null);
-    try {
-      const r = await addCalculationGroup(workspaceId, datasetId, {
-        templateId: cgTemplate.id,
-        tableName: cgTableName,
-        calendarTable: cgTemplate.needsDate ? calendarTable : undefined,
-        dateColumn: cgTemplate.needsDate ? dateColumn : undefined,
-      });
-      setCgResult({ ok: r.changed > 0 || !r.created, text: r.detail });
-      await load();
-    } catch (e) {
-      setCgResult({ ok: false, text: e instanceof Error ? e.message : String(e) });
-    } finally {
-      setAddingCg(false);
-    }
-  }, [canAddCg, dateRef, workspaceId, datasetId, cgTemplate, cgTableName, load]);
 
   // IBCS chart orientation (report-side): time → column, structure → bar.
   const [orientBusy, setOrientBusy] = useState<'scan' | 'fix' | null>(null);
@@ -655,63 +610,7 @@ export function IbcsTools({ workspaceId, datasetId, reportId }: IbcsToolsProps) 
             )}
           </div>
 
-          {/* 3. Calculation group templates */}
-          <div className={styles.card}>
-            <div className={styles.cardHead}>
-              <Table20Regular style={{ color: ICON_ACCENT }} />
-              <span className={styles.cardTitle}>Calculation group templates</span>
-            </div>
-            <Text className={styles.cardHint}>
-              Add a ready-made calculation group that switches every measure at once — no per-measure
-              copies. <b>Time Intelligence</b> (Current, MTD, QTD, YTD, PY, YoY, YoY %) needs a date
-              column; <b>Units</b> (units / thousands / millions / billions) works on any measure.
-            </Text>
-            {analysis.calcGroups.length > 0 && (
-              <Text className={styles.cardHint}>
-                Existing: {analysis.calcGroups.join(', ')}
-              </Text>
-            )}
-            <div className={styles.row}>
-              <div className={styles.field}>
-                <label className={styles.label}>Template</label>
-                <Dropdown
-                  style={{ minWidth: '220px' }}
-                  value={cgTemplate.name + (cgTemplate.needsDate ? ' · time intelligence' : ' · scaling')}
-                  selectedOptions={[cgTemplate.id]}
-                  onOptionSelect={(_, d) => onPickTemplate(d.optionValue ?? cgTemplate.id)}
-                >
-                  {CG_TEMPLATES.map((t) => (
-                    <Option key={t.id} value={t.id} text={t.name}>
-                      {t.name} · {t.items.length} items
-                    </Option>
-                  ))}
-                </Dropdown>
-              </div>
-              <div className={styles.field}>
-                <label className={styles.label}>Table name</label>
-                <Input value={cgTableName} onChange={(_, d) => setCgTableName(d.value)} />
-              </div>
-              <Button
-                appearance="primary"
-                icon={addingCg ? <Spinner size="tiny" /> : <Table20Regular />}
-                disabled={!canAddCg}
-                onClick={runAddCalcGroup}
-              >
-                Add calculation group
-              </Button>
-            </div>
-            <Text className={styles.cardHint}>{cgTemplate.description}</Text>
-            {cgTemplate.needsDate && !dateRef && (
-              <span className={styles.cardHint}>Pick a date column above first.</span>
-            )}
-            {cgResult && (
-              <MessageBar intent={cgResult.ok ? 'success' : 'warning'}>
-                <MessageBarBody>{cgResult.text}</MessageBarBody>
-              </MessageBar>
-            )}
-          </div>
-
-          {/* 4. Measure tables & explicit measures (PKG-7) */}
+          {/* 3. Measure tables & explicit measures (PKG-7) */}
           <div className={styles.card}>
             <div className={styles.cardHead}>
               <Calculator20Regular style={{ color: ICON_ACCENT }} />
