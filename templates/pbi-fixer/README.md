@@ -181,6 +181,78 @@ GitHub Copilot via a one-time device-flow sign-in:
 
 ![AI-assisted translations](docs/screenshots/ai-translations.png)
 
+**Field Parameters** — build a field parameter table from a pick-list of
+measures or columns, with reordering and a live TMDL preview:
+
+![Field Parameters builder](docs/screenshots/field-parameters.png)
+
+**Perspectives** — define focused subsets of the model by ticking the tables,
+columns, and measures each perspective should expose:
+
+![Perspectives editor](docs/screenshots/perspectives.png)
+
+**Model Explorer (dark theme)** — the same modelling workbench in dark mode,
+with the full object tree, expression pane, and properties panel:
+
+![Model Explorer in dark theme](docs/screenshots/model-explorer-dark.png)
+
+**Report BPA** — a Best Practice Analyzer for the report layer, with
+Error / Warning / Info severity filters and one-click fixes per finding:
+
+![Report Best Practice Analyzer](docs/screenshots/report-bpa.png)
+
+**Report Fixers** — targeted report repairs: IBCS chart formatting, variance
+styling, and report-structure clean-up applied straight to the PBIR:
+
+![Report Fixers](docs/screenshots/report-fixers.png)
+
+**IBCS Variance Builder** — add a marked calendar table and generate the
+previous-year and variance measures that power IBCS variance visuals, with a
+measure picker for the base measures:
+
+![IBCS Variance Builder](docs/screenshots/ibcs-variance-builder.png)
+
+**PBIR View** — the raw report definition as an editable PBIR parts tree with a
+JSON editor for surgical, low-level changes:
+
+![PBIR View](docs/screenshots/pbir-view.png)
+
+**Landing Page generator** — generate a polished report landing / navigation
+page with AI, ready to drop into the report:
+
+![AI Landing Page generator](docs/screenshots/landing-page.png)
+
+**Model Documentation** — a guided workflow to add a whole-model documentation
+page describing tables, columns, and measures:
+
+![Model Documentation generator](docs/screenshots/model-documentation.png)
+
+**Sempy Runner** — build a `sempy` / `sempy-labs` call from a curated catalog of
+110+ functions, preview the generated Python, then run it on Fabric Spark or drop
+it into a notebook:
+
+![Sempy Runner](docs/screenshots/sempy-runner.png)
+
+**Workspace Editor** — browse, filter, and organise every item in the workspace,
+with folder grouping, tidy-up, and one-click org-app creation:
+
+![Workspace Editor](docs/screenshots/workspace-editor.png)
+
+**Fabric Jumpstart** — deploy ready-made Fabric accelerators (cost analysis,
+platform monitoring, and more) into the workspace as fully provisioned notebooks:
+
+![Fabric Jumpstart catalog](docs/screenshots/jumpstart-catalog.png)
+
+**Rayfin Apps** — one-click deploy full Fabric apps from the Awesome Rayfin
+gallery, with a ready-to-run CLI command pre-filled for the selected workspace:
+
+![Awesome Rayfin Apps catalog](docs/screenshots/rayfin-apps-catalog.png)
+
+**Power BI Guidelines** — a consolidated best-practice reference spanning data
+integration, modelling, report design, and maintenance, customisable per team:
+
+![Power BI Guidelines](docs/screenshots/guidelines.png)
+
 > Screenshots use sample semantic models and reports.
 
 ---
