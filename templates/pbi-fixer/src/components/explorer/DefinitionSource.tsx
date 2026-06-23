@@ -25,6 +25,8 @@ import {
   Table20Regular,
   Search20Regular,
   TextGrammarWand20Regular,
+  ChevronRight16Regular,
+  ChevronDown16Regular,
 } from '@fluentui/react-icons';
 import { BORDER_COLOR, GRAY_COLOR, ICON_ACCENT, SECTION_BG } from '@/explorer/theme';
 import {
@@ -52,18 +54,46 @@ const useStyles = makeStyles({
     backgroundColor: SECTION_BG,
     fontFamily: 'monospace',
     fontSize: '12px',
+    ...shorthands.padding('4px'),
   },
-  fileItem: {
-    ...shorthands.padding('3px', '8px'),
+  // --- part tree ---
+  treeRow: {
+    display: 'flex',
+    alignItems: 'center',
+    ...shorthands.gap('4px'),
+    minHeight: '22px',
+    lineHeight: '22px',
+    ...shorthands.padding('0', '6px', '0', '2px'),
     cursor: 'pointer',
     whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
+    ...shorthands.borderRadius('4px'),
     '&:hover': { backgroundColor: '#f0f0f0' },
   },
-  fileItemSelected: { backgroundColor: `${ICON_ACCENT}22`, fontWeight: '600' },
-  fileItemDirty: { color: ICON_ACCENT },
-  editorPanel: { display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0, minHeight: 0, ...shorthands.gap('4px') },
+  treeRowSelected: { backgroundColor: `${ICON_ACCENT}22`, fontWeight: '600' },
+  treeRowDirty: { color: ICON_ACCENT },
+  treeChevron: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '16px',
+    flexShrink: 0,
+    color: GRAY_COLOR,
+  },
+  treeSpacer: { display: 'inline-block', width: '16px', flexShrink: 0 },
+  treeLabel: { overflow: 'hidden', textOverflow: 'ellipsis', flexGrow: 1, minWidth: 0 },
+  treeFolderLabel: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    flexGrow: 1,
+    minWidth: 0,
+    fontWeight: '600',
+  },
+  treeChildren: {
+    marginLeft: '9px',
+    ...shorthands.borderLeft('1px', 'solid', BORDER_COLOR),
+    paddingLeft: '7px',
+  },
+  editorPanel: { display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0, minHeight: '420px', ...shorthands.gap('4px') },
   editorPath: { fontSize: '12px', color: GRAY_COLOR, fontFamily: 'monospace', wordBreak: 'break-all' },
   editor: {
     flex: 1,
@@ -72,7 +102,7 @@ const useStyles = makeStyles({
     '& textarea': {
       height: '100%',
       fontFamily: 'monospace',
-      fontSize: '12px',
+      fontSize: '13px',
       lineHeight: '1.5',
       whiteSpace: 'pre',
       overflowWrap: 'normal',
@@ -123,6 +153,56 @@ const useStyles = makeStyles({
   },
 });
 
+interface TreeNode {
+  seg: string;
+  key: string;
+  isLeaf: boolean;
+  part?: RawDefinitionPart;
+  children: TreeNode[];
+}
+
+// Build a nested tree from the flat list of definition part paths. Folder nodes
+// are the intermediate path segments; leaves carry the original part. Insertion
+// order is preserved so pages/visuals stay grouped as the server returns them.
+function buildSourceTree(parts: RawDefinitionPart[]): TreeNode[] {
+  const root: TreeNode = { seg: '', key: '', isLeaf: false, children: [] };
+  const byKey = new Map<string, TreeNode>([['', root]]);
+  for (const p of parts) {
+    const segs = p.path.split('/');
+    let cum = '';
+    let parent = root;
+    for (let i = 0; i < segs.length; i++) {
+      const seg = segs[i];
+      cum = cum ? `${cum}/${seg}` : seg;
+      const isLeaf = i === segs.length - 1;
+      let node = byKey.get(cum);
+      if (!node) {
+        node = { seg, key: cum, isLeaf, children: [] };
+        byKey.set(cum, node);
+        parent.children.push(node);
+      }
+      if (isLeaf) {
+        node.isLeaf = true;
+        node.part = p;
+      }
+      parent = node;
+    }
+  }
+  // The Fabric definition payload nests every meaningful part under a single
+  // top-level `definition/` folder. Unwrap that redundant wrapper so the tree
+  // starts at the useful level (tables/, roles/, pages/, …) instead of one dead
+  // click in. Sibling root files (.platform, definition.pbism) are preserved.
+  const top: TreeNode[] = [];
+  for (const node of root.children) {
+    if (!node.isLeaf && node.seg === 'definition' && node.children.length > 0) {
+      top.push(...node.children);
+    } else {
+      top.push(node);
+    }
+  }
+  return top;
+}
+
 export interface DefinitionSourceProps {
   workspaceId: string;
   reportId?: string;
@@ -156,6 +236,7 @@ export const DefinitionSource: React.FC<DefinitionSourceProps> = ({
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<{ msg: string; color: string } | null>(null);
   const [search, setSearch] = useState('');
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [showDiff, setShowDiff] = useState(false);
   const taRef = useRef<HTMLTextAreaElement | null>(null);
   // Deep-link target captured at load time, applied once the parts arrive.
@@ -348,6 +429,74 @@ export const DefinitionSource: React.FC<DefinitionSourceProps> = ({
     }
   }, [kind, selectedPath, selectedPart, edits, onEdit]);
 
+  // ---- PBIR/TMDL part tree --------------------------------------------------
+  const searchActive = search.trim().length > 0;
+  const tree = useMemo(() => buildSourceTree(filteredParts), [filteredParts]);
+
+  // Friendly folder labels: a page's GUID folder is labelled with its page name
+  // (derived from the child page.json's displayName via labelByPath).
+  const folderLabel = useMemo(() => {
+    const m: Record<string, string> = {};
+    for (const p of parts) {
+      if (/\/page\.json$/.test(p.path)) {
+        m[p.path.replace(/\/page\.json$/, '')] = labelByPath[p.path] ?? 'page';
+      }
+    }
+    return m;
+  }, [parts, labelByPath]);
+
+  const toggleFolder = useCallback((key: string) => {
+    setCollapsed((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }, []);
+
+  const renderTree = (nodes: TreeNode[]): React.ReactNode =>
+    nodes.map((node) => {
+      if (node.isLeaf && node.children.length === 0) {
+        const part = node.part!;
+        const isSel = part.path === selectedPath;
+        const isDirty = dirtyPaths.has(part.path);
+        const leaf = /\.bookmark\.json$/.test(part.path)
+          ? labelByPath[part.path] ?? node.seg
+          : node.seg + (part.binary ? ' (binary)' : '');
+        const cls = [styles.treeRow];
+        if (isSel) cls.push(styles.treeRowSelected);
+        if (isDirty) cls.push(styles.treeRowDirty);
+        return (
+          <div
+            key={node.key}
+            className={cls.join(' ')}
+            title={part.path}
+            onClick={() => setSelectedPath(part.path)}
+          >
+            <span className={styles.treeSpacer} />
+            <span className={styles.treeLabel}>
+              {isDirty ? '\u25cf ' : ''}
+              {leaf}
+            </span>
+          </div>
+        );
+      }
+      const expanded = searchActive || !collapsed.has(node.key);
+      return (
+        <div key={node.key}>
+          <div className={styles.treeRow} title={node.key} onClick={() => toggleFolder(node.key)}>
+            <span className={styles.treeChevron}>
+              {expanded ? <ChevronDown16Regular /> : <ChevronRight16Regular />}
+            </span>
+            <span className={styles.treeFolderLabel}>{folderLabel[node.key] ?? node.seg}</span>
+          </div>
+          {expanded && node.children.length > 0 && (
+            <div className={styles.treeChildren}>{renderTree(node.children)}</div>
+          )}
+        </div>
+      );
+    });
+
   return (
     <div className={styles.root}>
       <div className={styles.toolbar}>
@@ -433,23 +582,7 @@ export const DefinitionSource: React.FC<DefinitionSourceProps> = ({
               onChange={(_, d) => setSearch(d.value)}
             />
             <div className={styles.fileList}>
-              {filteredParts.map((p) => {
-                const cls = [styles.fileItem];
-                if (p.path === selectedPath) cls.push(styles.fileItemSelected);
-                if (dirtyPaths.has(p.path)) cls.push(styles.fileItemDirty);
-                return (
-                  <div
-                    key={p.path}
-                    className={cls.join(' ')}
-                    title={p.path}
-                    onClick={() => setSelectedPath(p.path)}
-                  >
-                    {dirtyPaths.has(p.path) ? '● ' : ''}
-                    {labelByPath[p.path] ?? p.path.replace(/^definition\//, '')}
-                    {p.binary ? ' (binary)' : ''}
-                  </div>
-                );
-              })}
+              {renderTree(tree)}
               {filteredParts.length === 0 && (
                 <div className={styles.placeholder}>No parts match the search.</div>
               )}
