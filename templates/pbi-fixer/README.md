@@ -48,8 +48,8 @@ with inline TMDL and one-click organise actions:
 ![Model Explorer](docs/screenshots/model-explorer.png)
 
 **Model BPA** — the Best Practice Analyzer with per-rule findings, severity
-chips, and **one-click fixes** (here: 632 findings across 25 tables, 316 of them
-auto-fixable):
+chips, and **one-click fixes** for the findings the engine can repair
+automatically:
 
 ![Model Best Practice Analyzer](docs/screenshots/model-bpa.png)
 
@@ -63,7 +63,7 @@ GitHub Copilot via a one-time device-flow sign-in:
 
 ![AI-assisted translations](docs/screenshots/ai-translations.png)
 
-> Screenshots use a public sample model (German higher-education statistics).
+> Screenshots use a sample semantic model and report.
 
 ---
 
