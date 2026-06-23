@@ -116,6 +116,13 @@ One-click deploy for:
 - ⭐ Awesome Rayfin Apps Catalog
 - Workspace Monitoring
 
+### Team guidelines
+
+- ⭐ **Power BI Best-Practice Guidelines & Survey** — a guided questionnaire
+  captures your team's Power BI conventions, renders them as an in-app Guidelines
+  view, and syncs to OneLake (`pbi-fixer-guidelines-conventions.json`) so the
+  whole team shares one source of truth.
+
 ---
 
 ## Screenshots
