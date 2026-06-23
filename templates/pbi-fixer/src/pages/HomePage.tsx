@@ -447,10 +447,11 @@ const useStyles = makeStyles({
 });
 
 type TabValue = 'model' | 'report' | 'descriptions' | 'field-parameters' | 'refresh-tools' | 'perspectives' | 'diagram' | 'metric-view' | 'tmdl-runner' | 'documentation' | 'cleanup' | 'forward-prototype' | 'sempy' | 'jumpstart' | 'rayfin-apps' | 'monitoring' | 'workspace-editor' | 'history' | 'guidelines' | 'about';
-// Sub-views nested inside the Report Explorer tab. IBCS, Fixers, BPA, Reverse
-// Prototype and the PBIR source view all live under Report Explorer as sub-tabs
-// so the report explorer stays the anchor view and is never lost.
-type ReportSub = 'explorer' | 'ibcs' | 'fixers' | 'bpa' | 'reverse' | 'pbir' | 'landing';
+// Sub-views nested inside the Report Explorer tab. IBCS, Fixers, BPA, Reverse /
+// Forward Prototype, Landing / Documentation pages and the PBIR source view all
+// live under Report Explorer as sub-tabs so the report explorer stays the anchor
+// view and is never lost.
+type ReportSub = 'explorer' | 'ibcs' | 'fixers' | 'bpa' | 'reverse' | 'forward' | 'pbir' | 'landing' | 'documentation';
 
 // A nav entry may optionally deep-link into a lens of an already-loaded object:
 //  - `sub` opens the Report tab and selects that Report Explorer sub-view.
@@ -559,7 +560,7 @@ const NAV_GROUPS: NavGroupDef[] = [
         label: 'Add Page',
         items: [
           { value: 'report', sub: 'landing', label: 'Landing Page', icon: <Sparkle20Regular /> },
-          { value: 'documentation', label: 'Add Documentation Page', icon: <BookInformation20Regular /> },
+          { value: 'report', sub: 'documentation', label: 'Add Documentation Page', icon: <BookInformation20Regular /> },
         ],
       },
       {
@@ -567,7 +568,7 @@ const NAV_GROUPS: NavGroupDef[] = [
         label: 'Prototype',
         items: [
           { value: 'report', sub: 'reverse', label: 'Reverse Prototype', icon: <ArrowImport20Regular /> },
-          { value: 'forward-prototype', label: 'Forward Prototype', icon: <ArrowExport20Regular /> },
+          { value: 'report', sub: 'forward', label: 'Forward Prototype', icon: <ArrowExport20Regular /> },
         ],
       },
     ],
@@ -1651,8 +1652,14 @@ export function HomePage() {
                   <Tab value="reverse" icon={<ArrowImport20Regular />}>
                     Reverse Prototype
                   </Tab>
+                  <Tab value="forward" icon={<ArrowExport20Regular />}>
+                    Forward Prototype
+                  </Tab>
                   <Tab value="landing" icon={<Sparkle20Regular />}>
                     Landing Page
+                  </Tab>
+                  <Tab value="documentation" icon={<BookInformation20Regular />}>
+                    Add Documentation Page
                   </Tab>
                   <Tab value="pbir" icon={<Code20Regular />}>
                     PBIR View
@@ -1713,9 +1720,27 @@ export function HomePage() {
                   </div>
                 )}
 
+                {reportSubVisited.has('forward') && (
+                  <div style={{ display: reportSub === 'forward' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+                    <ForwardPrototype workspaceId={workspaceId} datasetId={datasetId} datasetName={datasetName} />
+                  </div>
+                )}
+
                 {reportSubVisited.has('landing') && (
                   <div style={{ display: reportSub === 'landing' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
                     <LandingPage workspaceId={workspaceId} reportId={reportId} reportName={reportName} datasetId={datasetId} datasetName={datasetName} />
+                  </div>
+                )}
+
+                {reportSubVisited.has('documentation') && (
+                  <div style={{ display: reportSub === 'documentation' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+                    <ModelDocumentation
+                      workspaceId={workspaceId}
+                      datasetId={datasetId}
+                      datasetName={datasetName}
+                      reportId={reportId}
+                      reportName={reportName}
+                    />
                   </div>
                 )}
 
@@ -1770,27 +1795,9 @@ export function HomePage() {
                 <TmdlRunner workspaceId={workspaceId} datasetId={datasetId} datasetName={datasetName} />
               </div>
             )}
-            {visited.has('documentation') && (
-              <div style={{ display: tab === 'documentation' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
-                <ModelDocumentation
-                  workspaceId={workspaceId}
-                  datasetId={datasetId}
-                  datasetName={datasetName}
-                  reportId={reportId}
-                  reportName={reportName}
-                />
-              </div>
-            )}
-
             {visited.has('cleanup') && (
               <div style={{ display: tab === 'cleanup' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
                 <UnusedCleanup workspaceId={workspaceId} datasetId={datasetId} datasetName={datasetName} />
-              </div>
-            )}
-
-            {visited.has('forward-prototype') && (
-              <div style={{ display: tab === 'forward-prototype' ? 'flex' : 'none', flexDirection: 'column', flex: 1, minHeight: 0 }}>
-                <ForwardPrototype workspaceId={workspaceId} datasetId={datasetId} datasetName={datasetName} />
               </div>
             )}
 
