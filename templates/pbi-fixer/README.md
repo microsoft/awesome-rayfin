@@ -11,8 +11,9 @@
 - **[Michael Kovalsky](https://github.com/m-kovalsky)** — for showing me that
   something like this is even *possible* with Rayfin. The spark for the whole
   project.
-- **Lukasz Obst** — with whom I started this tool. **Whenever you see AI infused
-  into PBI Fixer, it is most likely thanks to him.**
+- **[Lukasz Obst](https://www.linkedin.com/in/lukasz-obst-3672083a2/)** — with
+  whom I started this tool. **Whenever you see AI infused into PBI Fixer, it is
+  most likely thanks to him.**
 
 Thank you both. 🚀
 
@@ -25,6 +26,11 @@ semantic models and reports** directly in the browser. It reads model and report
 definitions through a server-side Fabric **User Data Function** proxy, runs a
 library of Best Practice Analyzer (BPA) rules, and writes the changes back as
 TMDL / PBIR — all without leaving the tab.
+
+> 🌐 **Website:** [kornalexander.github.io/pbi_fixer/app.html](https://kornalexander.github.io/pbi_fixer/app.html)
+> — the landing page for this Fabric App edition. The companion
+> [Notebook edition](https://kornalexander.github.io/pbi_fixer/) (one line of
+> Python in a Fabric Notebook) is linked from there too.
 
 > Built on [Rayfin](../../README.md) — brokered Fabric auth + static hosting, so
 > the whole thing runs as a single Fabric app item with a Python backend.
