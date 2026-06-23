@@ -17,6 +17,7 @@
 // and position, ready to be re-bound against a model in the target tool.
 
 import type { PrototypeDocument, PrototypePage, PrototypeVisual, VisualType } from './prototypeApi';
+import { triggerDownload, type DownloadResult } from '@/services/download';
 
 /* ------------------------------------------------------------------ */
 /* Schema URLs (versions taken from a real PBIR export — docTemplate)  */
@@ -372,23 +373,18 @@ export function exportPrototypeToPbipZip(doc: PrototypeDocument): Uint8Array {
 }
 
 /** Trigger a browser download of raw bytes. */
-export function downloadBytes(filename: string, data: Uint8Array, mime: string): void {
+export function downloadBytes(filename: string, data: Uint8Array, mime: string): DownloadResult {
   const ab = new ArrayBuffer(data.byteLength);
   new Uint8Array(ab).set(data);
-  const blob = new Blob([ab], { type: mime });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  return triggerDownload(filename, new Blob([ab], { type: mime }));
 }
 
-/** Build + download a deployable PBIP project ZIP. Returns the byte size. */
-export function downloadPrototypePbip(doc: PrototypeDocument, baseName: string): number {
+/** Build + download a deployable PBIP project ZIP. Returns the byte size and download mechanism. */
+export function downloadPrototypePbip(
+  doc: PrototypeDocument,
+  baseName: string
+): { size: number; via: DownloadResult['via'] } {
   const zip = exportPrototypeToPbipZip(doc);
-  downloadBytes(`${baseName}.pbip.zip`, zip, 'application/zip');
-  return zip.byteLength;
+  const res = downloadBytes(`${baseName}.pbip.zip`, zip, 'application/zip');
+  return { size: zip.byteLength, via: res.via };
 }

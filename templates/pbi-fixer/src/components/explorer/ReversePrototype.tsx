@@ -38,6 +38,18 @@ import {
   type PrototypeDocument,
 } from '@/services/prototypeApi';
 import { downloadPrototypePbip } from '@/services/pbirExport';
+import type { DownloadResult } from '@/services/download';
+
+/**
+ * When the app is embedded in the Fabric portal iframe the browser cannot save
+ * a file directly, so the download is routed to a new top-level tab. Tell the
+ * user where to look (and to allow pop-ups) so the export never feels silent.
+ */
+function tabHint(res: DownloadResult): string {
+  return res.via === 'tab'
+    ? ' (opened in a new browser tab — allow pop-ups if you do not see it)'
+    : '';
+}
 
 const useStyles = makeStyles({
   root: { display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, ...shorthands.gap('8px') },
@@ -178,22 +190,26 @@ export const ReversePrototype: React.FC<ReversePrototypeProps> = ({
 
   const onExportPbir = () => {
     if (!doc) return;
-    const size = downloadPrototypePbip(doc, `${safeName}.reverse`);
+    const { size, via } = downloadPrototypePbip(doc, `${safeName}.reverse`);
     setStatus(
-      `Exported ${safeName}.reverse.pbip.zip (${(size / 1024).toFixed(1)} KB) — unzip, then open the .pbip in Power BI Desktop or import the .Report into a Fabric workspace.`
+      `Exported ${safeName}.reverse.pbip.zip (${(size / 1024).toFixed(1)} KB)${tabHint({ via })} — unzip, then open the .pbip in Power BI Desktop or import the .Report into a Fabric workspace.`
     );
   };
   const onExportExcalidraw = () => {
     if (!doc) return;
     const scene = exportPrototypeToExcalidraw(doc);
-    downloadText(`${safeName}.reverse.excalidraw`, scene, 'application/json');
-    setStatus(`Exported ${safeName}.reverse.excalidraw — open at excalidraw.com (File ▸ Open).`);
+    const res = downloadText(`${safeName}.reverse.excalidraw`, scene, 'application/json');
+    setStatus(
+      `Exported ${safeName}.reverse.excalidraw${tabHint(res)} — open at excalidraw.com (File ▸ Open).`
+    );
   };
   const onExportSvg = () => {
     if (!doc) return;
     const svg = exportPrototypeToSvg(doc);
-    downloadText(`${safeName}.reverse.svg`, svg, 'image/svg+xml');
-    setStatus(`Exported ${safeName}.reverse.svg — drag onto a Figma canvas to import.`);
+    const res = downloadText(`${safeName}.reverse.svg`, svg, 'image/svg+xml');
+    setStatus(
+      `Exported ${safeName}.reverse.svg${tabHint(res)} — drag onto a Figma canvas to import.`
+    );
   };
 
   if (!workspaceId || !reportId) {

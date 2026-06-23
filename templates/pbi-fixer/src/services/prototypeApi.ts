@@ -13,6 +13,7 @@
 // the user can re-bind in the target canvas.
 
 import type { ReportData } from '@/explorer/types';
+import { triggerDownload, type DownloadResult } from '@/services/download';
 
 export type VisualType =
   | 'card'
@@ -126,21 +127,13 @@ export function exportPrototypeToPbir(doc: PrototypeDocument): string {
 }
 
 /** Trigger a browser download of JSON content. */
-export function downloadJson(filename: string, content: string): void {
-  downloadText(filename, content, 'application/json');
+export function downloadJson(filename: string, content: string): DownloadResult {
+  return downloadText(filename, content, 'application/json');
 }
 
 /** Generic single-blob downloader (text content). */
-export function downloadText(filename: string, content: string, mime: string): void {
-  const blob = new Blob([content], { type: mime });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+export function downloadText(filename: string, content: string, mime: string): DownloadResult {
+  return triggerDownload(filename, new Blob([content], { type: mime }));
 }
 
 /* ------------------------------------------------------------------ */
