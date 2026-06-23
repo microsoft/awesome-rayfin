@@ -1,5 +1,10 @@
 # Power BI Fixer
 
+> **Thank you** — to **Michael Kovalsky** for showing me that something like this
+> is even possible with Rayfin, and to **Lukasz Obst**, with whom I started this
+> tool. Whenever you see AI infused into PBI Fixer, it is most likely thanks to
+> him.
+
 A Fabric-authenticated React + Vite app that **inspects, edits, and fixes Power BI
 semantic models and reports** directly in the browser. It reads model and report
 definitions through a server-side Fabric **User Data Function** proxy, runs a
