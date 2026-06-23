@@ -1,9 +1,24 @@
 # Power BI Fixer
 
-> **Thank you** — to **Michael Kovalsky** for showing me that something like this
-> is even possible with Rayfin, and to **Lukasz Obst**, with whom I started this
-> tool. Whenever you see AI infused into PBI Fixer, it is most likely thanks to
-> him.
+<table>
+<tr>
+<td>
+
+### 🙏 Credits & Thanks
+
+**This tool would not exist without two people:**
+
+- **[Michael Kovalsky](https://github.com/m-kovalsky)** — for showing me that
+  something like this is even *possible* with Rayfin. The spark for the whole
+  project.
+- **Lukasz Obst** — with whom I started this tool. **Whenever you see AI infused
+  into PBI Fixer, it is most likely thanks to him.**
+
+Thank you both. 🚀
+
+</td>
+</tr>
+</table>
 
 A Fabric-authenticated React + Vite app that **inspects, edits, and fixes Power BI
 semantic models and reports** directly in the browser. It reads model and report
@@ -13,6 +28,11 @@ TMDL / PBIR — all without leaving the tab.
 
 > Built on [Rayfin](../../README.md) — brokered Fabric auth + static hosting, so
 > the whole thing runs as a single Fabric app item with a Python backend.
+
+> ⭐ marks my top picks. This is not an exhaustive list of functionality — you
+> will find other hidden gems.
+>
+> ⚠️ The application is currently in **Beta** — use at your own risk.
 
 ---
 
@@ -41,14 +61,71 @@ in with your Fabric identity and start working.
 
 ---
 
+## Features
+
+### Semantic model editing
+
+Edit your tabular model with full access to all properties — and a lot more.
+
+- **Edit**
+  - ⭐ Edit all properties — Display Folders, Descriptions, Field Parameters, Perspectives, Translations
+  - DAX Formatter
+  - Preview data
+  - Model Adder — calc groups, tables, info views
+  - Model Diagram — live ER diagram with layout, zoom, hidden-object toggles
+  - Perspective Editor
+- **Clean up**
+  - Unused Cleanup — remove unreferenced columns / measures
+  - Metric View Migration — Databricks Unity Catalog metric view (YAML) → Direct Lake semantic model
+- **Analyse**
+  - Model BPA — Best Practice Analyzer and fixer with severity grouping + batch one-click fixes
+  - Memory Analyzer — column / table size + cardinality insights to shrink models
+  - Diff preview — every fix shows the exact TMDL / PBIR change before it is written
+- **Refresh**
+  - Refresh Tools — whole model, individual tables, or all models
+  - ⭐ Pre-Warm Direct Lake Caching — warm caches for faster queries
+- **AI** *(once-off GitHub device-flow auth, runs on your own Copilot subscription)*
+  - ⭐ Translations — culture translations for captions and descriptions
+  - ⭐ Descriptions — consistent object descriptions across the model
+  - ⭐ Display-Folder Organisation — propose a clean, consistent folder structure
+- **Safety**
+  - History & Undo — every write-back tracked and reversible
+
+### Report editing
+
+Edit and extend your report — fix, prototype, and document.
+
+- **Explore**
+  - ⭐ PBIR View — browse and edit the report definition (tree, source / diff, pop-out editor)
+  - Reverse / Forward Prototype — scaffold and round-trip report layouts
+- **Fix**
+  - IBCS rules — bring report visuals in line with IBCS notation standards
+  - ⭐ Add free IBCS custom visual — notation-correct charts, no marketplace purchase
+  - Report BPA — report-layer best-practice findings
+- **Add Page**
+  - ⭐ Whole Model Documentation — generate a documentation page
+  - ⭐ Landing Page — AI-generated landing page
+
+### Automation & ops
+
+One-click deploy for:
+
+- ⭐ Sempy Runner and Builder
+- ⭐ **Workspace Editor** — reorganise workspace items into folders with AI, mass-delete items
+- ⭐ Jumpstart Catalog
+- ⭐ Awesome Rayfin Apps Catalog
+- Workspace Monitoring
+
+---
+
 ## Screenshots
 
 **The app shell** — model and report tooling, Fluent UI, light/dark themes:
 
 ![Power BI Fixer app shell](docs/screenshots/app-shell.png)
 
-**Model Explorer** — browse a Direct Lake model's tables, columns, and measures,
-with inline TMDL and one-click organise actions:
+**Model Explorer** — browse and edit a model's tables, columns, and measures,
+with inline TMDL, a live properties pane, and one-click organise actions:
 
 ![Model Explorer](docs/screenshots/model-explorer.png)
 
@@ -58,62 +135,32 @@ automatically:
 
 ![Model Best Practice Analyzer](docs/screenshots/model-bpa.png)
 
+**Memory Analyzer** — column / table size and cardinality insights with
+auto-fixable findings to shrink the model:
+
+![Memory Analyzer](docs/screenshots/memory-analyzer.png)
+
 **Model Diagram** — a live ER diagram of tables and relationships with layout,
 zoom, and hidden-object toggles:
 
 ![Model relationship diagram](docs/screenshots/model-diagram.png)
+
+**Report Explorer** — the PBIR tree with a live / wireframe report preview and an
+editable properties pane:
+
+![Report Explorer](docs/screenshots/report-explorer.png)
+
+**IBCS builder** — add a marked calendar table and generate previous-year &
+variance measures (PY, Δ PY, Δ% PY) that drive IBCS variance charts:
+
+![IBCS builder](docs/screenshots/ibcs-builder.png)
 
 **AI Translations** — generate culture translations for the whole model with
 GitHub Copilot via a one-time device-flow sign-in:
 
 ![AI-assisted translations](docs/screenshots/ai-translations.png)
 
-> Screenshots use a sample semantic model and report.
-
----
-
-## Features
-
-**Semantic model editing**
-
-- **Model Explorer** — browse and edit tables, columns, measures, relationships; inline TMDL view.
-- **Measure editing** — edit DAX with a built-in formatter, organise into display folders.
-- **Unused Cleanup** — find and remove columns / measures nothing depends on.
-- **Display Folders**, **Descriptions**, **Field Parameters**, **Perspectives**.
-- **Model Diagram** — live ER diagram with layout, zoom, and hidden-object toggles.
-- **Metric View migration**, **Model Documentation**, **Refresh Tools**.
-- **History & Undo** — every write-back is tracked and reversible.
-
-**Analysis & fixes**
-
-- **Model BPA** — a Best Practice Analyzer rule library with severity grouping and
-  **one-click fixes** for common modelling issues; batch-fix the auto-fixable findings.
-- **Memory Analyzer** — column / table size and cardinality insights to shrink models.
-- **Diff preview** — every fix shows the exact TMDL / PBIR change before it is written.
-
-**Report layer** _(beyond classic model editors)_
-
-- **Report Explorer** — PBIR tree, source / diff view, and a pop-out editor window.
-- **Reverse / Forward Prototype** — scaffold and round-trip report layouts.
-- **IBCS chart fixes** — bring report visuals in line with IBCS notation standards.
-
-**Free IBCS custom visual**
-
-- Ships with a **free, IBCS-compliant custom visual** for standardised,
-  notation-correct charts — no marketplace purchase required.
-
-**AI-assisted cleanup** _(GitHub Copilot)_
-
-- **Translations** — generate culture translations for captions and descriptions.
-- **Descriptions** — draft consistent object descriptions across the model.
-- **Display-folder organisation** — propose a clean, consistent folder structure.
-- All AI features authorise once via a GitHub **device flow** and run on your own
-  Copilot subscription.
-
-**Automation & ops**
-
-- **Sempy Runner**, **Workspace Editor**, **Jumpstart catalog**, **Rayfin Apps**,
-  **Workspace Monitoring** one-click deploy.
+> Screenshots use sample semantic models and reports.
 
 ---
 
