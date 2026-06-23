@@ -8,7 +8,7 @@
 
 **This tool would not exist without two people:**
 
-- **[Michael Kovalsky](https://github.com/m-kovalsky)** — for showing me that
+- **[Michael Kovalsky](https://www.linkedin.com/in/michaelkovalsky/)** — for showing me that
   something like this is even *possible* with Rayfin. The spark for the whole
   project.
 - **[Lukasz Obst](https://www.linkedin.com/in/lukasz-obst-3672083a2/)** — with
