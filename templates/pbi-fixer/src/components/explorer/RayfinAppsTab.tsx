@@ -20,10 +20,12 @@ import {
   AWESOME_RAYFIN_REPO,
   rayfinAppRepoUrl,
   rayfinDeployCommand,
+  rayfinDeploySteps,
   rayfinGalleryCommand,
   type RayfinApp,
   type RayfinAppCategory,
 } from '@/services/rayfinApps';
+import { copyToClipboard } from '@/services/download';
 import { BORDER_COLOR, SECTION_BG, GRAY_COLOR } from '@/explorer/theme';
 
 const CATEGORY_FILTERS: ('All' | RayfinAppCategory)[] = ['All', 'App', 'Game', 'Tool', 'Starter'];
@@ -75,22 +77,53 @@ const useStyles = makeStyles({
     ...shorthands.padding('8px', '10px'),
     ...shorthands.margin('0'),
   },
+  stepsLabel: { fontSize: '12px', fontWeight: 600, color: '#444', marginTop: '2px' },
+  steps: { display: 'flex', flexDirection: 'column', ...shorthands.gap('10px') },
+  step: { display: 'flex', ...shorthands.gap('8px'), alignItems: 'flex-start' },
+  stepNum: {
+    flexShrink: 0,
+    width: '20px',
+    height: '20px',
+    marginTop: '1px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '11px',
+    fontWeight: 700,
+    color: '#fff',
+    backgroundColor: '#0f6cbd',
+    ...shorthands.borderRadius('50%'),
+  },
+  stepBody: { display: 'flex', flexDirection: 'column', ...shorthands.gap('4px'), minWidth: 0, flex: 1 },
+  stepTitle: { fontSize: '12.5px', fontWeight: 600, color: '#242424' },
+  stepDetail: { fontSize: '11.5px', color: GRAY_COLOR },
+  stepCmdRow: { display: 'flex', alignItems: 'stretch', ...shorthands.gap('6px'), minWidth: 0 },
+  stepCmd: {
+    flex: 1,
+    minWidth: 0,
+    fontFamily: 'Consolas, "Courier New", monospace',
+    fontSize: '11.5px',
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-all',
+    color: '#333',
+    backgroundColor: SECTION_BG,
+    ...shorthands.border('1px', 'solid', BORDER_COLOR),
+    ...shorthands.borderRadius('6px'),
+    ...shorthands.padding('6px', '8px'),
+    ...shorthands.margin('0'),
+  },
   cardActions: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', ...shorthands.gap('8px'), marginTop: 'auto' },
 });
 
 async function copyText(text: string): Promise<boolean> {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch {
-    return false;
-  }
+  return copyToClipboard(text);
 }
 
 export function RayfinAppsTab() {
   const styles = useStyles();
   const [categoryFilter, setCategoryFilter] = useState<'All' | RayfinAppCategory>('All');
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
+  const [copiedStep, setCopiedStep] = useState<string | null>(null);
   const [galleryCopied, setGalleryCopied] = useState(false);
 
   const items = useMemo(
@@ -103,6 +136,14 @@ export function RayfinAppsTab() {
     if (ok) {
       setCopiedSlug(app.slug);
       window.setTimeout(() => setCopiedSlug((s) => (s === app.slug ? null : s)), 2500);
+    }
+  }, []);
+
+  const copyStep = useCallback(async (key: string, command: string) => {
+    const ok = await copyText(command);
+    if (ok) {
+      setCopiedStep(key);
+      window.setTimeout(() => setCopiedStep((s) => (s === key ? null : s)), 2500);
     }
   }, []);
 
@@ -209,7 +250,36 @@ export function RayfinAppsTab() {
                 ))}
               </div>
 
-              <pre className={styles.cmd}>{rayfinDeployCommand(app)}</pre>
+              <Text className={styles.stepsLabel}>Get this app into your workspace</Text>
+              <div className={styles.steps}>
+                {rayfinDeploySteps(app).map((step, i) => {
+                  const stepKey = `${app.slug}#${i}`;
+                  const stepCopied = copiedStep === stepKey;
+                  return (
+                    <div key={stepKey} className={styles.step}>
+                      <span className={styles.stepNum}>{i + 1}</span>
+                      <div className={styles.stepBody}>
+                        <Text className={styles.stepTitle}>{step.title}</Text>
+                        {step.detail && <Text className={styles.stepDetail}>{step.detail}</Text>}
+                        {step.command && (
+                          <div className={styles.stepCmdRow}>
+                            <pre className={styles.stepCmd}>{step.command}</pre>
+                            <Tooltip content="Copy this command" relationship="label">
+                              <Button
+                                size="small"
+                                appearance="subtle"
+                                icon={stepCopied ? <Checkmark20Regular /> : <Copy20Regular />}
+                                aria-label="Copy this command"
+                                onClick={() => void copyStep(stepKey, step.command!)}
+                              />
+                            </Tooltip>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
 
               <div className={styles.cardActions}>
                 <Link href={rayfinAppRepoUrl(app.slug)} target="_blank" rel="noreferrer">
@@ -222,7 +292,7 @@ export function RayfinAppsTab() {
                   icon={copied ? <Checkmark20Regular /> : <Copy20Regular />}
                   onClick={() => void copyDeploy(app)}
                 >
-                  {copied ? 'Copied' : 'Copy deploy command'}
+                  {copied ? 'Copied' : 'Copy all steps'}
                 </Button>
               </div>
             </Card>

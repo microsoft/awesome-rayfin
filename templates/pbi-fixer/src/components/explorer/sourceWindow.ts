@@ -44,7 +44,7 @@ export function openSourceWindow(p: SourceWindowParams): SourceWindowResult {
   const target = `pbir-source-${p.kind}-${p.reportId ?? p.datasetId ?? 'item'}`;
   let win: Window | null = null;
   try {
-    win = window.open(url, target, 'noopener,noreferrer,width=1200,height=860');
+    win = window.open(url, target, 'noopener,noreferrer,width=1500,height=950');
   } catch {
     win = null;
   }

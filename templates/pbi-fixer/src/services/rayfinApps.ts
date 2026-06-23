@@ -59,19 +59,56 @@ function currentTenantId(): string {
 /**
  * Build the one-click deploy command for a gallery app. The Rayfin CLI reads
  * `rayfin-template.yml` at the repo root and shows a picker; the user selects
- * the named app, then `rayfin up staticapp deploy` deploys it to Fabric. Both
+ * the named app, enters the new folder, then `rayfin up` builds and deploys it
+ * to Fabric. Both
  * `--workspace-id` and `--tenant` are pre-filled from this app's own context
  * so the snippet is ready-to-run (override them to target a different place).
  */
-export function rayfinDeployCommand(app: RayfinApp): string {
+export interface RayfinDeployStep {
+  /** Short imperative heading for the step. */
+  title: string;
+  /** Optional extra context shown under the heading. */
+  detail?: string;
+  /** The shell command to run for this step (omitted for instruction-only steps). */
+  command?: string;
+}
+
+/**
+ * The ordered steps to get a gallery app into your Fabric workspace. Step 2 is
+ * an instruction (the CLI picker + folder change), the others are ready-to-run
+ * commands. Workspace + tenant are pre-filled from this app's own context.
+ */
+export function rayfinDeploySteps(app: RayfinApp): RayfinDeployStep[] {
   return [
-    `# Scaffold "${app.name}" from the Awesome Rayfin gallery`,
-    `npm create @microsoft/rayfin@latest -- --template ${AWESOME_RAYFIN_REPO}`,
-    `#   -> choose "${app.name}" in the template picker, then cd into the new folder`,
-    '',
-    '# Deploy to your Fabric workspace (workspace + tenant pre-filled from this app)',
-    `npx rayfin up staticapp deploy --skip-build --workspace-id ${currentWorkspaceId()} --tenant ${currentTenantId()} -y`,
-  ].join('\n');
+    {
+      title: 'Install the prerequisites',
+      detail: 'Node.js 18+ and npm on your machine — the Rayfin CLI runs locally, not in this page.',
+    },
+    {
+      title: `Scaffold "${app.name}" from the Awesome Rayfin gallery`,
+      detail: `Pick "${app.name}" in the template picker, then type a project name when prompted (that becomes the folder name).`,
+      command: `npm create @microsoft/rayfin@latest -- --template ${AWESOME_RAYFIN_REPO}`,
+    },
+    {
+      title: 'Enter the new project folder',
+      detail: 'Use the exact folder name the CLI printed under "Next steps". Every command below must run from inside this folder — otherwise npx tries to fetch a "rayfin" package from npm and fails with E404.',
+      command: 'cd <your-project-folder>',
+    },
+    {
+      title: 'Deploy to your Fabric workspace',
+      detail: 'Builds and deploys the app. Workspace + tenant are pre-filled from this app — override them to target a different place.',
+      command: `npx rayfin up --workspace-id ${currentWorkspaceId()} --tenant ${currentTenantId()} -y`,
+    },
+  ];
+}
+
+export function rayfinDeployCommand(app: RayfinApp): string {
+  return rayfinDeploySteps(app)
+    .map((step) => {
+      const heading = step.detail ? `# ${step.title} — ${step.detail}` : `# ${step.title}`;
+      return step.command ? `${heading}\n${step.command}` : heading;
+    })
+    .join('\n\n');
 }
 
 /** Command that opens the full gallery picker (all apps). */

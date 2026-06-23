@@ -124,8 +124,10 @@ const useStyles = makeStyles({
     cursor: 'nwse-resize',
   },
   side: {
-    width: '230px',
+    width: '250px',
     flexShrink: 0,
+    boxSizing: 'border-box',
+    overflowX: 'hidden',
     overflowY: 'auto',
     ...shorthands.border('1px', 'solid', BORDER_COLOR),
     ...shorthands.borderRadius('8px'),
@@ -136,9 +138,11 @@ const useStyles = makeStyles({
     ...shorthands.gap('10px'),
   },
   sideTitle: { fontWeight: '600', fontSize: '13px' },
-  field: { display: 'flex', flexDirection: 'column', ...shorthands.gap('3px') },
+  field: { display: 'flex', flexDirection: 'column', minWidth: 0, ...shorthands.gap('3px') },
   fieldLabel: { fontSize: '11px', color: GRAY_COLOR },
   numRow: { display: 'flex', ...shorthands.gap('6px') },
+  numCol: { display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0, ...shorthands.gap('3px') },
+  controlFull: { width: '100%', minWidth: 0 },
   empty: { color: GRAY_COLOR, fontSize: '12px' },
   stat: { fontSize: '12px', color: GRAY_COLOR },
 });
@@ -420,6 +424,7 @@ export function ForwardPrototype({ workspaceId, datasetId, datasetName }: Forwar
               <div className={styles.field}>
                 <span className={styles.fieldLabel}>Title</span>
                 <Input
+                  className={styles.controlFull}
                   value={selected.title}
                   onChange={(_, d) => updateVisual(selected.id, (v) => ({ ...v, title: d.value }))}
                 />
@@ -427,6 +432,7 @@ export function ForwardPrototype({ workspaceId, datasetId, datasetName }: Forwar
               <div className={styles.field}>
                 <span className={styles.fieldLabel}>Type</span>
                 <Dropdown
+                  className={styles.controlFull}
                   value={VISUAL_TYPES.find((t) => t.type === selected.type)?.label ?? selected.type}
                   selectedOptions={[selected.type]}
                   onOptionSelect={(_, d) =>
@@ -441,17 +447,19 @@ export function ForwardPrototype({ workspaceId, datasetId, datasetName }: Forwar
                 </Dropdown>
               </div>
               <div className={styles.numRow}>
-                <div className={styles.field}>
+                <div className={styles.numCol}>
                   <span className={styles.fieldLabel}>X</span>
                   <Input
+                    className={styles.controlFull}
                     type="number"
                     value={String(selected.x)}
                     onChange={(_, d) => updateVisual(selected.id, (v) => ({ ...v, x: Number(d.value) || 0 }))}
                   />
                 </div>
-                <div className={styles.field}>
+                <div className={styles.numCol}>
                   <span className={styles.fieldLabel}>Y</span>
                   <Input
+                    className={styles.controlFull}
                     type="number"
                     value={String(selected.y)}
                     onChange={(_, d) => updateVisual(selected.id, (v) => ({ ...v, y: Number(d.value) || 0 }))}
@@ -459,17 +467,19 @@ export function ForwardPrototype({ workspaceId, datasetId, datasetName }: Forwar
                 </div>
               </div>
               <div className={styles.numRow}>
-                <div className={styles.field}>
+                <div className={styles.numCol}>
                   <span className={styles.fieldLabel}>Width</span>
                   <Input
+                    className={styles.controlFull}
                     type="number"
                     value={String(selected.width)}
                     onChange={(_, d) => updateVisual(selected.id, (v) => ({ ...v, width: Math.max(60, Number(d.value) || 60) }))}
                   />
                 </div>
-                <div className={styles.field}>
+                <div className={styles.numCol}>
                   <span className={styles.fieldLabel}>Height</span>
                   <Input
+                    className={styles.controlFull}
                     type="number"
                     value={String(selected.height)}
                     onChange={(_, d) => updateVisual(selected.id, (v) => ({ ...v, height: Math.max(40, Number(d.value) || 40) }))}
@@ -486,6 +496,7 @@ export function ForwardPrototype({ workspaceId, datasetId, datasetName }: Forwar
               <div className={styles.field}>
                 <span className={styles.fieldLabel}>Name</span>
                 <Input
+                  className={styles.controlFull}
                   value={activePage?.name ?? ''}
                   onChange={(_, d) => activePage && updatePage(activePage.id, (p) => ({ ...p, name: d.value }))}
                 />
@@ -493,6 +504,7 @@ export function ForwardPrototype({ workspaceId, datasetId, datasetName }: Forwar
               <div className={styles.field}>
                 <span className={styles.fieldLabel}>Canvas size</span>
                 <Dropdown
+                  className={styles.controlFull}
                   value={
                     PAGE_PRESETS.find((p) => p.width === activePage?.width && p.height === activePage?.height)?.label ??
                     `${activePage?.width}×${activePage?.height}`
