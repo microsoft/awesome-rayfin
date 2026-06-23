@@ -61,7 +61,7 @@ export interface IbcsToolsProps {
   reportId: string;
 }
 
-// The two self-developed IBCS custom visuals (github.com/alkorn/PBI-IBCS-Visuals).
+// The two self-developed IBCS custom visuals (github.com/kornalexander/PBI-IBCS-Visuals).
 const IBCS_VISUALS = [
   {
     title: 'IBCS Multi-Tier Column',
@@ -714,8 +714,8 @@ export function IbcsTools({ workspaceId, datasetId, reportId }: IbcsToolsProps) 
                 <span className={styles.guid}>{v.guid}</span>
               </div>
             ))}
-            <Link href="https://github.com/alkorn/PBI-IBCS-Visuals" target="_blank">
-              github.com/alkorn/PBI-IBCS-Visuals
+            <Link href="https://github.com/kornalexander/PBI-IBCS-Visuals" target="_blank">
+              github.com/kornalexander/PBI-IBCS-Visuals
             </Link>
 
             {/* Actionable orientation fix (report-side PBIR edit). */}
