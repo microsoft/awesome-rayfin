@@ -48,6 +48,9 @@ export interface AddCalendarOptions {
   connect?: boolean;
   /** Build the rich 20-column calendar instead of the lean 6-column one. */
   rich?: boolean;
+  /** Build the community "Calc Table - Calendar" snippet (display folders,
+   *  fiscal-year flags, hierarchies). Forces the key column name to "Date". */
+  gallery?: boolean;
 }
 
 export interface CalendarResult {
@@ -479,6 +482,225 @@ function buildRichCalendarTmdl(tableName: string, dateCol: string): string {
   ].join('\n');
 }
 
+/**
+ * The community "Calc Table - Calendar" snippet, reproduced faithfully:
+ * https://community.fabric.microsoft.com/t5/TMDL-Gallery/Calc-Table-Calendar/td-p/4798025
+ * A `dataCategory: Time` calculated table with display folders, fiscal-year and
+ * relative-month flags, and three ready-made hierarchies. The DAX references the
+ * intrinsic `[Date]` column from `CALENDARAUTO()`, so the key column stays "Date".
+ */
+function buildGalleryCalendarTmdl(tableName: string): string {
+  const t = quoteName(tableName);
+  const FLAG_FMT = '"""TRUE"";""TRUE"";""FALSE"""';
+  // Faithful, inferred-name flag column.
+  const flagCol = (name: string, src: string) => [
+    `\tcolumn ${quoteName(name)}`,
+    `\t\tformatString: ${FLAG_FMT}`,
+    `\t\tdisplayFolder: 4. Flags`,
+    `\t\tsummarizeBy: none`,
+    `\t\tisNameInferred`,
+    `\t\tsourceColumn: [${src}]`,
+    ``,
+    `\t\tannotation SummarizationSetBy = Automatic`,
+    ``,
+  ];
+  return [
+    `table ${t}`,
+    `\tdataCategory: Time`,
+    ``,
+    `\tcolumn Date`,
+    `\t\tisKey`,
+    `\t\tformatString: Short Date`,
+    `\t\tdisplayFolder: 1. Favorites`,
+    `\t\tsummarizeBy: none`,
+    `\t\tisNameInferred`,
+    `\t\tsourceColumn: [Date]`,
+    ``,
+    `\t\tannotation SummarizationSetBy = Automatic`,
+    ``,
+    `\t\tannotation UnderlyingDateTimeDataType = Date`,
+    ``,
+    `\tcolumn Month`,
+    `\t\tformatString: 0`,
+    `\t\tdisplayFolder: 2. Calendar Date\\2. Number Columns`,
+    `\t\tsummarizeBy: sum`,
+    `\t\tisNameInferred`,
+    `\t\tsourceColumn: [Month]`,
+    ``,
+    `\t\tannotation SummarizationSetBy = Automatic`,
+    ``,
+    `\tcolumn 'Fiscal Year'`,
+    `\t\tformatString: 0`,
+    `\t\tdisplayFolder: 3. Fiscal Date\\2. Numbers;1. Favorites`,
+    `\t\tsummarizeBy: sum`,
+    `\t\tisNameInferred`,
+    `\t\tsourceColumn: [Fiscal Year]`,
+    ``,
+    `\t\tannotation SummarizationSetBy = Automatic`,
+    ``,
+    `\tcolumn Year`,
+    `\t\tformatString: 0`,
+    `\t\tdisplayFolder: 2. Calendar Date\\2. Number Columns;1. Favorites`,
+    `\t\tsummarizeBy: sum`,
+    `\t\tisNameInferred`,
+    `\t\tsourceColumn: [Year]`,
+    ``,
+    `\t\tannotation SummarizationSetBy = Automatic`,
+    ``,
+    `\tcolumn 'Month (MMM)'`,
+    `\t\tdisplayFolder: 2. Calendar Date\\3. Text Columns;1. Favorites`,
+    `\t\tsummarizeBy: none`,
+    `\t\tisNameInferred`,
+    `\t\tsourceColumn: [Month (MMM)]`,
+    `\t\tsortByColumn: Month`,
+    ``,
+    `\t\tannotation SummarizationSetBy = Automatic`,
+    ``,
+    `\tcolumn Day`,
+    `\t\tformatString: 0`,
+    `\t\tdisplayFolder: 2. Calendar Date\\2. Number Columns`,
+    `\t\tsummarizeBy: sum`,
+    `\t\tisNameInferred`,
+    `\t\tsourceColumn: [Day]`,
+    ``,
+    `\t\tannotation SummarizationSetBy = Automatic`,
+    ``,
+    ...flagCol('Is Before This Month', 'Is Before This Month'),
+    ...flagCol('Is Current Fiscal Year', 'Is Current Fiscal Year'),
+    ...flagCol('Is Previous Fiscal Year', 'Is Previous Fiscal Year'),
+    ...flagCol('Is Current Calendar Year', 'Is Current Calendar Year'),
+    ...flagCol('Is Previous Calendar Year', 'Is Previous Calendar Year'),
+    ...flagCol('Is Current Month', 'Is Current Month'),
+    ...flagCol('Is Previous Month', 'Is Previous Month'),
+    `\tcolumn 'Year Month Key'`,
+    `\t\tformatString: 0`,
+    `\t\tdisplayFolder: 2. Calendar Date\\2. Number Columns`,
+    `\t\tsummarizeBy: count`,
+    `\t\tsourceColumn: [Month Key]`,
+    ``,
+    `\t\tannotation SummarizationSetBy = Automatic`,
+    ``,
+    `\tcolumn 'Relative Month'`,
+    `\t\tformatString: 0`,
+    `\t\tdisplayFolder: 4. Flags`,
+    `\t\tsummarizeBy: sum`,
+    `\t\tisNameInferred`,
+    `\t\tsourceColumn: [Relative Month]`,
+    ``,
+    `\t\tannotation SummarizationSetBy = Automatic`,
+    ``,
+    `\tcolumn Quarter`,
+    `\t\tdisplayFolder: 2. Calendar Date\\3. Text Columns`,
+    `\t\tsummarizeBy: none`,
+    `\t\tisNameInferred`,
+    `\t\tsourceColumn: [Quarter]`,
+    ``,
+    `\t\tannotation SummarizationSetBy = Automatic`,
+    ``,
+    `\tcolumn 'End of Month'`,
+    `\t\tformatString: General Date`,
+    `\t\tdisplayFolder: 2. Calendar Date\\2. Number Columns`,
+    `\t\tsummarizeBy: none`,
+    `\t\tisNameInferred`,
+    `\t\tsourceColumn: [End of Month]`,
+    ``,
+    `\t\tannotation SummarizationSetBy = Automatic`,
+    ``,
+    `\tcolumn 'Week of Year'`,
+    `\t\tformatString: 0`,
+    `\t\tdisplayFolder: 2. Calendar Date\\2. Number Columns`,
+    `\t\tsummarizeBy: sum`,
+    `\t\tisNameInferred`,
+    `\t\tsourceColumn: [Week of Year]`,
+    ``,
+    `\t\tannotation SummarizationSetBy = Automatic`,
+    ``,
+    `\tcolumn Weekday`,
+    `\t\tformatString: 0`,
+    `\t\tdisplayFolder: 2. Calendar Date\\2. Number Columns`,
+    `\t\tsummarizeBy: sum`,
+    `\t\tisNameInferred`,
+    `\t\tsourceColumn: [Weekday]`,
+    ``,
+    `\t\tannotation SummarizationSetBy = Automatic`,
+    ``,
+    `\tcolumn 'Is Current or Past Months'`,
+    `\t\tdisplayFolder: 4. Flags`,
+    `\t\tsummarizeBy: none`,
+    `\t\tsourceColumn: [Is Current or Past Month]`,
+    ``,
+    `\t\tannotation SummarizationSetBy = Automatic`,
+    ``,
+    `\thierarchy 'Date Hierarchy'`,
+    `\t\tdisplayFolder: 2. Calendar Date\\1. Hierarchy`,
+    ``,
+    `\t\tlevel Year`,
+    `\t\t\tcolumn: Year`,
+    ``,
+    `\t\tlevel Month`,
+    `\t\t\tcolumn: Month`,
+    ``,
+    `\t\tlevel Date`,
+    `\t\t\tcolumn: Date`,
+    ``,
+    `\thierarchy 'Fiscal Date Hierarchy'`,
+    `\t\tdisplayFolder: 3. Fiscal Date\\1. Hierarchy`,
+    ``,
+    `\t\tlevel 'Fiscal Year'`,
+    `\t\t\tcolumn: 'Fiscal Year'`,
+    ``,
+    `\thierarchy 'Calendar Hierarchy'`,
+    `\t\tdisplayFolder: 1. Favorites`,
+    ``,
+    `\t\tlevel Year`,
+    `\t\t\tcolumn: Year`,
+    ``,
+    `\t\tlevel 'Month (MMM)'`,
+    `\t\t\tcolumn: 'Month (MMM)'`,
+    ``,
+    `\tpartition ${t} = calculated`,
+    `\t\tmode: import`,
+    `\t\tsource =`,
+    `\t\t\t\tVAR Today = TODAY()`,
+    `\t\t\t\tVAR MonthStartFiscalYear = 10`,
+    `\t\t\t\tRETURN`,
+    `\t\t\t\t    ADDCOLUMNS(`,
+    `\t\t\t\t        CALENDARAUTO(),`,
+    `\t\t\t\t        "Year", YEAR([Date]),`,
+    `\t\t\t\t        "Quarter", "Q " & QUARTER([Date]),`,
+    `\t\t\t\t        "Month", MONTH([Date]),`,
+    `\t\t\t\t        "Month (MMM)", FORMAT([Date], "MMM"),`,
+    `\t\t\t\t        "Day", DAY([Date]),`,
+    `\t\t\t\t        "Fiscal Year", YEAR([Date]) + IF(MONTH([Date]) >= MonthStartFiscalYear, 1, 0),`,
+    `\t\t\t\t        "End of Month", EOMONTH([Date], 0),`,
+    `\t\t\t\t        "Week of Year", WEEKNUM([Date]),`,
+    `\t\t\t\t        "Weekday", WEEKDAY([Date]),`,
+    `\t\t\t\t        "Is Current or Past Month", IF([Date] <= EOMONTH(TODAY(), 0), "Yes", "No"),`,
+    `\t\t\t\t        "Is Before This Month", FORMAT([Date], "YYYYMM") < FORMAT(Today, "YYYYMM"),`,
+    `\t\t\t\t        "Is Current Fiscal Year",`,
+    `\t\t\t\t            VAR CurrentFiscalYear = YEAR(Today) + IF(MONTH(Today) >= MonthStartFiscalYear, 1, 0)`,
+    `\t\t\t\t            RETURN YEAR([Date]) + IF(MONTH([Date]) >= MonthStartFiscalYear, 1, 0) = CurrentFiscalYear,`,
+    `\t\t\t\t        "Is Previous Fiscal Year",`,
+    `\t\t\t\t            VAR CurrentFiscalYear = YEAR(Today) + IF(MONTH(Today) >= MonthStartFiscalYear, 1, 0)`,
+    `\t\t\t\t            RETURN YEAR([Date]) + IF(MONTH([Date]) >= MonthStartFiscalYear, 1, 0) = CurrentFiscalYear - 1,`,
+    `\t\t\t\t        "Is Current Calendar Year", YEAR([Date]) = YEAR(Today),`,
+    `\t\t\t\t        "Is Previous Calendar Year", YEAR([Date]) = YEAR(Today) - 1,`,
+    `\t\t\t\t        "Is Current Month", YEAR([Date]) = YEAR(Today) && MONTH([Date]) = MONTH(Today),`,
+    `\t\t\t\t        "Is Previous Month",`,
+    `\t\t\t\t            VAR PrevMonthYear = IF(MONTH(Today) = 1, YEAR(Today) - 1, YEAR(Today))`,
+    `\t\t\t\t            VAR PrevMonth = IF(MONTH(Today) = 1, 12, MONTH(Today) - 1)`,
+    `\t\t\t\t            RETURN YEAR([Date]) = PrevMonthYear && MONTH([Date]) = PrevMonth,`,
+    `\t\t\t\t        "Month Key", YEAR([Date]) * 100 + MONTH([Date]),`,
+    `\t\t\t\t        "Relative Month", (YEAR([Date]) - YEAR(Today)) * 12 + (MONTH([Date]) - MONTH(Today))`,
+    `\t\t\t\t    )`,
+    ``,
+    `\tannotation TabularEditor_TableGroup = 03. Dimension Tables`,
+    ``,
+    `\tannotation PBI_Id = ${uuid().replace(/-/g, '')}`,
+    ``,
+  ].join('\n');
+}
+
 /** Strip characters that are unsafe in a TMDL part file name (emoji, slashes). */
 function sanitizeFileName(name: string): string {
   const cleaned = name.replace(/[^A-Za-z0-9 _.-]/g, '').replace(/\s+/g, ' ').trim();
@@ -534,7 +756,7 @@ export async function addCalendarTable(
   opts: AddCalendarOptions = {}
 ): Promise<CalendarResult> {
   const tableName = (opts.tableName ?? 'Calendar').trim() || 'Calendar';
-  const dateCol = (opts.dateColumnName ?? 'Date').trim() || 'Date';
+  const dateCol = opts.gallery ? 'Date' : (opts.dateColumnName ?? 'Date').trim() || 'Date';
 
   const parts = await loadDefinitionParts('model', workspaceId, datasetId);
   const modelPart = parts.find((p) => /\/model\.tmdl$/i.test(p.path) && !p.binary);
@@ -563,9 +785,11 @@ export async function addCalendarTable(
   const newTablePath = `${tablesDir}/${tableName}.tmdl`;
 
   const edits: Record<string, string> = {
-    [newTablePath]: opts.rich
-      ? buildRichCalendarTmdl(tableName, dateCol)
-      : buildCalendarTmdl(tableName, dateCol),
+    [newTablePath]: opts.gallery
+      ? buildGalleryCalendarTmdl(tableName)
+      : opts.rich
+        ? buildRichCalendarTmdl(tableName, dateCol)
+        : buildCalendarTmdl(tableName, dateCol),
   };
 
   // Register the table in model.tmdl (after the last `ref table` line).
@@ -625,8 +849,13 @@ export async function addCalendarTable(
 // Measure tables & explicit measures
 // --------------------------------------------------------------------------- //
 
-/** Three themed, emoji-prefixed measure-container tables (C2). */
-export const THEMED_MEASURE_TABLES = ['\u{1F4CA} Measures', '\u{1F522} KPIs', '\u{1F4C5} Time Intelligence'];
+/** The community "3 Measure Tables With Icons" snippet's exact table names:
+ *  https://community.fabric.microsoft.com/t5/TMDL-Gallery/3-quot-Measure-Tables-quot-With-Icons/td-p/4774031 */
+export const THEMED_MEASURE_TABLES = [
+  '\u{1F3AF}Measures | 1.\u{1F4C8}KPIs',
+  '\u{1F3AF}Measures | 2. #\u{20E3} Variables',
+  '\u{1F3AF}Measures | 3.\u{1F4CB}Titles and Labels',
+];
 
 /** Create one or more empty `{BLANK()}` measure-container tables in one round trip. */
 async function addMeasureTablesInternal(

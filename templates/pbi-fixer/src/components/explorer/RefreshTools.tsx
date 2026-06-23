@@ -18,6 +18,7 @@ import {
   Input,
   Dropdown,
   Option,
+  Switch,
   Text,
   Badge,
   MessageBar,
@@ -29,14 +30,18 @@ import {
   Clock20Regular,
   GlobeClock20Regular,
   CalendarLtr20Regular,
+  CalendarMonth20Regular,
   ArrowSync20Regular,
   Search20Regular,
   Table20Regular,
+  TableMultiple20Regular,
 } from '@fluentui/react-icons';
 import { BORDER_COLOR, ICON_ACCENT, GRAY_COLOR } from '@/explorer/theme';
 import {
   addLastRefreshTable,
   addCalendarFunction,
+  addCalendarTable,
+  addMeasureTables3WithIcons,
   scanIncrementalRefreshTargets,
   addIncrementalRefresh,
   analyzeModel,
@@ -106,6 +111,16 @@ export function RefreshTools({ workspaceId, datasetId, datasetName }: RefreshToo
   const [c7Busy, setC7Busy] = useState(false);
   const [c7Result, setC7Result] = useState<Result | null>(null);
 
+  // C8 — Calendar table (rich "CalcCalendar" calc-table).
+  const [c8Name, setC8Name] = useState('Calendar');
+  const [c8Connect, setC8Connect] = useState(true);
+  const [c8Busy, setC8Busy] = useState(false);
+  const [c8Result, setC8Result] = useState<Result | null>(null);
+
+  // C2 — three emoji measure-container tables.
+  const [mtBusy, setMtBusy] = useState(false);
+  const [mtResult, setMtResult] = useState<Result | null>(null);
+
   // C9 — Incremental refresh.
   const [scanBusy, setScanBusy] = useState(false);
   const [scanned, setScanned] = useState(false);
@@ -169,6 +184,36 @@ export function RefreshTools({ workspaceId, datasetId, datasetName }: RefreshToo
       setC7Result({ ok: false, text: e instanceof Error ? e.message : String(e) });
     } finally {
       setC7Busy(false);
+    }
+  }, [workspaceId, datasetId]);
+
+  const runC8 = useCallback(async () => {
+    setC8Busy(true);
+    setC8Result(null);
+    try {
+      const r = await addCalendarTable(workspaceId, datasetId, {
+        tableName: c8Name.trim() || 'Calendar',
+        gallery: true,
+        connect: c8Connect,
+      });
+      setC8Result({ ok: r.created || !r.changed, text: r.detail });
+    } catch (e) {
+      setC8Result({ ok: false, text: e instanceof Error ? e.message : String(e) });
+    } finally {
+      setC8Busy(false);
+    }
+  }, [workspaceId, datasetId, c8Name, c8Connect]);
+
+  const runMeasureTables = useCallback(async () => {
+    setMtBusy(true);
+    setMtResult(null);
+    try {
+      const r = await addMeasureTables3WithIcons(workspaceId, datasetId);
+      setMtResult({ ok: r.changed > 0 || r.created.length > 0, text: r.detail });
+    } catch (e) {
+      setMtResult({ ok: false, text: e instanceof Error ? e.message : String(e) });
+    } finally {
+      setMtBusy(false);
     }
   }, [workspaceId, datasetId]);
 
@@ -395,6 +440,72 @@ export function RefreshTools({ workspaceId, datasetId, datasetName }: RefreshToo
           {c7Result && (
             <MessageBar intent={c7Result.ok ? 'success' : 'error'}>
               <MessageBarBody>{c7Result.text}</MessageBarBody>
+            </MessageBar>
+          )}
+        </div>
+
+        {/* C8 — Calendar table (rich CalcCalendar calc-table) */}
+        <div className={styles.card}>
+          <div className={styles.cardHead}>
+            <CalendarMonth20Regular style={{ color: ICON_ACCENT }} />
+            <span className={styles.cardTitle}>Calendar table (CalcCalendar)</span>
+          </div>
+          <Text className={styles.cardHint}>
+            Adds a marked <code>dataCategory: Time</code> DAX calc-table (<code>CALENDARAUTO()</code>)
+            with display folders, fiscal-year &amp; relative-month flags, and ready-made Date / Fiscal
+            / Calendar hierarchies. Unlike the function above, this writes an actual date table you
+            can relate to your facts.
+          </Text>
+          <div className={styles.row}>
+            <div className={styles.field}>
+              <label className={styles.label}>Table name</label>
+              <Input value={c8Name} onChange={(_, d) => setC8Name(d.value)} />
+            </div>
+            <Switch
+              label="Auto-connect to fact date columns"
+              checked={c8Connect}
+              onChange={(_, d) => setC8Connect(!!d.checked)}
+            />
+            <Button
+              appearance="primary"
+              icon={c8Busy ? <Spinner size="tiny" /> : <CalendarMonth20Regular />}
+              disabled={!ready || c8Busy || !c8Name.trim()}
+              onClick={runC8}
+            >
+              Add calendar table
+            </Button>
+          </div>
+          {c8Result && (
+            <MessageBar intent={c8Result.ok ? 'success' : 'error'}>
+              <MessageBarBody>{c8Result.text}</MessageBarBody>
+            </MessageBar>
+          )}
+        </div>
+
+        {/* C2 — three emoji measure-container tables */}
+        <div className={styles.card}>
+          <div className={styles.cardHead}>
+            <TableMultiple20Regular style={{ color: ICON_ACCENT }} />
+            <span className={styles.cardTitle}>Measure tables (3 with icons)</span>
+          </div>
+          <Text className={styles.cardHint}>
+            Adds three empty emoji-prefixed measure-container tables to organise your model:{' '}
+            <code>🎯Measures | 1.📈KPIs</code>, <code>🎯Measures | 2. #⃣ Variables</code> and{' '}
+            <code>🎯Measures | 3.📋Titles and Labels</code>. Existing tables are skipped.
+          </Text>
+          <div className={styles.row}>
+            <Button
+              appearance="primary"
+              icon={mtBusy ? <Spinner size="tiny" /> : <TableMultiple20Regular />}
+              disabled={!ready || mtBusy}
+              onClick={runMeasureTables}
+            >
+              Add 3 measure tables
+            </Button>
+          </div>
+          {mtResult && (
+            <MessageBar intent={mtResult.ok ? 'success' : 'error'}>
+              <MessageBarBody>{mtResult.text}</MessageBarBody>
             </MessageBar>
           )}
         </div>
