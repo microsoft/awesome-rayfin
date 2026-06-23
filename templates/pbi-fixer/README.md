@@ -32,6 +32,14 @@ TMDL / PBIR — all without leaving the tab.
 > [Notebook edition](https://kornalexander.github.io/pbi_fixer/) (one line of
 > Python in a Fabric Notebook) is linked from there too.
 
+> 🆕 **This Fabric App edition supersedes the original Semantic Link Labs
+> notebook solution of PBI Fixer.** Everything the notebook does — all **12 tabs
+> and 50+ fixers** — is here too, now running in the browser and shared across
+> your whole team, plus a full report layer, AI-assisted cleanup, Team
+> Best-Practice Guidelines, and one-click workspace automation the notebook never
+> had. The Semantic Link Labs notebook remains available as the lightweight,
+> single-user option, but the Fabric App is the way forward.
+
 > Built on [Rayfin](../../README.md) — brokered Fabric auth + static hosting, so
 > the whole thing runs as a single Fabric app item with a Python backend.
 
