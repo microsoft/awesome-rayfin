@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: static-blankapp
+  displayName: Blank App
+  description: Bare-bones Rayfin app with authentication, but without any JS or CSS framework and a tiny TypeScript entry point
+entries:
+  - path: .
+    name: Blank App

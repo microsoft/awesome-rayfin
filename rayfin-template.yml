@@ -16,6 +16,9 @@ entries:
   - path: templates/slide-deck
     name: Slide Deck
     description: Interactive slide deck presenter with sessions, live slide tracking, and audience chat
+  - path: templates/static-blankapp
+    name: Blank App
+    description: Bare-bones Rayfin app with authentication, but without any JS or CSS framework and a tiny TypeScript entry point
   - path: templates/todo-local-experimental
     name: '[Experimental] Todo app with full local dev'
     description: End-to-end todo CRUD with username/password auth, a Rayfin data model, and Docker local development — a working starter that exercises the full data path without Fabric
