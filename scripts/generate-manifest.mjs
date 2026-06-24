@@ -137,8 +137,10 @@ function updateReadmeTable(templates) {
       const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
       const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
       const stackParts = [];
-      if (allDeps["react"]) stackParts.push("React");
+      if (allDeps["@angular/core"]) stackParts.push("Angular");
+      else if (allDeps["react"]) stackParts.push("React");
       else if (allDeps["typescript"]) stackParts.push("TypeScript");
+      if (allDeps["@angular/material"]) stackParts.push("Material");
       if (allDeps["vite"] || allDeps["@vitejs/plugin-react-swc"] || allDeps["@vitejs/plugin-react"]) {
         stackParts.push("Vite");
       }
