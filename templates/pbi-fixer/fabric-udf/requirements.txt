@@ -1,0 +1,3 @@
+# No third-party packages required.
+# The UDF uses only the Python standard library plus the pre-installed
+# fabric-user-data-functions package (provided by the Fabric runtime).

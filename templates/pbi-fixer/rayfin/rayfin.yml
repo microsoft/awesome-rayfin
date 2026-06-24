@@ -1,0 +1,26 @@
+id: pbi-fixer
+name: Power BI Fixer
+version: 1.0.0
+services:
+  auth:
+    enabled: true
+    fabric:
+      enabled: true
+    password:
+      enabled: true
+    allowedRedirectUris:
+      - http://localhost:5173
+  # Rayfin (TypeScript) functions are disabled: the Fabric UDF backend does not
+  # yet accept the TYPESCRIPT runtime. The server-side logic runs in a separate
+  # standalone Python User Data Functions item instead (see fabric-udf/).
+  functions:
+    enabled: false
+  staticHosting:
+    enabled: true
+    folder: dist
+    buildCommand: npm run build:fabric
+    indexDocument: index.html
+  data:
+    enabled: false
+  storage:
+    enabled: false

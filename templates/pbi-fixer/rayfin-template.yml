@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: pbi-fixer
+  displayName: Power BI Fixer
+  description: Fabric-authenticated workspace that inspects, documents, and fixes Power BI semantic models and reports — a best-practice analyzer with one-click and batch fixes, a report explorer with PBIR diffs, AI-assisted metadata cleanup, and a free IBCS visual, all powered server-side by Fabric User Data Functions
+entries:
+  - path: .
+    name: Power BI Fixer
