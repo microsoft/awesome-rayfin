@@ -1,0 +1,15 @@
+# Build output
+site/
+
+# Node.js
+node_modules/
+
+# Rayfin generated
+rayfin/.temp/
+rayfin/.env
+rayfin/.env.bak
+rayfin/.deployments.json
+
+# OS
+.DS_Store
+Thumbs.db
