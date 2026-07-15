@@ -46,6 +46,7 @@ The CLI reads `rayfin-template.yml` at the repo root and presents an interactive
 
 | Template | Description | Auth | Data | Stack |
 |----------|-------------|:----:|:----:|-------|
+| **[Airport IQ](./templates/airport-iq)** | Two 3D airport views — Live Approach (CesiumJS globe, aircraft on approach/taxi/park) and Live-Ops (Three.js gate operations with delays and cascading conflicts) — over real OpenStreetMap geometry. Runs on baked synthetic data out of the box; swap in live ADS-B or your own Fabric warehouse via a single data adapter. | ✅ | — | — |
 | **[Angular Blank App](./templates/angular-blankapp)** | Bare-bones Fabric-authenticated Angular + Material app — sign-in, routing, and a placeholder home page, with no data layer to remove | ✅ | ✅ | Angular, Material |
 | **[Angular Dashboard App](./templates/angular-dashboard)** | Responsive Angular Material dashboard — top navbar + collapsible side menu, Project/Task data model, and optional one-click GitHub Issues/PRs sync for a public repo. | ✅ | ✅ | Angular, Material |
 | **[Field Technician App](./templates/field-technician)** | Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric) | ✅ | ✅ | React, Vite, Tailwind |

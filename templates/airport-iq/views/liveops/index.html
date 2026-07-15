@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Airport IQ — DUS Gate Operations · Live 3D</title>
+<style>
+  :root{
+    --bg:#eef3fb; --sky:#dce7f7; --panel:#ffffffd9; --ink:#1a2540;
+    --muted:#5f6f92; --line:#cdd8ec; --accent:#2563eb; --good:#16a34a; --warn:#f59e0b; --bad:#e11d48;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;}
+  #app{position:fixed;inset:0;}
+  header{position:absolute;top:0;left:0;right:0;z-index:5;padding:14px 20px;
+    display:flex;align-items:flex-start;gap:24px;pointer-events:none;
+    background:linear-gradient(#eef3fbf2,#eef3fb00);}
+  header h1{font-size:18px;margin:0;font-weight:650;letter-spacing:.2px;}
+  header h1 span{color:var(--accent);}
+  header .sub{font-size:12px;color:var(--muted);margin-top:2px;}
+  .kpis{display:flex;gap:10px;margin-left:auto;pointer-events:none;}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 12px;text-align:center;min-width:74px;backdrop-filter:blur(6px);
+    box-shadow:0 4px 14px #1a254010;}
+  .kpi b{display:block;font-size:19px;line-height:1.15;}
+  .kpi small{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.4px;}
+  .kpi.warn b{color:var(--warn);} .kpi.bad b{color:var(--bad);}
+  .legend{position:absolute;left:20px;bottom:96px;z-index:5;background:var(--panel);
+    border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:12px;
+    backdrop-filter:blur(6px);box-shadow:0 6px 20px #1a254014;}
+  .legend .row{display:flex;align-items:center;gap:8px;margin:3px 0;}
+  .sw{width:13px;height:13px;border-radius:50%;border:1px solid #ffffff80;}
+  #rwypanel{position:absolute;left:20px;bottom:214px;z-index:5;background:var(--panel);
+    border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:12px;min-width:186px;
+    backdrop-filter:blur(6px);box-shadow:0 6px 20px #1a254014;}
+  #rwystat .rrow{display:flex;align-items:center;gap:7px;margin:4px 0;white-space:nowrap;}
+  #rwystat .rrow b{font-variant-numeric:tabular-nums;}
+  #rwystat .rrow span:last-child{color:var(--muted);font-size:11px;}
+  .rdot{width:9px;height:9px;border-radius:50%;background:#c2ccdf;flex:0 0 auto;}
+  .rdot.on{background:var(--accent);box-shadow:0 0 0 0 #2563eb99;animation:rpulse 1.4s ease-out infinite;}
+  @keyframes rpulse{0%{box-shadow:0 0 0 0 #2563eb88;}70%{box-shadow:0 0 0 7px #2563eb00;}100%{box-shadow:0 0 0 0 #2563eb00;}}  /* scrubber */
+  #scrub{position:absolute;left:20px;right:20px;bottom:18px;z-index:6;background:var(--panel);
+    border:1px solid var(--line);border-radius:12px;padding:10px 16px;backdrop-filter:blur(8px);
+    display:flex;align-items:center;gap:14px;box-shadow:0 6px 22px #1a254018;}
+  #play{pointer-events:auto;cursor:pointer;border:1px solid var(--line);background:#fff;
+    color:var(--ink);border-radius:8px;width:38px;height:34px;font-size:15px;flex:0 0 auto;}
+  #play:hover{border-color:var(--accent);}
+  #time{font-variant-numeric:tabular-nums;font-weight:650;font-size:15px;min-width:168px;}
+  #time small{display:block;font-weight:400;color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;}
+  #range{flex:1;pointer-events:auto;accent-color:var(--accent);height:6px;}
+  #speed{pointer-events:auto;border:1px solid var(--line);border-radius:8px;background:#fff;
+    color:var(--ink);font-family:inherit;font-size:12px;padding:6px 8px;}
+  .nowtag{font-size:11px;color:var(--muted);}
+  .nowtag b{color:var(--accent);}
+  #tip{position:absolute;z-index:9;pointer-events:none;background:#ffffffef;color:var(--ink);
+    border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;display:none;
+    max-width:250px;box-shadow:0 8px 26px #1a254022;}
+  #tip b{color:var(--accent);}
+  /* detail card */
+  #detail{position:absolute;right:20px;bottom:96px;z-index:6;width:268px;background:var(--panel);
+    border:1px solid var(--line);border-radius:12px;padding:0;backdrop-filter:blur(8px);
+    box-shadow:0 8px 26px #1a254022;display:none;overflow:hidden;}
+  #detail .hd{padding:11px 14px;color:#fff;font-weight:650;display:flex;justify-content:space-between;align-items:center;}
+  #detail .bd{padding:11px 14px;font-size:12.5px;}
+  #detail .bd .kv{display:flex;justify-content:space-between;margin:4px 0;gap:10px;}
+  #detail .bd .kv span:first-child{color:var(--muted);}
+  #detail .x{cursor:pointer;pointer-events:auto;opacity:.85;font-weight:400;}
+  .pill{display:inline-block;padding:1px 8px;border-radius:999px;font-size:11px;font-weight:600;}
+  #loading{position:absolute;inset:0;display:grid;place-items:center;z-index:8;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<style id="aiq-nav-style">
+#aiq-nav{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:2147483000;display:flex;gap:2px;
+ align-items:center;background:rgba(10,16,32,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+ border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:5px 8px;
+ font:600 12px/1 'Segoe UI',system-ui,sans-serif;box-shadow:0 8px 26px rgba(0,0,0,.4)}
+#aiq-nav a{color:#c7d3ea;text-decoration:none;padding:6px 12px;border-radius:999px;white-space:nowrap;transition:.15s}
+#aiq-nav a:hover{background:rgba(255,255,255,.10);color:#fff}
+#aiq-nav a.aiq-home{color:#ffd23f;font-weight:800}
+#aiq-nav a.active{background:#2f6df0;color:#fff}
+#aiq-nav .aiq-sep{width:1px;height:16px;background:rgba(255,255,255,.16);margin:0 3px}
+@media(max-width:820px){#aiq-nav{font-size:11px;padding:4px 5px}#aiq-nav a{padding:5px 8px}}
+</style>
+
+<nav id="aiq-nav"><a href="../../index.html" class="aiq-home">🛫 Airport IQ</a><span class="aiq-sep"></span><a id="aiq-approach" href="../approach/index.html">Live Approach</a><a id="aiq-liveops" href="../liveops/index.html" style="display:none">Live-Ops</a></nav>
+<script>(function(){var L=['DUS','BER'];function ap(){try{var u=new URLSearchParams(location.search).get('ap');return (u||localStorage.getItem('aiq_ap')||'DUS').toUpperCase();}catch(e){return 'DUS';}}window.aiqSetAirport=function(a){if(a){a=String(a).toUpperCase();try{localStorage.setItem('aiq_ap',a);}catch(e){}try{var u=new URL(location.href);u.searchParams.set('ap',a);history.replaceState(null,'',u);}catch(e){}}window.aiqUpdateNav();};window.aiqUpdateNav=function(){var a=ap();var isLive=location.pathname.indexOf('/liveops/')>=0;var ael=document.getElementById('aiq-approach'),lel=document.getElementById('aiq-liveops');if(ael){ael.href='../approach/index.html?ap='+a;ael.className=isLive?'':'active';}if(lel){var show=L.indexOf(a)>=0;lel.style.display=show?'':'none';lel.href='../liveops/index.html?ap='+a;lel.textContent=a+' Live-Ops';lel.className=isLive?'active':'';}};window.aiqUpdateNav();})();</script>
+
+<div id="app"></div>
+<header>
+  <div>
+    <h1>Airport IQ — <span id="apName">Düsseldorf (DUS)</span> · Gate Operations</h1>
+    <div class="sub">Live gate occupancy on real airport geometry · scrub time to see which gate is occupied when</div>
+  </div>
+  <div class="kpis" id="kpis"></div>
+</header>
+
+<div class="legend" id="legend">
+  <div style="font-weight:650;margin-bottom:6px">Gate status</div>
+  <div class="row"><span class="sw" style="background:#c7d2e6"></span>Free</div>
+  <div class="row"><span class="sw" style="background:#2563eb"></span>Occupied (on time)</div>
+  <div class="row"><span class="sw" style="background:#f59e0b"></span>Occupied · delayed</div>
+  <div class="row"><span class="sw" style="background:#e11d48"></span>Gate conflict</div>
+  <div class="row" style="margin-top:6px"><span class="sw" style="background:#94a3b8;border-radius:2px"></span>Aircraft — tail fin = airline</div>
+  <div class="row"><span class="sw" style="background:#5c667a;border-radius:2px"></span>Runway (OSM)</div>
+  <label class="row" style="margin-top:6px;cursor:pointer"><input type="checkbox" id="lblToggle" checked style="margin-right:6px;vertical-align:-1px">Airline / type labels</label>
+<label class="row" style="margin-top:4px;cursor:pointer"><input type="checkbox" id="rotToggle" style="margin-right:6px;vertical-align:-1px">Auto-rotate</label>
+</div>
+
+<div id="rwypanel">
+  <div style="font-weight:650;margin-bottom:6px">Runways</div>
+  <div id="rwystat"></div>
+</div>
+
+<div id="detail">
+  <div class="hd" id="dHd"><span id="dTitle">Gate</span><span class="x" id="dClose">✕</span></div>
+  <div class="bd" id="dBody"></div>
+</div>
+
+<div id="scrub">
+  <button id="play" title="Play / pause">▶</button>
+  <div id="time"><span id="timeVal">—</span><small id="schedLbl">DUS schedule time</small></div>
+  <input id="range" type="range" min="0" max="1000" value="0" />
+  <div class="nowtag">now&nbsp;<b id="nowClock">—</b></div>
+  <select id="speed" title="Playback speed">
+    <option value="4">4 min/s</option>
+    <option value="15" selected>15 min/s</option>
+    <option value="60">1 h/s</option>
+    <option value="240">4 h/s</option>
+  </select>
+</div>
+
+<div id="tip"></div>
+<div id="loading">Loading Düsseldorf geometry &amp; live gate data…</div>
+
+<script src="../../data-adapter.js"></script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
+
+const app = document.getElementById('app');
+const tip = document.getElementById('tip');
+
+// ---------- airport focus (Live-Ops available for DUS / BER only) ----------
+const AP = (()=>{ try{ const u=new URLSearchParams(location.search).get('ap');
+  const a=(u||localStorage.getItem('aiq_ap')||'DUS').toUpperCase(); return ['DUS','BER'].includes(a)?a:'DUS'; }catch(e){ return 'DUS'; } })();
+const APNAME = {DUS:'Düsseldorf', BER:'Berlin Brandenburg'}[AP] || AP;
+try{ localStorage.setItem('aiq_ap', AP); }catch(e){}
+document.title = `Airport IQ — ${AP} Gate Operations · Live 3D`;
+{ const e=document.getElementById('apName'); if(e) e.textContent = `${APNAME} (${AP})`; }
+{ const e=document.getElementById('schedLbl'); if(e) e.textContent = `${AP} schedule time`; }
+{ const e=document.getElementById('loading'); if(e) e.textContent = `Loading ${APNAME} geometry & live gate data…`; }
+
+// ---------- scene (light mode) ----------
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xdce7f7);
+scene.fog = new THREE.Fog(0xdce7f7, 2600, 7200);
+
+const camera = new THREE.PerspectiveCamera(52, innerWidth/innerHeight, 1, 14000);
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+app.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.maxPolarAngle = Math.PI/2.12;
+controls.autoRotate = false;
+controls.autoRotateSpeed = 0.22;
+controls.minDistance = 140;
+controls.maxDistance = 3400;
+
+// daylight
+scene.add(new THREE.HemisphereLight(0xffffff, 0xbdcadf, 1.05));
+const sun = new THREE.DirectionalLight(0xfff4e2, 1.7);
+sun.position.set(-700, 1050, 620);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+const s = 1500;
+sun.shadow.camera.left=-s; sun.shadow.camera.right=s; sun.shadow.camera.top=s; sun.shadow.camera.bottom=-s;
+sun.shadow.camera.near=10; sun.shadow.camera.far=4200; sun.shadow.bias=-0.0004;
+scene.add(sun);
+
+// apron ground (light concrete)
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(9000, 9000),
+  new THREE.MeshStandardMaterial({ color:0xd6dce8, roughness:.98, metalness:0 }));
+ground.rotation.x = -Math.PI/2; ground.position.y = -0.1; ground.receiveShadow = true;
+scene.add(ground);
+const grid = new THREE.GridHelper(9000, 90, 0xb7c4dc, 0xc8d2e6);
+grid.position.y = 0.02; scene.add(grid);
+
+// building materials (light)
+const matTerminal = new THREE.MeshStandardMaterial({ color:0xa9c2ef, roughness:.5, metalness:.15 });
+const matBuilding = new THREE.MeshStandardMaterial({ color:0xdbe2ee, roughness:.9, metalness:.02 });
+const BLD_POLY=[];   // building footprints in world (x,z) — used to keep parked aircraft clear of terminals
+
+function footprintShape(pts){
+  const shape = new THREE.Shape();
+  shape.moveTo(pts[0][0], -pts[0][1]);
+  for (let i=1;i<pts.length;i++) shape.lineTo(pts[i][0], -pts[i][1]);
+  shape.closePath(); return shape;
+}
+function buildBuildings(data){
+  const termGeos=[], bldgGeos=[];
+  for (const b of data.buildings){
+    if (!b.p || b.p.length < 3) continue;
+    BLD_POLY.push(b.p.map(pt=>({x:pt[0], z:pt[1]})));
+    let geo; try { geo = new THREE.ExtrudeGeometry(footprintShape(b.p),
+      { depth:b.h||9, bevelEnabled:false, curveSegments:1 }); } catch(e){ continue; }
+    (b.kind==='terminal'?termGeos:bldgGeos).push(geo);
+  }
+  const g = new THREE.Group();
+  const add=(geos,mat)=>{ if(!geos.length) return;
+    const m=new THREE.Mesh(BufferGeometryUtils.mergeGeometries(geos,false), mat);
+    m.rotation.x=-Math.PI/2; m.castShadow=true; m.receiveShadow=true; g.add(m); };
+  add(bldgGeos, matBuilding); add(termGeos, matTerminal);
+  scene.add(g); return g;
+}
+
+// ---------- runways (OSM aeroway=runway, © OSM ODbL) ----------
+let RUNWAYS=[], runwayObjs=[];
+function makeLabelSprite(text){
+  const c=document.createElement('canvas'); c.width=192; c.height=110;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle='rgba(20,30,55,.82)';
+  const rr=(x,y,w,h,r)=>{ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();};
+  rr(8,20,176,70,14); ctx.fill();
+  ctx.fillStyle='#ffffff'; ctx.font='bold 58px "Segoe UI",sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(text, 96, 56);
+  const tex=new THREE.CanvasTexture(c); tex.anisotropy=8;
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, transparent:true, depthTest:true }));
+  sp.scale.set(112,64,1); return sp;
+}
+function buildRunways(list){
+  RUNWAYS=list;
+  const dashMat=new THREE.MeshBasicMaterial({ color:0xeef3fb });
+  for (const rw of list){
+    const [ax,az]=rw.a, [bx,bz]=rw.b;
+    const mx=(ax+bx)/2, mz=(az+bz)/2;
+    const len=Math.hypot(bx-ax, bz-az), A=Math.atan2(bz-az, bx-ax);
+    const grp=new THREE.Group(); grp.position.set(mx, 0.05, mz); grp.rotation.y=-A;
+    // asphalt strip
+    const mat=new THREE.MeshStandardMaterial({ color:0x5c667a, roughness:.96, metalness:0,
+      emissive:0x2563eb, emissiveIntensity:0 });
+    const strip=new THREE.Mesh(new THREE.PlaneGeometry(len, rw.w), mat);
+    strip.rotation.x=-Math.PI/2; strip.receiveShadow=true; grp.add(strip);
+    // dashed centreline
+    const dl=26, gap=26, nd=Math.floor((len-160)/(dl+gap));
+    for (let i=0;i<nd;i++){ const d=new THREE.Mesh(new THREE.PlaneGeometry(dl,1.6), dashMat);
+      d.rotation.x=-Math.PI/2; d.position.set(-len/2+80 + i*(dl+gap)+dl/2, 0.05, 0); grp.add(d); }
+    // threshold "piano keys" at both ends
+    for (const end of [-1,1]) for (let k=-3;k<=3;k++){
+      const bar=new THREE.Mesh(new THREE.PlaneGeometry(16,3.4), dashMat);
+      bar.rotation.x=-Math.PI/2; bar.position.set(end*(len/2-18), 0.05, k*(rw.w/8)); grp.add(bar); }
+    scene.add(grp);
+    // camera-facing designator labels at each threshold
+    const dx=(bx-ax)/len, dz=(bz-az)/len, off=55;
+    const spA=makeLabelSprite(rw.refA); spA.position.set(ax+dx*off, 40, az+dz*off); scene.add(spA);
+    const spB=makeLabelSprite(rw.refB); spB.position.set(bx-dx*off, 40, bz-dz*off); scene.add(spB);
+    runwayObjs.push({ ref:rw.ref, role:rw.role, refA:rw.refA, refB:rw.refB, mat, spA, spB });
+  }
+}
+
+// ---------- airline colours ----------
+const AL_COLORS = { LH:0x0b1f6b, EW:0xe40046, LX:0xd0021b, BA:0x1d3f8f, KL:0x00a1de,
+  AF:0x002157, OS:0xe2001a, TK:0xc70a0c, SK:0x003d8f, AY:0x0b1560, FR:0x073590,
+  U2:0xff6600, W6:0xc6007e, DE:0xe2001a, XQ:0xd81e05, DL:0xc8102e, UA:0x005daa,
+  AC:0xd22630, QR:0x5c0632, HU:0xd0103a };
+function alColor(iata){
+  if (AL_COLORS[iata]!=null) return AL_COLORS[iata];
+  let h=0; for (const c of (iata||'??')) h=(h*31+c.charCodeAt(0))>>>0;
+  return new THREE.Color().setHSL((h%360)/360, .55, .45).getHex();
+}
+// status colours
+const C_FREE=0xc7d2e6, C_OCC=0x2563eb, C_DELAY=0xf59e0b, C_CONFLICT=0xe11d48;
+
+// ---------- gate pads (InstancedMesh, per-instance colour) ----------
+let gates=[], gatePads=null, gateIndex={};
+function buildGatePads(){
+  const geo = new THREE.CylinderGeometry(6.5, 7.5, 1.4, 20);
+  const mat = new THREE.MeshStandardMaterial({ roughness:.55, metalness:.1, vertexColors:false });
+  gatePads = new THREE.InstancedMesh(geo, mat, gates.length);
+  gatePads.castShadow=false; gatePads.receiveShadow=true;
+  gatePads.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(gates.length*3),3);
+  const d=new THREE.Object3D(); const col=new THREE.Color();
+  gates.forEach((g,i)=>{ d.position.set(g.x, 0.7, g.z); d.updateMatrix(); gatePads.setMatrixAt(i,d.matrix);
+    col.setHex(C_FREE); gatePads.setColorAt(i,col); gateIndex[g.id]=i; });
+  gatePads.instanceMatrix.needsUpdate=true; gatePads.instanceColor.needsUpdate=true;
+  scene.add(gatePads);
+}
+
+// ---------- parked-aircraft glyphs (type-accurate silhouettes) ----------
+// Each type family gets a distinct fuselage length, wingspan, engine count and
+// deck shape, so an A380 reads as a huge 4-engine double-decker while an A320
+// stays a compact twin. Nose points along +X (kept from the original glyph).
+const BODY_COL=0xeef1f6, ENGINE_COL=0x333a48;
+// family → geometry spec (world units; narrowbody ≈ the old glyph size)
+const FAM_SPEC = {
+  regional:  { len:22, rad:1.7, span:26, quad:false, deck2:false, hump:false },
+  narrow:    { len:32, rad:2.2, span:35, quad:false, deck2:false, hump:false },
+  wide2:     { len:50, rad:3.4, span:56, quad:false, deck2:false, hump:false },
+  quad:      { len:62, rad:3.6, span:66, quad:true,  deck2:false, hump:true  },
+  super:     { len:68, rad:4.3, span:80, quad:true,  deck2:true,  hump:false },
+};
+// classify a flight's aircraft type string into a family
+function planeFamily(f){
+  const t=(f && f.actype ? f.actype : '').toUpperCase();
+  if (t.includes('A380')) return 'super';
+  if (t.includes('747') || t.includes('A340')) return 'quad';
+  if ((f && f.size==='wide') || /A3[35]|A310|777|787|767|A330/.test(t)) return 'wide2';
+  if (/CRJ|E1[79]|E2|ERJ|AT[R]?7|DH8|Q400|SF34/.test(t)) return 'regional';
+  return 'narrow';
+}
+// give every vertex of a part the same colour (so one vertexColors material renders body+engines)
+function paintGeo(geo,hex){
+  const c=new THREE.Color(hex), n=geo.attributes.position.count, arr=new Float32Array(n*3);
+  for (let i=0;i<n;i++){ arr[i*3]=c.r; arr[i*3+1]=c.g; arr[i*3+2]=c.b; }
+  geo.setAttribute('color', new THREE.BufferAttribute(arr,3));
+  return geo;
+}
+// build the white airframe (fuselage, wings, stabiliser, engines, hump) — fin is separate & airline-coloured
+function buildFamBody(s){
+  const parts=[];
+  const fus=new THREE.CylinderGeometry(s.rad, s.rad, s.len, 16); fus.rotateZ(Math.PI/2);
+  if (s.deck2) fus.scale(1,1.22,1);                                       // taller cross-section = double deck
+  parts.push(paintGeo(fus,BODY_COL));
+  const nose=new THREE.ConeGeometry(s.rad*(s.deck2?1.15:1), s.rad*2.6, 16); nose.rotateZ(-Math.PI/2);
+  nose.translate(s.len/2 + s.rad*1.1, s.deck2?s.rad*0.12:0, 0); parts.push(paintGeo(nose,BODY_COL));
+  const tail=new THREE.ConeGeometry(s.rad, s.rad*3, 16); tail.rotateZ(Math.PI/2);
+  tail.translate(-s.len/2 - s.rad*1.2, s.rad*0.35, 0); parts.push(paintGeo(tail,BODY_COL));
+  const wing=new THREE.BoxGeometry(s.rad*2.7, s.rad*0.32, s.span); wing.translate(-s.len*0.03, -s.rad*0.35, 0);
+  parts.push(paintGeo(wing,BODY_COL));
+  const hs=new THREE.BoxGeometry(s.rad*1.7, s.rad*0.26, s.span*0.4); hs.translate(-s.len*0.44, s.rad*0.1, 0);
+  parts.push(paintGeo(hs,BODY_COL));
+  // engines under the wings (2 or 4)
+  const er=s.rad*0.55, el=s.rad*2.6, ey=-s.rad*0.9, ex=s.len*0.02;
+  const offs = s.quad ? [s.span*0.18, s.span*0.34] : [s.span*0.28];
+  for (const o of offs) for (const sgn of [1,-1]){
+    const nac=new THREE.CylinderGeometry(er, er*0.9, el, 12); nac.rotateZ(Math.PI/2);
+    nac.translate(ex, ey, sgn*o); parts.push(paintGeo(nac,ENGINE_COL));
+  }
+  if (s.hump){                                                           // 747 upper-deck hump
+    const h=new THREE.CylinderGeometry(s.rad*0.72, s.rad*0.72, s.len*0.24, 14); h.rotateZ(Math.PI/2);
+    h.scale(1,0.62,1); h.translate(s.len*0.24, s.rad*0.78, 0); parts.push(paintGeo(h,BODY_COL));
+  }
+  return BufferGeometryUtils.mergeGeometries(parts,false);
+}
+// the vertical tail fin — kept separate so it carries the airline livery colour
+function buildFamFin(s){
+  const fin=new THREE.BoxGeometry(s.rad*2, s.rad*(s.deck2?3.4:2.9), s.rad*0.34);
+  fin.translate(-s.len*0.44, s.rad*(s.deck2?2.5:2.1), 0);
+  return fin;
+}
+const FAM_BODY={}, FAM_FIN={};                                           // built once per family
+function ensureFam(fam){
+  if (!FAM_BODY[fam]){ const s=FAM_SPEC[fam]; FAM_BODY[fam]=buildFamBody(s); FAM_FIN[fam]=buildFamFin(s); }
+}
+const bodyMat=new THREE.MeshStandardMaterial({ vertexColors:true, roughness:.5, metalness:.2 });
+const finMatCache={};                                                    // airline colour → fin material
+function finMat(iata){ return finMatCache[iata] || (finMatCache[iata]=new THREE.MeshStandardMaterial(
+  { color: alColor(iata), roughness:.42, metalness:.3 })); }
+// small camera-facing tag "LH · A320" (cached by text; rebuilt cheaply every minute otherwise)
+const tagCache={};
+function planeTag(text){
+  if (tagCache[text]) return tagCache[text];
+  const c=document.createElement('canvas'); c.width=256; c.height=64; const ctx=c.getContext('2d');
+  ctx.fillStyle='rgba(20,30,55,.82)';
+  const r=10,x=6,y=10,w=244,h=44;
+  ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#fff'; ctx.font='bold 30px "Segoe UI",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(text,128,34);
+  const tex=new THREE.CanvasTexture(c); tex.anisotropy=8;
+  return (tagCache[text]=tex);
+}
+let SHOW_LABELS=true;
+// assemble one parked aircraft: white body + airline-coloured fin + optional tag
+function makePlane(fam, iata, label){
+  ensureFam(fam); const s=FAM_SPEC[fam];
+  const grp=new THREE.Group();
+  const body=new THREE.Mesh(FAM_BODY[fam], bodyMat); body.castShadow=true; grp.add(body);
+  const fin=new THREE.Mesh(FAM_FIN[fam], finMat(iata)); fin.castShadow=true; grp.add(fin);
+  if (SHOW_LABELS && label){
+    const sp=new THREE.Sprite(new THREE.SpriteMaterial({ map:planeTag(label), transparent:true, depthTest:true }));
+    sp.scale.set(s.len*0.9, s.len*0.22, 1); sp.position.set(0, s.rad*(s.deck2?4.6:3.8)+4, 0); grp.add(sp);
+  }
+  grp.userData.rad=s.rad;
+  grp.userData.half=s.len/2 + s.rad*2.6;   // fuselage half-length incl. nose/tail cones
+  return grp;
+}
+const planesGroup=new THREE.Group(); scene.add(planesGroup);
+const ringsGroup=new THREE.Group(); scene.add(ringsGroup);
+const conflictRings=[];
+
+// ---------- data / time ----------
+let SNAP=null, T0=0, T1=0, NOWMS=0;
+const parse = iso => Date.parse(iso);            // iso ends in Z → UTC
+const fmt = ms => { const d=new Date(ms);
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const p=n=>String(n).padStart(2,'0');
+  return `${days[d.getUTCDay()]} ${p(d.getUTCDate())} ${mon[d.getUTCMonth()]} · ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}`; };
+const fmtClock = ms => { const d=new Date(ms); const p=n=>String(n).padStart(2,'0');
+  return `${p(d.getUTCHours())}:${p(d.getUTCMinutes())}`; };
+
+// assignment lookup + occupancy at time T
+let ASG=[];               // {gid, fid, s0, e0, delay}
+function prepData(){
+  ASG = SNAP.assignments.map(a=>({ gid:a.gid, fid:a.fid, gnum:a.gnum, term:a.term,
+    s0:parse(a.s), e0:parse(a.e), delay:SNAP.delays[a.fid]?.min||0 }));
+  // conflict active windows keyed by gate_id
+  SNAP._conf = SNAP.conflicts.map(c=>({ gid:c.gate_id, gnum:c.gate_number,
+    s0:parse(c.impacted_needs_gate), e0:parse(c.impacted_can_dock),
+    root:c.root_flight_number, impacted:c.impacted_flight_number, carrier:c.impacted_carrier,
+    overlap:c.overlap_minutes, rootDelay:c.root_delay_minutes, status:c.resolution_status }));
+  // runway movements: match flight.rwy (24R/24L) to the runway designator
+  SNAP._rwyMoves = {};
+  for (const fid in SNAP.flights){
+    const f=SNAP.flights[fid]; if (!f.rwy) continue;
+    const t = f.dir==='outbound' ? parse(f.ob||f.sdep) : parse(f.onb||f.sarr);
+    if (!isFinite(t)) continue;
+    (SNAP._rwyMoves[f.rwy] ||= []).push({ t, dir:f.dir, num:f.num, iata:f.iata });
+  }
+  for (const k in SNAP._rwyMoves) SNAP._rwyMoves[k].sort((a,b)=>a.t-b.t);
+}
+// nearest runway movement to time T on a given designator, within ±win ms
+const RWY_WIN=5*60000;
+function runwayActivity(desig, T){
+  const list=SNAP._rwyMoves[desig]; if(!list) return null;
+  let best=null;
+  for (const m of list){ const d=Math.abs(m.t-T); if(d<=RWY_WIN && (!best||d<Math.abs(best.t-T))) best=m; }
+  return best;
+}
+// returns Map gid -> {a, conflict}
+function occupancyAt(T){
+  const m=new Map();
+  for (const a of ASG){
+    if (T>=a.s0 && T<=a.e0){
+      const cur=m.get(a.gid);
+      if (!cur || a.s0<cur.a.s0) m.set(a.gid,{a});    // earliest-start wins the stand
+    }
+  }
+  for (const c of SNAP._conf){
+    if (T>=c.s0-1800000 && T<=c.e0+1800000){          // ±30 min halo
+      const e=m.get(c.gid)||{}; e.conflict=c; m.set(c.gid,e);
+    }
+  }
+  return m;
+}
+
+// ---------- gate stand clearance (keep parked aircraft out of the terminals) ----------
+const _normXZ=(v)=>{ const L=Math.hypot(v.x,v.z)||1; return {x:v.x/L, z:v.z/L}; };
+const _pipXZ=(p,poly)=>{ let ins=false,n=poly.length,j=n-1;
+  for(let i=0;i<n;i++){ const xi=poly[i].x,zi=poly[i].z,xj=poly[j].x,zj=poly[j].z;
+    if(((zi>p.z)!==(zj>p.z)) && (p.x<(xj-xi)*(p.z-zi)/(zj-zi+1e-12)+xi)) ins=!ins; j=i; } return ins; };
+const _nearXZ=(p,poly)=>{ let best=null,bd=1e18,n=poly.length;
+  for(let i=0;i<n;i++){ const a=poly[i],b=poly[(i+1)%n],dx=b.x-a.x,dz=b.z-a.z,L2=dx*dx+dz*dz;
+    let t=L2?((p.x-a.x)*dx+(p.z-a.z)*dz)/L2:0; t=t<0?0:t>1?1:t;
+    const cp={x:a.x+dx*t,z:a.z+dz*t},d=Math.hypot(cp.x-p.x,cp.z-p.z); if(d<bd){bd=d;best=cp;} } return {cp:best,d:bd}; };
+const _outAt=(cp,poly,p)=>{ let o=_normXZ({x:p.x-cp.x, z:p.z-cp.z});
+  if(_pipXZ(p,poly) || _pipXZ({x:cp.x+o.x*2,z:cp.z+o.z*2},poly)) o={x:-o.x,z:-o.z}; return o; };
+// returns {x,z,ang} for a parked aircraft whose fuselage half-length is `half`
+function standFor(g, half){
+  const CLR = half + 5;
+  if(!BLD_POLY.length) return { x:g.x, z:g.z, ang:Math.atan2(g.z, -g.x) };
+  let nb=null, ncp=null, nd=1e18;
+  for(const poly of BLD_POLY){ const r=_nearXZ({x:g.x,z:g.z},poly); if(r.d<nd){ nd=r.d; ncp=r.cp; nb=poly; } }
+  if(!nb || nd>160) return { x:g.x, z:g.z, ang:Math.atan2(g.z, -g.x) };   // open / remote stand
+  let out=_outAt(ncp, nb, {x:g.x,z:g.z});
+  let c={ x:ncp.x+out.x*CLR, z:ncp.z+out.z*CLR };
+  for(let it=0; it<6; it++){ let worst=null,wcp=null,wd=0;
+    for(const poly of BLD_POLY){ const inside=_pipXZ(c,poly); const r=_nearXZ(c,poly);
+      const pen=inside? r.d+CLR : (r.d<CLR? CLR-r.d : 0); if(pen>wd){ wd=pen; worst=poly; wcp=r.cp; } }
+    if(!worst) break; const o2=_outAt(wcp, worst, c); c={ x:wcp.x+o2.x*CLR, z:wcp.z+o2.z*CLR }; }
+  const dir=_normXZ({x:ncp.x-c.x, z:ncp.z-c.z});   // nose points back toward the gate (nose-in)
+  return { x:c.x, z:c.z, ang:Math.atan2(-dir.z, dir.x) };
+}
+
+// ---------- render state for a given time ----------
+const col=new THREE.Color();
+let lastKey='';
+function applyTime(T, force){
+  // occupancy churns on the minute — throttle heavy rebuilds
+  const key = Math.floor(T/60000);
+  if (!force && key===lastKey) return;
+  lastKey=key;
+  const occ = occupancyAt(T);
+
+  // gate pad colours
+  let nOcc=0, nDelay=0, nConf=0;
+  gates.forEach((g,i)=>{
+    const e=occ.get(g.id);
+    let c=C_FREE;
+    if (e){
+      if (e.conflict){ c=C_CONFLICT; nConf++; }
+      else if (e.a){ c=(e.a.delay>=15)?C_DELAY:C_OCC; }
+      if (e.a){ nOcc++; if (e.a.delay>=15) nDelay++; }
+    }
+    col.setHex(c); gatePads.setColorAt(i,col);
+  });
+  gatePads.instanceColor.needsUpdate=true;
+
+  // parked aircraft
+  planesGroup.clear();
+  ringsGroup.clear(); conflictRings.length=0;
+  const placed=[];   // {x,z,r} already-placed aircraft footprints — keep OSM near-coincident gates from stacking
+  for (const [gid,e] of occ){
+    const g=gates[gateIndex[gid]]; if(!g) continue;
+    if (e.a){
+      const f=SNAP.flights[e.a.fid];
+      const iata=f?f.iata:e.a?.iata;
+      const fam=f?planeFamily(f):'narrow';
+      const label=f?`${iata} · ${f.actype}`:iata;
+      const grp=makePlane(fam, iata, label);
+      // nose-in stand: push the aircraft onto the apron so its fuselage clears the terminal
+      const st=standFor(g, grp.userData.half);
+      // OSM digitises many gate nodes only a few metres apart; nudge aircraft apart so two occupied
+      // near-coincident gates never render one aircraft on top of another ("double aeroplane")
+      let px=st.x, pz=st.z; const myR=grp.userData.half+6;
+      let ox=px-g.x, oz=pz-g.z, ol=Math.hypot(ox,oz); if(ol<1e-3){ ox=1; oz=0; ol=1; } ox/=ol; oz/=ol; // apron-outward fallback
+      for(let it=0; it<14; it++){
+        let hit=null, hd=1e9;
+        for(const q of placed){ const dd=Math.hypot(px-q.x,pz-q.z); if(dd < myR+q.r && dd<hd){ hd=dd; hit=q; } }
+        if(!hit) break;
+        // push directly away from the nearest conflicting aircraft (fallback: apron-outward)
+        let ax=px-hit.x, az=pz-hit.z, al=Math.hypot(ax,az);
+        if(al<1e-3){ ax=ox; az=oz; al=1; } ax/=al; az/=al;
+        const need=(myR+hit.r)-hd+2; px+=ax*need; pz+=az*need;
+      }
+      placed.push({x:px,z:pz,r:myR});
+      grp.position.set(px, grp.userData.rad+0.8, pz); grp.rotation.y=st.ang;
+      planesGroup.add(grp);
+    }
+    if (e.conflict){
+      const r=new THREE.Mesh(new THREE.TorusGeometry(11,1.4,10,32),
+        new THREE.MeshBasicMaterial({ color:C_CONFLICT }));
+      r.rotation.x=-Math.PI/2; r.position.set(g.x, 2.2, g.z);
+      ringsGroup.add(r); conflictRings.push(r);
+    }
+  }
+
+  // KPIs
+  setKpis([
+    ['Gates occ', `${nOcc}/${gates.length}`, ''],
+    ['Aircraft', nOcc, ''],
+    ['Delayed', nDelay, nDelay?'warn':''],
+    ['Conflicts', nConf, nConf?'bad':''],
+  ]);
+  // runway activity (24R arrivals / 24L departures)
+  const rwyRows=[];
+  for (const ro of runwayObjs){
+    const act = runwayActivity(ro.refA, T) || runwayActivity(ro.refB, T);
+    ro.mat.emissiveIntensity = act ? 0.5 : 0;
+    const on = !!act;
+    const verb = ro.role==='arrivals' ? 'Landing' : 'Departing';
+    rwyRows.push(`<div class="rrow"><span class="rdot ${on?'on':''}"></span>`+
+      `<b>${act?act.iata+act.num.replace(/^[A-Z0-9]{2}/,''):ro.refA}</b>`+
+      `<span>${on?verb:ro.role} · ${ro.ref}</span></div>`);
+  }
+  const rwEl=document.getElementById('rwystat'); if(rwEl) rwEl.innerHTML=rwyRows.join('');
+  document.getElementById('timeVal').textContent = fmt(T);
+  // keep detail card live if open
+  if (openGate) fillDetail(openGate, T);
+}
+
+function setKpis(items){
+  document.getElementById('kpis').innerHTML = items.map(([k,v,cls])=>
+    `<div class="kpi ${cls}"><b>${v}</b><small>${k}</small></div>`).join('');
+}
+
+// ---------- detail card ----------
+let openGate=null;
+function statusPill(f, delay){
+  const map={arrived:['#e2e8f0','#334155'],scheduled:['#dbeafe','#1e40af'],boarding:['#dcfce7','#166534'],
+    en_route:['#e0f2fe','#075985'],departed:['#ede9fe','#5b21b6'],landed:['#fef9c3','#854d0e']};
+  const c=map[f?.status]||['#e2e8f0','#334155'];
+  return `<span class="pill" style="background:${c[0]};color:${c[1]}">${f?f.status:'—'}</span>`+
+    (delay>=15?` <span class="pill" style="background:#fef3c7;color:#92400e">+${delay}m</span>`:'');
+}
+function fillDetail(gid, T){
+  const g=gates[gateIndex[gid]]; if(!g) return;
+  const occ=occupancyAt(T); const e=occ.get(gid);
+  const f=e&&e.a?SNAP.flights[e.a.fid]:null;
+  const al=f?SNAP.airlines[f.al]:null;
+  const hd=document.getElementById('dHd');
+  const barCol = e? (e.conflict?'#e11d48':(e.a&&e.a.delay>=15?'#f59e0b':'#2563eb')) : '#64748b';
+  hd.style.background=barCol;
+  document.getElementById('dTitle').textContent=`Gate ${g.num} · ${g.term}`;
+  const rows=[];
+  rows.push(['Zone', g.zone+(g.remote?' · remote':'')]);
+  rows.push(['Home carrier', g.home||'—']);
+  rows.push(['Jet bridge', g.jet?'yes':'no']);
+  if (f){
+    const o=SNAP.airports[f.o], d=SNAP.airports[f.d];
+    rows.push(['Flight', `${f.num} · ${al?al.name:f.iata}`]);
+    rows.push(['Route', `${f.o} → ${f.d}`]);
+    rows.push([f.dir==='outbound'?'To':'From', (f.dir==='outbound'?(d?d.city:f.d):(o?o.city:f.o))]);
+    rows.push(['Aircraft', `${f.actype} · ${f.seats} seats`]);
+    rows.push(['At gate', `${fmtClock(e.a.s0)}–${fmtClock(e.a.e0)}`]);
+    rows.push(['Status', statusPill(f, e.a.delay)]);
+  } else if (e && e.conflict){
+    rows.push(['State', '<b style="color:#e11d48">Gate conflict</b>']);
+  } else {
+    rows.push(['State', 'Free']);
+  }
+  if (e && e.conflict){
+    const c=e.conflict;
+    rows.push(['⚠ Conflict', `${c.impacted} (${c.carrier}) blocked ${c.overlap}m`]);
+    rows.push(['Root cause', `${c.root} delayed +${c.rootDelay}m`]);
+  }
+  document.getElementById('dBody').innerHTML = rows.map(([k,v])=>
+    `<div class="kv"><span>${k}</span><span>${v}</span></div>`).join('');
+  document.getElementById('detail').style.display='block';
+}
+document.getElementById('dClose').onclick=()=>{ openGate=null; document.getElementById('detail').style.display='none'; };
+
+// ---------- picking ----------
+const _ray=new THREE.Raycaster(); const _m=new THREE.Vector2();
+function pickGate(ev){
+  _m.x=(ev.clientX/innerWidth)*2-1; _m.y=-(ev.clientY/innerHeight)*2+1;
+  _ray.setFromCamera(_m,camera);
+  const hit=_ray.intersectObject(gatePads)[0];
+  return (hit&&hit.instanceId!=null)?gates[hit.instanceId]:null;
+}
+addEventListener('pointermove',(ev)=>{
+  if (ev.buttons||!gatePads){ tip.style.display='none'; return; }
+  const g=pickGate(ev);
+  if (g){
+    const occ=occupancyAt(curT()); const e=occ.get(g.id);
+    const f=e&&e.a?SNAP.flights[e.a.fid]:null;
+    tip.style.display='block'; tip.style.left=(ev.clientX+14)+'px'; tip.style.top=(ev.clientY+14)+'px';
+    tip.innerHTML=`<b>Gate ${g.num}</b> · ${g.term}<br>`+
+      (f?`${f.num} ${f.iata} · ${f.o}→${f.d}<br><span style="color:#5f6f92">${f.status}${e.a.delay>=15?' · +'+e.a.delay+'m':''}</span>`
+        :(e&&e.conflict?`<span style="color:#e11d48">conflict</span>`:`<span style="color:#5f6f92">free</span>`));
+  } else tip.style.display='none';
+});
+addEventListener('click',(ev)=>{ const g=pickGate(ev); if(g){ openGate=g.id; fillDetail(g.id, curT()); } });
+
+// ---------- scrubber / playback ----------
+const range=document.getElementById('range');
+const curT = ()=> T0 + (range.value/1000)*(T1-T0);
+range.addEventListener('input', ()=>{ playing=false; setPlay(); applyTime(curT(), true); });
+let playing=false, speed=15;
+document.getElementById('speed').addEventListener('change', e=>speed=+e.target.value);
+function setPlay(){ document.getElementById('play').textContent = playing?'❚❚':'▶'; }
+document.getElementById('play').onclick=()=>{ playing=!playing; setPlay(); };
+document.getElementById('lblToggle').addEventListener('change', e=>{ SHOW_LABELS=e.target.checked; applyTime(curT(), true); });
+      document.getElementById('rotToggle').addEventListener('change', e=>{ controls.autoRotate = e.target.checked; });
+function toRange(ms){ range.value = Math.max(0,Math.min(1000, ((ms-T0)/(T1-T0))*1000)); }
+
+// ---------- loop ----------
+let last=performance.now();
+(function loop(now){
+  requestAnimationFrame(loop);
+  const dt=(now-last)/1000; last=now;
+  if (playing && SNAP){
+    let ms=curT() + dt*speed*60000;         // speed = sim-minutes per real second
+    if (ms>=T1){ ms=T0; }                    // loop
+    toRange(ms); applyTime(ms);
+  }
+  const pulse=1+0.12*Math.sin(now*0.006);
+  for (const r of conflictRings) r.scale.setScalar(pulse);
+  controls.update();
+  renderer.render(scene,camera);
+})(performance.now());
+
+addEventListener('resize',()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight); });
+
+// ---------- init ----------
+Promise.all([
+  window.AIQ_DATA.getGeometry(`./data/${AP}/buildings.json`),
+  window.AIQ_DATA.getSnapshot(`./data/${AP}/snapshot.json`),
+  window.AIQ_DATA.getGeometry(`./data/${AP}/runways.json`)
+]).then(([geo, snap, rwy])=>{
+  SNAP=snap; gates=snap.gates;
+  T0=parse(snap.meta.window[0]); T1=parse(snap.meta.window[1]); NOWMS=parse(snap.meta.now);
+  buildBuildings(geo);
+  buildRunways(rwy.runways);
+  buildGatePads();
+  prepData();
+  // frame camera to include gate cluster + both runways
+  let sx=0,sz=0,minx=1e9,maxx=-1e9,minz=1e9,maxz=-1e9;
+  for (const g of gates){ sx+=g.x; sz+=g.z;
+    minx=Math.min(minx,g.x); maxx=Math.max(maxx,g.x); minz=Math.min(minz,g.z); maxz=Math.max(maxz,g.z); }
+  const cx=sx/gates.length, cz=sz/gates.length;         // keep view centred on the terminal/apron
+  for (const rw of rwy.runways) for (const p of [rw.a, rw.b]){
+    minx=Math.min(minx,p[0]); maxx=Math.max(maxx,p[0]); minz=Math.min(minz,p[1]); maxz=Math.max(maxz,p[1]); }
+  const span=Math.min(Math.max(maxx-minx,maxz-minz,400),4200);
+  controls.target.set(cx,20,cz);
+  camera.position.set(cx+span*0.30, span*0.55+220, cz+span*0.80);
+  document.getElementById('nowClock').textContent = fmtClock(NOWMS)+' UTC';
+  toRange(NOWMS); applyTime(NOWMS, true);
+  document.getElementById('loading').style.display='none';
+}).catch(err=>{ document.getElementById('loading').textContent='Failed to load: '+err.message; });
+</script>
+</body>
+</html>
