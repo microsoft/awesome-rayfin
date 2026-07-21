@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/hooks/AuthContext';
 import { getRayfinClient } from '@/services/rayfinClient';
 import { watchDoomStats, type LevelResult, type StatsWatcher } from '@/game/doomStats';
-import { createSaveManager, type SaveManager } from '@/game/doomSaves';
+import { createSaveManager, type SaveManager, type EmModule } from '@/game/doomSaves';
 
 // Self-hosted, fully free stack (no external calls, no purchased game data):
 //  - js-dos / DOSBox runtime (GPL) served from this app's own origin
@@ -20,12 +20,24 @@ const JS_DOS_SCRIPT = '/jsdos/js-dos-api.js?v=4';
 const DOOM_ZIP = '/game/doom.zip';
 const DOOM_EXE = './DOOM/DOOM.EXE';
 
-function waitForDosbox(timeout = 10000): Promise<any> {
+// Minimal typing for the untyped js-dos (DOSBox) API we use.
+type DosboxInstance = {
+  run: (archiveUrl: string, executable: string) => void;
+  module?: EmModule;
+  destroy?: () => void;
+};
+type DosboxConstructor = new (options: {
+  id: string;
+  onload?: (dosbox: DosboxInstance) => void;
+  onrun?: (dosbox: DosboxInstance, app: string) => void;
+}) => DosboxInstance;
+
+function waitForDosbox(timeout = 10000): Promise<DosboxConstructor> {
   return new Promise((resolve, reject) => {
     const start = Date.now();
 
     const check = () => {
-      const Dosbox = (window as any).Dosbox;
+      const Dosbox = (window as unknown as { Dosbox?: DosboxConstructor }).Dosbox;
       if (typeof Dosbox === 'function') {
         resolve(Dosbox);
         return;
@@ -98,7 +110,7 @@ type BoardRow = {
 
 export function HomePage() {
   const doomRef = useRef<HTMLDivElement | null>(null);
-  const dosboxRef = useRef<any>(null);
+  const dosboxRef = useRef<DosboxInstance | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [muted, setMuted] = useState(false);
 
@@ -323,10 +335,10 @@ export function HomePage() {
 
         dosboxRef.current = new Dosbox({
           id: 'DOOM',
-          onload(dosbox: any) {
+          onload(dosbox: DosboxInstance) {
             dosbox.run(DOOM_ZIP, DOOM_EXE);
           },
-          onrun(_dosbox: any, app: string) {
+          onrun(_dosbox: DosboxInstance, app: string) {
             console.log(`App '${app}' is runned`);
             void startSession();
             startWatcher();

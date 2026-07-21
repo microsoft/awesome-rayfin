@@ -27,7 +27,7 @@ type EmFS = {
   mkdir?: (path: string) => void;
   analyzePath?: (path: string) => { exists: boolean };
 };
-type EmModule = { FS?: EmFS } | null | undefined;
+export type EmModule = { FS?: EmFS } | null | undefined;
 
 const SAVE_RE = /DOOMSAV(\d+)\.DSG$/i;
 const DOOM_EXE_RE = /^DOOM\.EXE$/i;
