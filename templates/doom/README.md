@@ -27,6 +27,7 @@ is built on his work. Go star and follow it:
   - Blog: [Playing games as a Microsoft Fabric App via Rayfin](https://sandervandevelde.wordpress.com/2026/06/07/playing-zork-i-as-a-microsoft-fabric-app-via-rayfin/)
 - **[thedoggybrad/doom_on_js-dos](https://github.com/thedoggybrad/doom_on_js-dos)** — DOOM-in-the-browser via js-dos / DOSBox
 - **id Software** — the DOOM engine (GPL) and the freely-redistributable **shareware** game data
+- **Minor modifications & this template packaging** by **[🎯 Alexander Korn](https://www.linkedin.com/in/alexanderkorn/)** — reach out on LinkedIn for questions
 
 This template **extends** Sander's app with a Rayfin **data layer** (session tracking, per-level
 stats, a leaderboard, and cloud-persisted save games) and repackages it as a **100% self-hosted,
