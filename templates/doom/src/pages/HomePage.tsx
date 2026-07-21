@@ -59,6 +59,20 @@ function loadScript(src: string): Promise<void> {
   });
 }
 
+// DOOM's menus are keyboard-only and its canvas isn't focusable by default, so
+// we synthesise key events straight to the document (em-dosbox listens there).
+// keyCode/which are forced because em-dosbox's SDL layer reads the legacy codes.
+function pressDoomKey(key: string, code: string, keyCode: number): void {
+  const fire = (type: 'keydown' | 'keyup') => {
+    const e = new KeyboardEvent(type, { key, code, bubbles: true, cancelable: true });
+    Object.defineProperty(e, 'keyCode', { get: () => keyCode });
+    Object.defineProperty(e, 'which', { get: () => keyCode });
+    document.dispatchEvent(e);
+  };
+  fire('keydown');
+  window.setTimeout(() => fire('keyup'), 60);
+}
+
 function formatDuration(totalSeconds: number): string {
   const s = Math.max(0, Math.round(totalSeconds));
   const h = Math.floor(s / 3600);
@@ -95,6 +109,21 @@ export function HomePage() {
       return next;
     });
   }, []);
+
+  // Focus the (keyboard-focusable) canvas so real key presses reach DOOM.
+  const focusDoomCanvas = useCallback(() => {
+    const canvas = doomRef.current?.querySelector<HTMLCanvasElement>('canvas');
+    if (!canvas) return;
+    if (!canvas.hasAttribute('tabindex')) canvas.setAttribute('tabindex', '0');
+    canvas.focus();
+  }, []);
+
+  // Open DOOM's main menu (New Game / Options / …). It only opens on Esc and
+  // never appears on its own, so we give the player a button + auto-open on boot.
+  const openDoomMenu = useCallback(() => {
+    focusDoomCanvas();
+    pressDoomKey('Escape', 'Escape', 27);
+  }, [focusDoomCanvas]);
 
   // Keep the latest signed-in user reachable from the one-shot init effect.
   const { user } = useAuth();
@@ -197,6 +226,7 @@ export function HomePage() {
     let cancelled = false;
     let heartbeat: number | null = null;
     let autostart: number | null = null;
+    let menuTimer: number | null = null;
 
     // Update the current session's duration + end time (best-effort).
     const flush = async () => {
@@ -303,6 +333,16 @@ export function HomePage() {
             // Restore persisted saves into the emulator FS, then watch for new ones.
             void saveManager.restore();
             saveManager.start();
+            // DOOM boots into a title/demo loop and only shows its menu on Esc,
+            // so once it's up we focus the canvas and open the main menu.
+            menuTimer = window.setTimeout(() => {
+              const canvas = doomRef.current?.querySelector<HTMLCanvasElement>('canvas');
+              if (canvas) {
+                if (!canvas.hasAttribute('tabindex')) canvas.setAttribute('tabindex', '0');
+                canvas.focus();
+              }
+              pressDoomKey('Escape', 'Escape', 27);
+            }, 3000);
           },
         });
 
@@ -325,11 +365,25 @@ export function HomePage() {
 
     initDoom();
 
+    // Clicking anywhere on the game gives the canvas keyboard focus so the
+    // player's key presses reach DOOM.
+    const doomEl = doomRef.current;
+    const onDoomClick = () => {
+      const canvas = doomEl?.querySelector<HTMLCanvasElement>('canvas');
+      if (canvas) {
+        if (!canvas.hasAttribute('tabindex')) canvas.setAttribute('tabindex', '0');
+        canvas.focus();
+      }
+    };
+    doomEl?.addEventListener('click', onDoomClick);
+
     return () => {
       cancelled = true;
       window.removeEventListener('beforeunload', onBeforeUnload);
+      doomEl?.removeEventListener('click', onDoomClick);
       if (heartbeat) clearInterval(heartbeat);
       if (autostart) clearInterval(autostart);
+      if (menuTimer) clearTimeout(menuTimer);
       watcherRef.current?.stop();
       watcherRef.current = null;
       saveManager.stop();
@@ -401,6 +455,15 @@ export function HomePage() {
           <div id="DOOM" className="dosbox-default h-full w-full" ref={doomRef} />
           <button
             type="button"
+            onClick={openDoomMenu}
+            className="absolute left-3 top-3 z-10 flex h-9 items-center justify-center gap-1.5 rounded-full border border-white/20 bg-black/50 px-3 text-xs font-semibold text-white/80 backdrop-blur transition-colors hover:bg-black/70 hover:text-white"
+            title="Open the DOOM menu (New Game, Options…)"
+            aria-label="Open DOOM menu"
+          >
+            ☰ Menu
+          </button>
+          <button
+            type="button"
             onClick={toggleMute}
             className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/50 text-base text-white/80 backdrop-blur transition-colors hover:bg-black/70 hover:text-white"
             title={muted ? 'Unmute' : 'Mute'}
@@ -416,8 +479,9 @@ export function HomePage() {
           </div>
         ) : (
           <p className="mb-2 text-xs text-slate-400">
-            <span className="text-slate-300">Controls:</span> Arrow keys move &amp; turn ·{' '}
-            <span className="text-slate-300">Space</span> shoots ·{' '}
+            <span className="text-slate-300">Click the game</span>, then ↑ ↓ +{' '}
+            <span className="text-slate-300">Enter</span> to start a New Game ({'☰'} Menu reopens it) ·{' '}
+            Arrow keys move &amp; turn · <span className="text-slate-300">Space</span> shoots ·{' '}
             <span className="text-slate-300">W</span> opens doors ·{' '}
             <span className="text-slate-300">Shift</span> runs ·{' '}
             <span className="text-slate-300">Esc</span> menu — shareware Episode 1 (Knee-Deep in the Dead)
