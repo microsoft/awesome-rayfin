@@ -1,0 +1,24 @@
+# Files excluded when this repo is scaffolded as a gallery template.
+# Dev-only tooling and local state that a template consumer doesn't need.
+
+# AI-agent / MCP dev tooling
+AGENTS.md
+.mcp.json
+
+# Local env + build artifacts
+.env
+.env.*
+!.env.example
+dist/
+*.tsbuildinfo
+coverage/
+playwright-report/
+test-results/
+
+# Rayfin local state
+rayfin/.env*
+rayfin/.deployments.json
+rayfin/.temp/
+
+# Dependencies
+node_modules/
