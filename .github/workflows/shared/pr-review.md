@@ -26,6 +26,7 @@ safe-outputs:
     side: "RIGHT"
   submit-pull-request-review:
     max: 1
+    allowed-events: [COMMENT] # Advisory-only: reject APPROVE/REQUEST_CHANGES at the safe-output boundary (defense against prompt injection), not just in the prompt.
   noop:
   messages:
     footer: "> 🤖 *Reviewed by [{workflow_name}]({run_url}) — an automated assistant. A human maintainer has the final say.*"
