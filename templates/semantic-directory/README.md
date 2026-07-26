@@ -12,6 +12,22 @@ Sales** demo with zero setup.
 
 ---
 
+## Screenshots
+
+> Dark mode, running against the bundled **Contoso Sales** demo model — zero configuration.
+
+![Semantic Directory — searchable model constellation](docs/screenshots/landing.png)
+
+| Search that answers | Measure DNA (DAX-parsed lineage) |
+| :--- | :--- |
+| ![Search results with match evidence](docs/screenshots/search.png) | ![Measure detail showing what a measure is built from](docs/screenshots/measure-dna.png) |
+
+| Model health | Impact analysis | Path finder |
+| :--- | :--- | :--- |
+| ![Best-practice model health checks](docs/screenshots/model-health.png) | ![Downstream change-impact tracing](docs/screenshots/impact-analysis.png) | ![Shortest join path between tables](docs/screenshots/path-finder.png) |
+
+---
+
 ## What it does
 
 - **Search that answers, not dead-ends.** Type a value like *"Total Sales"* or a member
