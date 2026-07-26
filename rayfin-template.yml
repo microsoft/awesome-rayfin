@@ -19,6 +19,9 @@ entries:
   - path: templates/pbi-fixer
     name: Power BI Fixer
     description: Fabric-authenticated workspace that inspects, documents, and fixes Power BI semantic models and reports — a best-practice analyzer with one-click and batch fixes, a report explorer with PBIR diffs, AI-assisted metadata cleanup, and a free IBCS visual, all powered server-side by Fabric User Data Functions
+  - path: templates/semantic-directory
+    name: Semantic Directory
+    description: A live, searchable directory for any Power BI or Fabric semantic model — search measures and fields, trace lineage and relationships, inspect measure DNA and change impact, and explore a bundled demo model with zero setup.
   - path: templates/slide-deck
     name: Slide Deck
     description: Interactive slide deck presenter with sessions, live slide tracking, and audience chat
