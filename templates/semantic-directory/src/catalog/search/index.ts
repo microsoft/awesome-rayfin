@@ -27,6 +27,34 @@ export interface CatalogSearchHit extends SearchDoc {
     score: number;
 }
 
+/** A built search index plus the docs it was built from (for substring fallback). */
+export interface CatalogSearchIndex {
+    index: MiniSearch<SearchDoc>;
+    docs: SearchDoc[];
+}
+
+/**
+ * Split a compound identifier into searchable sub-terms.
+ * "isActiveCustomer" -> ["isactivecustomer", "is", "active", "customer"]
+ * "NetRevenueUSD" -> ["netrevenueusd", "net", "revenue", "usd"]
+ * Keeps letter+digit tokens intact ("ME5" stays "me5"), so a whole-token
+ * query still matches.
+ */
+export function splitIdentifier(term: string): string[] {
+    const whole = term.toLowerCase();
+    const parts = term
+        // camelCase / PascalCase boundary: fooBar -> foo Bar
+        .replace(/([a-z])([A-Z])/g, "$1 $2")
+        // acronym boundary: HTTPServer -> HTTP Server
+        .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+        // digit -> letter boundary: ME5Flag -> ME5 Flag (keeps ME5 intact)
+        .replace(/([0-9])([A-Za-z])/g, "$1 $2")
+        .split(/[^A-Za-z0-9]+/)
+        .map((p) => p.toLowerCase())
+        .filter(Boolean);
+    return Array.from(new Set([whole, ...parts]));
+}
+
 function toDocs(catalog: CatalogModel): SearchDoc[] {
     const docs: SearchDoc[] = [];
     const push = (
@@ -117,7 +145,7 @@ const BOOSTS = {
     description: 1,
 } as const;
 
-export function buildSearchIndex(catalog: CatalogModel): MiniSearch<SearchDoc> {
+export function buildSearchIndex(catalog: CatalogModel): CatalogSearchIndex {
     const index = new MiniSearch<SearchDoc>({
         idField: "id",
         fields: Object.keys(BOOSTS),
@@ -125,6 +153,10 @@ export function buildSearchIndex(catalog: CatalogModel): MiniSearch<SearchDoc> {
             "kind", "name", "displayName", "table", "topic",
             "description", "synonyms", "tags", "emoji",
         ],
+        // Expand compound identifiers into their sub-parts at BOTH index and
+        // query time, so a fragment inside a camelCase/acronym name still hits
+        // (e.g. "Revenue" or "USD" finds a `NetRevenueUSD` column).
+        processTerm: (term) => splitIdentifier(term),
         searchOptions: {
             boost: BOOSTS,
             prefix: true,
@@ -132,15 +164,51 @@ export function buildSearchIndex(catalog: CatalogModel): MiniSearch<SearchDoc> {
             combineWith: "AND",
         },
     });
-    index.addAll(toDocs(catalog));
-    return index;
+    const docs = toDocs(catalog);
+    index.addAll(docs);
+    return { index, docs };
+}
+
+/** Flattened, lowercased searchable text for a doc (substring fallback only). */
+function docHaystack(d: SearchDoc): string {
+    return [d.name, d.displayName, d.table, d.topic, d.description, d.synonyms, d.tags]
+        .join(" ")
+        .toLowerCase();
+}
+
+/**
+ * Last-resort scan: return any doc whose searchable text contains the raw
+ * lowercased query as a substring. Catches mid-token fragments that neither
+ * token nor prefix/fuzzy matching can reach.
+ */
+function substringScan(docs: SearchDoc[], query: string): SearchDoc[] {
+    const q = query.trim().toLowerCase();
+    if (!q) return [];
+    return docs.filter((d) => docHaystack(d).includes(q));
+}
+
+function toHit(d: SearchDoc, score: number): CatalogSearchHit {
+    return {
+        id: d.id,
+        kind: d.kind,
+        name: d.name,
+        displayName: d.displayName,
+        table: d.table,
+        topic: d.topic,
+        description: d.description,
+        synonyms: d.synonyms,
+        tags: d.tags,
+        emoji: d.emoji,
+        score,
+    };
 }
 
 export function search(
-    index: MiniSearch<SearchDoc>,
+    catalogIndex: CatalogSearchIndex,
     query: string,
     limit = 50,
 ): CatalogSearchHit[] {
+    const { index, docs } = catalogIndex;
     const q = query.trim();
     if (!q) return [];
     // Precise first: require all terms (AND). If that finds nothing — common for
@@ -151,17 +219,11 @@ export function search(
     if (results.length === 0) {
         results = index.search(q, { combineWith: "OR" }) as (SearchResult & SearchDoc)[];
     }
-    return results.slice(0, limit).map((r) => ({
-        id: r.id,
-        kind: r.kind,
-        name: r.name,
-        displayName: r.displayName,
-        table: r.table,
-        topic: r.topic,
-        description: r.description,
-        synonyms: r.synonyms,
-        tags: r.tags,
-        emoji: r.emoji,
-        score: r.score,
-    }));
+    // Still nothing? A mid-token fragment (e.g. "ctiveCu") can miss token/prefix
+    // matching entirely — sweep the docs for a raw substring so search never
+    // dead-ends when the text plainly contains the query.
+    if (results.length === 0) {
+        return substringScan(docs, q).slice(0, limit).map((d) => toHit(d, 0));
+    }
+    return results.slice(0, limit).map((r) => toHit(r, r.score));
 }
