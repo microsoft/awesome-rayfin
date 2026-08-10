@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: paragliding-twin
+  displayName: Paragliding Twin
+  description: Interactive 3D paragliding twin of the Bavarian Alps, built entirely from open geodata — true-scale 1 m terrain with LoD2 buildings and measured vegetation, a Copernicus DEM shell for the horizon, anonymised flight replay with a barogram scrubber, a free-flying drone camera, and live FANET/FLARM traffic from the Open Glider Network
+entries:
+  - path: .
+    name: Paragliding Twin
