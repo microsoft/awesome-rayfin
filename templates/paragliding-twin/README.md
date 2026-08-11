@@ -14,6 +14,13 @@
 
 ---
 
+![Oberstdorf in the foreground, the Nebelhorn massif behind, and a real flight drawn across it](docs/screenshot-terrain.png)
+
+*Looking east over Oberstdorf (806 m) towards the Nebelhorn (2 224 m). Terrain from the Bavarian
+survey at 1 m, buildings from LoD2, trees measured from the surface model, the horizon from
+Copernicus — and the recorded flight drawn across it, orange where the pilot climbed and blue where
+they sank.*
+
 ## What this is
 
 A **Microsoft Fabric App** that renders 9 × 8 km of the Allgäu Alps at true scale from official 1 m
@@ -37,7 +44,22 @@ Five things you can do with it:
 
 …and then **switch the whole thing to a different mountain** from the dropdown in the header.
 
+## Replaying a flight
+
+![The chase camera following the glider, with the barogram scrubbed to 2:30 into the flight](docs/screenshot-flight.png)
+
+The track draws itself coloured by climb and sink, the barogram doubles as the scrubber, and the
+readout above it is the vario and ground speed at the instant under the head. The camera can follow
+the glider without taking the controls away — following moves the orbit centre, so you can still
+turn around the wing while it flies.
+
+The bundled flight is a real one, anonymised at import: `tools/flights/anonymise_igc.py` strips the
+pilot, glider and logger-serial records before the file ever reaches `public/flights/`. Drop your own
+IGC on the window and it is parsed **entirely in the browser** — nothing is uploaded.
+
 ## Two sites, one build
+
+![Neuschwanstein, Hohenschwangau and the Säuling at the second site](docs/screenshot-tegelberg.png)
 
 The location is configuration. Two areas of interest ship:
 
@@ -118,6 +140,8 @@ that to the browser, which then talks to Azure AI Foundry directly. No API key e
 and none reaches the client.
 
 ## Drone mode
+
+![Drone mode over the Nebelhorn ridge, with the instrument panel showing altitude, height above ground, speed and heading](docs/screenshot-drone.png)
 
 Press `W` and the map camera becomes a drone. There is no button for it, and that is the point.
 
@@ -219,6 +243,13 @@ public/day/         Mode D snapshot, exported from the semantic model
 | `npm run data:build` | `python tools/geodata/pipeline.py` — downloads and derives the terrain |
 
 ## Fabric
+
+![The day panel reading a Direct Lake snapshot: cloud base, thermals, freezing level, and the flights recorded that day](docs/screenshot-day.png)
+
+*Everything in that panel is queried from a Direct Lake semantic model over the Fabric Lakehouse and
+exported as one snapshot the static app can read. The wind below it is not a forecast: it is measured
+from the drift of 109 complete 360° turns the pilot flew, and the altitude bands where nobody circled
+stay empty.*
 
 The analytical half runs in Microsoft Fabric, and the pieces are provisioned by script rather than
 by clicking:
