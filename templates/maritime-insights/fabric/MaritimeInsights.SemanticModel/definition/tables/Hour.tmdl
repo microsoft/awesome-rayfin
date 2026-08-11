@@ -1,0 +1,43 @@
+table 'Hour'
+	lineageTag: 5ff8e1a1-1ed8-4866-bf8e-ac26fcda2359
+
+	column 'Hour Of Day'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 891544ab-50d9-4540-b2a6-45834aabe7e8
+		summarizeBy: none
+		sourceColumn: hour_of_day
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'hour_label'
+		dataType: string
+		lineageTag: 85807bef-fee6-4464-8acc-7d83bb6a2b24
+		summarizeBy: none
+		sourceColumn: hour_label
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'hour_start_second'
+		dataType: int64
+		isHidden
+		lineageTag: 55095328-1b9b-40fe-be02-9772b0fbf936
+		summarizeBy: none
+		sourceColumn: hour_start_second
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'hour_end_second'
+		dataType: int64
+		isHidden
+		lineageTag: f273b7a9-cac0-40f8-b7d1-b7695ad84c68
+		summarizeBy: none
+		sourceColumn: hour_end_second
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'hour_of_day' = entity
+		mode: directLake
+		source
+			entityName: hour_of_day
+			expressionSource: 'DirectLake - MaritimeInsightsLakehouse'

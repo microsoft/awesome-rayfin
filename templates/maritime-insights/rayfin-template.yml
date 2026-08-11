@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: maritime-insights
+  displayName: Maritime Insights
+  description: Interactive 3D coastal twin of the Kieler Förde, built entirely from open geodata — true-scale DGM1 terrain with LoD2 buildings and an orthophoto drape, a coarse Copernicus DEM shell for the horizon, and a geometric sensor-visibility model that is explicitly not a radar model.
+entries:
+  - path: .
+    name: Maritime Insights
