@@ -149,11 +149,11 @@ Press `W` and the map camera becomes a drone. There is no button for it, and tha
 |---|---|---|
 | `W A S D` | — | forward / left / back / right |
 | `Q` `E` | — | down / up |
-| `R` `F` | — | **circle whatever is in the middle of the view** |
+| `R` `F` | — | circle whatever is in the middle of the view |
 | left drag | orbit the map | look around from where you are |
 | arrow keys | — | look around |
 | mouse wheel | zoom towards the target | throttle |
-| `Shift` | — | a short sprint |
+| `Shift` + drag | pan the map | a short sprint |
 | `Esc` | — | hand the camera straight back to the map |
 
 The eight movement keys are **six** behaviours, not four. `R` and `F` used to be a second pair of
