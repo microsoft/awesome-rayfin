@@ -203,6 +203,17 @@ export default function App({ initialTheme = "dark" }: { initialTheme?: ThemeNam
   const [ladder, setLadder] = useState<AltitudeRung[] | null>(null);
   const [ladderBusy, setLadderBusy] = useState(false);
   const [assetAttribution, setAssetAttribution] = useState<string | null>(null);
+  /**
+   * Who surveyed the ground under this AOI, and who owns the horizon tier.
+   *
+   * 🔴 Both were **typed into the footer** as "LVermGeo SH" and "Copernicus DEM © DLR/Airbus/ESA".
+   * That is only true of the two coasts this repo happens to ship. The whole claim of the app is
+   * that an AOI is configuration, so the first fork onto another coast would have kept crediting a
+   * German state survey for Danish or Norwegian data — a false licence attribution, which is a
+   * worse failure than a wrong number because it is the part a data owner checks. Same bug class as
+   * the hardcoded "30 m" horizon posting a few lines below, and as the vegetation caveat before it.
+   */
+  const [geobasis, setGeobasis] = useState<{ core: string; shell: string | null } | null>(null);
   const selected = assets.find((a) => a.id === assetId) ?? null;
 
   // ── the network ────────────────────────────────────────────────────────
@@ -389,6 +400,7 @@ export default function App({ initialTheme = "dark" }: { initialTheme?: ThemeNam
     setAssets([]);
     setAssetId(null);
     setAssetAttribution(null);
+    setGeobasis(null);
     setTracksMeta(null);
     setBeats([]);
     (async () => {
@@ -413,6 +425,12 @@ export default function App({ initialTheme = "dark" }: { initialTheme?: ThemeNam
           // and silently became a lie the moment the shell was rebuilt at 90 m.
           + `${data.shell ? ` · Horizont ${data.shell.meta.resolutionM ?? "?"} m` : ""}`,
         );
+        // Attribution follows the data that is actually on screen, per AOI, exactly as the
+        // horizon posting above does. `shell` is optional, so its credit is too.
+        setGeobasis({
+          core: data.meta.attribution,
+          shell: data.shell?.meta.attribution ?? null,
+        });
         if (data.tracks) {
           setTracksMeta({
             date: data.tracks.meta.date,
@@ -2476,9 +2494,9 @@ export default function App({ initialTheme = "dark" }: { initialTheme?: ThemeNam
                        fontSize: 11, lineHeight: 1.5, opacity: 0.65,
                        background: "linear-gradient(var(--mi-bg-clear), var(--mi-bg-fade))" }}>
         Demonstrations- und Anschauungszweck. Keine Navigationsgrundlage und keine verbindliche
-        Verkehrs- oder Seeraumauskunft. Gelände unverzerrt dargestellt, ohne Überhöhung. ·
-        Datenquelle: Landesamt für Vermessung und Geoinformation Schleswig-Holstein (LVermGeo SH),
-        CC BY 4.0 [Daten bearbeitet] · Copernicus DEM © DLR/Airbus/ESA
+        Verkehrs- oder Seeraumauskunft. Gelände unverzerrt dargestellt, ohne Überhöhung.
+        {geobasis && <> · {geobasis.core}</>}
+        {geobasis?.shell && <> · {geobasis.shell}</>}
         {/*
           🔴 Attribution has to name the source that is actually on screen. Crediting the recorded
           day while the relay is feeding the scene happened to be true only because the relay was
