@@ -37,8 +37,8 @@ Five things you can do with it:
    between them, at true scale with no vertical exaggeration.
 2. **Replay a flight.** The track draws itself coloured by climb and sink, the barogram doubles as
    the scrubber, and the wind is derived from the flight's own thermal circles.
-3. **Fly it yourself.** Press `W` and the orbit camera becomes a drone — see
-   [Drone mode](#drone-mode).
+3. **Fly it yourself.** Press `W` and the orbit camera becomes a drone — `R` and `F` circle whatever
+   is in the middle of the view. See [Drone mode](#drone-mode).
 4. **Watch who is flying right now.** *(Phase 4.)* Live FANET/FLARM traffic when the sky cooperates.
 5. **Ask it questions.** *(Phase 6.)* Voice and chat over the same data.
 
@@ -149,11 +149,27 @@ Press `W` and the map camera becomes a drone. There is no button for it, and tha
 |---|---|---|
 | `W A S D` | — | forward / left / back / right |
 | `Q` `E` | — | down / up |
+| `R` `F` | — | **circle whatever is in the middle of the view** |
 | left drag | orbit the map | look around from where you are |
 | arrow keys | — | look around |
 | mouse wheel | zoom towards the target | throttle |
 | `Shift` | — | a short sprint |
 | `Esc` | — | hand the camera straight back to the map |
+
+The eight movement keys are **six** behaviours, not four. `R` and `F` used to be a second pair of
+up/down keys — literally `held.has('e') || held.has('r')` — which is a key doing nothing, because
+nobody presses two keys for one thing. They now swing the camera around whatever is centred, which
+is the one move a drone cannot otherwise make: `W A S D` plus drag can approach a thing and can look
+at it, but keeping it centred while going round it needs both at once, in opposite directions, at a
+rate that depends on the distance. The spin is **angular** rather than linear (`SPIN_PER_SECOND`,
+~10 s per lap), so the same key is a slow crawl around one building and a wide sweep around a
+valley without anybody setting anything.
+
+The centre is **latched** while either key is held, and that is the only subtle part: re-deriving it
+from the view ray every frame sounds simpler and is wrong — the ray lands further away as the
+terrain falls off and nearer as it rises, so the circle walks across the map and the thing you were
+looking at slides out of frame. Sampling once and holding it is what makes it an orbit rather than a
+drift.
 
 The two camera models bind the same four inputs — drag, wheel, `Shift`+drag and the arrow keys — so
 they cannot both be live. `src/twin3d/flyControls.ts` resolves that with a **latch rather than a
