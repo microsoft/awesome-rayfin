@@ -1,5 +1,5 @@
-id: paragliding-twin
-name: paragliding-twin
+id: paragliding-insights
+name: paragliding-insights
 version: 0.1.0
 services:
   auth:

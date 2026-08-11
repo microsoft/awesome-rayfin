@@ -1,4 +1,4 @@
-# Paragliding Twin
+# Paragliding Insights
 
 **Der Luftraum über Oberstdorf und dem Nebelhorn als interaktive 3D-Flugkarte.**
 *The airspace over Oberstdorf and the Nebelhorn as an interactive 3D flying map.*
@@ -10,7 +10,7 @@
 
 > The app calls itself **Gleitschirm-Insights** on screen and in its own sources — that is its name,
 > and renaming the product inside a template would only make its own tests and comments lie. The
-> gallery entry is `paragliding-twin` because that is what it is.
+> gallery entry is `paragliding-insights`, which is the same name in English.
 
 ---
 
@@ -92,7 +92,7 @@ Scaffold it from the gallery:
 
 ```bash
 npm create @microsoft/rayfin -- --template https://github.com/microsoft/awesome-rayfin
-# choose "Paragliding Twin"
+# choose "Paragliding Insights"
 ```
 
 You need Node 20+, Python 3.11+, and about 380 MB of download budget for the geodata.

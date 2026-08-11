@@ -1,5 +1,5 @@
 {
-  "templateId": "paragliding-twin",
+  "templateId": "paragliding-insights",
   "icon": "blank-app",
   "services": {
     "auth": true,
