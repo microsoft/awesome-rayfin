@@ -16,6 +16,11 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install native Node.js build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libsecret-1-dev
+
       - name: Validate template metadata
         run: |
           errors=0
@@ -97,6 +102,11 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "20"
+
+      - name: Install native Node.js build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libsecret-1-dev
 
       - name: Detect touched templates
         id: detect-templates
