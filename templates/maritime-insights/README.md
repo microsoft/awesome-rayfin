@@ -32,31 +32,34 @@ propagation anomaly, no detection probability, no product performance data, in a
 
 ### ⚠️ "Live" traffic: what you will actually see
 
-The app has a genuine live path, but **it needs a relay you run yourself**, and the free public AIS
-source it was built against is currently not sending anything.
+**By default the app has one mode: the recorded day.** There is no Live toggle unless you configure
+a relay, and that is deliberate.
 
-- **Out of the box there is no live data.** With no relay reachable the app stays on the recorded
-  day and says so.
-- **Even with the relay running, the upstream is down.** `aisstream.io` has delivered **zero frames
-  to its entire user base since 2026-08-05** — provider-side, not key- or region-specific. Our own
-  relay has held an accepted subscription for **51 hours without receiving one message**
-  (`everReceived: false`, `messages: 0`, `upstreamErrors: 0`, measured 2026-08-12). Their issue
-  tracker carries a dozen identical reports and no maintainer reply.
-- **So the relay stands in with the recorded day**, and every claim on screen changes with it: the
-  count carries its caveat in the same string (*"51 Schiffe (Aufzeichnung)"*), a second banner says
-  the live source is not sending, the footer credits the **recording** rather than the silent
-  provider, and identities are marked synthetic because the stand-in emits invented MMSIs.
+The live path is real and still here — but the free public AIS source it was built against is
+sending nothing, so the relay stands in with the recording. That left two controls that both showed
+recorded traffic, which is a choice with no consequence: a puzzle in front of the reader rather than
+a feature. On the second AOI it was worse than useless, because the stand-in holds only the Kiel
+Fjord recording — switching to Live on the Schlei produced **an empty sea** (measured: 0 vessels in
+area against 61 reporting outside it).
 
-🔴 **Do not read a ship on screen as a ship at sea right now** unless the feed says `live`.
-Check which it is rather than trusting this paragraph, which will age:
+- **The traffic you see is a recorded day**, `2026-07-01` from the Danish Maritime Authority: 261
+  passages, 44 084 positions, on a scrubber with story beats. Real MMSIs and names.
+- **To turn the live path back on**, set `VITE_AIS_RELAY` to a relay you run and rebuild. The toggle
+  returns with it — no code change, nothing was deleted.
+- **The upstream is down**, not our key: `aisstream.io` has delivered **zero frames to its entire
+  user base since 2026-08-05**. Our relay held an accepted subscription for **51 hours without one
+  message** (`everReceived: false`, `messages: 0`, `upstreamErrors: 0`, measured 2026-08-12). Their
+  issue tracker carries a dozen identical reports and no maintainer reply.
+
+Check the state rather than trusting this paragraph, which will age:
 
 ```bash
 curl https://<your-relay>/ais/health     # upstream, everReceived, messages, fallback
 ```
 
 `upstream: "silent"` with `everReceived: false` means the provider accepted the subscription and
-sent nothing — their outage. A rejected key looks different: the socket closes in about a second,
-and the reconnect count climbs by thousands per day rather than by four.
+sent nothing — their outage. A rejected key looks different: the socket closes in about a second and
+the reconnect count climbs by thousands a day rather than by four.
 
 **No free feed currently covers this water.** Measured 2026-08-12: Fintraffic/Digitraffic is live,
 keyless and CC BY 4.0 but Finnish waters only (**0 of 837 vessels** inside the Kiel bounding box);

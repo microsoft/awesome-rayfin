@@ -40,8 +40,24 @@ import {
  * listening the app stays in replay and says so — a missing relay is a supported state, not an
  * error.
  */
-const RELAY_URL = (import.meta.env.VITE_AIS_RELAY as string | undefined)
-  ?? "http://127.0.0.1:8788";
+const RELAY_URL = (import.meta.env.VITE_AIS_RELAY as string | undefined)?.trim() ?? "";
+
+/**
+ * Is a live feed on offer at all?
+ *
+ * 🔴 **A choice between two things that behave the same is not a feature, it is a puzzle.** While
+ * the upstream AIS provider is down the relay stands in with the recorded day, so "Live" and
+ * "Aufzeichnung" both showed recorded traffic and the reader was left to work out why they were
+ * being asked to pick. Worse on the second AOI: the stand-in only holds the Kieler Förde recording,
+ * so switching to Live on the Schlei produced **an empty sea** — measured, 0 vessels in area against
+ * 61 reporting outside it.
+ *
+ * So the control appears only when someone has actually pointed the app at a relay. Nothing is
+ * deleted: `liveSource`, `liveList` and the scene's live buffers are all still here and still
+ * tested, because the moment the provider recovers this is one environment variable away from
+ * coming back.
+ */
+const LIVE_OFFERED = RELAY_URL.length > 0;
 
 interface Status {
   stage: string;
@@ -611,10 +627,14 @@ export default function App({ initialTheme = "dark" }: { initialTheme?: ThemeNam
 
   // The live feed. Connecting is the only thing that can tell us whether a relay is there, so the
   // toggle attempts it and the UI reports what happened rather than pretending to know in advance.
+  //
+  // ⚠️ `LIVE_OFFERED` is checked here as well as on the button. Belt and braces on purpose: with no
+  // relay configured there is no address to dial, and an unconditional connect would spend the
+  // page's first seconds failing against a host nobody nominated.
   useEffect(() => {
     const handle = handleRef.current;
     if (!ready || !handle) return;
-    if (!liveWanted) {
+    if (!liveWanted || !LIVE_OFFERED) {
       liveRef.current?.close();
       liveRef.current = null;
       handle.setLiveMode(false);
@@ -2373,16 +2393,18 @@ export default function App({ initialTheme = "dark" }: { initialTheme?: ThemeNam
           <div style={{ display: "flex", gap: 12, alignItems: "center", pointerEvents: "auto",
                         background: "var(--mi-panel-soft)", padding: "8px 14px", borderRadius: 8,
                         fontSize: 12, maxWidth: "min(760px, 92vw)" }}>
-            <button
-              data-testid="twin3d-live-toggle"
-              onClick={() => setLiveWanted((on) => !on)}
-              aria-pressed={liveWanted}
-              style={{ background: liveWanted ? "var(--mi-accent20)" : "var(--mi-line07)", color: "var(--mi-text)",
-                       border: `1px solid ${liveWanted ? "var(--mi-accent)" : "var(--mi-line20)"}`,
-                       borderRadius: 6, padding: "6px 12px", cursor: "pointer", fontSize: 12 }}
-            >
-              {liveWanted ? "Live" : "Aufzeichnung"}
-            </button>
+            {LIVE_OFFERED && (
+              <button
+                data-testid="twin3d-live-toggle"
+                onClick={() => setLiveWanted((on) => !on)}
+                aria-pressed={liveWanted}
+                style={{ background: liveWanted ? "var(--mi-accent20)" : "var(--mi-line07)", color: "var(--mi-text)",
+                         border: `1px solid ${liveWanted ? "var(--mi-accent)" : "var(--mi-line20)"}`,
+                         borderRadius: 6, padding: "6px 12px", cursor: "pointer", fontSize: 12 }}
+              >
+                {liveWanted ? "Live" : "Aufzeichnung"}
+              </button>
+            )}
 
             {!liveWanted && (
               <span style={{ opacity: 0.7 }}>
