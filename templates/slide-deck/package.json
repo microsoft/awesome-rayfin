@@ -6,7 +6,8 @@
   "template": {
     "name": "slide-deck",
     "displayName": "Slide Deck",
-    "description": "Interactive slide deck presenter with sessions, live slide tracking, and audience chat"
+    "description": "Interactive slide deck presenter with sessions, live slide tracking, and audience chat",
+    "category": "business"
   },
   "scripts": {
     "predev": "rayfin env --framework vite",

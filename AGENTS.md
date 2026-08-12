@@ -11,7 +11,7 @@ This repository is the **Awesome Rayfin** template gallery, not a single Rayfin 
 ## Key repo workflows
 
 - `scripts/new-template.sh` scaffolds a new template directory: `./scripts/new-template.sh <name> "<Display Name>" "<description>"`
-- `scripts/generate-manifest.mjs` regenerates the root `rayfin-template.yml`, per-template manifests, and the README templates table.
+- `scripts/generate-manifest.mjs` regenerates the root `rayfin-template.yml`, per-template manifests, and the categorised template gallery in README.
 - `node scripts/generate-manifest.mjs --check` verifies generated files are up to date.
 
 ## Cross-platform compatibility

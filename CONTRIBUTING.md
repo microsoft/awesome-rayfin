@@ -28,12 +28,14 @@ This repo is a curated gallery of templates and resources for Rayfin builders. C
 
 1. Open an issue describing the template — what it does, what Rayfin features it uses, and who it's for.
 2. Review the [Template Guidelines](docs/template-guidelines.md) for required files and conventions.
-3. Submit a PR that adds an entry to the appropriate section in `README.md`.
-4. Each entry should include:
-   - **Name** with a link to the repository or directory
-   - **Description** — one or two sentences explaining what it demonstrates
-   - **Feature tags** — which Rayfin capabilities it uses (Auth, Data, Storage, etc.)
-   - **Stack** — frameworks and libraries used (React, Vue, Vite, Tailwind, etc.)
+3. Submit a PR that adds the template under `templates/`.
+4. Each template should provide:
+   - **Metadata** — `template.name`, `template.displayName`, `template.description`, and `template.category` in `package.json`
+   - **A preview image** — `docs/previews/<template-directory-name>.webp`, 1280x800 and under 200 KB
+   - **Feature flags** — which Rayfin capabilities it uses (`services` in `manifest.json`)
+   - **Stack** — frameworks and libraries used, picked up from your dependencies
+5. Run `node scripts/generate-manifest.mjs` and commit the result. The README gallery is
+   generated from that metadata — do not hand-edit it.
 
 ### Adding a resource link
 

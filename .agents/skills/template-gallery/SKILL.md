@@ -1,6 +1,6 @@
 ---
 name: template-gallery
-description: "Use when working in the Awesome Rayfin template gallery repo — creating, validating, or updating templates under templates/, regenerating gallery manifests, or updating the templates table in README. Triggers: awesome-rayfin, template gallery, templates/, new-template.sh, generate-manifest.mjs, rayfin-template.yml, manifest.json, template metadata, templateId, template.name, template.displayName, template.description, rayfin init -t, scaffold template, gallery README, leaf manifest, root manifest"
+description: "Use when working in the Awesome Rayfin template gallery repo — creating, validating, or updating templates under templates/, regenerating gallery manifests, or updating the categorised template gallery in README. Triggers: awesome-rayfin, template gallery, templates/, new-template.sh, generate-manifest.mjs, rayfin-template.yml, manifest.json, template metadata, templateId, template.name, template.displayName, template.description, template.category, docs/previews, rayfin init -t, scaffold template, gallery README, leaf manifest, root manifest"
 metadata:
   author: microsoft
   version: "0.1.0"
@@ -38,7 +38,9 @@ Make changes that keep individual templates, generated manifests, and gallery do
    - `template.name`
    - `template.displayName`
    - `template.description`
-6. If the template adds new routes or features, make sure the README explains what the template demonstrates.
+   - `template.category` — one of `starters`, `business`, `analytics`, `fabric-tools`, `digital-twins`, `games`
+6. Add a gallery preview image at `docs/previews/<template>.webp` (1280x800, under 200 KB). Without one the card falls back to a shared placeholder.
+7. If the template adds new routes or features, make sure the README explains what the template demonstrates.
 
 ## Validate a template
 
@@ -52,7 +54,7 @@ Make changes that keep individual templates, generated manifests, and gallery do
    ```
    If the CLI supports it in your environment, point the output to a new empty directory so you can inspect the scaffolded result safely.
 3. Check the scaffolded output contains the expected project files, especially `package.json`.
-4. Re-open the source template's `package.json` and confirm `template.name`, `template.displayName`, and `template.description` are present and correct.
+4. Re-open the source template's `package.json` and confirm `template.name`, `template.displayName`, `template.description`, and `template.category` are present and correct.
 5. If the repo workflow or your change touches manifest generation, compare the regenerated files before finishing.
 
 ## Update the gallery after template changes
@@ -66,7 +68,7 @@ node scripts/generate-manifest.mjs
 This regenerates:
 - root `rayfin-template.yml`
 - per-template `rayfin-template.yml`
-- the templates table in `README.md`
+- the categorised template gallery in `README.md`, between the `<!-- TEMPLATES:START -->` and `<!-- TEMPLATES:END -->` markers
 
 Do not hand-edit generated manifest content if the script owns it.
 

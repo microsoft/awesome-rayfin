@@ -6,7 +6,8 @@
   "template": {
     "name": "field-technician",
     "displayName": "Field Technician App",
-    "description": "Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric)"
+    "description": "Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric)",
+    "category": "business"
   },
   "scripts": {
     "predev": "rayfin env --framework vite",

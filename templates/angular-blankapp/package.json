@@ -6,7 +6,8 @@
   "template": {
     "name": "angular-blankapp",
     "displayName": "Angular Blank App",
-    "description": "Bare-bones Fabric-authenticated Angular + Material app — sign-in, routing, and a placeholder home page, with no data layer to remove"
+    "description": "Bare-bones Fabric-authenticated Angular + Material app — sign-in, routing, and a placeholder home page, with no data layer to remove",
+    "category": "starters"
   },
   "scripts": {
     "predev": "rayfin env --framework vite",

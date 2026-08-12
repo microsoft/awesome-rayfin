@@ -18,7 +18,7 @@ entries:
     description: HTML5 Canvas platformer that teaches IBCS chart rules level by level, embedded in a Fabric-authenticated Rayfin app; each play-through is persisted to a typed GameStats entity
   - path: templates/pbi-fixer
     name: Power BI Fixer
-    description: Fabric-authenticated workspace that inspects, documents, and fixes Power BI semantic models and reports — a best-practice analyzer with one-click and batch fixes, a report explorer with PBIR diffs, AI-assisted metadata cleanup, and a free IBCS visual, all powered server-side by Fabric User Data Functions
+    description: Inspect, document, and fix Power BI semantic models and reports — best-practice analysis, one-click and batch fixes, a report explorer with PBIR diffs, and a free IBCS visual, powered server-side by Fabric User Data Functions
   - path: templates/slide-deck
     name: Slide Deck
     description: Interactive slide deck presenter with sessions, live slide tracking, and audience chat

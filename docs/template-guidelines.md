@@ -17,7 +17,7 @@ Each template should include the following files:
 
 | File | Purpose | Required details |
 | --- | --- | --- |
-| `package.json` | Template package metadata and scripts | Must include a `template` object with `name`, `displayName`, and `description` |
+| `package.json` | Template package metadata and scripts | Must include a `template` object with `name`, `displayName`, `description`, and `category` |
 | `manifest.json` | Gallery manifest metadata | Must include `templateId`, `icon`, `services`, `hasDabSchema`, and `tokens` |
 | `rayfin-template.yml` | Leaf Rayfin template manifest | Must contain `apiVersion: v1`, `metadata` (`name`, `displayName`, `description`), and an `entries` item with `path: .` and `name` |
 | `rayfin/rayfin.yml` | Rayfin service configuration | Include `id`, `name`, `version`, and service configuration |
@@ -39,9 +39,40 @@ Use these values consistently across template files:
 - `template.name`: kebab-case identifier that matches the directory name
 - `template.displayName`: human-readable name shown in the CLI picker
 - `template.description`: one-line description of the template
+- `template.category`: gallery category the template belongs to (see below)
 - `manifest.json.templateId`: same value as `template.name`
 - `manifest.json.icon`: icon identifier for the template
 - `rayfin-template.yml.metadata`: should mirror the `template` metadata from `package.json`
+
+## Gallery categories
+
+The README gallery is grouped by `template.category`. Pick the single best fit:
+
+| Category | Use it for |
+| --- | --- |
+| `starters` | Minimal scaffolds — auth wired up, little or nothing to delete |
+| `business` | Everyday operational apps: dashboards, field work, presenting |
+| `analytics` | Apps that put data and insight in front of an end user |
+| `fabric-tools` | Apps that inspect, document, or administer the data platform itself |
+| `digital-twins` | 3D, map, and live-operations views of real-world systems |
+| `games` | Canvas and game-engine apps, and interactive teaching |
+| `other` | Fallback — used automatically when the field is missing or unknown |
+
+Categories with no templates are still listed, with an invitation to contribute the first one,
+so builders can see where a new template belongs.
+
+## Preview images
+
+Each template gets one row in the README gallery. The row's preview image is resolved by
+convention — no metadata field is needed:
+
+- Path: `docs/previews/<template-directory-name>.webp` (`.png`, `.jpg`, `.jpeg`, and `.gif` also work)
+- Size: 1280x800, displayed at 180px wide
+- Budget: keep it under 200 KB — WebP at quality ~85 comfortably fits
+- Content: a real screenshot of the running app is preferred; a designed title card is an acceptable stand-in
+
+If no image is found, the shared `docs/previews/_placeholder.webp` is used and the
+generator prints a warning.
 
 ## `manifest.json` conventions
 
@@ -95,8 +126,11 @@ The repository includes automation to keep template metadata in sync:
 
 - `scripts/generate-manifest.mjs` reads `package.json` template metadata
 - It generates the root `rayfin-template.yml`
-- It generates each template’s leaf `rayfin-template.yml`
-- It updates the templates table in the root `README.md`
+- It generates each template's leaf `rayfin-template.yml`
+- It regenerates the categorised gallery in the root `README.md`, between the
+  `<!-- TEMPLATES:START -->` and `<!-- TEMPLATES:END -->` markers
+
+Everything between those markers is generated — edit the template metadata, not the README.
 
 After adding or updating a template, run:
 
@@ -113,6 +147,8 @@ Before opening a PR, make sure the template:
 - Lives in `templates/<kebab-case-name>/`
 - Includes every required file listed above
 - Uses matching identifiers across `package.json`, `manifest.json`, and `rayfin/rayfin.yml`
+- Declares a `template.category` from the supported list
+- Ships a preview image at `docs/previews/<template-directory-name>.webp`
 - Includes a README with the required sections
 - Follows the React/Vite/TypeScript/Tailwind/Vitest/ESLint baseline
 - Runs `node scripts/generate-manifest.mjs` so generated manifests and the root README stay up to date

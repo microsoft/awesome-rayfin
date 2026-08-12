@@ -6,7 +6,8 @@
   "template": {
     "name": "todoapp",
     "displayName": "[Experimental] Todo app with full local dev",
-    "description": "End-to-end todo CRUD with username/password auth, a Rayfin data model, and Docker local development — a working starter that exercises the full data path without Fabric"
+    "description": "End-to-end todo CRUD with username/password auth, a Rayfin data model, and Docker local development — a working starter that exercises the full data path without Fabric",
+    "category": "business"
   },
   "scripts": {
     "predev": "rayfin env --framework vite",
