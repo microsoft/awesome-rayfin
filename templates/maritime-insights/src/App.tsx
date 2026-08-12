@@ -17,7 +17,7 @@ import type { VesselDetails } from "./twin3d/scene";
 import { vesselClass } from "./twin3d/vesselClasses";
 import { connectLive, type LiveSource, type LiveState, type LiveStatus } from "./twin3d/liveSource";
 import { checkUrl, describeLiveFeed, formatAge, hasSyntheticIdentity, isUnderWay, LIVE_STALE_MS,
-         summariseLiveVessels, verificationUrl,
+         summariseLiveVessels, verificationUrl, vesselUrl,
          type LiveBounds, type LiveListEntry } from "./twin3d/liveList";
 import { ChatPanel } from "./assistant/ChatPanel";
 import { buildViewSnapshot } from "./assistant/viewSnapshot";
@@ -2155,8 +2155,18 @@ export default function App({ initialTheme = "dark" }: { initialTheme?: ThemeNam
                   {vessel.name && (
                     <a
                       data-testid="twin3d-vessel-verify"
-                      href={`https://www.marinetraffic.com/en/ais/index/search/all?keyword=${
-                        encodeURIComponent(vessel.mmsi)}`}
+                      /*
+                        🔴 One definition, deliberately. This panel used to build the URL inline, and
+                        the copy it built pointed at MarineTraffic's search endpoint, which answers
+                        **404** for every MMSI — so the app's own "go and check us" offer landed the
+                        reader on an error page. That is worse than offering nothing: a verification
+                        link that fails withdraws the claim it was made to support.
+
+                        The duplicate is the real defect. It was removed once before and came back,
+                        because the tests cover `vesselUrl` in liveList.ts and could not see a
+                        second URL hand-written here. `externalLinks.test.ts` now reads this file.
+                      */
+                      href={vesselUrl(vessel.mmsi)}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{ color: "var(--mi-accent)", textDecoration: "none" }}
