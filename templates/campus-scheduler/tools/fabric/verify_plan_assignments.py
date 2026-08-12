@@ -26,6 +26,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import seed_plan_assignments as seed  # noqa: E402
+import fabric_ids  # noqa: E402
 
 
 def main() -> None:
@@ -37,7 +38,8 @@ def main() -> None:
             wanted[str(row[0]).lower()] = row
 
     with pyodbc.connect(
-        f"Driver={{ODBC Driver 18 for SQL Server}};Server={seed.SERVER};Database={seed.DATABASE};"
+        f"Driver={{ODBC Driver 18 for SQL Server}};"
+        f"Server={fabric_ids.sql_server()};Database={fabric_ids.sql_database()};"
         "Encrypt=yes;TrustServerCertificate=no;Connection Timeout=60",
         attrs_before={1256: seed.token()},
     ) as conn:

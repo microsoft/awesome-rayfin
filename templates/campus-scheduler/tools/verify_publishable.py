@@ -37,6 +37,7 @@ examined nothing and said so approvingly.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -84,6 +85,61 @@ STAMPED = [
 # CHECK 2 — the names.
 # ---------------------------------------------------------------------------------------------
 
+
+class HashedNames:
+    """Matches a fixed list of surnames WITHOUT carrying them in readable form.
+
+    ⚠️ THE GUARD USED TO BE THE ONLY FILE IN THE REPOSITORY THAT NAMED THESE PEOPLE.
+
+    The first version was a plain alternation of the two surnames, with an allowlist entry excusing
+    this file, reason: "has to spell the names out to find them". Every word of that was true and
+    the conclusion was still wrong — the check reported `0 not covered` while publishing, to a
+    public gallery, two real surnames of staff at a university this repository names elsewhere.
+    A guard that leaks the thing it guards has not reduced the exposure, it has relocated it.
+
+    (Writing this docstring proved the point: quoting that old line as an example put one of the
+    names straight back, and this check failed on its own file until the quote came out.)
+
+    It does not have to spell them out. Comparing salted digests answers exactly the same
+    question, and a digest cannot be read back into a name. The allowlist entry is gone with the
+    literals, so this file is now scanned like any other and CAN fail — which is the point.
+
+    ⚠️ THE DIGESTS ARE NOT A SECRET EITHER, and must never be treated as one. The keyspace of
+    German surnames is small enough to enumerate, so this defeats a reader, not an attacker. It is
+    the right tool because the risk here IS a reader: someone scrolling a public template and
+    finding a name. Do not reach for this to hide anything that would matter to an attacker.
+
+    Adding a name: `python tools/verify_publishable.py --hash "Surname"` prints the line to paste.
+    """
+
+    #: sha256(SALT + ":" + surname.lower())[:16] — see --hash.
+    SALT = "campus-scheduler/publishable/v1"
+    DIGESTS = {
+        "638bbd3ebc2b74d9",  # the professor whose timetable workbook reached us
+        "f13eb24ea1896ebc",  # the IT staff member who sent the export
+    }
+
+    #: 4+ letters, so initials and short codes do not generate noise. German letters included:
+    #: a surname is exactly the kind of token that carries them.
+    _TOKEN = re.compile(r"[A-Za-z\u00c0-\u024f]{4,}")
+
+    @classmethod
+    def digest(cls, word: str) -> str:
+        return hashlib.sha256(f"{cls.SALT}:{word.lower()}".encode()).hexdigest()[:16]
+
+    def findall(self, blob: bytes) -> list[bytes]:
+        """Same shape as a compiled pattern's `findall`, so the scan loop treats it identically."""
+        # `errors="ignore"` is safe here and would not be in a decoder: a byte sequence that is not
+        # valid UTF-8 cannot be part of a name we are looking for, and dropping it only ever
+        # removes candidates. A binary file simply yields no tokens.
+        text = blob.decode("utf-8", "ignore")
+        return [
+            m.group(0).encode("utf-8")
+            for m in self._TOKEN.finditer(text)
+            if self.digest(m.group(0)) in self.DIGESTS
+        ]
+
+
 PATTERNS = {
     "tum": re.compile(
         rb"NavigaTUM|navigatum|TUMonline|tumonline|\bTUM\b|Garching|"
@@ -105,7 +161,7 @@ PATTERNS = {
     # `Stundenverteilungsplan`, which are a standard German university form and identify nobody —
     # three benign hits, and a check that cries wolf is a check that gets an allowlist entry
     # written for it in a hurry, which is the failure this whole class exists to undo.
-    "customer_people": re.compile(rb"Andorfer|Biersack"),
+    "customer_people": HashedNames(),
     # ⚠️ NOT A LICENCE QUESTION, AND THAT IS WHY IT IS A SEPARATE CLASS. None of these is a
     # secret — a workspace id is useless to anyone without access to it. They are simply one
     # tenant's coordinates, and a template that carries them points every clone at one deployment
@@ -115,8 +171,28 @@ PATTERNS = {
     # shipping.
     "internal": re.compile(
         rb"fc3a8969|5249380b|522a9b89|4d41d56f|MngEnvMCAP|webapp\.fabricapps\.net|"
-        rb"alkorn@|azurecontainerapps\.io",
+        rb"alkorn@|azurecontainerapps\.io|"
+        # ⚠️ HOST SHAPES, ADDED AFTER THE LITERALS ABOVE LET ONE THROUGH. The list above is
+        # everything I had already NOTICED, and a check scoped to what I already noticed cannot
+        # find what I forgot: a live Fabric SQL endpoint sat in `seed_plan_assignments.py`
+        # through every green run of this script, because its host was in no line of it. Match
+        # the shape of an address, not the addresses one person happened to remember.
+        rb"\.database\.fabric\.microsoft\.com|\.datawarehouse\.fabric\.microsoft\.com|"
+        rb"\.pbidedicated\.windows\.net|\.openai\.azure\.com|\.azurecr\.io|\.vault\.azure\.net",
     ),
+    # ⚠️ ANY GUID AT ALL, WHICH IS DELIBERATELY BLUNTER THAN THE CLASS ABOVE.
+    #
+    # The `internal` list names identifiers. This one names a SHAPE, because the failure it exists
+    # to catch is not "I typed the wrong guid" but "I did not know this guid was here". A tenant's
+    # coordinates are 36 characters that look like every other 36 characters, so the only way to
+    # be sure none is riding along is to ask about all of them and account for each answer.
+    #
+    # It is noisy by design and the allowlist below is how that noise is paid for: three entries,
+    # each naming why THAT file's guid is not anybody's address. When a fourth appears, read it —
+    # the whole value of this class is the moment somebody has to look at a new guid and say what
+    # it is. If this list ever grows long enough to be annoying, that is the signal to split the
+    # generated identifiers out of the source, not to delete the check.
+    "tenant_guid": re.compile(rb"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"),
 }
 
 # ⚠️ PATH PREFIXES, WITH A REASON EACH. A prefix rather than an exact path because these are whole
@@ -168,13 +244,29 @@ ALLOWED = {
     # reason to appear anywhere in a public template, so there is nothing to justify. If this list
     # ever grows an entry, the entry is the thing to argue about.
     "customer_people": [
-        ("tools/verify_publishable.py", "this file, which has to spell the names out to find them"),
+        # ⚠️ THE ENTRY THAT USED TO SIT HERE IS GONE ON PURPOSE. It excused this file, because the
+        # pattern spelled the surnames out. `HashedNames` no longer does, so this file is scanned
+        # like every other and the class has no exemptions at all — which is the only state in
+        # which "0 not covered by the allowlist" means what it says.
     ],
     "internal": [
         ("tools/verify_publishable.py", "this file, which has to spell the patterns out"),
+        ("tools/fabric/fabric_ids.py",
+         "documents the SHAPE of the env vars it demands — a placeholder host against the public "
+         "Fabric SQL suffix. It is the file that exists so no real endpoint is written down"),
         ("tools/verify_deploy.mjs", "the post-deploy verifier, which knows what a Fabric host looks like"),
         ("e2e/site-guard.spec.ts", "matches the Azure Container Apps domain to tell which host a "
                                   "request went to — a public suffix, not anybody's address"),
+    ],
+    "tenant_guid": [
+        ("tools/verify_publishable.py", "this file, which has to spell the guid shape out"),
+        ("src/api/__tests__/assignmentId.test.ts",
+         "expected values of the deterministic id function, computed FROM a site and a session id "
+         "by the algorithm under test — they identify a row in a timetable, not a resource, and "
+         "they are what makes the Python seeder and the TypeScript app provably agree"),
+        ("tools/fabric/build_semantic_model.py",
+         "a uuid5 NAMESPACE constant, chosen once so table ids are reproducible across runs — an "
+         "arbitrary seed, not the address of anything"),
     ],
 }
 
@@ -279,7 +371,14 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", default=str(REPO), help="tree to check (default: this repository)")
     ap.add_argument("--census", action="store_true", help="print every match, including allowlisted ones")
+    ap.add_argument("--hash", metavar="SURNAME", nargs="+",
+                    help="print the digest line for a name, to paste into HashedNames.DIGESTS")
     args = ap.parse_args()
+
+    if args.hash:
+        for word in args.hash:
+            print(f'        "{HashedNames.digest(word)}",  # describe the ROLE here, never the name')
+        return 0
 
     root = Path(args.root).resolve()
     if not root.is_dir():

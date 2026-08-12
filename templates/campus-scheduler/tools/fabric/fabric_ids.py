@@ -16,6 +16,8 @@ Set them once per shell:
     $env:FABRIC_WORKSPACE_ID = "<workspace guid>"
     $env:FABRIC_LAKEHOUSE_ID = "<lakehouse guid>"     # after setup_lakehouse.py has created it
     $env:FABRIC_FOLDER_ID    = "<folder guid>"        # optional; omit to create at the root
+    $env:FABRIC_SQL_SERVER   = "<host>.database.fabric.microsoft.com,1433"
+    $env:FABRIC_SQL_DATABASE = "<database name, which carries the database guid as a suffix>"
 
 ⚠️ A MISSING VALUE RAISES, IT DOES NOT DEFAULT. A default that "usually works" is how a script
 that writes Delta tables ends up writing them somewhere nobody meant, and the write succeeds.
@@ -49,3 +51,23 @@ def lakehouse_id() -> str:
 def folder_id() -> str | None:
     """Optional. `None` means "create at the workspace root", which is a valid answer."""
     return os.getenv("FABRIC_FOLDER_ID", "").strip() or None
+
+
+def sql_server() -> str:
+    """The Fabric SQL endpoint, `<host>.database.fabric.microsoft.com,1433`.
+
+    ⚠️ This one is worth naming separately from the guids above: a workspace id is inert, but a
+    server host is a REACHABLE ADDRESS. Publishing it in a template does not grant anyone access —
+    the endpoint still demands an AAD token — but it points every clone of this repository at one
+    tenant's database, which is not a place a template should know about.
+
+    Read it from Fabric REST rather than the portal, so it cannot be mistyped:
+    `az rest --url https://api.fabric.microsoft.com/v1/workspaces/<ws>/sqlDatabases/<id>`
+    returns `properties.serverFqdn` and `properties.databaseName`.
+    """
+    return _required("FABRIC_SQL_SERVER", "the SQL endpoint of the Fabric database to connect to")
+
+
+def sql_database() -> str:
+    """The database NAME, which carries its guid as a suffix — copy it whole, do not rebuild it."""
+    return _required("FABRIC_SQL_DATABASE", "the name of the Fabric SQL database to connect to")

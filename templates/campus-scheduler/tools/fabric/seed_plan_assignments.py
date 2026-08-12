@@ -28,18 +28,18 @@ import argparse
 import json
 import struct
 import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import fabric_ids  # noqa: E402
 
 SITES = {
     "oth": ROOT / "data" / "synthetic",
     "lmu": ROOT / "data" / "synthetic-lmu",
 }
-
-# Fabric SQL database `campus-scheduler` in workspace `Rayfin Apps`.
-SERVER = "ngetv7da5wve3ew7d7pu75n4cu-bm4esur7kqvu5k32hhk245rt5a.database.fabric.microsoft.com,1433"
-DATABASE = "campus-scheduler-48542a7b-b62d-4070-8ce8-e3c33f5cb652"
 
 
 def assignment_id(site: str, session_id: str) -> str:
@@ -213,7 +213,8 @@ def main() -> None:
     import pyodbc  # imported late so --dry-run works without a driver
 
     with pyodbc.connect(
-        f"Driver={{ODBC Driver 18 for SQL Server}};Server={SERVER};Database={DATABASE};"
+        f"Driver={{ODBC Driver 18 for SQL Server}};"
+        f"Server={fabric_ids.sql_server()};Database={fabric_ids.sql_database()};"
         "Encrypt=yes;TrustServerCertificate=no;Connection Timeout=60",
         attrs_before={1256: token()},
     ) as conn:
