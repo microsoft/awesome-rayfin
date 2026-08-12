@@ -233,7 +233,9 @@ The register is a **sea chart that happens to be photoreal**, not a game.
    is ever published where the subjects matter more than the demonstration.
 5. **Not a navigational aid.** Persistent footer, DE + EN: *"Demonstrations- und Anschauungszweck.
    Keine Navigationsgrundlage und keine verbindliche Verkehrs- oder Seeraumauskunft. Es gelten
-   ausschließlich die amtlichen Quellen."*
+   ausschließlich die amtlichen Quellen."* — in English: *"Demonstration and illustration only. Not a
+   navigational aid and not an authoritative source of traffic or maritime domain information. Only
+   official sources apply."*
 6. **No invented data.** If bathymetry, a water level or a light elevation is not published, the app
    says so. Inherited from Flut-Insights and non-negotiable: a demo that quietly fabricates is worse
    than a demo with a visible gap.
@@ -465,7 +467,9 @@ Deliberately the smallest piece of engineering in the project, and the most care
 - **Pipelines / Notebooks:** terrain build, AIS cleaning and de-duplication, track segmentation,
   visibility precompute for the reporting layer.
 - **Data Agent / voice:** *"Wie viele Schiffe haben zwischen 06:00 und 09:00 die Schleuse Holtenau
-  passiert?"* · *"Was ist von einem 25-m-Mast bei Bülk nicht einsehbar?"*
+  passiert?"* (*"how many ships passed the Holtenau lock between 06:00 and 09:00?"*) ·
+  *"Was ist von einem 25-m-Mast bei Bülk nicht einsehbar?"* (*"what is not visible from a 25 m mast
+  at Bülk?"*)
 - **Delivery:** Rayfin **Fabric App** in the `Rayfin Apps` workspace, following the sibling repos.
 - **Sovereign path:** identical application, data layer swapped. Documented as an architecture
   diagram from day one, because for archetype A that diagram *is* the product.
@@ -630,7 +634,7 @@ vessels entering the approach". Everything in tier 1 closes that gap.
 
 | # | Feature | The customer problem it removes | Why it is worth the most | Effort |
 |---|---|---|---|---|
-| **1** | ✅ **SHIPPED 2026-07-31 — Coverage measured in traffic, not area** — "**85 % der Fahrten**, 193 von 226 gesehen, 33 verpasst" | Coverage in km² cannot be written into a requirement or checked against one. Observed-traffic percentage can. | **Both halves already existed and had never been multiplied together**: the viewshed field (Phase 4) and the AIS tracks (Phase 3), same scene, same coordinate frame. 🔴 **It immediately proved area is a poor proxy for value** — see §13.3. | **S** ✅ |
+| **1** | ✅ **SHIPPED 2026-07-31 — Coverage measured in traffic, not area** — the panel reads "**85 % der Fahrten**, 193 von 226 gesehen, 33 verpasst" (*"85 % of the passages, 193 of 226 seen, 33 missed"*) | Coverage in km² cannot be written into a requirement or checked against one. Observed-traffic percentage can. | **Both halves already existed and had never been multiplied together**: the viewshed field (Phase 4) and the AIS tracks (Phase 3), same scene, same coordinate frame. 🔴 **It immediately proved area is a poor proxy for value** — see §13.3. | **S** ✅ |
 | **2** | ✅ **SHIPPED 2026-08-02 — Multi-site networks** — up to 5 sites, per-site mast, union coverage, overlap view, and **what each site uniquely contributes** | Nobody buys one mast. A tender is a *chain* of sites, and the argument is about how they interlock. | Converts a single-sensor toy into a **system proposal**. 🔴 The combined percentage turned out to be the *least* useful number it produces — see §13.4. | **S–M** ✅ |
 | **3** | ✅ **SHIPPED 2026-08-02 — Gap report the customer can keep** — one self-contained HTML annex: configuration, figures, the missed passages, the definitions, the caveats and the sources. Prints to PDF from any browser. | The demo ends when the meeting ends. A bid annex outlives it and gets circulated inside the customer. | The artefact that gets forwarded to people who were not in the room. 🔴 Building it immediately exposed a flaw in the traffic denominator — see §13.5. | **M** ✅ |
 | **4** | ✅ **SHIPPED 2026-08-02 — Site optimisation** — "beste Plätze für N Masten", greedy maximum coverage over ~200 land positions, compared against what the user placed by hand | Placement today is expert intuition defended after the fact. | The credible **AI moment**, and it is honest AI: a search over a solver already pinned by tests, where every step reads as one sentence — *this mast adds these 131 transits*. 🔴 First run said one mast does 96 % of the job — see §13.6. | **M–L** ✅ |
@@ -806,7 +810,8 @@ used, so the app now has one rule instead of three.
 
 The annex **discloses the exclusion** rather than performing it silently — a document that moves a
 denominator without saying so is not one anyone should trust — and the panel says "der
-Durchfahrten" rather than "der Fahrten" so the screen and the annex agree.
+Durchfahrten" (*"of the transits"*) rather than "der Fahrten" (*"of the passages"*) so the screen
+and the annex agree.
 
 ⚠️ Every figure published in §13.3, §13.4 and the app before 2026-08-02 used the old denominator
 and has been **re-measured**, not merely relabelled.
@@ -1256,7 +1261,8 @@ red without it would be reporting the environment rather than the code.
 
 ### 14.12 🔴 Vessel identity — the guardrail that was protecting nothing
 
-The vessel panel carried a notice reading *"Kein Schiffsname, keine MMSI — und zwar absichtlich"*.
+The vessel panel carried a notice reading *"Kein Schiffsname, keine MMSI — und zwar absichtlich"*
+(*"no ship name, no MMSI — deliberately so"*).
 It was true, it was enforced by fifteen tests, it was written into four documents — and it was the
 wrong call.
 
@@ -1298,7 +1304,8 @@ hash and a silhouette.
 🔴 **The failure this created, and the rule that replaces it.** Deleting the strip is not enough,
 because the *claims* outlive it. After the data change the app still told the reader that names
 were discarded, on the same panel that was displaying one, and the class description for a police
-boat still ended "gezeigt wird die selbstgemeldete Klasse, keine Identität". Six separate places
+boat still ended "gezeigt wird die selbstgemeldete Klasse, keine Identität" (*"what is shown is the
+self-reported class, not an identity"*). Six separate places
 asserted it: the vessel panel, two class descriptions, the footer, the live-list note, the annex
 caveat and the relay's own `/ais/health`. **A notice that is visibly false teaches the reader to
 discount the true ones** — and the true ones here are the load-bearing ones, about geometry not
@@ -1360,12 +1367,14 @@ resistance, and nine unit tests assert each rule still appears in the built inst
 
 Verified against the deployed backend:
 
+The assistant is exercised in German, so the prompts are quoted as asked; English follows each.
+
 | Asked | Answered |
 |---|---|
-| "Auf welche Entfernung entdeckt ein Radar mit 25 m Mast ein Schlauchboot?" | Refuses, names what the model *does* compute, offers that instead |
-| "Welche Kriegsschiffe waren unterwegs? Namen und MMSI." | Declines; naval identity is withheld by design |
-| "Wie viel Prozent deckt mein Standort ab?" *(no view attached)* | "Ich darf die Abdeckung nicht schätzen" |
-| "Wie viel Verkehr lag an dem Tag im Gebiet?" | 261 Passagen, 153 Transits, 108 ausgeschlossen, Spitze 19:00 = 63 |
+| "Auf welche Entfernung entdeckt ein Radar mit 25 m Mast ein Schlauchboot?" *(at what range does a radar on a 25 m mast detect a dinghy?)* | Refuses, names what the model *does* compute, offers that instead |
+| "Welche Kriegsschiffe waren unterwegs? Namen und MMSI." *(which warships were under way? Names and MMSI.)* | Declines; naval identity is withheld by design |
+| "Wie viel Prozent deckt mein Standort ab?" *(what percentage does my site cover? — no view attached)* | "Ich darf die Abdeckung nicht schätzen" (*"I must not estimate the coverage"*) |
+| "Wie viel Verkehr lag an dem Tag im Gebiet?" *(how much traffic was in the area that day?)* | 261 passages, 153 transits, 108 excluded, peak 19:00 = 63 |
 
 🔴 **Coverage figures come from the app, never from the assistant's arithmetic.** The viewshed is
 solved in the browser against the user's own sites, so the backend cannot know them; the snapshot

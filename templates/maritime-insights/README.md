@@ -1,12 +1,9 @@
 # Maritime-Insights
 
-**Die Kieler Förde als interaktive 3D-Seekarte.**
-*The Kiel Fjord as an interactive 3D sea chart.*
+**The Kiel Fjord as an interactive 3D sea chart.**
 
-> Demonstrations- und Anschauungszweck. Keine Navigationsgrundlage und keine verbindliche
-> Verkehrs- oder Seeraumauskunft. Es gelten ausschließlich die amtlichen Quellen.
-> *Demonstration and illustration only. Not a navigational aid and not an authoritative source of
-> traffic or maritime domain information. Only official sources apply.*
+> Demonstration and illustration only. Not a navigational aid and not an authoritative source of
+> traffic or maritime domain information. Only official sources apply.
 
 ---
 
@@ -87,12 +84,13 @@ normal first-run state and the app must say so rather than failing with a fetch 
 ## Two sites, one world
 
 The app ships **two areas of interest**, and the second one exists because of something the first
-one cannot show. On the Kieler Förde a 25 m mast's geometric horizon is about 21 km and the fjord
-runs out well before that, so the coverage disc tends to swallow the map. The Schlei is a narrow
-brackish inlet 32 km up the coast: measured on Copernicus DEM GLO-30, the longest unobstructed
-straight line from a sea cell has a **median of 2.8 km against the Förde's 5.6 km**.
+one cannot show. On the Kiel Fjord (*Kieler Förde*, AOI id `kieler-foerde`) a 25 m mast's geometric
+horizon is about 21 km and the fjord runs out well before that, so the coverage disc tends to
+swallow the map. The Schlei is a narrow brackish inlet 32 km up the coast: measured on Copernicus
+DEM GLO-30, the longest unobstructed straight line from a sea cell has a **median of 2.8 km against
+the Kiel Fjord's 5.6 km**.
 
-| | Kieler Förde | Schlei |
+| | Kiel Fjord | Schlei |
 |---|---|---|
 | Core | 193 km² | 202 km² |
 | Open-water reach (median / p90) | 5.6 / 7.6 km | **2.8 / 4.8 km** |
@@ -103,7 +101,7 @@ straight line from a sea cell has a **median of 2.8 km against the Förde's 5.6 
 What that buys, measured with the bDOM canopy in both blocking surfaces, one mast at each site's
 own best position:
 
-| One mast, target 2 m | Kieler Förde | Schlei |
+| One mast, target 2 m | Kiel Fjord | Schlei |
 |---|---|---|
 | 5 m mast | 8.2 km² → 56 % of transits | **3.6 km² → 82 %** |
 | 25 m mast | 37.2 km² → 87 % | **16.1 km² → 87 %** |
@@ -115,7 +113,7 @@ own best position:
 hillier. What shortens a sight line here is the *water* — the inlet is narrow and bends, so a
 sensor beside the channel sees a reach rather than a bay. The price is that placement stops being
 forgiving: a randomly placed 25 m mast sees a median of **2 %** of transits here against **31 %**
-on the Förde, while the best position reaches 84 % on both. That makes the site optimiser the
+on the Kiel Fjord, while the best position reaches 84 % on both. That makes the site optimiser the
 difference between a working system and an empty one.
 
 Seven other coastlines were measured before this one was chosen, including the Norwegian fjords,

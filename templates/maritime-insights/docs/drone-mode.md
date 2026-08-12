@@ -58,10 +58,10 @@ and stand — which is a far better answer to "what does this site not see" than
 
 Two actions make that loop quick:
 
-- **Auf Mastspitze** — puts the camera exactly at the eye height the viewshed was solved for. This
-  is the one viewpoint from which the coverage field is not an abstraction.
-- **Standort hier setzen** — drops the notional site beneath the camera, so you can fly to a
-  headland, place a site, and look.
+- **Auf Mastspitze** (*"to the mast top"*) — puts the camera exactly at the eye height the viewshed
+  was solved for. This is the one viewpoint from which the coverage field is not an abstraction.
+- **Standort hier setzen** (*"place a site here"*) — drops the notional site beneath the camera, so
+  you can fly to a headland, place a site, and look.
 
 In drone mode a click is a look, not a placement: the pointer is the gimbal.
 

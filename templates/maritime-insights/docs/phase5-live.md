@@ -62,9 +62,10 @@ Live vessels are written into the **same buffer layout** the replay asset decode
 (`position`, `aTime`, `aSpeed`) and drawn by the **same material instances** — so they inherit the
 coverage uniforms for free.
 
-The test is Mode D. Toggling *"nur Verkehr außerhalb der modellierten Sicht"* while the scene is
-running on live data **changes the rendered frame**. That can only happen if live vessels are going
-through the same coverage shader as replay vessels, which is the gate.
+The test is Mode D. Toggling *"nur Verkehr außerhalb der modellierten Sicht"* (*"only traffic outside
+the modelled view"*) while the scene is running on live data **changes the rendered frame**. That can
+only happen if live vessels are going through the same coverage shader as replay vessels, which is
+the gate.
 
 Measured on the deployed build with the relay running:
 

@@ -13,15 +13,19 @@ python tools/geodata/verify_sources.py
 
 ## Terrain, surface model, buildings, orthophoto — Schleswig-Holstein
 
-**Landesamt für Vermessung und Geoinformation Schleswig-Holstein (LVermGeo SH)**, published as
-open data through the state geodata portal.
+**Landesamt für Vermessung und Geoinformation Schleswig-Holstein (LVermGeo SH)** — the Schleswig-Holstein
+state survey and geoinformation office — published as open data through the state geodata portal.
+
+> ⚠️ The German names below are kept deliberately. They are the **official product and authority
+> names**, and they are what you must search for in the portal to find the same data; a translated
+> name would find nothing. English glosses are given alongside.
 
 | Product | Use | Licence |
 |---|---|---|
-| DGM1 — Digitales Geländemodell, 1 m | core terrain | **CC BY 4.0** |
-| bDOM — bildbasiertes Digitales Oberflächenmodell, 20 cm | blocking surface — trees and unmodelled structures, **on land only** | **CC BY 4.0** |
-| LoD2 — 3D-Gebäudemodell | buildings | **CC BY 4.0** |
-| DOP20 — Digitale Orthophotos, 20 cm | photoreal drape | **CC BY 4.0** |
+| DGM1 — *Digitales Geländemodell*, 1 m digital terrain model | core terrain | **CC BY 4.0** |
+| bDOM — *bildbasiertes Digitales Oberflächenmodell*, 20 cm image-matched digital surface model | blocking surface — trees and unmodelled structures, **on land only** | **CC BY 4.0** |
+| LoD2 — *3D-Gebäudemodell*, 3D building model | buildings | **CC BY 4.0** |
+| DOP20 — *Digitale Orthophotos*, 20 cm digital orthophotos | photoreal drape | **CC BY 4.0** |
 
 🔴 **bDOM is used on land only, and that is a correctness decision rather than a licence one.** It
 is image-matched, so over water it returns wave texture, wakes and moored boats. Admitting that
@@ -32,7 +36,10 @@ land mask decides, and `fetch_bdom.py` records how many cells were dropped for t
 Licence confirmed from the portal's own dataset record
 (`opendata.schleswig-holstein.de`, `license_id = http://dcat-ap.de/def/licenses/cc-by/4.0`).
 
-**Attribution to be carried in the app and on every derived asset:**
+**Attribution to be carried in the app and on every derived asset.** 🔴 This string is reproduced
+**verbatim in German because that is the wording the licensor prescribes** — translating a required
+attribution would stop it being the attribution. English rendering, for readers only: *"Data source:
+Schleswig-Holstein state survey and geoinformation office (LVermGeo SH), CC BY 4.0 [data modified]"*.
 
 > Datenquelle: Landesamt für Vermessung und Geoinformation Schleswig-Holstein (LVermGeo SH),
 > CC BY 4.0 [Daten bearbeitet]
@@ -41,7 +48,8 @@ Vertical datum stated by the source itself, per tile: `DHHN2016_NH`, quasigeoid
 `DE_AdV_GCG2016_QGH`. Acquisition year of the DGM1 tiles over this AOI: **2023**; LoD2: **2024**.
 
 Both areas of interest lie in Schleswig-Holstein and draw on this same source under the same
-licence: **Kieler Förde** (201 DGM1 tiles, 213 bDOM tiles) and **Schlei** (224 DGM1 tiles, 224 bDOM
+licence: **Kiel Fjord** (*Kieler Förde*; 201 DGM1 tiles, 213 bDOM tiles) and **Schlei** (224 DGM1
+tiles, 224 bDOM
 tiles). Choosing the second AOI inside the same federal state was deliberate — it keeps one
 provenance chain and one licence rather than adding a second data platform for one demo.
 
@@ -144,7 +152,8 @@ their identity is withheld. `--include-naval` overrides this deliberately and vi
 
 ## Water level
 
-**PEGELONLINE**, Wasserstraßen- und Schifffahrtsverwaltung des Bundes (WSV), open REST API.
+**PEGELONLINE**, *Wasserstraßen- und Schifffahrtsverwaltung des Bundes* (WSV) — the German federal
+waterways and shipping administration — open REST API.
 Reachable and returning station data (2026-07-29; an earlier probe the same day returned HTTP 503,
 so treat availability as intermittent and cache).
 

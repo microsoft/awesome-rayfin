@@ -183,9 +183,11 @@ geometry — no product performance claim anywhere near it.
 
 ## Guardrails held
 
-- No site exists until the user places one; it carries no name and is labelled *fiktiver Standort*.
+- No site exists until the user places one; it carries no name and is labelled *fiktiver Standort*
+  (*"notional site"*).
 - No real installation is depicted anywhere.
-- Mode D shows the gap and refuses to interpret it: *"Eine Lücke ist kein unentdecktes Schiff."*
+- Mode D shows the gap and refuses to interpret it: *"Eine Lücke ist kein unentdecktes Schiff"*
+  (*"a gap is not an undetected ship"*).
 - Repo remains account-neutral.
 
 ## Open

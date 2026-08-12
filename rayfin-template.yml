@@ -18,7 +18,7 @@ entries:
     description: HTML5 Canvas platformer that teaches IBCS chart rules level by level, embedded in a Fabric-authenticated Rayfin app; each play-through is persisted to a typed GameStats entity
   - path: templates/maritime-insights
     name: Maritime Insights
-    description: Interactive 3D coastal twin of the Kieler Förde, built entirely from open geodata — true-scale DGM1 terrain with LoD2 buildings and an orthophoto drape, a coarse Copernicus DEM shell for the horizon, and a geometric sensor-visibility model that is explicitly not a radar model.
+    description: Interactive 3D coastal twin of the Kiel Fjord, built entirely from open geodata — true-scale DGM1 terrain with LoD2 buildings and an orthophoto drape, a coarse Copernicus DEM shell for the horizon, and a geometric sensor-visibility model that is explicitly not a radar model.
   - path: templates/pbi-fixer
     name: Power BI Fixer
     description: Fabric-authenticated workspace that inspects, documents, and fixes Power BI semantic models and reports — a best-practice analyzer with one-click and batch fixes, a report explorer with PBIR diffs, AI-assisted metadata cleanup, and a free IBCS visual, all powered server-side by Fabric User Data Functions
