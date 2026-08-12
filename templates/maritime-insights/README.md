@@ -30,6 +30,41 @@ Three things you can do with it:
 measured terrain model. **It is not a radar model.** No radar cross-section, no clutter, no
 propagation anomaly, no detection probability, no product performance data, in any build.
 
+### ⚠️ "Live" traffic: what you will actually see
+
+The app has a genuine live path, but **it needs a relay you run yourself**, and the free public AIS
+source it was built against is currently not sending anything.
+
+- **Out of the box there is no live data.** With no relay reachable the app stays on the recorded
+  day and says so.
+- **Even with the relay running, the upstream is down.** `aisstream.io` has delivered **zero frames
+  to its entire user base since 2026-08-05** — provider-side, not key- or region-specific. Our own
+  relay has held an accepted subscription for **51 hours without receiving one message**
+  (`everReceived: false`, `messages: 0`, `upstreamErrors: 0`, measured 2026-08-12). Their issue
+  tracker carries a dozen identical reports and no maintainer reply.
+- **So the relay stands in with the recorded day**, and every claim on screen changes with it: the
+  count carries its caveat in the same string (*"51 Schiffe (Aufzeichnung)"*), a second banner says
+  the live source is not sending, the footer credits the **recording** rather than the silent
+  provider, and identities are marked synthetic because the stand-in emits invented MMSIs.
+
+🔴 **Do not read a ship on screen as a ship at sea right now** unless the feed says `live`.
+Check which it is rather than trusting this paragraph, which will age:
+
+```bash
+curl https://<your-relay>/ais/health     # upstream, everReceived, messages, fallback
+```
+
+`upstream: "silent"` with `everReceived: false` means the provider accepted the subscription and
+sent nothing — their outage. A rejected key looks different: the socket closes in about a second,
+and the reconnect count climbs by thousands per day rather than by four.
+
+**No free feed currently covers this water.** Measured 2026-08-12: Fintraffic/Digitraffic is live,
+keyless and CC BY 4.0 but Finnish waters only (**0 of 837 vessels** inside the Kiel bounding box);
+Kystverket is Norwegian and its public endpoint fails its TLS handshake; AISHub requires
+contributing receiver hardware; the Danish archive is free **historically** but its live feed needs
+a bilateral agreement. A paid API, or an AOI on water that has an open feed, are the two real routes
+to permanently-live traffic.
+
 Everything is built from openly licensed data, registered in **[NOTICE.md](NOTICE.md)** before use.
 The framing and content rules are binding and live in **[PLAN.md](PLAN.md) §1.0 and §3 — they
 outrank every other part of this repo.** In particular: **no customer, account or company name
@@ -230,8 +265,11 @@ the scene runs on live data **changes the rendered frame**, which can only happe
 go through one shader.
 
 The live source **forbids browser connections**, so a small zero-dependency relay is mandatory
-rather than a design preference — and it is deliberately not deployed, because static hosting
-cannot hold a socket open and shipping a relay would mean shipping a key. Privacy is enforced where
+rather than a design preference — and it is **not part of the deployed static bundle**, because
+static hosting cannot hold a socket open and shipping the relay with the app would mean shipping a
+key. It runs instead as a separate container the browser reaches over SSE, addressed by
+`VITE_AIS_RELAY`; with that unset the app points at `127.0.0.1:8788` and simply stays on the
+recording, which is a supported state rather than an error. Privacy is enforced where
 the data *enters*: `AIS_IDENTITY` on the relay takes the same three values as the ingest script and
 decides how much of MMSI, name, call sign, IMO and destination leaves the process. `anonymous` is
 still pinned by tests — including a standing runtime assertion that refuses to send a frame
