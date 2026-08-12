@@ -6,7 +6,8 @@
   "template": {
     "name": "angular-dashboard",
     "displayName": "Angular Dashboard App",
-    "description": "Responsive Angular Material dashboard — top navbar + collapsible side menu, Project/Task data model, and optional one-click GitHub Issues/PRs sync for a public repo."
+    "description": "Responsive Angular Material dashboard — top navbar + collapsible side menu, Project/Task data model, and optional one-click GitHub Issues/PRs sync for a public repo.",
+    "category": "starters"
   },
   "scripts": {
     "predev": "rayfin env --framework vite",

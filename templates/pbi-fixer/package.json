@@ -6,7 +6,8 @@
   "template": {
     "name": "pbi-fixer",
     "displayName": "Power BI Fixer",
-    "description": "Fabric-authenticated workspace that inspects, documents, and fixes Power BI semantic models and reports — a best-practice analyzer with one-click and batch fixes, a report explorer with PBIR diffs, AI-assisted metadata cleanup, and a free IBCS visual, all powered server-side by Fabric User Data Functions"
+    "description": "Inspect, document, and fix Power BI semantic models and reports — best-practice analysis, one-click and batch fixes, a report explorer with PBIR diffs, and a free IBCS visual, powered server-side by Fabric User Data Functions",
+    "category": "fabric-tools"
   },
   "scripts": {
     "predev": "rayfin env --framework vite",

@@ -34,6 +34,22 @@ body:
     validations:
       required: true
 
+  - type: dropdown
+    id: category
+    attributes:
+      label: Gallery category
+      description: Which section of the README gallery does this belong in?
+      options:
+        - starters — minimal scaffolds to build on
+        - business — dashboards, field work, presenting
+        - analytics — data and insight for an end user
+        - fabric-tools — inspect, document, or administer the data platform
+        - digital-twins — 3D, map, and live-operations views
+        - games — canvas and game-engine apps, interactive teaching
+        - not sure yet
+    validations:
+      required: true
+
   - type: textarea
     id: rayfin-features
     attributes:
@@ -56,4 +72,5 @@ body:
       label: Contribution
       options:
         - label: I plan to implement and submit this template myself
+        - label: I can provide a preview screenshot for the gallery card
         - label: I have read the [Template Guidelines](docs/template-guidelines.md)

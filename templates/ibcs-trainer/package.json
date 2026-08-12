@@ -6,7 +6,8 @@
   "template": {
     "name": "ibcs-trainer",
     "displayName": "IBCS Trainer",
-    "description": "HTML5 Canvas platformer that teaches IBCS chart rules level by level, embedded in a Fabric-authenticated Rayfin app; each play-through is persisted to a typed GameStats entity"
+    "description": "HTML5 Canvas platformer that teaches IBCS chart rules level by level, embedded in a Fabric-authenticated Rayfin app; each play-through is persisted to a typed GameStats entity",
+    "category": "games"
   },
   "scripts": {
     "predev": "rayfin env --framework vite",
