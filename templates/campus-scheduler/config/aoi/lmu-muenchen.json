@@ -1,0 +1,266 @@
+{
+  "$comment": "Area of interest for Campus-Scheduler, second site. Every coordinate and every count in this file was MEASURED via Overpass on 2026-07-31 by tools/geodata/probe_site.py — nothing here is recalled. Raw responses were written to temp/lmu-probe-*.json. The rule is inherited from Campus-Insights / Gleitschirm-Insights and was earned twice more here: no coordinate enters config without being looked up.",
+  "id": "lmu-muenchen",
+  "probedOn": "2026-07-31",
+  "site": {
+    "name": { "de": "LMU München", "en": "LMU Munich" },
+    "region": { "de": "München, Bayern", "en": "Munich, Bavaria" },
+    "timezone": "Europe/Berlin"
+  },
+
+  "$siteSelection": "LMU HAS SIX SITES, AND THIS AOI DELIBERATELY HOLDS TWO OF THEM. A single-linkage clustering at 700 m over the 125 OSM features that name LMU (temp/lmu_cluster.py) returned: Stammgelände/Maxvorstadt 51 features (centre 48.15189/11.58054, 2284 x 1685 m); Campus Martinsried–Großhadern 30 features at 9.68 km; LMU Klinikum Campus Innenstadt 24 features at 2.61 km; Tierärztliche Fakultät Oberschleißheim 9 at 10.85 km; Universitäts-Sternwarte 5 at 1.98 km; Fakultät für Physik in Garching 2 at ~15 km. Stammgelände plus Klinikum Innenstadt is the pair that fits one photoreal core — and it is not a compromise, it is the same shape as the first customer: OTH's two campuses are 2.48 km apart, LMU's chosen two are 2.44 km apart. Martinsried, Oberschleißheim and Garching are recorded in `outOfCoreSites` below rather than silently dropped; they belong to the travel-time matrix long before they belong to the twin.",
+
+  "$regexLesson": "⚠️ THE FIRST CLUSTERING FOUND A CAMPUS THAT DOES NOT EXIST. Matching /Ludwig-Maximilians|LMU/i against name and operator returned 227 features including a 14-feature 'campus' in Freiham — because 'lmu' is a substring of 'HeLMUt-Schmidt-Allee', 'HeLMUt-Karl-Platz' and 'Alois-WohLMUth-Straße'. With a word boundary the count is 125 and the phantom is gone. An acronym is a word, not a substring, and a case-insensitive three-letter match over a German street index will always find something.",
+
+  "campuses": [
+    {
+      "id": "stammgelaende",
+      "name": { "de": "Stammgelände / Maxvorstadt", "en": "Main campus / Maxvorstadt" },
+      "anchor": { "lat": 48.15049, "lon": 11.5798 },
+      "anchorSource": "OSM way/82672176 amenity=university name='Ludwig-Maximilians-Universität' addr=Geschwister-Scholl-Platz 1",
+      "bbox": { "west": 11.56, "east": 11.596, "south": 48.145, "north": 48.16 },
+      "$bboxComment": "~2674 x 1663 m. MEASURED extent of the Hauptgebäude polygon (way/82672176, `out geom`) is only 235 x 301 m, and that is the point: unlike OTH, LMU's 'campus' is not a fenced site but an axis. The box spans from Luisenstraße 37 (Geowissenschaften, 11.5643) east to Oettingenstraße 67 (Informatik, 11.5944) and from Amalienstraße 17 (48.1470) north to Leopoldstraße 44 (48.1570), because those are where the measured LMU buildings are."
+    },
+    {
+      "id": "klinikum",
+      "name": { "de": "Klinikum Campus Innenstadt", "en": "University Hospital city campus" },
+      "anchor": { "lat": 48.13281, "lon": 11.56024 },
+      "anchorSource": "OSM relation/6676202 amenity=university name='LMU Klinikum Campus Innenstadt'",
+      "bbox": { "west": 11.554, "east": 11.568, "south": 48.1275, "north": 48.138 },
+      "$bboxComment": "~1040 x 1164 m. MEASURED extent of the campus outline (relation/6676202, `out geom`): west 11.55705, east 11.56343, south 48.12994, north 48.13567 = 473 x 638 m, plus ~250 m of margin so the Anatomische Anstalt (Pettenkoferstraße 11), the Institut für Humangenetik (Goethestraße 29) and the Pathologisches Institut (Thalkirchner Straße 36) all sit inside rather than on the edge. This one IS a real campus in the OTH sense: a contiguous clinical quarter with its own outline."
+    }
+  ],
+
+  "campusSeparation": {
+    "straightLineKm": 2.44,
+    "$comment": "MEASURED between the two anchors above (haversine): 2.44 km — 1961 m north-south and 1453 m east-west. A second measurement between the two CLUSTER centroids gave 2.61 km. Note how close this is to OTH's 2.48 km: the demo's central constraint — a cohort cannot be in two places 40 minutes apart within one 15-minute break — transfers to LMU unchanged, and the travel-time matrix has to carry a real Munich U-Bahn/tram journey (U3/U6 Universität → Sendlinger Tor → Goetheplatz) rather than a straight line."
+  },
+
+  "outOfCoreSites": [
+    { "id": "martinsried", "name": "Campus Martinsried–Großhadern", "lat": 48.11236, "lon": 11.46428, "distanceKm": 9.68, "features": 30, "note": "Biologie, Chemie/Pharmazie, Genzentrum, Klinikum Großhadern. The largest LMU site outside the core and the obvious phase-2 AOI." },
+    { "id": "oberschleissheim", "name": "Tierärztliche Fakultät Oberschleißheim", "lat": 48.24703, "lon": 11.54779, "distanceKm": 10.85, "features": 9 },
+    { "id": "garching-physik", "name": "Fakultät für Physik, Garching", "lat": 48.26875, "lon": 11.67395, "distanceKm": 14.77, "features": 2, "note": "OSM relation/16257718, Am Coulombwall 1 — inside the Campus-Insights Garching AOI, which is a different repository's site." },
+    { "id": "sternwarte", "name": "Universitäts-Sternwarte", "lat": 48.14537, "lon": 11.60666, "distanceKm": 1.98, "features": 5, "note": "Only 2 km out and just east of the core box. Included here rather than in the AOI because widening the core to reach it would add 1.5 km of Bogenhausen for one observatory." }
+  ],
+
+  "bbox": {
+    "crs": "EPSG:4326",
+    "west": 11.554,
+    "east": 11.596,
+    "south": 48.1265,
+    "north": 48.161,
+    "$comment": "PHOTOREAL CORE, ~3.12 x 3.83 km, covering BOTH campuses AND the corridor between them. Same rule as OTH: the corridor is not padding, it is the subject — the whole argument for a twin is that the inter-campus transition becomes visible. Roughly 1560 x 1915 samples at the 2 m grid below."
+  },
+  "shell": {
+    "crs": "EPSG:4326",
+    "west": 11.45,
+    "east": 11.7,
+    "south": 48.05,
+    "north": 48.24,
+    "$comment": "COARSE TERRAIN SHELL, ~18.6 x 21.1 km. Terrain only, fading into haze. ⚠️ Munich has almost nothing to put on its horizon: the Isar gravel plain rises about 60 m across the whole shell, so unlike Regensburg (Danube valley, Bayerischer-Wald foothills) this shell reads as a very slightly tilted plane. That is the truth about the site and the reason the registration gate leans on coverage rather than relief."
+  },
+  "workingCrs": "EPSG:25832",
+  "verticalDatum": "DHHN2016",
+
+  "elevationRangeM": {
+    "min": 490,
+    "max": 545,
+    "$measured": true,
+    "$comment": "MEASURED 2026-07-31 by build_terrain.py over the core: 500.6 .. 532.8 m, from 25 LDBV DGM1 tiles at 100% coverage. The declared bracket is left deliberately loose around the measurement so a re-run after an LDBV data update does not trip the plausibility gate over a decimetre; uint16 quantisation over a 55 m bracket is ~0.8 mm, far finer than the source. CONSEQUENCE: just 32 m of relief across 3.8 km, against Regensburg's 78 m and closer to Garching's 12 m — terrain shading does almost no work here and the buildings carry the whole image. And unlike OTH, where the two campuses differ by 24 m and the walk between them is measurably downhill, LMU's two sites are 511.9 m (Hauptgebäude) and 520.2 m (Klinikum) — the Klinikum is 8 m HIGHER, which is within the noise of a city. The reason a cohort cannot cross between them is distance and the U-Bahn, not the terrain; do not reach for the OTH version of that story here."
+  },
+
+  "verification": {
+    "$comment": "Registration gate, composite form (Campus-Insights checks A-F). Munich has the opposite problem to the Alps and the same problem as Regensburg: an Overpass sweep of the core on 2026-07-31 returned 37 ele-tagged nodes and not one of them is a survey point. So registration is proven from coverage, plausibility, focus places, shell control points and the LDBV-vs-Copernicus seam offset.",
+    "minCoveragePct": 99.5,
+    "toleranceM": 3.0,
+    "shellToleranceM": 12.0,
+    "maxSeamOffsetM": 3.0,
+    "controlPoints": [
+      { "name": "Perlacher Mugl", "lat": 48.069204, "lon": 11.576829, "publishedM": 587, "tier": "shell", "source": "OSM node/27236490 natural=peak ele=587 wikidata" },
+      { "name": "Baldehöhe", "lat": 48.065932, "lon": 11.509252, "publishedM": 580, "tier": "shell", "source": "OSM node/7781604724 natural=peak ele=580" },
+      { "name": "Rodelberg Neuried", "lat": 48.077685, "lon": 11.498666, "publishedM": 574, "tier": "shell", "source": "OSM node/12557739764 natural=peak ele=574" },
+      { "name": "Olympiaberg", "lat": 48.169852, "lon": 11.551629, "publishedM": 564, "tier": "shell", "source": "OSM node/158712415 natural=peak ele=564 wikidata" },
+      { "name": "Fröttmaninger Berg", "lat": 48.21418, "lon": 11.630448, "publishedM": 562, "tier": "shell", "source": "OSM node/263833045 natural=peak ele=562 wikidata" },
+      { "name": "Luitpoldhügel", "lat": 48.172422, "lon": 11.570897, "publishedM": 539, "tier": "shell", "source": "OSM node/666304999 natural=peak ele=539 wikidata" },
+      { "name": "Hypoberg", "lat": 48.204514, "lon": 11.645326, "publishedM": 534, "tier": "shell", "source": "de.wikipedia.org/wiki/Hypoberg, 534 m ü. NHN, citing the Bayerische Vermessungsverwaltung geoportal (v.bayern.de/JS56r). ⚠️ NOT the OSM value: node/331312920 carries ele=517, which is 17 m too low — see $hypobergCorrection." }
+    ],
+    "$controlPointsComment": "Seven named landforms, all in the shell, resolved from a sweep of 567 ele-tagged nodes. ⚠️ EVERY ONE OF THEM IS ARTIFICIAL. Munich is flat; each of these is a Schuttberg — wartime rubble (Olympiaberg, Luitpoldhügel, Hypoberg), a capped landfill (Fröttmaninger Berg) or a purpose-built toboggan mound (Perlacher Mugl, Rodelberg Neuried, Baldehöhe). That is not a defect for this purpose — a rubble hill with a surveyed summit is a perfectly good control point — but it does mean the whole set was created within living memory, so a survey epoch predating a raising or a landfill cap shows up as a one-sided error. It also means their PUBLISHED heights are less well curated than an Alpine summit's, which is exactly what went wrong here (see $hypobergCorrection).\n\nMEASURED RESULT of the first run: six of the seven read BELOW their published value, by −0.43 to −7.68 m. That is the expected sign for a 30 m-posting radar model over a small steep mound — the summit is averaged away. A consistent negative bias of a physically explicable size is better evidence than a set that scatters.",
+    "$hypobergCorrection": "⚠️ THE GATE CAUGHT A BAD PUBLISHED VALUE, AND THE MODEL WAS THE ONE TELLING THE TRUTH. First run: Hypoberg failed at +16.15 m against OSM's ele=517, the only point of the seven to read HIGH and by twice the largest deviation in either direction. Rather than widen shellToleranceM, the value was checked independently: the German Wikipedia article, citing the Bayerische Vermessungsverwaltung geoportal, gives 534 m ü. NHN. The shell model reads 533.15 m — −0.85 m, in line with the other six both in sign and in size. So OSM's node is 17 m low and the registration was never in question. DO NOT restore 517, and DO NOT loosen the tolerance: the tolerance is what made this visible. Same class of event as OTH's Königswiesener Berg, opposite outcome — there two surveys contradicted OSM and the point was dropped; here an authority confirmed the model and the point was kept with a corrected reference.",
+    "$noCoreControlPoint": "There is NO control point inside the core, and that is a measured conclusion. The core contains 37 ele-tagged nodes: one named place node, one address node, and 35 cycle-route guideposts. All are rejected below. Garching and Regensburg are in the same position for the same reason, and the gate is designed for it: checks A, B, C and E carry the proof.",
+    "$rejectedCandidates": "Recorded so they are not silently re-added.\n\n(1) node/1700534808 'München' (48.137108/11.575382, ele=519) — the CITY place node. It is the only named ele node inside the core and it is a label for a city of 1.5 million, not a point on the ground. Same class as the settlement nodes rejected for OTH (Kleinprüfening, Lappersdorf, Sinzing).\n\n(2) The 35 cycle-network guideposts inside the core (e.g. node/4157038870 ele=515, node/4269745470 ele=553). ⚠️ These are more tempting than OTH's benches and bollards because they carry `source:ele`, i.e. somebody recorded where the number came from. They are still rejected: the value describes the signpost, the provenance behind `source:ele` is not stated per node, and a set of guideposts that disagree by 38 m over 1.5 km of pancake-flat Maxvorstadt (515 vs 553) cannot all be ground level. If a core control point is ever genuinely needed, this is where to look — after reading the source:ele values, not before.\n\n(3) node/3712962532 (48.144601/11.561048, ele=492) — an ADDRESS node carrying an elevation. An address point is not a survey. Identical to OTH's rejected node/2251378676.\n\n(4) node/6186388212 'Rockmuseum Munich' ele=693 — inside the Olympiaturm. That is a viewing platform 180 m up, and it is the highest 'elevation' in the whole sweep. Taking the maximum ele in a box is exactly how this one gets in.\n\n(5) node/8221898808 'Windkraftanlage Freimann' ele=687 — a wind turbine; the value is hub height.\n\n(6) node/5046900823 'Friedensmahnmal' ele=541 — a memorial standing ON the Luitpoldhügel (539, accepted above) at the same coordinate to five decimals. The 2 m difference is the monument. Two ele nodes at one spot means one of them is furniture.\n\n(7) Settlement place nodes (Sauschütt 606, Taufkirchen 563, Unterhaching 556, Ottobrunn 555, Haar 542, Weideninsel 516, Karlsfeld 491, Dachau 482, Garching 482, Unterschleißheim 473) — village-centre labels with no defined ground point.\n\n(8) node/13133380322 'Hoher Berg' 526 and node/667441727 'Rodelhügel Hochbrück' 490 — genuine landforms, but both lie NORTH of the shell box and were dropped for that reason alone. Widen the shell and they become candidates."
+  },
+
+  "drape": {
+    "maxPx": 4096,
+    "$built": "3381 x 4096 px at 0.96 m per pixel, 3.7 MB JPEG (measured 2026-07-31, one WMS request).",
+    "$comment": "Long side of the DOP20 mosaic → 0.96 m per pixel over the 3.94 km core, marginally coarser than OTH's 0.78 m because the box is longer. NOT larger: at 8192 px the mipmap chain is ~300 MB, which Chromium accepts and then silently samples BLACK. And the drape texture must be loaded with flipY=false and WITHOUT mipmaps (see PLAN §5.5)."
+  },
+  "grids": {
+    "sourceResolutionM": 1,
+    "renderResolutionM": 2,
+    "renderDecimation": 2,
+    "$comment": "LDBV DGM1 source, resampled to a 2 m heightmap, mesh decimated 2x -> 4 m posting. Same tier as OTH and Garching. This core is ~37% larger in area than OTH's, so expect ~600k terrain vertices against ~450k."
+  },
+  "shellGrids": {
+    "sourceResolutionM": 30,
+    "renderResolutionM": 30,
+    "renderDecimation": 3,
+    "transitionBandM": 250,
+    "$comment": "Copernicus GLO-30 -> ~90 m posting. transitionBandM is expressed here in metres for readability but MUST be applied as a fraction of the core (CORE_FADE_FRACTION ~0.08), never absolute — an absolute band tuned for a 9 km alpine AOI ate 43% of a 2 km campus and turned the drape into a dark blob."
+  },
+
+  "ownership": {
+    "$comment": "HOW A BUILDING IS RECOGNISED AS LMU. This block exists because the OTH answer does not transfer. OTH occupies two fenced campuses, so point-in-polygon against its outlines is most of the answer. LMU is an urban university: its faculties stand in ordinary Maxvorstadt streets, next door to the Alte Pinakothek, the Bayerische Staatsbibliothek and — the real hazard — TUM's Stammgelände, 700 m west of LMU's Hauptgebäude. Proximity is worth even less here than it was in Regensburg, so the signals are ownership statements, not geometry.",
+    "outlineIds": ["way/82672176", "relation/6676202"],
+    "$outlineIdsComment": "Only two outlines exist and only one is a campus: relation/6676202 (Klinikum Campus Innenstadt, 473 x 638 m) is a real contiguous site, while way/82672176 is just the Hauptgebäude footprint (235 x 301 m). The outline test therefore catches a small minority of LMU buildings, which is why it is the weakest of the four signals here and was the strongest at OTH.",
+    "siteRelations": ["relation/6441069"],
+    "$siteRelationsComment": "MEASURED: relation/6441069, tagged type=site + amenity=university + wikidata=Q55044, lists 75 members (68 ways, 4 relations, 3 nodes). 45 of them fall inside this core box and 52 of the 75 carry a building tag. This is an explicit statement of membership by the people who mapped it and it beats every geometric heuristic available over a city centre. ⚠️ It is also INCOMPLETE — see extraIds.",
+    "operatorPattern": "ludwig-maximilians",
+    "namePattern": "Ludwig-Maximilians|Ludwigs-Maximilians|(?<![A-Za-z])LMU(?![A-Za-z])",
+    "$namePatternComment": "The word-boundary form, for the reason in $regexLesson. 'Ludwigs-Maximilians' is not a typo in this file: way/832961760 is spelled that way in OSM and a strict pattern would drop it.",
+    "extraIds": ["relation/116031"],
+    "$extraIdsComment": "⚠️ AN EXPLICIT ALLOW-LIST, WITH EVIDENCE, BECAUSE IT CARRIES THE BEST DATA ON THE SITE. relation/116031 is unnamed, has no operator tag and is not a member of the site relation, so all four signals miss it — and it holds 526 of the 952 mapped indoor rooms in the whole core. It is LMU's Institut für Informatik at Oettingenstraße 67: its centroid (48.15010/11.59440) matches the site relation's own member way/376680733 'Institut für Informatik der LMU' (48.15011/11.59441) to five decimal places, it is tagged building=university with 3 levels, and its room refs run A/C/D/E/F/G/H/L + three digits, which is the published Trakt scheme of Oettingenstraße 67. Four independent agreements. Anything added to this list must come with that much."
+  },
+
+  "buildings": {
+    "measured": {
+      "osmBuildingsInCore": 9435,
+      "osmWithBuildingLevels": 4678,
+      "lod2BuildingsBuilt": 15746,
+      "lod2Triangles": 1100878,
+      "lod2AssetMB": 18.9,
+      "$comment": "The OSM count (9435) was the PROBE, measured over a box 400 m narrower than the final core. The LDBV LoD2 build produced 15 746 buildings and 1 100 878 triangles from 9 CityGML tiles, having skipped 1217 structures under 18 m\u00b2 and 24 900 outside the terrain extent. \u26a0\ufe0f THE PROBE UNDERSTATED THE BUILD BY 67%, and the OTH numbers are why that was not expected: there the OSM probe said 8193 and the build produced 9105, an 11% gap, so 'OSM count \u2248 LoD2 count' looked like a rule. It is not. LoD2 is a cadastral product that splits a Maxvorstadt block into its individual surveyed buildings where OSM maps the block as one outline, and the denser and older the fabric, the wider the two diverge. Do not size a new AOI from its OSM building count alone."
+    },
+    "lodPolicy": {
+      "decision": "full LoD2 everywhere in the core",
+      "$comment": "⚠️ KEPT, BUT THE HEADROOM IS GONE — and this is the entry that was a forecast and has now been measured twice. Forecast (before the build, from the OTH outcome): 'a comparable building count, so expect a comparable ~8 MB'. Measured after the geodata pipeline: 18.90 MB of buildings and ~30.1 MB of browser assets. Measured again after the room geometry landed (rooms.json 2.25 MB + rooms.bin + occupancy.bin): **37.0 MB total**. That is 2.3x OTH's building payload and 1.8x its complete 20.2 MB set. It still ships — the inherited engine's own performance budget allows 34 MB for its larger site and 37 MB over Fabric static hosting is acceptable — but the corridor-LoD1 simplification that OTH forecast and never needed is now a REAL option, and this is the AOI that would have to write it. The next thing added to this scene should be paid for by simplifying the corridor, not by growing the budget again."
+    }
+  },
+
+  "vegetation": {
+    "osmTrees": 4746,
+    "osmTreeRows": 120,
+    "osmLanduseAreas": 671,
+    "cadastreTreesRendered": 29580,
+    "$comment": "The OSM figures were the probe. The BUILD used the Bavarian tree cadastre (the M\u00fcnchen tile 124028_baeume.gpkg, 493 MB downloaded, cached and gitignored): 601 951 rows scanned, 567 488 outside the terrain, 4883 thinned, 29 580 trees kept at 9 m spacing in 0.27 MB of instance data. Heights 5.5\u201362.3 m, median 15.6 m. That is 6.2x what OSM knows about \u2014 a larger multiple than OTH saw (3.6x) and than Garching saw (7.4x), i.e. within the normal range for a city where street trees are surveyed but not mapped."
+  },
+
+  "network": {
+    "measuredFootways": 8037,
+    "measuredRoads": 3586,
+    "measuredPtStops": 73,
+    "measuredWater": 143,
+    "$comment": "MEASURED 2026-07-31. Nearly twice OTH's footway count (4240) in a comparable area — this is a walkable inner city. ⚠️ Only 73 PT stops against OTH's 217, and that number is misleading rather than low: Munich's inner city moves on U-Bahn and S-Bahn, whose stations are mapped as stop areas and platforms below ground rather than as `highway=bus_stop` nodes. The travel-time matrix between the two campuses is a U-Bahn journey (Universität → Sendlinger Tor → Goetheplatz), so phase-4 routing must read railway stations here, not just the bus layer that was sufficient in Regensburg."
+  },
+
+  "indoorProbe": {
+    "$comment": "⚠️ THE HEADLINE NUMBER IS A TRAP AND THE ATTRIBUTED NUMBER IS THE FINDING. A plain query returns 952 `indoor=room` features inside the core — 33x what OTH has, and it would be very easy to write 'LMU is richly mapped indoors'. It is not. Joining every room to the building polygon that contains it (temp/lmu_indoor_owner.py, 10 713 outlines) shows the rooms belong overwhelmingly to TUM, whose Stammgelände sits inside any LMU Maxvorstadt box: Thierschbau, Gebäude R, Hochvolthaus, Verwaltungsbau, Mensa Arcisstraße and TUM's own Hauptgebäude account for ~185, and 182 rooms fall inside no building at all. This is the Universität-Regensburg problem from the OTH AOI, one order of magnitude worse, and the same rule applies: filter by ownership, never by proximity.",
+    "osmIndoorRoomsInCore": 952,
+    "attributedToLmu": 527,
+    "attributeToBuildings": true,
+    "$attributeToBuildingsComment": "⚠️ MUST STAY TRUE HERE. It tells fetch_indoor_rooms.py to keep a mapped room only when its centroid falls inside a building the ownership test already accepted. OTH does not set it and does not need it — everything inside its campus boxes is OTH's. Munich is the opposite case and the flag is the whole difference between 527 rooms and 952.",
+    "$attributedComment": "MEASURED: 526 rooms in relation/116031 (Institut für Informatik, Oettingenstraße 67 — see ownership.extraIds for the four-way evidence that it is LMU) plus 1 in the Pathologisches Institut. Every other LMU building in the core has zero. So LMU's indoor data is not broad, it is ONE deeply mapped building — but that building has 19x the room count of OTH's Gebäude K (28) and three levels instead of one, which makes it a considerably better subject for the exploding-building view than the first customer had.",
+    "roomsByOwner": {
+      "relation/116031 — LMU Institut für Informatik, Oettingenstraße 67": 526,
+      "relation/6758375 — TUM Verwaltungsbau": 80,
+      "way/19183732 — Mensa Arcisstraße (Studierendenwerk)": 57,
+      "way/97399424 — TUM Gebäude R": 22,
+      "way/61408163 — TUM Thierschbau": 14,
+      "way/10053349 — TUM Hauptgebäude": 10,
+      "way/158913000 — LMU Pathologisches Institut": 1,
+      "relation/52412 — Bayerische Staatsbibliothek": 2,
+      "(in no building outline)": 182
+    },
+    "codePattern": "^[A-Z] ?\\d{3}$",
+    "$codePatternComment": "DERIVED FROM REAL DATA, not invented: the mapped refs are 'A 001', 'A 105', 'C 111', 'L 102' — a single wing letter plus three digits. Measured prefix frequencies across the whole core: L 102, A 44, D 36, E 36, F 35, C 32, G 31, H 23. Those letters are the Trakte of Oettingenstraße 67, not a campus-wide building code, which is the opposite of OTH — where the letter identifies the BUILDING and the same pattern therefore means something different. Any Untis room list must be validated against the right interpretation.",
+    "buildingsWithLevelTags": { "stammgelaende": 2999, "klinikum": 529 },
+    "$levelsComment": "Ways carrying building:levels (or indoor tags) in each campus box, and the reason generated floor plates are viable for the rest: floor COUNTS are real across the site even where floor PLANS are not."
+  },
+
+  "focusPlaces": [
+    { "id": "hauptgebaeude", "name": "LMU Hauptgebäude", "lat": 48.15049, "lon": 11.5798, "source": "OSM way/82672176" },
+    { "id": "philologicum", "name": "Philologicum", "lat": 48.14873, "lon": 11.57999, "source": "OSM way/19322270" },
+    { "id": "mathematik", "name": "Fakultät für Mathematik", "lat": 48.14811, "lon": 11.57284, "source": "OSM way/165494491" },
+    { "id": "informatik", "name": "Institut für Informatik (Oettingenstraße)", "lat": 48.15011, "lon": 11.59441, "source": "OSM way/376680733" },
+    { "id": "amalienstrasse", "name": "Fakultät für Informatik, Amalienstraße", "lat": 48.14702, "lon": 11.57592, "source": "OSM way/115881074" },
+    { "id": "geowissenschaften", "name": "Fakultät für Geowissenschaften", "lat": 48.14794, "lon": 11.56477, "source": "OSM way/96114101" },
+    { "id": "palaeontologie", "name": "Paläontologisches Museum", "lat": 48.14761, "lon": 11.56362, "source": "OSM way/28026044" },
+    { "id": "tiermedizin", "name": "Tierärztliche Fakultät", "lat": 48.14962, "lon": 11.58352, "source": "OSM way/449701274" },
+    { "id": "psychologie", "name": "Fakultät für Psychologie und Pädagogik", "lat": 48.15588, "lon": 11.58284, "source": "OSM relation/52573" },
+    { "id": "klinikum", "name": "LMU Klinikum Campus Innenstadt", "lat": 48.13281, "lon": 11.56024, "source": "OSM relation/6676202" },
+    { "id": "anatomie", "name": "Anatomische Anstalt", "lat": 48.13387, "lon": 11.55995, "source": "OSM way/40151560" },
+    { "id": "pettenkofer", "name": "Max von Pettenkofer-Institut", "lat": 48.13379, "lon": 11.56238, "source": "OSM relation/1344490" },
+    { "id": "humangenetik", "name": "Institut für Humangenetik", "lat": 48.13546, "lon": 11.55886, "source": "OSM way/91908330" },
+    { "id": "pathologie", "name": "Pathologisches Institut", "lat": 48.13003, "lon": 11.56496, "source": "OSM way/158913000" }
+  ],
+  "$focusPlacesComment": "All fourteen resolved from the site relation and the Overpass probe on 2026-07-31 with their OSM ids recorded. A coordinate is only verified once something independent agrees with it — here that will be the terrain build sampling each place and the LoD2 footprints landing on them.",
+
+  "$neighbourNote": "⚠️ TUM'S STAMMGELÄNDE IS INSIDE THIS CORE BOX, roughly 700 m west of LMU's Hauptgebäude (Arcisstraße 21, around 48.1487/11.5679). It is a different university, it is larger than LMU on this map in terms of mapped interiors, and it must NEVER be presented as LMU. It will render, and it should: two of Germany's biggest universities sharing one district is the truth about Maxvorstadt and it makes the twin recognisable. It is also the single most likely source of a wrong number in this AOI — see indoorProbe, where an unfiltered count credits LMU with 952 rooms instead of 527. The Bayerische Staatsbibliothek, the Alte and Neue Pinakothek, the Glyptothek and the Bayerisches Nationalmuseum are inside the box for the same reason and with the same rule.",
+  "$altstadtNote": "The southern half of the core reaches the edge of the Altstadt ring at Sendlinger Tor and takes in the Theresienwiese approach to the west of the Klinikum. Good for the demo — the twin shows a city people recognise rather than a business park — and a reminder that this AOI, like OTH's, is a slice of a city rather than a campus.",
+
+  "lenses": ["occupancy", "staffing", "quality"],
+  "schedulerSite": "lmu",
+  "planQuality": {
+    "source": "tools/data/build_plan_quality.py — whole-cohort lecture days + slot desirability",
+    "studentGroupMappingModelled": false
+  },
+  "staffing": {
+    "source": "tools/data/build_staffing.py — course.sws joined to teacher.contractSws",
+    "lecturerTypesModelled": false
+  },
+  "$lensesComment": "Declared only now that the data exists. The engine has a test — 'declares only lenses whose data requirements it can meet' — which failed the first OTH fork for declaring `occupancy` before the room data existed, so this stayed EMPTY until tools/data/build_room_geometry.py --site lmu had written rooms.json / rooms.bin / occupancy.bin. It now reports 9316 rooms, 520 of them from survey, and 130 rooms carrying bookings from the generated plan.",
+
+  "rooms": {
+    "$comment": "Room-level analytics are possible here, and better founded than at the first site. Oettingenstraße 67 (relation/116031, the Institut für Informatik) carries 526 room outlines OpenStreetMap actually surveyed, across three levels — against OTH's 28 on one level of Gebäude K. Every other building's interior is generated: plates laid out inside the REAL footprint at the REAL storey count, badged `generated` on every record. Occupancy comes from the synthetic timetable rather than being invented separately, so the colour a room takes IS the plan the solver is working on.",
+    "codePattern": "^(?:[A-Z] ?)?U?\\d{3}[A-Z]?$",
+    "$codePatternComment": "MEASURED from the 526 refs, and wider than it looks because the survey itself is: 'A 001' and 'H 112' carry a wing letter, '075' and '179' do not, 'U167' is an Untergeschoss room, and '040A'/'U142A' carry a subdivision suffix. The OTH pattern (^[A-Z]{1,2} ?\\d{3}$) would reject the majority of them. ⚠️ Do NOT read the leading letter as a building: it is a Trakt of this one building.",
+    "osmRefKey": "ref",
+    "heroBuilding": "ax",
+    "heroBuildingOsmId": "relation/116031",
+    "$heroBuildingComment": "BOTH are recorded, and the OSM id is the one to trust. `ax` is the lower-case placeholder the generator assigned — lower case because this building is UNNAMED in OSM and the identifier is therefore ours, not LMU's — and it would change if the building list changed. The demo opens here because it is the only interior on the site that is real (520 of the 526 surveyed rooms, on three levels) and because it belongs to MIS, one of the two modelled faculties: the same double qualification Gebäude K has at OTH.",
+    "storeyHeightM": 3.6,
+    "$storeyHeightComment": "ASSUMED. LoD2 gives building heights but not floor-to-floor pitch, and OSM has no level heights here. Slightly above OTH's 3.5 m because the measured Oettingenstraße refs run to three storeys in a building whose LoD2 height supports it. It is the weakest number in the interior and it is the one that shows: get it wrong and exploded floors interpenetrate.",
+    "levelProvenance": {
+      "$comment": "⚠️ MOST OF THESE FLOORS ARE DERIVED, NOT SURVEYED, and the split is recorded per room in `levelSource`. Only 32 of the 526 rooms carry an OSM `level` tag. The rest get their storey from the room number under the German convention (hundreds digit = storey, U prefix = Untergeschoss), which was CHECKED against those 32 and agreed with 32 of 32. Without it, 94% of the only real interior on this site would have been discarded and replaced by generated plates — the loss would have been silent, which is the part that matters.",
+      "taggedRooms": 32,
+      "derivedFromRef": "the remainder",
+      "agreementOnTaggedRooms": "32 of 32"
+    },
+    "referenceSemester": {
+      "id": "synthetic",
+      "startDate": "2026-10-13",
+      "endDate": "2027-02-05",
+      "$comment": "One representative teaching week from the generated plan, not a real semester. The start date is the Bavarian Wintersemester teaching start rather than OTH's 1 October, because LMU's lecture period begins in mid-October."
+    }
+  },
+
+  "geobasis": {
+    "authority": "Bayerische Vermessungsverwaltung (LDBV)",
+    "licence": "CC BY 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/4.0/deed.de",
+    "attribution": "Datenquelle: Bayerische Vermessungsverwaltung – www.geodaten.bayern.de [Daten bearbeitet]",
+    "downloadBase": "https://download1.bayernwolke.de",
+    "downloadMirror": "https://download2.bayernwolke.de",
+    "metalinkBase": "https://geodaten.bayern.de/odd",
+    "$comment": "Identical to the OTH and Garching AOIs — München is in Bayern, so the same survey authority, the same portal and the same licence apply, and the pipeline needs no new fetcher (unlike Tübingen, which is Baden-Württemberg and required an LGL adapter). The attribution is not optional."
+  },
+  "shellGeobasis": {
+    "authority": "ESA / DLR / Airbus Defence and Space — Copernicus DEM GLO-30",
+    "licence": "Copernicus DEM free licence (worldwide, free reuse with the prescribed notice)",
+    "licenceUrl": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+    "attribution": "produced using Copernicus WorldDEM-30 © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018 provided under COPERNICUS by the European Union and ESA; all rights reserved",
+    "$attributionComment": "The ADAPTED-DATA form of the notice, which is prescribed rather than stylistic: the pipeline resamples the tile onto a UTM grid and shifts it onto the core's vertical datum, so it is unambiguously modified.",
+    "cogUrlTemplate": "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM.tif",
+    "tiles": ["N48_E011"],
+    "$tilesComment": "ONE tile, unlike OTH's four: the shell spans 48.05–48.24 N and 11.45–11.70 E, so it crosses neither a parallel nor a meridian boundary. Worth stating explicitly because the OTH config warns about the opposite mistake — a missing tile shows up as a flat shelf on the horizon rather than as an error — and inheriting 'four tiles' here would download three empty ones."
+  },
+
+  "tour": [
+    { "placeId": "hauptgebaeude", "captionKey": "tour.lmu.hauptgebaeude", "rangeM": 900, "holdMs": 6500 },
+    { "placeId": "philologicum", "captionKey": "tour.lmu.philologicum", "rangeM": 420, "holdMs": 5500 },
+    { "placeId": "informatik", "captionKey": "tour.lmu.informatik", "rangeM": 520, "holdMs": 6500 },
+    { "placeId": "klinikum", "captionKey": "tour.lmu.klinikum", "rangeM": 700, "holdMs": 6500 },
+    { "placeId": "anatomie", "captionKey": "tour.lmu.anatomie", "rangeM": 380, "holdMs": 5500 }
+  ],
+  "$tourComment": "Five stops that tell the constraint rather than the architecture: the Hauptgebäude for scale, the Philologicum for the teaching stock, Oettingenstraße for the one building whose interior is real, then 2.4 km south to the Klinikum and its Anatomie — which is the moment the cohort's problem becomes visible."
+}

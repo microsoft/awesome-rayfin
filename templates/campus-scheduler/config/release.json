@@ -1,0 +1,30 @@
+{
+  "$schemaComment": "THE PUBLIC-RELEASE SWITCH. One file, read by BOTH the TypeScript app (src/config/release.ts) and the Python geodata pipeline (tools/geodata/pipeline.py), so a site cannot be excluded from one and survive in the other. That split is the whole reason this is a file rather than two flags.",
+
+  "$why": "NavigaTUM (TUM-Dev) is GPL-3.0 SOFTWARE, but the room and calendar DATA it serves originates in TUMonline and its redistribution terms are not established. Internal demonstration is fine; publishing a build that carries a baked semester snapshot is not. See NOTICE.md.",
+
+  "navigatumData": "synthetic",
+  "$navigatumDataComment": "LEVER A — what Garching's interiors are made of. THREE settings, because 'drop it' and 'keep it' were not the only options: the room POLYGONS come from OpenStreetMap under ODbL and were never TUM's to withhold. Only the semantics and the bookings are.",
+  "$navigatumDataOptions": {
+    "include": "Real NavigaTUM semantics + real TUMonline bookings. The internal demo. NOT publishable.",
+    "synthetic": "PUBLISHABLE, AND THE EXPLODE VIEW SURVIVES. Keeps the real OSM room polygons, so a building still opens into real floors and real rooms. Room usage is derived from the OpenStreetMap room tag and name where present, and from floor area otherwise; the teaching week is invented, seeded per room code so it is stable across rebuilds and screenshots keep matching. No course titles are generated — a made-up lecture name on a real, checkable TUM room number would be a false statement about a real place, which a badged percentage is not. The flow lens still goes: it is routed from real consecutive bookings, and inventing pedestrian movement is a bigger claim than inventing a utilisation figure.",
+    "exclude": "No interiors at all. Garching keeps terrain, orthophoto, buildings and trees — all LDBV CC BY 4.0 and OpenStreetMap ODbL — and loses rooms, occupancy, flow and the planner."
+  },
+
+  "excludeAois": [],
+  "$excludeAoisComment": "LEVER B — drop whole sites. Put \"garching\" here to remove the TUM campus entirely: it disappears from the AOI switcher, its dot on the national map stops offering to open it, ?aoi=garching falls back to the default site, and the pipeline refuses to build it. Use this if TUM should not appear at all, rather than appearing without real interiors.",
+
+  "realCustomerData": "exclude",
+  "$realCustomerDataComment": "LEVER C — the university's OWN timetable export. OTH Regensburg sent us their live Untis GPU files (PLAN §25); `data/oth-real/` is built from them and the OTH AOI names `schedulerSite: \"oth-real\"` as its default, because showing a customer their own week is the demo. NONE OF THAT MAY BE PUBLISHED — it is one university's internal room, lecturer and class data, shared for an evaluation, and it is a stronger restriction than the TUM one because it was never public in any form.",
+  "$realCustomerDataOptions": {
+    "include": "The OTH AOI defaults to `oth-real` and `?scheduler=oth-real` is honoured. The internal demo. NOT publishable.",
+    "exclude": "PUBLISHABLE. The OTH AOI falls back to the GENERATED site `oth` — the same campus, the same twin, an invented week that `tools/data/generate_timetable.py` reproduces from `config/academic/oth.json`. `?scheduler=oth-real` is ignored rather than pointed at a backend that is not there. Everything the planner demonstrates still works; only the week is ours instead of theirs."
+  },
+  "$realCustomerDataFailClosed": "⚠️ ANYTHING THAT IS NOT THE LITERAL STRING \"include\" MEANS EXCLUDE — same bias as navigatumData. A missing key, a typo, a null: all withhold. The generated site is a complete substitute, so failing closed costs a demo nothing and failing open costs a customer relationship.",
+
+  "$plannerComment": "⚠️ `synthetic` ALSO DROPS THE PLANNER. Garching's `schedulerSite: \"tum\"` backend is loaded from `data/tum/`, which `build_tum_dataset.py` derives from the same TUMonline bookings. Substituting the twin's occupancy does not substitute that, so the planner is withheld in both `synthetic` and `exclude`.",
+
+  "$alsoDeleteComment": "⚠️ NO SETTING HERE EDITS TRACKED FILES. For a repository that contains no TUM-derived values at all, also delete: config/aoi/garching.json (its exploreBuildings list carries `navigatumRooms` counts read from the API), config/campus-garching.json, e2e/tum.spec.ts, tools/geodata/fetch_navigatum*.py, tools/data/build_tum_dataset.py. Run `npm run check:release` to be told which of these are still present.",
+
+  "$notCommittedComment": "The DATA itself is already safe: /data/ and /public/terrain/ are gitignored, so no NavigaTUM response, calendar snapshot or generated occupancy grid has ever been committed. The exposure this file closes is the DEPLOYED BUILD, which would otherwise ship public/terrain/garching/rooms.json and occupancy.bin."
+}

@@ -10,6 +10,9 @@ entries:
   - path: templates/angular-dashboard
     name: Angular Dashboard App
     description: Responsive Angular Material dashboard — top navbar + collapsible side menu, Project/Task data model, and optional one-click GitHub Issues/PRs sync for a public repo.
+  - path: templates/campus-scheduler
+    name: Campus Scheduler
+    description: A timetable planner's cockpit over a photoreal 3D campus twin, built entirely from open geodata — state 1 m terrain under a 20 cm orthophoto, LoD2 buildings that open into their own floors, and eight German universities in one build — with hard-constraint conflict detection, cascade what-if, and an OR-Tools CP-SAT solver proposing the smallest set of moves that repairs the week.
   - path: templates/field-technician
     name: Field Technician App
     description: Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric)
