@@ -5,6 +5,12 @@
 > Demonstration and illustration only. Not a navigational aid and not an authoritative source of
 > traffic or maritime domain information. Only official sources apply.
 
+![A sensor site placed on the west shore of the Kiel Fjord. The water it can see is tinted; the rest of the bay is in shadow. The panel reports 82 % of transits observed — 112 of 137 seen, 25 missed.](docs/screenshot-coverage.jpeg)
+
+*One notional 25 m mast on the west shore. **27.3 km² visible, 172.6 km² shadowed — and 82 % of the
+day's transits observed, 112 of 137.** The percentage is the number a tender can be written around;
+the square kilometres are not.*
+
 ---
 
 ## What this is
@@ -25,6 +31,20 @@ Three things you can do with it:
 2. **Replay the traffic.** Real vessels on a scrubbable clock.
 3. **Place a sensor and argue with it.** Set a position and a mast height; the visible-surface
    shadow updates live.
+
+![The Kiel Fjord rendered photoreal at true scale, with the day's recorded ship tracks drawn across the water and the replay scrubber at the traffic peak.](docs/screenshot-fjord.jpeg)
+
+*The recorded day at its 19:00 peak, 53 vessels under way. 2834 × 4414 samples at 4 m, 54 323
+buildings, and a Copernicus shell carrying the horizon out to 90 m posting — no vertical
+exaggeration anywhere, because the viewshed marches over these exact elevations.*
+
+### The second area exists to make a point
+
+![The Schlei, a narrow winding brackish inlet, rendered in the same app through the area switcher.](docs/screenshot-schlei.jpeg)
+
+*The Schlei, 32 km up the same coast, reached from the switcher in the header — no reload, no second
+build. The inlet is **flatter** than the fjord, yet sight lines are half as long: what stops a scan
+here is the water's shape, not relief. Same code, same pipeline, different `config/aoi/*.json`.*
 
 **What it computes, stated plainly:** *geometric visibility* — a 4/3-earth radar horizon against a
 measured terrain model. **It is not a radar model.** No radar cross-section, no clutter, no
