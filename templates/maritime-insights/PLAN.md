@@ -1,7 +1,6 @@
 # Maritime-Insights — Plan
 
 > **Status** v0.1 — planning · **Owner** Alexander Korn · **Created** 2026-07-29
-> **Repo** local `C:\Users\alkorn\repos\Maritime-Insights` · remote `KornAlexander/Maritime-Insights` (private, to be created)
 > **Lineage** terrain engine from `Gleitschirm-Insights` (two-tier core + shell, orthophoto drape, registration gate);
 > shader-field, scrubber, derived beats, what-if levers and the honesty rules from `Flut-Insights`;
 > track handling from `airport-iq-rayfin`.
