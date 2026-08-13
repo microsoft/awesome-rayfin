@@ -28,3 +28,7 @@ __pycache__/
 # Test output
 test-results/
 playwright-report/
+
+# Rendered demo video: 15 MB of binary, reproducible with tools/demo/record-campus.mjs.
+# The .srt beside it IS tracked - the narration is written, not rendered.
+media/*.mp4
