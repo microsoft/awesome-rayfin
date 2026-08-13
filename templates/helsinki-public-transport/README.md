@@ -7,8 +7,8 @@ Live map of a city's public transport, built as a **Microsoft Fabric App** (Rayf
 > Intelligence architecture, the Fabric portal host-bridge data path and the app's feature set
 > are his.
 >
-> Packaged as a template by **Alexander Korn**, who added a token-free photoreal 3D city twin, a
-> scripted back-end deploy kit, and a fallback chain so the app also runs outside the portal.
+> Packaged as a template by **Alexander Korn**, who added a token-free photoreal 3D city twin and
+> some minor changes.
 
 Vehicle positions come from the public [HSL GTFS-RT feeds](https://hsldevcom.github.io/gtfs_rt/)
 (Helsingin seudun liikenne, the Helsinki region transport authority). No API key is required.
