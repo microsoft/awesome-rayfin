@@ -248,10 +248,10 @@ describe('weekWalks', () => {
 
 describe('weekWalks at campus level', () => {
   /**
-   * ⚠️ THIS IS THE CUSTOMER'S OWN CASE. OTH's Untis export numbers every Prüfeninger-Straße room
-   * `P …` and no OSM outline carries that letter, so 666 of their real sessions have a campus and
-   * no building. Skipping them made the cross-town transfer — the one the whole product is about —
-   * disappear from a real professor's week.
+   * ⚠️ THIS IS THE REAL-DATA CASE, NOT A CONSTRUCTED ONE. A real Untis export numbers every room
+   * on the second campus `P …` and no OSM outline carries that letter, so 666 real sessions have
+   * a campus and no building. Skipping them made the cross-town transfer — the one the whole
+   * product is about — disappear from a real lecturer's week.
    */
   it('routes a session that resolved only to its campus, and says the answer is site level', () => {
     const walks = weekWalks(

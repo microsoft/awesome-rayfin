@@ -62,14 +62,14 @@ const TRACKED = [
 ];
 
 /**
- * Scheduler sites built from a customer's own export, and where that export lands on disk.
+ * Scheduler sites built from a university's own export, and where that export lands on disk.
  *
  * ⚠️ SEPARATE FROM THE TUM LISTS, BECAUSE THE RESTRICTION IS STRONGER. TUM's bookings are at
- * least published; OTH sent us theirs privately for an evaluation. Nothing about it is public,
+ * least published somewhere. An institution's own Untis export is not public in any part,
  * including the fact that a particular lecturer teaches on a particular afternoon.
  */
 const CUSTOMER_SITES = [
-  ['oth-real', 'data/oth-real', "OTH Regensburg's own Untis GPU export (PLAN §25)"],
+  ['oth-real', 'data/oth-real', "a university's own Untis GPU export"],
 ];
 
 /** AOI configs whose declared `schedulerSite` must be checked against Lever C. */

@@ -107,9 +107,9 @@ export function shipsAoi(id: string | null | undefined): boolean {
 /**
  * ⚠️ FAILS CLOSED, AND WITH A HARDER BIAS THAN LEVER A: only the literal `"include"` includes.
  *
- * TUM's data is at least published somewhere. OTH's Untis export was sent to us privately for an
- * evaluation and has never been public in any form, so a missing key or a typo must withhold it.
- * The generated site is a complete substitute, which is what makes failing closed cheap here.
+ * TUM's data is at least published somewhere. A university's own Untis export is not public in any
+ * form, so a missing key or a typo must withhold it. The generated site is a complete substitute,
+ * which is what makes failing closed cheap here.
  */
 export const SHIPS_REAL_CUSTOMER_DATA =
   (release as { realCustomerData?: string }).realCustomerData === 'include';

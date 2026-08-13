@@ -119,15 +119,14 @@ Room and calendar data originate from **TUMonline**.
 NavigaTUM is run by students and carries no SLA. The pipeline caches aggressively and the
 app never calls it at page load (PLAN D4).
 
-## Timetable data — OTH Regensburg (Untis)
+## Timetable data — a university's own scheduling system (Untis)
 
-OTH Regensburg supplied their live Untis export (GPU001/GPU002/GPU005) so the planner could be
-evaluated against a real week. `tools/data/read_untis_gpu.py` turns it into `data/oth-real/`.
+`tools/data/read_untis_gpu.py` turns a real Untis export (GPU001/GPU002/GPU005) into
+`data/oth-real/`, so the planner can be evaluated against a real week rather than a generated one.
 
 > ⚠️ **NOT REDISTRIBUTED, AND THE RESTRICTION IS STRONGER THAN THE TUM ONE.**
-> TUM's bookings are at least published somewhere. This export was sent privately for an
-> evaluation: it is one university's internal room, lecturer and class data, and none of it was
-> ever public in any form.
+> TUM's bookings are at least published somewhere. This kind of export is not: it is one
+> institution's internal room, lecturer and class data, and none of it is public in any form.
 >
 > `config/release.json` → `realCustomerData` decides. With it withheld (the default, and anything
 > other than the literal `"include"`), the OTH AOI falls back to the **generated** site `oth` —

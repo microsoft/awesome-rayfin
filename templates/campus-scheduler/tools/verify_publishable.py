@@ -66,7 +66,7 @@ UNPUBLISHED_TREES = ["data", "public/terrain"]
 FORBIDDEN_PATHS = [
     ("data/tum", "the TUM planner dataset, derived from TUMonline bookings"),
     ("data/raw/navigatum", "raw NavigaTUM API responses and the calendar snapshot"),
-    ("data/oth-real", "OTH Regensburg's own Untis GPU export, sent privately for an evaluation"),
+    ("data/oth-real", "a university's own Untis GPU export, which is not public in any form"),
     ("public/terrain/garching/flows.json", "pedestrian flows routed from real TUM bookings"),
     ("public/terrain/garching/flows.bin", "pedestrian flows routed from real TUM bookings"),
     ("dist/terrain/garching/flows.json", "built copy of the same"),
@@ -180,7 +180,26 @@ PATTERNS = {
         rb"\.database\.fabric\.microsoft\.com|\.datawarehouse\.fabric\.microsoft\.com|"
         rb"\.pbidedicated\.windows\.net|\.openai\.azure\.com|\.azurecr\.io|\.vault\.azure\.net",
     ),
-    # ⚠️ ANY GUID AT ALL, WHICH IS DELIBERATELY BLUNTER THAN THE CLASS ABOVE.
+    # ⚠️ THE ARRANGEMENT, NOT THE DATA. Every class above asks "is restricted CONTENT in here?".
+    # This one asks a different question that all of them missed: "does this tree describe a
+    # confidential RELATIONSHIP?" Six files said a named university had sent us their timetable
+    # privately for an evaluation. None of them carried a single restricted row. The data was
+    # perfectly withheld and the tree published the fact of the engagement instead, which is the
+    # part a customer would actually mind.
+    #
+    # It is deliberately about phrasing rather than names, because the names are allowed — this
+    # repository names eight universities on purpose. What is not allowed is describing what
+    # passed between us and one of them.
+    # ⚠️ WORD BOUNDARIES, AFTER `sent it ` MATCHED INSIDE "preSENT IT as the campus". A first
+    # version without `\b` flagged an unrelated e2e comment, and a check that cries wolf is a
+    # check somebody writes a hasty allowlist entry for — which is the exact failure this whole
+    # file exists to undo. Narrow the pattern; never buy quiet with an excuse.
+    "disclosure": re.compile(
+        rb"\bsent us\b|\bsent (?:it|them|theirs|to us)\b|\bshared (?:it|them|with us|privately)\b|"
+        rb"\b(?:for|under) an evaluation\b|\bsent privately\b|\bprivately for\b|"
+        rb"\bunder (?:an )?NDA\b|\bnon-disclosure\b|\bconfidential\b",
+        re.IGNORECASE,
+    ),
     #
     # The `internal` list names identifiers. This one names a SHAPE, because the failure it exists
     # to catch is not "I typed the wrong guid" but "I did not know this guid was here". A tenant's
@@ -224,7 +243,14 @@ ALLOWED = {
         # in `config/academic/oth.json`: the scan flagged the file, the allowlist covered the whole
         # directory with a reason I had reasoned rather than read, and the leak passed. One line
         # per file, so a NEW customer mention in configuration has to be looked at.
-        ("config/release.json", "the switch that withholds it, and explains itself"),
+        #
+        # ⚠️ AND THEN IT HAPPENED AGAIN, ONE LINE BELOW THIS WARNING. `config/release.json` was
+        # excused as "the switch that withholds it, and explains itself" — a reason about the
+        # file's PURPOSE, written without reading its PROSE, which said a named university had
+        # sent us their timetable privately for an evaluation. The scan was working; the excuse
+        # was not. A reason must quote what the file says, not what the file is for.
+        ("config/release.json", "documents each lever generically — names no institution and "
+                                "describes no arrangement, only what is withheld and why"),
         ("config/academic/oth.json", "the block scheme their own form disproved our assumption "
                                      "about — a published fact about how they teach, no rows"),
         ("config/aoi/oth-regensburg.json", "names the backend the switch substitutes"),
@@ -267,6 +293,11 @@ ALLOWED = {
         ("tools/fabric/build_semantic_model.py",
          "a uuid5 NAMESPACE constant, chosen once so table ids are reproducible across runs — an "
          "arbitrary seed, not the address of anything"),
+    ],
+    "disclosure": [
+        ("tools/verify_publishable.py", "this file, which has to spell the phrasing out"),
+        ("server/app.py", "'without ever having been sent it' describes a PASSWORD not reaching "
+                          "the browser — a security property of this app, about nobody's data"),
     ],
 }
 
