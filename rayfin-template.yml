@@ -15,7 +15,7 @@ entries:
     description: Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric)
   - path: templates/helsinki-public-transport
     name: Helsinki Public Transport
-    description: Live public transport over a Fabric Real-Time Intelligence Eventhouse - a DirectQuery semantic model queried straight from the browser, drawn on a 2D map and on a token-free photoreal 3D city twin built from open geodata
+    description: Live public transport over a Fabric Real-Time Intelligence Eventhouse - a DirectQuery semantic model queried straight from the browser, drawn on a 2D map and on a token-free 3D city twin built from open geodata
   - path: templates/ibcs-trainer
     name: IBCS Trainer
     description: HTML5 Canvas platformer that teaches IBCS chart rules level by level, embedded in a Fabric-authenticated Rayfin app; each play-through is persisted to a typed GameStats entity

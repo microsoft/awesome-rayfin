@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { CesiumView } from '@/components/CesiumView';
-import { MapControls, type MeshChoice } from '@/components/MapControls';
+import { MapControls } from '@/components/MapControls';
 import type { PathPoint, Vehicle } from '@/data/model';
 import { EMPTY_SELECTION, applySelect } from '@/data/selection';
 
@@ -52,8 +52,6 @@ function mockPath(seed: number, count = 60): PathPoint[] {
 }
 
 export function CesiumPreview() {
-  const [mesh, setMesh] = useState<MeshChoice>('2017');
-  const [showTrees, setShowTrees] = useState(false);
   const [selection, setSelection] = useState(EMPTY_SELECTION);
 
   // Synthetic tracks for whatever is selected, so multi-track rendering can be checked here too.
@@ -70,14 +68,7 @@ export function CesiumPreview() {
     <div className="flex h-screen flex-col gap-2 p-2">
       <div className="flex items-center gap-3">
         <span className="text-[12px] font-semibold">Cesium preview (dev only)</span>
-        <MapControls
-          mode="3d"
-          onModeChange={() => undefined}
-          mesh={mesh}
-          onMeshChange={setMesh}
-          showTrees={showTrees}
-          onShowTreesChange={setShowTrees}
-        />
+        <MapControls mode="3d" onModeChange={() => undefined} />
         <span className="text-[11px] opacity-50" data-testid="preview-selection">
           selected: {selection.ids.join(', ') || 'none'}
         </span>
@@ -88,8 +79,6 @@ export function CesiumPreview() {
           selectedIds={selection.ids}
           activeVehicleId={selection.activeId}
           paths={paths}
-          mesh={mesh}
-          showTrees={showTrees}
           onSelect={(id, additive) =>
             setSelection((current) => applySelect(current, id, additive))
           }

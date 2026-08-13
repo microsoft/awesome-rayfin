@@ -3,6 +3,7 @@ import {
   Cartographic,
   CameraEventType,
   Cesium3DTileset,
+  Cesium3DTileStyle,
   CesiumTerrainProvider,
   Color,
   HeightReference,
@@ -24,20 +25,18 @@ import { DroneHud } from '@/components/DroneHud';
 import type { PathPoint, Vehicle } from '@/data/model';
 import { speedColor, trackColor } from '@/theme';
 import {
+  BUILDING_TINT,
   HELSINKI_ATTRIBUTION,
   HOME_VIEW,
   LOD2_TEXTURED_TILESET,
-  MESH_TILESETS,
   ORTHO_WMS_LAYER,
   ORTHO_WMS_URL,
   TERRAIN_URL,
-  TREES_TILESET,
-  type MeshVintage,
 } from '@/cesium/helsinkiOpenData';
 
 /**
- * No Cesium ion asset is ever requested - terrain, imagery and the photorealistic mesh all come
- * from the City of Helsinki. Blanking the token makes that guarantee explicit rather than implicit.
+ * No Cesium ion asset is ever requested - terrain, imagery and the buildings all come from the
+ * City of Helsinki. Blanking the token makes that guarantee explicit rather than implicit.
  */
 Ion.defaultAccessToken = '';
 
@@ -47,8 +46,6 @@ export interface CesiumViewProps {
   selectedIds: string[];
   activeVehicleId: string | null;
   paths: Map<string, PathPoint[]>;
-  mesh: MeshVintage | 'off';
-  showTrees: boolean;
   onSelect: (vehicleId: string | null, additive: boolean) => void;
 }
 
@@ -66,15 +63,11 @@ export function CesiumView({
   selectedIds,
   activeVehicleId,
   paths,
-  mesh,
-  showTrees,
   onSelect,
 }: CesiumViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const viewerRef = useRef<Viewer | null>(null);
-  const meshRef = useRef<Cesium3DTileset | null>(null);
   const buildingsRef = useRef<Cesium3DTileset | null>(null);
-  const treesRef = useRef<Cesium3DTileset | null>(null);
   const stateRef = useRef(new Map<string, VehicleEntityState>());
   const flyRef = useRef<FlyControls | null>(null);
 
@@ -132,7 +125,7 @@ export function CesiumView({
         if (!disposed && !viewer.isDestroyed()) viewer.terrainProvider = terrain;
       })
       .catch(() => {
-        /* keep the ellipsoid; the mesh already carries the visible relief */
+        /* fall back to the plain ellipsoid - Helsinki is flat enough that it barely shows */
       });
 
     viewer.camera.setView({
@@ -298,9 +291,7 @@ export function CesiumView({
     return () => {
       disposed = true;
       stateRef.current.clear();
-      meshRef.current = null;
       buildingsRef.current = null;
-      treesRef.current = null;
       flyRef.current?.dispose();
       flyRef.current = null;
       if (!viewer.isDestroyed()) viewer.destroy();
@@ -308,70 +299,35 @@ export function CesiumView({
     };
   }, []);
 
-  // ---- photorealistic mesh / textured buildings ---------------------------
+  // ---- textured LoD2 buildings -------------------------------------------
   useEffect(() => {
     const viewer = viewerRef.current;
     if (!viewer) return;
     let cancelled = false;
 
-    const detach = (ref: React.MutableRefObject<Cesium3DTileset | null>) => {
-      if (ref.current && !viewer.isDestroyed()) viewer.scene.primitives.remove(ref.current);
-      ref.current = null;
-    };
-
-    detach(meshRef);
-    detach(buildingsRef);
-
-    const url = mesh === 'off' ? LOD2_TEXTURED_TILESET : MESH_TILESETS[mesh];
-    void Cesium3DTileset.fromUrl(url, {
-      // Cesium's default (16) is what makes the mesh look crisp at street level; the cache cap
-      // keeps a long session from growing without bound while panning across the city.
+    void Cesium3DTileset.fromUrl(LOD2_TEXTURED_TILESET, {
+      // Cesium's default (16) is what keeps the facades crisp at street level; the cache cap keeps
+      // a long session from growing without bound while panning across the city.
       maximumScreenSpaceError: 16,
       cacheBytes: 768 * 1024 * 1024,
       maximumCacheOverflowBytes: 256 * 1024 * 1024,
     })
       .then((tileset) => {
         if (cancelled || viewer.isDestroyed()) return;
+        // Multiplies the facade textures, so it tints the untextured buildings without flattening
+        // the textured ones. See BUILDING_TINT for why the dataset needs it.
+        tileset.style = new Cesium3DTileStyle({ color: `color('${BUILDING_TINT}')` });
         viewer.scene.primitives.add(tileset);
-        if (mesh === 'off') buildingsRef.current = tileset;
-        else meshRef.current = tileset;
+        buildingsRef.current = tileset;
       })
       .catch((error) => {
-        console.error('[cesium] tileset failed to load', url, error);
+        console.error('[cesium] buildings tileset failed to load', LOD2_TEXTURED_TILESET, error);
       });
 
     return () => {
       cancelled = true;
     };
-  }, [mesh]);
-
-  useEffect(() => {
-    const viewer = viewerRef.current;
-    if (!viewer) return;
-    let cancelled = false;
-
-    if (!showTrees) {
-      if (treesRef.current && !viewer.isDestroyed()) {
-        viewer.scene.primitives.remove(treesRef.current);
-      }
-      treesRef.current = null;
-      return;
-    }
-
-    void Cesium3DTileset.fromUrl(TREES_TILESET)
-      .then((tileset) => {
-        if (cancelled || viewer.isDestroyed()) return;
-        viewer.scene.primitives.add(tileset);
-        treesRef.current = tileset;
-      })
-      .catch((error) => {
-        console.error('[cesium] trees tileset failed to load', TREES_TILESET, error);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [showTrees]);
+  }, []);
 
   // ---- vehicles -----------------------------------------------------------
   const vehicleIndex = useMemo(() => new Map(vehicles.map((v) => [v.vehicleId, v])), [vehicles]);

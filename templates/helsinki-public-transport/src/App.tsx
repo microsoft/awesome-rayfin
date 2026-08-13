@@ -4,7 +4,7 @@ import { ConnectLiveData } from '@/components/ConnectLiveData';
 import { FleetPanel } from '@/components/FleetPanel';
 import { Header } from '@/components/Header';
 import { KpiBar } from '@/components/KpiBar';
-import { MapControls, type MeshChoice, type ViewMode } from '@/components/MapControls';
+import { MapControls, type ViewMode } from '@/components/MapControls';
 import { MapView } from '@/components/MapView';
 import { VehicleDetail } from '@/components/VehicleDetail';
 import {
@@ -79,8 +79,6 @@ function Dashboard() {
   const [viewMode, setViewMode] = useState<ViewMode>(
     () => (localStorage.getItem(VIEW_KEY) as ViewMode) || '2d',
   );
-  const [mesh, setMesh] = useState<MeshChoice>('2017');
-  const [showTrees, setShowTrees] = useState(false);
   const [selection, setSelection] = useState(EMPTY_SELECTION);
 
   useEffect(() => {
@@ -161,14 +159,7 @@ function Dashboard() {
             positionsTotal={counters.positionsTotal}
           />
           <div className="flex items-center justify-between gap-2">
-            <MapControls
-              mode={viewMode}
-              onModeChange={setViewMode}
-              mesh={mesh}
-              onMeshChange={setMesh}
-              showTrees={showTrees}
-              onShowTreesChange={setShowTrees}
-            />
+            <MapControls mode={viewMode} onModeChange={setViewMode} />
             {viewMode === '3d' ? (
               <span className="text-[10px] opacity-45">
                 Imagery &amp; 3D models &copy; City of Helsinki (CC BY 4.0) &middot; CesiumJS
@@ -189,8 +180,6 @@ function Dashboard() {
                   selectedIds={selection.ids}
                   activeVehicleId={selection.activeId}
                   paths={paths}
-                  mesh={mesh}
-                  showTrees={showTrees && mesh === 'off'}
                   onSelect={handleSelect}
                 />
               </Suspense>

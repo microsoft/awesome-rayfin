@@ -3,7 +3,7 @@
  *
  * Everything here is CC BY 4.0 open data served straight from `kartta.hel.fi`, which sends CORS
  * headers - so the app streams it at runtime with **no Cesium ion token and no Google Maps key**.
- * That keeps the photorealistic mode licence-clean and free of metered third-party tiles.
+ * That keeps the 3D mode licence-clean and free of metered third-party tiles.
  *
  * Source: 3D models of Helsinki, Helsingin kaupunginkanslia, CC BY 4.0.
  * https://hri.fi/data/en_GB/dataset/helsingin-3d-kaupunkimalli
@@ -11,30 +11,26 @@
 
 const BASE = 'https://kartta.hel.fi';
 
-/** Photogrammetric reality mesh, as Cesium 3D Tiles. */
-export const MESH_TILESETS = {
-  /** Whole city, 42k aerial photos, ~7.5 cm/px ground sample distance. The safe default. */
-  '2017': `${BASE}/3d/mesh/Helsinki_2017/tileset.json`,
-  /**
-   * Newer capture. **Not offered in the UI** - measured from an identical view on a cold cache it
-   * holds 406 MB of GPU memory against 52 MB for 2017, settles in 10.6 s against 7.9 s, and costs
-   * about a quarter of the frame rate, for detail that is invisible at the altitudes this app is
-   * flown at. Kept here so it is one line away if a close-up ever needs the freshest survey.
-   */
-  '2024': `${BASE}/3d/mesh/Helsinki_2024/tileset.json`,
-  /** Whole city, ~10 cm/px - the older, blurrier survey that 2017 replaced. Also not offered. */
-  '2015': `${BASE}/3d/mesh/Helsinki_2015/tileset.json`,
-} as const;
-
-export type MeshVintage = keyof typeof MESH_TILESETS;
-
-/** Semantic CityGML buildings with textures, as 3D Tiles. Useful when the mesh is switched off. */
+/**
+ * Textured semantic CityGML LoD2 buildings, as 3D Tiles - the only 3D surface the app offers.
+ *
+ * The city also publishes photogrammetric reality meshes (`/3d/mesh/Helsinki_<year>/tileset.json`
+ * for 2015, 2017 and 2024). They were offered here and have been withdrawn: vehicles are clamped
+ * to the *terrain*, not to the mesh, so close in they sank under the photogrammetry and vanished -
+ * which is the one thing this app exists to show. The mesh is also far heavier (2024 holds 406 MB
+ * of GPU memory against 52 MB for 2017) and slower to settle. These buildings load in ~2.5 s and
+ * keep the vehicles visible at every altitude.
+ */
 export const LOD2_TEXTURED_TILESET =
   `${BASE}/3d/datasource-data/e5e7158a-52df-45a1-9be0-1be8f2828abd/tileset.json`;
 
-/** Park and street trees. */
-export const TREES_TILESET =
-  `${BASE}/3d/datasource-data/7afdc4b9-9a23-4a6f-a1ae-cf71495a731e/tileset.json`;
+/**
+ * Not every building in the CityGML dataset carries facade textures. The untextured ones render as
+ * pure white boxes that glare next to their textured neighbours, so the tileset is multiplied by a
+ * warm stone tint: the blank buildings settle into masonry, and the textured ones only lose a
+ * little brightness.
+ */
+export const BUILDING_TINT = '#b9b1a3';
 
 /** Quantized-mesh terrain (2021). Replaces Cesium World Terrain, which would need an ion token. */
 export const TERRAIN_URL = `${BASE}/3d/datasource-data/4383570b-33a3-4a9f-ae16-93373aff5ffa/`;

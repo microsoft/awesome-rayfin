@@ -20,9 +20,8 @@ directly from the publisher - nothing is redistributed in this repository.
 ### City of Helsinki 3D city model, terrain and orthophoto
 
 - Publisher: Helsingin kaupunki / City of Helsinki
-- Endpoints: `https://kartta.hel.fi/3d/...` (photogrammetric reality mesh, textured LoD2
-  CityGML buildings, tree models, quantized-mesh terrain) and
-  `https://kartta.hel.fi/ws/geoserver/avoindata/wms` (orthophoto)
+- Endpoints: `https://kartta.hel.fi/3d/...` (textured LoD2 CityGML buildings, quantized-mesh
+  terrain) and `https://kartta.hel.fi/ws/geoserver/avoindata/wms` (orthophoto)
 - Licence: Creative Commons Attribution 4.0 International (CC BY 4.0)
 - Attribution: "Imagery & 3D models (c) City of Helsinki (CC BY 4.0)." - shown in the app
   whenever the 3D view is active.

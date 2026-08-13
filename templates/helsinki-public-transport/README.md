@@ -7,26 +7,27 @@ Live map of a city's public transport, built as a **Microsoft Fabric App** (Rayf
 > Intelligence architecture, the Fabric portal host-bridge data path and the app's feature set
 > are his.
 >
-> Packaged as a template by **Alexander Korn**, who added a token-free photoreal 3D city twin and
-> some minor changes.
+> Packaged as a template by **Alexander Korn**, who added a token-free 3D city twin and some minor
+> changes.
 
 Vehicle positions come from the public [HSL GTFS-RT feeds](https://hsldevcom.github.io/gtfs_rt/)
 (Helsingin seudun liikenne, the Helsinki region transport authority). No API key is required.
 
 ## Screenshots
 
-Live in the Fabric portal - 1,181 vehicles, no second sign-in, DAX served over the host bridge:
+Live in the Fabric portal - 1,179 vehicles, no second sign-in, DAX served over the host bridge:
 
 ![The app running inside the Fabric portal](docs/screenshots/01-portal-live.webp)
 
-`CityGML` surface with the tree models on - semantic LoD2 buildings plus the city's tree catalogue:
+`3D city` - the same live fleet on the City of Helsinki's textured LoD2 buildings, no Cesium ion
+token and no Google Maps key:
 
-![CityGML buildings with the tree models](docs/screenshots/02-citygml-trees.webp)
+![The 3D city view in the Fabric portal](docs/screenshots/02-3d-city.webp)
 
-Low pass over the Esplanadi on the 2017 reality mesh - note that the canopy is already baked into
-the photogrammetry, which is why the Trees toggle is disabled in mesh mode:
+Down at street level the vehicles stay on top of the buildings, because they are clamped to the
+same terrain the buildings sit on:
 
-![Street-level detail on the photogrammetric mesh](docs/screenshots/03-mesh-street-level.webp)
+![Street-level detail on the LoD2 buildings](docs/screenshots/03-street-level.webp)
 
 ## Architecture
 
@@ -59,55 +60,60 @@ Eventhouse under their own identity.
 The host bridge is tried first on purpose: inside the portal it is both the fastest path and the
 only one that does not ask the user to sign in a second time.
 
-## The 3D photorealistic view
+## The 3D city view
 
-The `3D photoreal` mode renders vehicles on the City of Helsinki's own photogrammetric city model -
-**with no Cesium ion token and no Google Maps API key**. Every layer is CC BY 4.0 open data streamed
-straight from `kartta.hel.fi`, which sends CORS headers, so nothing has to be re-hosted or baked:
+The `3D city` mode renders vehicles on the City of Helsinki's own semantic city model - **with no
+Cesium ion token and no Google Maps API key**. Every layer is CC BY 4.0 open data streamed straight
+from `kartta.hel.fi`, which sends CORS headers, so nothing has to be re-hosted or baked:
 
 | Layer | Source |
 | --- | --- |
-| Reality mesh (2017) | 3D Tiles, 42k aerial photos, ~7.5 cm/px |
 | Textured semantic LoD2 buildings | CityGML converted to 3D Tiles |
-| Park and street trees | 3D Tiles |
 | Terrain | quantized-mesh (2021) |
 | Base imagery | `Ortoilmakuva_2025_5cm` orthophoto WMS, 5 cm/px |
 
-The **Trees** toggle only applies to the `CityGML` surface. The photogrammetric mesh is built from
-aerial photos and already contains the canopy, so the separate tree models sit inside it and are
-invisible - the checkbox is therefore disabled while a mesh vintage is selected.
+### One surface, not four
 
-### Why only two surfaces
+The city also publishes photogrammetric reality meshes for 2015, 2017 and 2024, and all three were
+wired up here at one point - 2017 was offered in the UI as `Photoreal`. They are gone, for a reason
+that outranks how good the photogrammetry looks: **vehicles are clamped to the terrain, not to the
+mesh.** The mesh surface sits several metres above the terrain, so close in the vehicles sank under
+the buildings and disappeared. A transit map that hides the transit when you zoom in is not a
+feature with a trade-off; it is broken.
 
-The city publishes three mesh vintages. Offered as a control they were archaeology rather than a
-feature, and one of them was expensive. Measured from an identical view on a cold cache:
+The cost argument points the same way. Measured from an identical view on a cold cache:
 
 | Surface | Settles in | GPU memory | Frame rate while loading |
 | --- | --- | --- | --- |
 | Mesh 2017 | 7.9 s | 52 MB | 47.6 |
 | Mesh 2024 | 10.6 s | **406 MB** | 35.9 |
 | Mesh 2015 | 2.0 s | 53 MB | 48.8 |
-| CityGML | 2.5 s | 57 MB | 47.3 |
+| CityGML buildings | 2.5 s | 57 MB | 47.3 |
 
-2024 costs eight times the GPU memory and a quarter of the frame rate for detail that is invisible
-at the altitudes this app is flown at; 2015 is the blurrier survey 2017 replaced. Both URLs are
-still in `src/cesium/helsinkiOpenData.ts`, one line from being offered again.
+The tree tileset went with them. It was a second network round trip and a second set of tiles for
+canopy that reads as green mush from any altitude the app is actually flown at.
 
-What is left is the choice that means something - photogrammetry, or the lightweight semantic
-buildings, which settle roughly five times quicker and double as the fast option on a slow link.
-
-Tuning the tileset was **not** the lever: with a cold cache and the same view, `maximumScreenSpaceError`
+Tuning was **not** the lever: with a cold cache and the same view, `maximumScreenSpaceError`
 16 / 24 / 32 settled in 13.7 s / 12.1 s / 12.9 s, and `skipLevelOfDetail` made it worse. The time
 goes on fetching tiles from `kartta.hel.fi`. Nor are the vehicles a cost - 1,420 ground-clamped
 points render at the same 60 fps as 120.
+
+### Why the buildings are tinted
+
+Not every building in Helsinki's CityGML dataset carries facade textures. The untextured ones ship
+a plain white material, and lit by the sun next to their dark-roofed textured neighbours they read
+as glaring white boxes. The tileset therefore carries a `Cesium3DTileStyle` that multiplies
+everything by a warm stone tint (`BUILDING_TINT`). Multiply is the right operator here: it barely
+touches a textured facade, and it drops the blank ones into masonry. Any city model with the same
+gap can be fixed the same way.
 
 Cesium's default credit is the Cesium *ion* logo, which would be misleading here - `Ion.defaultAccessToken`
 is blanked, the credit container is hidden, and attribution is rendered in the app chrome instead.
 
 Attribution: *Source: 3D models of Helsinki, Helsingin kaupunginkanslia, CC BY 4.0.*
 
-A Cesium ion / Google Photorealistic 3D Tiles variant is deliberately **not** wired up yet - it is a
-later phase, and it swaps a free licence-clean source for a metered one.
+A Cesium ion / Google Photorealistic 3D Tiles variant is deliberately **not** wired up - it swaps a
+free licence-clean source for a metered one, and it would reintroduce the clamping problem above.
 
 ## Layout
 

@@ -2,7 +2,7 @@ apiVersion: v1
 metadata:
   name: helsinki-public-transport
   displayName: Helsinki Public Transport
-  description: Live public transport over a Fabric Real-Time Intelligence Eventhouse - a DirectQuery semantic model queried straight from the browser, drawn on a 2D map and on a token-free photoreal 3D city twin built from open geodata
+  description: Live public transport over a Fabric Real-Time Intelligence Eventhouse - a DirectQuery semantic model queried straight from the browser, drawn on a 2D map and on a token-free 3D city twin built from open geodata
 entries:
   - path: .
     name: Helsinki Public Transport
