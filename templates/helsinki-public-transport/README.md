@@ -115,6 +115,39 @@ Attribution: *Source: 3D models of Helsinki, Helsingin kaupunginkanslia, CC BY 4
 A Cesium ion / Google Photorealistic 3D Tiles variant is deliberately **not** wired up - it swaps a
 free licence-clean source for a metered one, and it would reintroduce the clamping problem above.
 
+## Operator comments
+
+Everything above is a read of the Eventhouse. The comments section on the vehicle panel is the one
+part that writes: a note pinned to a vehicle, stored in the app's own database through the Rayfin
+data service.
+
+That is the difference between a dashboard and a tool. The GTFS-RT feed can say a bus has not moved
+in nine minutes; only a person can say the doors are jammed and maintenance is already on the way -
+and that is exactly the context the next shift needs.
+
+Access is deliberately asymmetric, declared on the entity in `rayfin/data/VehicleComment.ts`:
+
+```ts
+@role('authenticated', ['read', 'create'])
+@role('authenticated', ['update', 'delete'], {
+  policy: (claims, item) => claims.sub.eq(item.user_id),
+})
+```
+
+Every signed-in user reads every note - a comment only its author can see is useless to a control
+room - but editing and deleting are gated on the JWT `sub` claim matching `user_id`. That check runs
+in the data layer, not in the UI: hiding the delete button is a courtesy, the policy is the control.
+
+Comments are fetched when the selection changes and after a write, never polled. Positions change
+every second and are polled accordingly; comments change when somebody types one.
+
+Enabling `services.data` provisions a SQL database beside the app item. Apply the schema after the
+first deploy:
+
+```bash
+npx rayfin up db apply
+```
+
 ## Layout
 
 | Path | What |

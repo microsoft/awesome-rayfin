@@ -3,6 +3,7 @@ import type { PathPoint, Vehicle } from '@/data/model';
 import { MAX_TRACKED_VEHICLES } from '@/data/selection';
 import { STOPPED_BELOW_KMH, trackColor } from '@/theme';
 
+import { Comments } from './Comments';
 import { SpeedChart } from './SpeedChart';
 
 interface VehicleDetailProps {
@@ -14,6 +15,8 @@ interface VehicleDetailProps {
   onActivate: (vehicleId: string) => void;
   onCloseTab: (vehicleId: string) => void;
   onCloseAll: () => void;
+  /** Signed-in user id; null when the data service is not reachable. */
+  currentUserId: string | null;
 }
 
 const OCCUPANCY_LABELS: Record<string, string> = {
@@ -76,6 +79,7 @@ export function VehicleDetail({
   onActivate,
   onCloseTab,
   onCloseAll,
+  currentUserId,
 }: VehicleDetailProps) {
   if (vehicles.length === 0) return null;
 
@@ -219,6 +223,13 @@ export function VehicleDetail({
       </div>
 
       <SpeedChart path={path} loading={pathLoading} />
+
+      <Comments
+        key={active.vehicleId}
+        vehicleId={active.vehicleId}
+        route={active.route}
+        currentUserId={currentUserId}
+      />
 
       <p className="mt-2 text-[10px] opacity-35">
         {vehicles.length === 1

@@ -17,6 +17,7 @@ import {
 import { LIVE_POLL_MS, useCounters, useVehicles, useVehiclePaths } from '@/hooks/useFleet';
 import type { AppEnv } from '@/services/auth';
 import { signIn } from '@/services/auth';
+import { getRayfinClient } from '@/services/rayfinClient';
 
 // CesiumJS is ~4 MB of JavaScript. Keeping it in its own chunk means opening the 2D map - the
 // default - never downloads it. It is warmed in the background once the dashboard is idle (see
@@ -80,6 +81,16 @@ function Dashboard() {
     () => (localStorage.getItem(VIEW_KEY) as ViewMode) || '2d',
   );
   const [selection, setSelection] = useState(EMPTY_SELECTION);
+
+  // Only used to decide whose comments get a delete affordance - the server enforces the same
+  // rule from the JWT, so a wrong value here cannot grant anything.
+  const currentUserId = useMemo(() => {
+    try {
+      return getRayfinClient().auth.getSession().user?.id ?? null;
+    } catch {
+      return null;
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(THEME_KEY, theme);
@@ -205,6 +216,7 @@ function Dashboard() {
             onActivate={(id) => setSelection((current) => activate(current, id))}
             onCloseTab={(id) => setSelection((current) => closeTab(current, id))}
             onCloseAll={() => setSelection(EMPTY_SELECTION)}
+            currentUserId={currentUserId}
           />
           <div className="min-h-0 flex-1">
             <FleetPanel

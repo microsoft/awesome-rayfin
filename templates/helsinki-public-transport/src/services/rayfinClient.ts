@@ -1,9 +1,10 @@
 import { ConnectorsRayfinClient } from '@microsoft/rayfin-client/experimental';
 
+import type { DataAppSchema } from '../../rayfin/data/schema';
 import type { AppConnectorsSchema } from '../../rayfin/connectors/schema';
 
 let client: ConnectorsRayfinClient<
-  Record<string, never>,
+  DataAppSchema,
   Record<string, never>,
   AppConnectorsSchema
 > | null = null;
@@ -16,7 +17,7 @@ export interface RayfinBootstrapConfig {
 export function initRayfinClient(config: RayfinBootstrapConfig) {
   if (!client) {
     client = new ConnectorsRayfinClient<
-      Record<string, never>,
+      DataAppSchema,
       Record<string, never>,
       AppConnectorsSchema
     >({
