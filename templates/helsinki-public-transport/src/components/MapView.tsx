@@ -2,7 +2,7 @@ import L from 'leaflet';
 import { useEffect, useMemo, useRef } from 'react';
 
 import type { PathPoint, Vehicle } from '@/data/model';
-import { speedColor, trackColor } from '@/theme';
+import { DIMMED_COLOR, speedColor, trackColor } from '@/theme';
 
 const HELSINKI: L.LatLngTuple = [60.1699, 24.9384];
 const DEFAULT_ZOOM = 12;
@@ -99,13 +99,16 @@ export function MapView({
       const trackIndex = selectedIndex.get(vehicle.vehicleId);
       const selected = trackIndex !== undefined;
       const active = vehicle.vehicleId === activeVehicleId;
+      // While a comparison is open everything else greys out, so the tracked vehicles are the
+      // only coloured things on the map and stay findable in a fleet of ~1,300.
+      const dimmed = selectedIds.length > 0 && !selected;
       const style: L.CircleMarkerOptions = {
         radius: active ? 8 : selected ? 7 : 4,
         // A selected vehicle is ringed in its track colour, so marker and trail read as one thing.
-        color: selected ? trackColor(trackIndex) : speedColor(vehicle.speedKmh),
+        color: selected ? trackColor(trackIndex) : dimmed ? DIMMED_COLOR : speedColor(vehicle.speedKmh),
         weight: selected ? 3 : 1,
-        fillColor: speedColor(vehicle.speedKmh),
-        fillOpacity: 0.9,
+        fillColor: dimmed ? DIMMED_COLOR : speedColor(vehicle.speedKmh),
+        fillOpacity: dimmed ? 0.45 : 0.9,
       };
 
       let marker = markers.get(vehicle.vehicleId);

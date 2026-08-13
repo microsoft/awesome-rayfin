@@ -1,4 +1,5 @@
 import {
+  BoundingSphere,
   Cartesian3,
   Cartographic,
   CameraEventType,
@@ -6,6 +7,7 @@ import {
   Cesium3DTileStyle,
   CesiumTerrainProvider,
   Color,
+  HeadingPitchRange,
   HeightReference,
   Ion,
   ImageryLayer,
@@ -23,7 +25,7 @@ import 'cesium/Build/Cesium/Widgets/widgets.css';
 import { createFlyControls, type FlyControls, type FlyTelemetry } from '@/cesium/flyControls';
 import { DroneHud } from '@/components/DroneHud';
 import type { PathPoint, Vehicle } from '@/data/model';
-import { speedColor, trackColor } from '@/theme';
+import { DIMMED_COLOR, speedColor, trackColor } from '@/theme';
 import {
   BUILDING_TINT,
   HELSINKI_ATTRIBUTION,
@@ -349,7 +351,11 @@ export function CesiumView({
       const selected = trackIndex !== undefined;
       const active = vehicle.vehicleId === activeVehicleId;
       const position = Cartesian3.fromDegrees(vehicle.lon, vehicle.lat);
-      const colour = Color.fromCssColorString(speedColor(vehicle.speedKmh));
+      // Same rule as the 2D map: while a comparison is open everything else greys out.
+      const dimmed = selectedIds.length > 0 && !selected;
+      const colour = dimmed
+        ? Color.fromCssColorString(DIMMED_COLOR).withAlpha(0.5)
+        : Color.fromCssColorString(speedColor(vehicle.speedKmh));
       // Ring a compared vehicle in its track colour so the point and its trail read as one thing.
       const outline = selected
         ? Color.fromCssColorString(trackColor(trackIndex))
@@ -439,11 +445,17 @@ export function CesiumView({
 
     const target = Cartographic.fromDegrees(vehicle.lon, vehicle.lat);
     const ground = viewer.scene.globe.getHeight(target) ?? 0;
-    viewer.camera.flyTo({
-      destination: Cartesian3.fromDegrees(vehicle.lon, vehicle.lat, ground + 450),
-      orientation: { heading: 0, pitch: CesiumMath.toRadians(-45), roll: 0 },
-      duration: 1.2,
-    });
+    // ⚠️ `flyTo` takes the CAMERA position, so putting it directly over the vehicle and pitching
+    // down 45° pushes the vehicle to the bottom edge of the screen - it looks like the dot is
+    // sliding out of view. `flyToBoundingSphere` takes the LOOK-AT point instead and works the
+    // camera offset out from the heading/pitch/range, so the vehicle lands in the middle.
+    viewer.camera.flyToBoundingSphere(
+      new BoundingSphere(Cartesian3.fromDegrees(vehicle.lon, vehicle.lat, ground), 60),
+      {
+        offset: new HeadingPitchRange(0, CesiumMath.toRadians(-45), 450),
+        duration: 1.2,
+      },
+    );
     // Deliberately keyed on the selection only - re-flying on every position poll would
     // fight the user for control of the camera.
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -13,6 +13,15 @@ export function speedColor(speedKmh: number): string {
   return bucket ? bucket.color : RAMP[RAMP.length - 1].color;
 }
 
+/** Below this the vehicle counts as standing still - same cut the speed ramp uses for 'stopped'. */
+export const STOPPED_BELOW_KMH = 1;
+
+/**
+ * Colour every unselected vehicle takes while a comparison is open. Greying the rest is what
+ * makes a handful of tracked vehicles findable in a fleet of 1,300.
+ */
+export const DIMMED_COLOR = '#6b7280';
+
 export const SPEED_LEGEND = [
   { label: 'stopped', color: '#94a3b8' },
   { label: '< 15', color: '#f59e0b' },
