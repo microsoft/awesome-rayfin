@@ -113,10 +113,18 @@ class HashedNames:
     """
 
     #: sha256(SALT + ":" + surname.lower())[:16] — see --hash.
+    #
+    # ⚠️ THE LIST WAS INCOMPLETE FOR A WEEK AND NOTHING SAID SO. A third name — the contact who
+    # forwarded the export — sat in a `provenance.json` source string in `read_untis_gpu.py`
+    # through every green run, because an enumerated list only knows the people somebody thought
+    # to enumerate. It was found by the `disclosure` class flagging the sentence AROUND it, not by
+    # this class. Two checks looking from different angles is why it surfaced at all.
     SALT = "campus-scheduler/publishable/v1"
     DIGESTS = {
         "638bbd3ebc2b74d9",  # the professor whose timetable workbook reached us
-        "f13eb24ea1896ebc",  # the IT staff member who sent the export
+        "f13eb24ea1896ebc",  # the IT staff member named as the export's origin
+        "ef898e1b76db1ec5",  # the contact who forwarded it (surname)
+        "681419eb6e2ce063",  # the same contact (given name)
     }
 
     #: 4+ letters, so initials and short codes do not generate noise. German letters included:
@@ -138,6 +146,69 @@ class HashedNames:
             for m in self._TOKEN.finditer(text)
             if self.digest(m.group(0)) in self.DIGESTS
         ]
+
+
+class DisclosurePhrases:
+    """Flags prose describing how restricted data reached us, and on what terms.
+
+    ⚠️ THE ARRANGEMENT, NOT THE DATA. Every other class asks "is restricted CONTENT in here?".
+    This one asks the question all of them missed: "does this tree describe a confidential
+    RELATIONSHIP?" Several files described an export being handed over and the terms it came
+    under. None carried a single restricted row. The data was perfectly withheld and the tree
+    published the engagement instead — which is the part a counterparty minds, and the part that
+    survives the data being gone.
+
+    It is about phrasing, not names: this repository names eight universities on purpose. What is
+    not allowed is describing what passed between us and one of them.
+
+    ⚠️ A CONJUNCTION IN A WINDOW, AFTER TWO VERSIONS THAT EACH FAILED IN THE OPPOSITE DIRECTION.
+    The first knew only "sent us" and missed "<institution> sent", which was the dominant form
+    here — five instances survived the pass meant to remove them, because the pattern was written
+    from the sentences just fixed rather than from the shape of the claim. Widening it to any
+    actor-plus-verb then flagged five innocent lines: "they must stay shared" about shader
+    uniforms, "a first version gave every...", "the same answer OTH gave before its floor plans
+    were OCR'd". Neither state is usable: one misses leaks, the other gets silenced.
+
+    So a claim needs all three parts near each other, in any order and across line breaks: someone
+    who could hand data over, a verb for handing it over, and something that is data. "The same
+    answer OTH gave" has two of the three and is correctly ignored. Explicit terms bypass the
+    conjunction, because "under NDA" needs no subject to be a disclosure.
+    """
+
+    #: Whoever could hand something over. `they`/`we` are deliberately absent - too common to mean
+    #: anything, and they were the source of most of the noise.
+    ACTOR = re.compile(
+        rb"\b(?:OTH|LMU|TUM|the university|the customer|the institution|the college)\b", re.I)
+    #: ⚠️ `shared` IS NOT HERE, AND THAT IS MEASURED, NOT TIMID. In this repository it is a
+    #: building-ownership term — `"owner": "shared"`, "the shared lecture halls of the
+    #: Hauptgebäude" — so as a bare verb it flagged the LMU academic profile on every run for
+    #: saying two faculties compete for one hall. Its disclosure sense always carries a
+    #: preposition ("shared WITH us", "shared PRIVATELY") and those live in EXPLICIT below, which
+    #: needs no actor. Narrowing here beats an allowlist entry, because an entry would excuse the
+    #: whole file and the next real sentence in it would ride along.
+    VERB = re.compile(rb"\b(?:sent|supplied|provided|gave|handed)\b", re.I)
+    #: Something that is data. `plan`/`plans` is absent on purpose: "floor plans" is a published
+    #: architectural drawing here, not a delivery.
+    OBJECT = re.compile(
+        rb"\b(?:export|extract|dataset|data|files?|timetable|workbook|snapshot|GPU\d|Untis)\b", re.I)
+    #: No subject required - these describe terms, and terms are a disclosure on their own.
+    EXPLICIT = re.compile(
+        rb"\bsent us\b|\bsent (?:it|them|theirs|to us)\b|\bshared (?:it|them|with us|privately)\b|"
+        rb"\bgave us\b|\b(?:for|under) an evaluation\b|\bsent privately\b|\bprivately for\b|"
+        rb"\bunder (?:an )?NDA\b|\bnon-disclosure\b|\bconfidential\b",
+        re.I)
+
+    #: Characters either side of the verb. Wide enough to span a wrapped comment block, narrow
+    #: enough that an actor and a noun in unrelated sentences do not pair up by accident.
+    WINDOW = 120
+
+    def findall(self, blob: bytes) -> list[bytes]:
+        hits = [m.group(0) for m in self.EXPLICIT.finditer(blob)]
+        for m in self.VERB.finditer(blob):
+            near = blob[max(0, m.start() - self.WINDOW):m.end() + self.WINDOW]
+            if self.ACTOR.search(near) and self.OBJECT.search(near):
+                hits.append(m.group(0))
+        return hits
 
 
 PATTERNS = {
@@ -180,26 +251,8 @@ PATTERNS = {
         rb"\.database\.fabric\.microsoft\.com|\.datawarehouse\.fabric\.microsoft\.com|"
         rb"\.pbidedicated\.windows\.net|\.openai\.azure\.com|\.azurecr\.io|\.vault\.azure\.net",
     ),
-    # ⚠️ THE ARRANGEMENT, NOT THE DATA. Every class above asks "is restricted CONTENT in here?".
-    # This one asks a different question that all of them missed: "does this tree describe a
-    # confidential RELATIONSHIP?" Six files said a named university had sent us their timetable
-    # privately for an evaluation. None of them carried a single restricted row. The data was
-    # perfectly withheld and the tree published the fact of the engagement instead, which is the
-    # part a customer would actually mind.
-    #
-    # It is deliberately about phrasing rather than names, because the names are allowed — this
-    # repository names eight universities on purpose. What is not allowed is describing what
-    # passed between us and one of them.
-    # ⚠️ WORD BOUNDARIES, AFTER `sent it ` MATCHED INSIDE "preSENT IT as the campus". A first
-    # version without `\b` flagged an unrelated e2e comment, and a check that cries wolf is a
-    # check somebody writes a hasty allowlist entry for — which is the exact failure this whole
-    # file exists to undo. Narrow the pattern; never buy quiet with an excuse.
-    "disclosure": re.compile(
-        rb"\bsent us\b|\bsent (?:it|them|theirs|to us)\b|\bshared (?:it|them|with us|privately)\b|"
-        rb"\b(?:for|under) an evaluation\b|\bsent privately\b|\bprivately for\b|"
-        rb"\bunder (?:an )?NDA\b|\bnon-disclosure\b|\bconfidential\b",
-        re.IGNORECASE,
-    ),
+    #: See the class above — a windowed conjunction, not a word list.
+    "disclosure": DisclosurePhrases(),
     #
     # The `internal` list names identifiers. This one names a SHAPE, because the failure it exists
     # to catch is not "I typed the wrong guid" but "I did not know this guid was here". A tenant's

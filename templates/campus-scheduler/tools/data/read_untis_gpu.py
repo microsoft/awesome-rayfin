@@ -1,6 +1,6 @@
-"""Read OTH's real Untis export into this project's dataset tables.
+"""Read a real Untis export into this project's dataset tables.
 
-PLAN §25.6 step 1. Turns the GPU files OTH sent on 2026-08-06 into `data/oth-real/*.json` with the
+Turns the GPU files a university's scheduling system produces into `data/oth-real/*.json` with the
 same shape the generated datasets use, so the app, the solver and the twin can read a real
 timetable without any of them learning a new format.
 
@@ -384,8 +384,8 @@ def build() -> dict[str, Any]:
     # ── lesson metadata: the only thing that can say whether two lessons share a week ────────
     # ⚠️ GPU001 IS A WEEKLY GRID AND CANNOT SAY WHICH WEEKS. Two lessons in one room at one hour
     # collide only if they run in the same weeks, and the grid does not know. GPU002 carries a date
-    # range and a Wochenwert per lesson — but OTH sent GPU002 for BM ONLY, so three faculties have
-    # no week information at all.
+    # range and a Wochenwert per lesson — but this export carries GPU002 for BM ONLY, so three
+    # faculties have no week information at all.
     #
     # Measured on this export: of BM's 343 lessons only 118 have Wochenwert >= 1.0 (they run every
     # week), and of its 70 room collisions exactly ONE has every participant weekly. So calling
@@ -496,10 +496,10 @@ def build() -> dict[str, Any]:
                              "source": "gpu016"})
 
     # ── availability from the Stundenverteilungsplan Excel ───────────────────────────────
-    # ⚠️ THE GPU016 FILE COVERS 19 LECTURERS OF 414, AND NOT THE ONE THE UNIVERSITY SENT AN
-    # EXAMPLE FOR. That lecturer's Zeitwünsche are not in the Untis export at all — they are in
-    # their own availability workbook, which is where the process actually starts. Reading it is
-    # what makes the demo the customer's own round trip rather than a re-enactment of it.
+    # ⚠️ THE GPU016 FILE COVERS 19 LECTURERS OF 414, AND NOT THE ONE THE WORKED EXAMPLE FOLLOWS.
+    # That lecturer's Zeitwünsche are not in the Untis export at all — they are in their own
+    # availability workbook, which is where the process actually starts. Reading it is what makes
+    # the demo a real round trip rather than a re-enactment of one.
     subjects_by_teacher: dict[str, set[str]] = defaultdict(set)
     for e in occ.values():
         for t in e["lehrer"]:
@@ -618,8 +618,8 @@ def main() -> None:
             json.dumps(rows, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
     (args.out / "provenance.json").write_text(json.dumps({
-        "$comment": "OTH Regensburg's real Untis export. See PLAN §25.",
-        "source": "Untis GPU001/GPU002/GPU016, sent by OTH IT-Zentrum 2026-06-22 via Ines Garaplija",
+        "$comment": "A university's real Untis export. Restricted — see config/release.json, lever C.",
+        "source": "Untis GPU001/GPU002/GPU016",
         "generatedBy": "tools/data/read_untis_gpu.py",
         "measured": [
             "course sessions, their day and period",

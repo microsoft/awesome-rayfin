@@ -54,7 +54,7 @@ _SYNTH_DIRS = {
     "oth": ROOT / "data" / "synthetic",
     "lmu": ROOT / "data" / "synthetic-lmu",
     "tum": ROOT / "data" / "tum",
-    # ⚠️ OTH's REAL timetable, read from the Untis export OTH sent (PLAN §25). It is a SEPARATE
+    # ⚠️ A REAL timetable, read from a university's own Untis export. It is a SEPARATE
     # site rather than a replacement for `oth`: the generated dataset is what every existing test
     # pins, and the two have to be comparable side by side. The directory name says which is which.
     "oth-real": ROOT / "data" / "oth-real",
