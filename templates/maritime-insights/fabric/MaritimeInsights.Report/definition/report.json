@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/2.0.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "CY24SU10",
+      "reportVersionAtImport": "5.55",
+      "type": "SharedResources"
+    }
+  },
+  "resourcePackages": [
+    {
+      "name": "ibcsMultiTierColumnB84BA14B8B6A4201A7F698B3B38DD148",
+      "type": "CustomVisual",
+      "items": [
+        {
+          "name": "ibcsMultiTierColumnB84BA14B8B6A4201A7F698B3B38DD148.pbiviz.json",
+          "path": "ibcsMultiTierColumnB84BA14B8B6A4201A7F698B3B38DD148.pbiviz.json",
+          "type": "CustomVisualMetadata"
+        }
+      ]
+    },
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "CY24SU10",
+          "path": "BaseThemes/CY24SU10.json",
+          "type": "BaseTheme"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true
+  }
+}

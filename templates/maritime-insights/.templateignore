@@ -1,0 +1,23 @@
+# Downloaded and derived geodata. Everything here is rebuilt by `npm run data:build` from the
+# open sources listed in NOTICE.md, and it is far too large to ship inside a template
+# (the working tree carries ~15 GB of raw survey tiles and ~90 MB of browser assets).
+data/
+public/terrain/
+
+# Local deployment state — points at one specific Fabric item in one specific tenant.
+rayfin/.deployments.json
+rayfin/.env
+rayfin/.temp/
+.env
+.env.local
+
+# Test and build output
+dist/
+test-results/
+playwright-report/
+node_modules/
+*.tsbuildinfo
+__pycache__/
+
+# One-off local recovery utility (hard-coded registry and output path) — not part of the template.
+tools/ops/

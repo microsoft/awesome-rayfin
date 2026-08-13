@@ -1,0 +1,11 @@
+relationship 527e69d0-3752-4ad0-9c7c-532ab3d72699
+	fromColumn: Position.'Track Key'
+	toColumn: Passage.'Track Key'
+
+relationship 9e2738af-a475-4078-acea-f925981ae885
+	fromColumn: Passage.'Vessel Type'
+	toColumn: 'Vessel Class'.'Vessel Type'
+
+relationship 49d8caf2-800a-45d4-89fa-023896b7babe
+	fromColumn: 'Plan Site'.plan_id
+	toColumn: Plan.plan_id

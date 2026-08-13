@@ -1,0 +1,35 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
+  "name": "footnote",
+  "position": {
+    "x": 24,
+    "y": 1032,
+    "z": 14,
+    "width": 1872,
+    "height": 30
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "AIS: Danish Maritime Authority, 2026-07-01 — ohne MMSI und ohne Schiffsnamen. Eine Fahrt ist eine durchgehende Passage durch das Gebiet; das Modell zählt Fahrten, nicht unterscheidbare Schiffe.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#5A6B77"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

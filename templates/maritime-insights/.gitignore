@@ -1,0 +1,69 @@
+# Dependencies
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Secrets — never commit
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Rayfin deployment state — tenant/workspace GUIDs and the publishable key.
+# PLAN §2.1 decision 12 sends this repo to a public template, so none of it ships.
+rayfin/.env
+rayfin/.deployments.json
+rayfin/.lockfile.json
+rayfin/.temp/
+
+# Test output
+test-results/
+playwright-report/
+.playwright-mcp/
+
+# Raw, cached and derived geodata. Large, redownloadable, and — for AIS — carrying identifiers.
+# See NOTICE.md for every source. `data/derived` is listed EXPLICITLY: in a sibling repo an
+# ignore list held raw/interim/cache/curated but not derived, so moving a sensitive file out of
+# the deploy quietly committed it to git instead. Same data, same rule, different hole.
+#
+# ⚠️ Anchored to the repo root on purpose. A bare `data/` also matches `rayfin/data/`, which holds
+# the Rayfin schema the template guidelines require — and the symptom is a fresh clone that does
+# not compile, not a missing-file error.
+/data/
+/data/derived/
+*.laz
+*.las
+*.tif
+*.tiff
+*.gml
+*.xyz
+*.zip
+
+# Generated browser assets. Tens of megabytes and reproducible from open sources at any time with
+# `python tools/geodata/pipeline.py`, which is why the app must show a setup notice rather than a
+# blank canvas on a fresh clone.
+public/terrain/
+public/tracks/
+*.ktx2
+*.glb
+
+# Local scratch
+.DS_Store
+Thumbs.db
+temp/
+scratch/
+*.log
+.vscode/settings.json
+
+test-results/
+playwright-report/
+
+# Output of tools/ops/recover_image_source.py
+.recovered/

@@ -1,0 +1,30 @@
+id: maritime-insights
+name: maritime-insights
+version: 0.1.0
+services:
+  auth:
+    enabled: true
+    fabric:
+      enabled: true
+    password:
+      enabled: false
+    # ⚠️ `rayfin up` rewrites this file and will re-add whatever host it just deployed to. That host
+    # is tenant- and item-specific, so it must not travel into a public template — check this list
+    # before copying the app into the gallery. Whoever deploys adds their own
+    # `https://<their-app-host>` AND `https://<their-app-host>/auth/callback`, then runs a full
+    # `rayfin up` (a `staticapp deploy` alone does not re-register them).
+    allowedRedirectUris:
+      - http://localhost:5173
+      - http://localhost:5173/auth/callback
+      - http://127.0.0.1:4180
+  data:
+    enabled: false
+  staticHosting:
+    enabled: true
+    folder: dist
+    buildCommand: npm run build:fabric
+    indexDocument: index.html
+  storage:
+    enabled: false
+  functions:
+    enabled: false

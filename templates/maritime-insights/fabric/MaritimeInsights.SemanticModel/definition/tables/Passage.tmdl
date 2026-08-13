@@ -1,0 +1,70 @@
+table 'Passage'
+	lineageTag: 2c2514ce-8171-4044-82d4-04effe2887bd
+
+	column 'Track Key'
+		dataType: int64
+		isHidden
+		lineageTag: 0f6e131c-00d5-4690-ac55-23dc24caaed0
+		summarizeBy: none
+		sourceColumn: track_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Vessel Type'
+		dataType: string
+		lineageTag: 2f541d2d-eb7c-4483-985a-ce0eb4aa0b23
+		summarizeBy: none
+		sourceColumn: vessel_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'from_second'
+		dataType: int64
+		isHidden
+		lineageTag: aa7014b3-4835-4367-8931-83c5658f9a20
+		summarizeBy: none
+		sourceColumn: from_second
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'to_second'
+		dataType: int64
+		isHidden
+		lineageTag: 6eb1ed17-f40d-4e94-8d08-ac26eb690594
+		summarizeBy: none
+		sourceColumn: to_second
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Duration s'
+		dataType: int64
+		formatString: #,0
+		lineageTag: d173fe77-8a7d-44de-8ace-ea788849876f
+		summarizeBy: none
+		sourceColumn: duration_s
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Position Count'
+		dataType: int64
+		formatString: #,0
+		lineageTag: fc2117da-d57b-4dc8-9184-9843c2cd869d
+		summarizeBy: none
+		sourceColumn: position_count
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Started At'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: c3a1c809-5119-42d8-86d4-b979b104cf23
+		summarizeBy: none
+		sourceColumn: started_at
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'vessel_track' = entity
+		mode: directLake
+		source
+			entityName: vessel_track
+			expressionSource: 'DirectLake - MaritimeInsightsLakehouse'
