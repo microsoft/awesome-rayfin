@@ -36,6 +36,8 @@ ROOT = Path(__file__).resolve().parent.parent
 # 1. paths that must not ship
 # ---------------------------------------------------------------------------
 
+PLACEHOLDER_GUID = "00000000-0000-0000-0000-000000000000"
+
 RESTRICTED_PATHS: list[tuple[str, str]] = [
     ("rayfin/.env", "Rayfin publishable key and deployment ids"),
     ("rayfin/.deployments.json", "deployment state for a specific workspace"),
@@ -156,6 +158,10 @@ def main() -> int:
                 continue
             reason = is_allowed(kind, rel)
             unique = sorted({h.decode("utf-8", "replace") for h in hits})
+            # An all-zero GUID is the template's own placeholder, never a real identifier.
+            unique = [h for h in unique if h != PLACEHOLDER_GUID]
+            if not unique:
+                continue
             summary = ", ".join(unique[:4]) + (f" (+{len(unique) - 4} more)" if len(unique) > 4 else "")
             if reason:
                 allowed_hits.append(f"[{kind}] {rel}: {summary} - allowed: {reason}")
