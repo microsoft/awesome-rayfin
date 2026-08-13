@@ -1,0 +1,14 @@
+{
+  "templateId": "zensical-docs",
+  "icon": "zensical-docs",
+  "services": {
+    "auth": true,
+    "data": false,
+    "storage": false,
+    "staticHosting": true
+  },
+  "hasDabSchema": false,
+  "tokens": [
+    "__RAYFIN_APP_URL__"
+  ]
+}

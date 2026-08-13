@@ -1,0 +1,20 @@
+id: zensical-docs
+name: zensical-docs
+version: 1.0.0
+services:
+  data:
+    enabled: false
+  auth:
+    enabled: true
+    fabric:
+      enabled: true
+    allowedRedirectUris:
+      - __RAYFIN_APP_URL__
+  storage:
+    enabled: false
+  staticHosting:
+    enabled: true
+    root: .
+    folder: site
+    buildCommand: npm run build
+    indexDocument: index.html
