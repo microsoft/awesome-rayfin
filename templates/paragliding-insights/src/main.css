@@ -1,0 +1,64 @@
+@import 'tailwindcss';
+
+:root {
+  font-family: 'Inter', system-ui, sans-serif;
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  /* Warm off-white, the colour of a printed report rather than a screen UI. The palette stays
+     muted and documentary (PLAN §2.3) — light mode here should read as paper, not as a bright
+     product dashboard. */
+  background: #f5f5f4; /* stone-100 */
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Map labels ───────────────────────────────────────────────────────────────
+   Positioned imperatively from the render loop (see twin3d/labelLayer.ts). The container has to
+   be inert to the pointer, or labels would swallow the drags that orbit the camera. */
+.gs-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.gs-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  padding: 0.2rem 0.4rem;
+  border-radius: 2px;
+  will-change: transform;
+  /* A halo rather than a filled box. Over a photoreal mountain a solid label reads as a sticker
+     and hides the ground it is naming; an outline keeps the terrain visible through the text and
+     stays legible over both the pale limestone and the dark forest. */
+  color: #1c1917;
+  text-shadow:
+    0 0 3px #f5f5f4,
+    0 0 3px #f5f5f4,
+    0 0 6px #f5f5f4;
+}
+
+.gs-label-place {
+  font-weight: 600;
+}
+
+.gs-label-launch,
+.gs-label-landing,
+.gs-label-station {
+  font-size: 0.66rem;
+  color: #44403c;
+}
+
