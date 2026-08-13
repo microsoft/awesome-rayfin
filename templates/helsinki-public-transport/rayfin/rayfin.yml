@@ -1,0 +1,36 @@
+id: helsinki-public-transport
+name: Helsinki Public Transport
+version: 1.0.0
+services:
+  auth:
+    enabled: true
+    fabric:
+      enabled: true
+    allowedRedirectUris:
+      - http://localhost:5173
+      - http://127.0.0.1:5173
+  data:
+    enabled: false
+  storage:
+    enabled: false
+  functions:
+    enabled: false
+  staticHosting:
+    enabled: true
+    folder: dist
+    buildCommand: npm run build:fabric
+    indexDocument: index.html
+connectors:
+  # Optional server-side transport. Point it at the semantic model created by `fabric/deploy`,
+  # or delete this block: embedded in the Fabric portal the app uses the host bridge instead, and
+  # standalone it falls back to the Power BI REST API.
+  transitModel:
+    connector: fabric-semanticmodel
+    version: "1"
+    auth:
+      type: delegated
+    config:
+      workspaceId: 00000000-0000-0000-0000-000000000000
+      itemId: 00000000-0000-0000-0000-000000000000
+    operations:
+      - name: executeQuery

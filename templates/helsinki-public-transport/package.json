@@ -1,0 +1,55 @@
+{
+  "name": "helsinki-public-transport",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Helsinki Public Transport Realtime Tracker - a Fabric App (Rayfin) over a Real-Time Intelligence Eventhouse.",
+  "template": {
+    "name": "helsinki-public-transport",
+    "displayName": "Helsinki Public Transport",
+    "category": "digital-twins",
+    "description": "Live public transport over a Fabric Real-Time Intelligence Eventhouse - a DirectQuery semantic model queried straight from the browser, drawn on a 2D map and on a token-free photoreal 3D city twin built from open geodata"
+  },
+  "scripts": {
+    "cesium:assets": "node scripts/copy-cesium.mjs",
+    "predev": "npm run cesium:assets && rayfin env --framework vite",
+    "prebuild": "npm run cesium:assets && rayfin env --framework vite",
+    "dev": "rayfin up --exclude-services staticHosting && vite",
+    "build": "tsc -b && vite build",
+    "build:fabric": "npm run cesium:assets && tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "rayfin:up": "rayfin up"
+  },
+  "dependencies": {
+    "@azure/msal-browser": "^5.17.3",
+    "@microsoft/rayfin-auth-provider-fabric": "1.34.0-beta.1",
+    "@microsoft/rayfin-client": "1.34.0-beta.1",
+    "@microsoft/rayfin-connector-fabric-semanticmodel": "1.34.0-beta.1",
+    "@microsoft/rayfin-core": "1.34.0-beta.1",
+    "@tailwindcss/vite": "^4.1.11",
+    "cesium": "^1.144.0",
+    "leaflet": "^1.9.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@microsoft/rayfin-cli": "1.34.0-beta.1",
+    "@types/leaflet": "^1.9.12",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react-swc": "^4.2.2",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.26",
+    "globals": "^16.5.0",
+    "jsdom": "^24.1.3",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.66.0",
+    "vite": "^7.3.2",
+    "vitest": "^3.2.7"
+  }
+}
