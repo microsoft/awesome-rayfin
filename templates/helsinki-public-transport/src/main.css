@@ -1,0 +1,87 @@
+@import 'tailwindcss';
+@import 'leaflet/dist/leaflet.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+  --app-bg: #f8fafc;
+  --app-fg: #0f172a;
+}
+
+.dark {
+  color-scheme: dark;
+  --app-bg: #0b0d13;
+  --app-fg: #e2e8f0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--app-bg);
+  color: var(--app-fg);
+  font-family: 'Segoe UI', 'Segoe UI Web (West European)', -apple-system, BlinkMacSystemFont,
+    Roboto, 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Light mode needs darker hairlines than the white/10 borders used throughout. */
+:root:not(.dark) .border-white\/10,
+:root:not(.dark) .border-white\/5 {
+  border-color: rgb(15 23 42 / 0.12);
+}
+
+:root:not(.dark) .bg-white\/\[0\.03\],
+:root:not(.dark) .bg-white\/\[0\.04\] {
+  background-color: rgb(15 23 42 / 0.03);
+}
+
+:root:not(.dark) .divide-white\/5 > :not(:last-child) {
+  border-color: rgb(15 23 42 / 0.08);
+}
+
+.leaflet-container {
+  background: var(--app-bg);
+  font-family: inherit;
+}
+
+/*
+ * Hint <-> HUD swap. The hint is the idle half of the pair; once the latch engages the HUD
+ * appearing IS the statement that the mouse now means something else, so the hint gets out of the
+ * way. Done with a sibling selector rather than a second rAF loop - the HUD already publishes
+ * `data-flying` every frame, and the hint must not cost anything to keep in sync.
+ */
+[data-testid='drone-hint'] {
+  transition: opacity 0.2s ease;
+}
+
+[data-testid='drone-hud'][data-flying='true'] ~ [data-testid='drone-hint'] {
+  opacity: 0;
+}
+
+.hsl-tooltip {
+  border: 1px solid rgb(255 255 255 / 0.12) !important;
+  border-radius: 6px !important;
+  background: rgb(15 17 23 / 0.92) !important;
+  color: #e2e8f0 !important;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.4) !important;
+}
+
+.hsl-tooltip::before {
+  border-top-color: rgb(15 17 23 / 0.92) !important;
+}
+
+:root:not(.dark) .hsl-tooltip {
+  border-color: rgb(15 23 42 / 0.12) !important;
+  background: rgb(255 255 255 / 0.95) !important;
+  color: #0f172a !important;
+}
+
+:root:not(.dark) .hsl-tooltip::before {
+  border-top-color: rgb(255 255 255 / 0.95) !important;
+}

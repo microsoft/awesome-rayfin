@@ -1,0 +1,193 @@
+table 'Last Vehicle Position'
+	lineageTag: 9d0d5f84-bbd5-4579-8074-79115d759417
+
+	column vehicle_id
+		dataType: string
+		lineageTag: 80d53e4c-21f1-4421-a2ca-567cffd45a0d
+		summarizeBy: none
+		sourceColumn: vehicle_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column timestamp
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 847f82ce-f68c-4dcc-9366-36c31ab5d513
+		summarizeBy: none
+		sourceColumn: timestamp
+
+		annotation SummarizationSetBy = Automatic
+
+	column type
+		dataType: string
+		lineageTag: f87b8a3c-bb79-4636-a944-419759cad9a0
+		summarizeBy: none
+		sourceColumn: type
+
+		annotation SummarizationSetBy = Automatic
+
+	column transport_type
+		dataType: string
+		lineageTag: da883992-ef8c-4de5-be4a-2f96aa99b6c8
+		summarizeBy: none
+		sourceColumn: transport_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column id
+		dataType: string
+		lineageTag: ec7f1eef-fd24-4078-afae-0e340bd027fc
+		summarizeBy: none
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column trip_id
+		dataType: string
+		lineageTag: 6b1dfcc6-fd2c-4b65-8446-e053a6969540
+		summarizeBy: none
+		sourceColumn: trip_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column trip_start_time
+		dataType: string
+		lineageTag: 8240cdbf-80ec-4856-9d46-0f21d32e54e8
+		summarizeBy: none
+		sourceColumn: trip_start_time
+
+		annotation SummarizationSetBy = Automatic
+
+	column trip_start_date
+		dataType: string
+		lineageTag: 0360dd28-bdd3-4ad7-b83f-546b0f7f83d3
+		summarizeBy: none
+		sourceColumn: trip_start_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column trip_schedule_relationship
+		dataType: string
+		lineageTag: 46817f4a-7da0-4030-a998-41a4fea9ee6c
+		summarizeBy: none
+		sourceColumn: trip_schedule_relationship
+
+		annotation SummarizationSetBy = Automatic
+
+	column trip_route_id
+		dataType: string
+		lineageTag: 0ad35d7a-0f39-4773-ab03-2bbee0c5c6f1
+		summarizeBy: none
+		sourceColumn: trip_route_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column position_latitude
+		dataType: double
+		lineageTag: fdab56e5-1ae1-4086-85b1-9cc26089aab9
+		summarizeBy: sum
+		sourceColumn: position_latitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column position_longitude
+		dataType: double
+		lineageTag: 90129c3a-8320-4d0c-8b2b-0e3549c388d4
+		summarizeBy: sum
+		sourceColumn: position_longitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column position_bearing
+		dataType: double
+		lineageTag: a4761ea4-bc30-44a9-b066-c2e328d0bdfc
+		summarizeBy: sum
+		sourceColumn: position_bearing
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column position_speed
+		dataType: double
+		lineageTag: 2a5eabc1-0174-4ba9-9c3c-2c617c04414a
+		summarizeBy: sum
+		sourceColumn: position_speed
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column vehicle_timestamp
+		dataType: int64
+		formatString: 0
+		lineageTag: bd83f2bd-57b1-4241-8ba0-15739068c45a
+		summarizeBy: sum
+		sourceColumn: vehicle_timestamp
+
+		annotation SummarizationSetBy = Automatic
+
+	column congestion_level
+		dataType: string
+		lineageTag: 5b2ddc24-e093-4343-9dfd-69c369568b06
+		summarizeBy: none
+		sourceColumn: congestion_level
+
+		annotation SummarizationSetBy = Automatic
+
+	column vehicle_label
+		dataType: string
+		lineageTag: 077cf934-b83e-40a2-b7bc-98bc66354f9e
+		summarizeBy: none
+		sourceColumn: vehicle_label
+
+		annotation SummarizationSetBy = Automatic
+
+	column vehicle_license_plate
+		dataType: string
+		lineageTag: 83ca942e-1f9c-46d9-a78a-9463cb914cc9
+		summarizeBy: none
+		sourceColumn: vehicle_license_plate
+
+		annotation SummarizationSetBy = Automatic
+
+	column occupancy_status
+		dataType: string
+		lineageTag: 70fbadd5-e6ee-49c1-861a-6e26ed565673
+		summarizeBy: none
+		sourceColumn: occupancy_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column alerts_json
+		dataType: string
+		lineageTag: 67100615-2e18-4cfc-af0b-c4e532fb8773
+		summarizeBy: none
+		sourceColumn: alerts_json
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Last Vehicle Position' = m
+		mode: directQuery
+		source =
+				let
+				Source = AzureDataExplorer.Contents("https://<eventhouse>.kusto.fabric.microsoft.com", "00000000-0000-0000-0000-000000000000", "last_vehicle_position
+				| where timestamp > ago(2h)
+				| join kind=leftouter (
+				    alerts
+				    | where timestamp > ago(5m)
+				    | summarize alerts_json=tostring(make_list(pack_all())) by vehicle_id
+				) on vehicle_id
+				| project-away  vehicle_id1
+				| sort by timestamp desc", [])
+				in
+				Source
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+
