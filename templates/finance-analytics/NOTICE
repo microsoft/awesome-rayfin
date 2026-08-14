@@ -1,0 +1,18 @@
+NOTICE — Third-party dependencies
+=================================
+
+The application and its finance component library (src/finance/) are original
+source authored for this template and licensed under this repository's LICENSE
+(MIT). There is no external or private package to install — the library ships as
+first-class source and is imported via the @/finance alias.
+
+Third-party dependencies
+------------------------
+The app builds on standard open-source packages, each under its own license as
+declared in package.json — including React, Vite, Tailwind CSS, lucide-react, and
+pptxgenjs. The opt-in official Fabric engine (enabled per-visual with
+engine="fabric" / gridEngine="fabric") additionally uses Vega / Vega-Lite and the
+@microsoft/fabric-datagrid, @microsoft/fabric-visuals and
+@microsoft/fabric-visuals-core packages. Those Fabric packages power the opt-in
+engine only; every visual and grid also ships a built-in, dependency-free engine,
+so the app runs without them.
