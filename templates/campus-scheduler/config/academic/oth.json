@@ -1,0 +1,113 @@
+{
+  "$comment": "The INVENTED half of the OTH Regensburg dataset, extracted verbatim from tools/data/generate_timetable.py so that a second university is a file rather than a fork. ⚠️ EVERY VALUE HERE IS BYTE-FOR-BYTE WHAT THE SCRIPT HELD BEFORE — including the ORDER of the lists, because the generator draws from them with a seeded RNG and a reordered list is a different dataset. If this file is edited, `data/synthetic/` changes and every screenshot with it.",
+  "$provenance": "synthetic — see data/synthetic/provenance.json. Nothing here is a claim about OTH's real faculties, staff or curriculum.",
+  "id": "oth",
+
+  "blockScheme": {
+    "$comment": "⚠️ MEASURED, NO LONGER AN ASSUMPTION. This used to read 'seven 90-minute blocks from 08:00 s.t. is the common German Hochschule pattern, but OTH's real scheme is an open question'. The university answered it without being asked: the availability form it sends its professors prints the block times on its own grid, and the timetabling system's own week view agrees to the minute. It is SIX blocks starting 08:15 c.t. — the akademisches Viertel, the same shape as LMU — not seven from 08:00. A 7th period does appear in their export and is carried here with a derived time, because dropping it would delete real teaching.",
+    "$source": "An availability form and a timetabling-system week view, cross-checked against each other. ⚠️ Neither document, nor any person or code identifying anyone in them, is reproduced here or anywhere else in this repository — see config/release.json, lever C. What survives is the block scheme itself, which is a published fact about how the university teaches.",
+    "$regenerationWarning": "⚠️ CHANGING THIS INVALIDATES THE GENERATED DATASET UNTIL IT IS REBUILT. Six blocks instead of seven is ~14 % less weekly capacity, so `generate_timetable.py --site oth` must be re-run, `validate_dataset.py` must pass its utilisation gate again, `dbo.PlanAssignments` must be re-seeded (session ids change), and the e2e suite must be re-pinned. Do not ship a half-applied change: the config and the data must agree.",
+    "days": ["Mo", "Di", "Mi", "Do", "Fr"],
+    "blocks": [["08:15", "09:45"], ["10:00", "11:30"], ["12:00", "13:30"], ["13:45", "15:15"], ["15:30", "17:00"], ["17:15", "18:45"], ["19:00", "20:30"]],
+    "$blocksComment": "Blocks 1-6 are OTH's, printed on their own form. Block 7 is DERIVED — the export uses a 7th period and no document we hold states its time.",
+    "desirability": [0.55, 1.0, 1.0, 0.85, 0.95, 0.7, 0.4],
+    "$desirabilityComment": "Still OURS, and still an assumption. Early and late blocks are the ones everybody avoids, and the solver's soft objective needs a number to prefer against — but OTH has never stated these weights and they are not in any export. PLAN §26.2 lists them as the first thing a rules panel should put in front of a planner."
+  },
+
+  "faculties": [
+    { "id": "IM", "name": "Fakultät Informatik und Mathematik", "teachers": 38 },
+    { "id": "M", "name": "Fakultät Maschinenbau", "teachers": 42 }
+  ],
+  "$facultiesComment": "TWO faculties, and that is a locked decision rather than a shortcut. With one faculty, room pressure is an internal matter and the interesting conflict — two faculties wanting the same large lecture hall in the same slot — cannot occur at all. Timetablers describe that as the hard part. ⚠️ OTH has around eight faculties; the other six are REAL, they render in the twin, and their buildings carry no teaching rooms. See `buildingOwnership.fallback`.",
+
+  "programmes": {
+    "IM": ["Informatik", "Wirtschaftsinformatik", "Mathematik", "Medieninformatik", "Data Science"],
+    "M": ["Maschinenbau", "Fahrzeugtechnik", "Produktionstechnik", "Mechatronik", "Energietechnik"]
+  },
+  "cohortSemesters": [1, 3, 5],
+  "$cohortComment": "2 faculties x 5 programmes x 3 semesters = 30 cohorts.",
+
+  "subjects": {
+    "IM": [
+      "Analysis", "Lineare Algebra", "Diskrete Mathematik", "Stochastik", "Numerik",
+      "Programmieren", "Algorithmen und Datenstrukturen", "Datenbanken", "Betriebssysteme",
+      "Rechnernetze", "Softwaretechnik", "Verteilte Systeme", "IT-Sicherheit",
+      "Maschinelles Lernen", "Computergrafik", "Compilerbau", "Theoretische Informatik",
+      "Mobile Anwendungen", "Data Engineering", "Cloud-Architekturen"
+    ],
+    "M": [
+      "Technische Mechanik", "Thermodynamik", "Strömungsmechanik", "Werkstoffkunde",
+      "Konstruktionslehre", "Fertigungstechnik", "Maschinenelemente", "Regelungstechnik",
+      "Antriebstechnik", "Fahrzeugtechnik", "Produktionsplanung", "Messtechnik",
+      "Finite-Elemente-Methode", "Kunststofftechnik", "Energietechnik", "Mechatronik",
+      "Robotik", "Qualitätsmanagement", "Additive Fertigung", "Leichtbau"
+    ]
+  },
+
+  "surnames": [
+    "Achleitner", "Baumgartner", "Brandner", "Danzer", "Eberl", "Fuchsberger", "Gschwendtner",
+    "Haslinger", "Hufnagel", "Innerhofer", "Jobst", "Kaltenbrunner", "Kirchmeier", "Lallinger",
+    "Leitner", "Mühlbauer", "Neumeier", "Oberländer", "Pfaffinger", "Quirin", "Rammelsberger",
+    "Reindl", "Sailer", "Schierlinger", "Staudinger", "Trautner", "Uhlmann", "Vilsmeier",
+    "Wittmann", "Zellner", "Ammersbach", "Bogner", "Cramer", "Dietlmeier", "Emslander",
+    "Frauenberger", "Grasser", "Hierl", "Irlbeck", "Jungwirth", "Kellermann", "Loibl",
+    "Meindl", "Nusser", "Ostermeier", "Prechtl", "Rehberger", "Simmerl", "Thanner", "Urban",
+    "Wagensonner", "Zirngibl", "Amberger", "Beutlhauser", "Dobmeier", "Eichinger", "Fischbeck",
+    "Girnghuber", "Hasenknopf", "Ippisch", "Jandl", "Kastenmeier", "Lindermeier", "Moosbauer",
+    "Niedermeier", "Obermüller", "Pongratz", "Rothammer", "Scheuerer", "Tremmel", "Unterberger",
+    "Vogtland", "Weindl", "Zankl", "Aschenbrenner", "Buchberger", "Deglmann", "Ertl", "Fenzl",
+    "Gietl", "Hinterberger", "Kolbeck", "Maurer"
+  ],
+  "$surnamesComment": "Deliberately a long pool of ordinary Bavarian names combined with a single initial: this dataset must never read as a roster of real OTH staff. provenance.json says so and the UI badges it.",
+
+  "nonTeachingNameWords": ["mensa", "küche", "musikpavillon", "parkhaus", "bibliothek", "verwaltung", "techbase"],
+  "$nonTeachingComment": "Buildings that are inside the OTH outline and big enough, but are not places a lecture is ever scheduled. A JUDGEMENT, written down rather than applied silently: the polygon filter correctly returns the Mensa, its Küche, the Musikpavillon and a Parkhaus, and a timetable that puts Thermodynamik in the canteen kitchen loses the room on the first slide.",
+  "$techBaseComment": "⚠️ TechBase Regensburg was the WORST case of that, and it was invisible until the dataset was regenerated: at 3 993 m² over three storeys it is large enough to earn two lecture halls, and the generator gave it the two BIGGEST on the whole estate — 339 and 338 seats, ahead of every real Hörsaalgebäude. It is a technology-transfer and start-up centre that OTH rents offices in, not a teaching building, and those 677 invented seats dropped lecture-hall pressure from 35% to 31% — enough for the validator to refuse the dataset, correctly. The building is real and still rendered; what is withdrawn is the claim that anyone lectures in it.",
+
+  "buildingOwnership": {
+    "$comment": "OWNERSHIP IS SYNTHETIC, and it is the single most load-bearing invention in the dataset: the two Hörsaalgebäude are SHARED, which is what makes two faculties compete for the same large hall, and Maschinenbau's Praktika sit at Prüfening, which is what makes a cohort have to cross 2.5 km between blocks. Both are the scenarios the product exists to handle. Neither is a claim about OTH's real estate. Rules are evaluated IN ORDER and the first match wins — the order is the original if/elif chain and must not be sorted.",
+    "rules": [
+      { "owner": "shared", "nameContains": ["hörsaal"] },
+      {
+        "owner": "IM",
+        "nameContains": ["techbase"],
+        "$comment": "⚠️ A TENANCY, AND THE SMALLEST CLAIM THAT IS STILL TRUE. OTH's presence at Franz-Mayer-Straße 1 is the Sensorik-Applikationszentrum (OSM node/4149309792, operator=OTH) inside a building the university does not own. Assigning it to Informatik und Mathematik is an INVENTION on top of that fact, chosen because IM is the pilot faculty and Gebäude K is 300 m away; sensor technology would really sit with Elektro- und Informationstechnik, which this dataset does not model. It earns its place because it is the only site of the three that is WALKABLE from another one, which is what makes the travel-time rule interesting rather than binary."
+      },
+      {
+        "owner": "IM",
+        "nameContains": ["informatik und mathematik"],
+        "$comment": "⚠️ A FACULTY BUILDING BELONGS TO ITS FACULTY. This rule was missing and the validator caught the consequence the moment the OSM relations were fixed: 'Fakultät Informatik und Mathematik' — Gebäude K, the ONE building with surveyed rooms — fell through to `other`, so its 28 real rooms were marked unschedulable and the plan was reported as booking lectures into a faculty this dataset does not model. The building is literally named after one of the two faculties being modelled."
+      },
+      { "owner": "M", "nameContains": ["maschinenbau"] },
+      { "owner": "IM", "nameContains": ["elektro", "mikrosystem", "cip", "gebäude g"] },
+      { "owner": "M", "campusId": "pruefening", "minFootprintM2": 900 },
+      { "owner": "M", "nameContains": ["gebäude i", "gebäude h"] }
+    ],
+    "fallback": "other",
+    "$fallbackComment": "⚠️ SCOPE, not just ownership. Giving all 20 buildings to the two modelled faculties made the room stock four times the demand and produced an 8.5% utilisation figure — arithmetically correct and completely misleading. Buildings of faculties we do not model are `other`: REAL, rendered in the twin, and excluded from the teaching stock entirely. We cannot schedule their rooms and we cannot observe them, so counting them as free capacity would be the same error as painting a room with no calendar 0% instead of grey. Two of them are named after real OTH faculties we are not modelling — Architektur and Bauingenieurwesen — which is exactly what `other` means."
+  },
+
+  "teachingShare": {
+    "$comment": "Fraction of a building's USABLE floor that becomes schedulable teaching space. Bands are tested in order against the building name, first match wins; `default` applies to everything else and a building owned by an unmodelled faculty gets 0 regardless. \u26a0\ufe0f THESE WERE HALVED (0.85/0.60/0.40 \u2192 0.70/0.35/0.18) after the OSM relation fix recovered the two big faculty buildings (Maschinenbau 8146 m\u00b2, Informatik und Mathematik 4406 m\u00b2). At the old share those two alone contributed thousands of square metres of 'teaching space', 262 teaching rooms appeared for 3386 students \u2014 one per 13 \u2014 and the validator's utilisation gate refused the dataset at 10%. The gate was right: the error was not the utilisation, it was believing that four tenths of a Maschinenbau faculty building is a seminar room. It is a workshop, a test rig and a professor's office.",
+    "byNameWords": [
+      { "share": 0.7, "words": ["h\u00f6rsaal"] },
+      { "share": 0.35, "words": ["labor", "cip", "mikrosystemtechnik"] },
+      {
+        "share": 0.1,
+        "words": ["techbase"],
+        "$comment": "⚠️ RENTED OFFICE SPACE IN SOMEBODY ELSE'S BUILDING, so the lowest share in the file — below even the 0.18 default. OTH occupies a research centre here alongside Vector Informatik, GEFASOFT, intive and Sensorik-Bayern; treating a tenth of the floor as schedulable seminar space is generous already, and treating a fifth of it as OTH's would quietly hand the university four private companies' offices."
+      }
+    ],
+    "default": 0.18
+  },
+
+  "lectureHalls": {
+    "$comment": "\u26a0\ufe0f LECTURE HALLS ARE DELIBERATELY SCARCE. An early pass gave a hall to every building over 1300 m\u00b2 and produced 16 of them for 150 hall sessions \u2014 27% occupancy even if perfectly packed, which means two faculties never want the same hall and the central conflict of the product cannot occur in its own demo data.",
+    "nameWords": ["h\u00f6rsaal"],
+    "minFootprintM2": 2000,
+    "secondHallMinFootprintM2": 1700
+  },
+
+  "cipPoolFaculties": ["IM", "shared"],
+  "$cipPoolComment": "Which owners' buildings get computer rooms in the mix. Informatik und Mathematik and the shared halls; a Maschinenbau workshop building does not need a CIP-Pool."
+}

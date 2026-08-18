@@ -1,0 +1,433 @@
+{
+  "$note": "LMU raumfinder coverage inside the built AOI. Measured, not assumed.",
+  "source": "https://www.lmu.de/raumfinder/",
+  "buildingsInAoi": 70,
+  "withPublishedPlans": 70,
+  "totalFloors": 355,
+  "totalRooms": 15116,
+  "processed": [
+    "bw7070"
+  ],
+  "buildings": [
+    {
+      "code": "bw0110",
+      "name": "AKADEMIESTR. 01",
+      "floors": 5,
+      "rooms": 49
+    },
+    {
+      "code": "bw1020",
+      "name": "AMALIENSTR. 17",
+      "floors": 6,
+      "rooms": 112
+    },
+    {
+      "code": "bw0073",
+      "name": "AMALIENSTR. 52",
+      "floors": 7,
+      "rooms": 130
+    },
+    {
+      "code": "bw0090",
+      "name": "AMALIENSTR. 54",
+      "floors": 5,
+      "rooms": 81
+    },
+    {
+      "code": "bw0147",
+      "name": "AMALIENSTR. 73",
+      "floors": 3,
+      "rooms": 53
+    },
+    {
+      "code": "bw0151",
+      "name": "AMALIENSTR. 83",
+      "floors": 4,
+      "rooms": 52
+    },
+    {
+      "code": "bw1541",
+      "name": "BEETHOVENPLATZ 01",
+      "floors": 3,
+      "rooms": 45
+    },
+    {
+      "code": "bw0630",
+      "name": "GEORGENSTR. 07",
+      "floors": 3,
+      "rooms": 50
+    },
+    {
+      "code": "bw0631",
+      "name": "GEORGENSTR. 11",
+      "floors": 4,
+      "rooms": 46
+    },
+    {
+      "code": "bw0000",
+      "name": "GESCHWISTER - SCHOLL - PLATZ 01",
+      "floors": 8,
+      "rooms": 1260
+    },
+    {
+      "code": "bw0570",
+      "name": "GISELASTR. 10",
+      "floors": 4,
+      "rooms": 98
+    },
+    {
+      "code": "bw1502",
+      "name": "GOETHESTR. 29",
+      "floors": 7,
+      "rooms": 86
+    },
+    {
+      "code": "bw1509",
+      "name": "GOETHESTR. 31",
+      "floors": 8,
+      "rooms": 508
+    },
+    {
+      "code": "bw1503",
+      "name": "GOETHESTR. 33",
+      "floors": 5,
+      "rooms": 219
+    },
+    {
+      "code": "bw1130",
+      "name": "KATHARINA-VON-BORA-STR. 10",
+      "floors": 1,
+      "rooms": 28
+    },
+    {
+      "code": "bw0310",
+      "name": "KAULBACHSTR. 37",
+      "floors": 6,
+      "rooms": 193
+    },
+    {
+      "code": "bw0306",
+      "name": "KAULBACHSTR. 45",
+      "floors": 4,
+      "rooms": 56
+    },
+    {
+      "code": "bw0303",
+      "name": "KAULBACHSTR. 53",
+      "floors": 3,
+      "rooms": 63
+    },
+    {
+      "code": "bw0801",
+      "name": "KOENIGINSTR. 08",
+      "floors": 6,
+      "rooms": 150
+    },
+    {
+      "code": "bw0820",
+      "name": "KOENIGINSTR. 10B",
+      "floors": 4,
+      "rooms": 34
+    },
+    {
+      "code": "bw0822",
+      "name": "KOENIGINSTR. 12",
+      "floors": 5,
+      "rooms": 182
+    },
+    {
+      "code": "bw0824",
+      "name": "KOENIGINSTR. 14",
+      "floors": 4,
+      "rooms": 199
+    },
+    {
+      "code": "bw0826",
+      "name": "KOENIGINSTR. 16",
+      "floors": 4,
+      "rooms": 133
+    },
+    {
+      "code": "bw0828",
+      "name": "KOENIGINSTR. 18",
+      "floors": 3,
+      "rooms": 17
+    },
+    {
+      "code": "bw0650",
+      "name": "KONRADSTR. 06",
+      "floors": 6,
+      "rooms": 129
+    },
+    {
+      "code": "bw0600",
+      "name": "LEOPOLDSTR. 03",
+      "floors": 6,
+      "rooms": 206
+    },
+    {
+      "code": "bw0620",
+      "name": "LEOPOLDSTR. 05",
+      "floors": 4,
+      "rooms": 85
+    },
+    {
+      "code": "bw0608",
+      "name": "LEOPOLDSTR. 11A ",
+      "floors": 2,
+      "rooms": 78
+    },
+    {
+      "code": "bw0601",
+      "name": "LEOPOLDSTR. 13",
+      "floors": 7,
+      "rooms": 744
+    },
+    {
+      "code": "bw0607",
+      "name": "LEOPOLDSTR. 13A",
+      "floors": 3,
+      "rooms": 215
+    },
+    {
+      "code": "bw0610",
+      "name": "LEOPOLDSTR. 15",
+      "floors": 5,
+      "rooms": 187
+    },
+    {
+      "code": "bw0580",
+      "name": "LEOPOLDSTR. 30",
+      "floors": 7,
+      "rooms": 166
+    },
+    {
+      "code": "bw0590",
+      "name": "LEOPOLDSTR. 44",
+      "floors": 6,
+      "rooms": 128
+    },
+    {
+      "code": "bw1540",
+      "name": "LESSINGSTR. 02",
+      "floors": 4,
+      "rooms": 45
+    },
+    {
+      "code": "bw1640",
+      "name": "LINDWURMSTR. 23",
+      "floors": 1,
+      "rooms": 24
+    },
+    {
+      "code": "bw0340",
+      "name": "LUDWIGSTR. 14",
+      "floors": 2,
+      "rooms": 20
+    },
+    {
+      "code": "bw0040",
+      "name": "LUDWIGSTR. 27",
+      "floors": 7,
+      "rooms": 187
+    },
+    {
+      "code": "bw0407",
+      "name": "LUDWIGSTR. 28",
+      "floors": 8,
+      "rooms": 602
+    },
+    {
+      "code": "bw0122",
+      "name": "LUDWIGSTR. 29",
+      "floors": 5,
+      "rooms": 96
+    },
+    {
+      "code": "bw0121",
+      "name": "LUDWIGSTR. 31",
+      "floors": 5,
+      "rooms": 96
+    },
+    {
+      "code": "bw0120",
+      "name": "LUDWIGSTR. 33",
+      "floors": 5,
+      "rooms": 107
+    },
+    {
+      "code": "bw1120",
+      "name": "LUISENSTR. 37",
+      "floors": 7,
+      "rooms": 403
+    },
+    {
+      "code": "bw0554",
+      "name": "MARTIUSSTR. 04",
+      "floors": 4,
+      "rooms": 153
+    },
+    {
+      "code": "bw7070",
+      "name": "OETTINGENSTR. 67",
+      "floors": 3,
+      "rooms": 840
+    },
+    {
+      "code": "bw1521",
+      "name": "PETTENKOFERSTR. 09A",
+      "floors": 6,
+      "rooms": 333
+    },
+    {
+      "code": "bw1531",
+      "name": "PETTENKOFERSTR. 11",
+      "floors": 5,
+      "rooms": 196
+    },
+    {
+      "code": "bw1500",
+      "name": "PETTENKOFERSTR. 12",
+      "floors": 5,
+      "rooms": 196
+    },
+    {
+      "code": "bw1507",
+      "name": "PETTENKOFERSTR. 14",
+      "floors": 4,
+      "rooms": 119
+    },
+    {
+      "code": "bw0420",
+      "name": "PROFESSOR - HUBER - PLATZ 02",
+      "floors": 8,
+      "rooms": 333
+    },
+    {
+      "code": "bw1110",
+      "name": "RICHARD - WAGNER - STR. 10",
+      "floors": 5,
+      "rooms": 128
+    },
+    {
+      "code": "bw0104",
+      "name": "SCHACKSTR. 04",
+      "floors": 5,
+      "rooms": 128
+    },
+    {
+      "code": "bw0200",
+      "name": "SCHELLINGSTR. 03",
+      "floors": 8,
+      "rooms": 624
+    },
+    {
+      "code": "bw0050",
+      "name": "SCHELLINGSTR. 04",
+      "floors": 7,
+      "rooms": 271
+    },
+    {
+      "code": "bw0251",
+      "name": "SCHELLINGSTR. 05",
+      "floors": 5,
+      "rooms": 65
+    },
+    {
+      "code": "bw0252",
+      "name": "SCHELLINGSTR. 07  ",
+      "floors": 4,
+      "rooms": 63
+    },
+    {
+      "code": "bw0250",
+      "name": "SCHELLINGSTR. 09",
+      "floors": 3,
+      "rooms": 55
+    },
+    {
+      "code": "bw0060",
+      "name": "SCHELLINGSTR. 10",
+      "floors": 1,
+      "rooms": 23
+    },
+    {
+      "code": "bw0070",
+      "name": "SCHELLINGSTR. 12",
+      "floors": 7,
+      "rooms": 251
+    },
+    {
+      "code": "bw0270",
+      "name": "SCHELLINGSTR. 33",
+      "floors": 5,
+      "rooms": 89
+    },
+    {
+      "code": "bw1504",
+      "name": "SCHILLERSTR. 42",
+      "floors": 5,
+      "rooms": 344
+    },
+    {
+      "code": "bw1505",
+      "name": "SCHILLERSTR. 44",
+      "floors": 6,
+      "rooms": 516
+    },
+    {
+      "code": "bw1501",
+      "name": "SCHILLERSTR. 46",
+      "floors": 4,
+      "rooms": 209
+    },
+    {
+      "code": "bw0334",
+      "name": "SCHÖNFELDSTR. 13A",
+      "floors": 2,
+      "rooms": 41
+    },
+    {
+      "code": "bw0575",
+      "name": "SEESTR. 13",
+      "floors": 4,
+      "rooms": 54
+    },
+    {
+      "code": "bw1715",
+      "name": "THALKIRCHNERSTR. 36 / FRAUENLOBSTR. 7A",
+      "floors": 7,
+      "rooms": 488
+    },
+    {
+      "code": "bw1003",
+      "name": "THERESIENSTR. 37/39/41",
+      "floors": 6,
+      "rooms": 1183
+    },
+    {
+      "code": "bw0440",
+      "name": "VETERINAERSTR. 01",
+      "floors": 5,
+      "rooms": 104
+    },
+    {
+      "code": "bw0460",
+      "name": "VETERINAERSTR. 05 ",
+      "floors": 5,
+      "rooms": 77
+    },
+    {
+      "code": "bw0800",
+      "name": "VETERINAERSTR. 13",
+      "floors": 18,
+      "rooms": 764
+    },
+    {
+      "code": "bw5950",
+      "name": "ZENTNERSTR. 31",
+      "floors": 6,
+      "rooms": 107
+    }
+  ]
+}

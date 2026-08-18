@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: campus-scheduler
+  displayName: Campus Scheduler
+  description: A timetable planner's cockpit over a photoreal 3D campus twin, built entirely from open geodata — state 1 m terrain under a 20 cm orthophoto, LoD2 buildings that open into their own floors, and eight German universities in one build — with hard-constraint conflict detection, cascade what-if, and an OR-Tools CP-SAT solver proposing the smallest set of moves that repairs the week.
+entries:
+  - path: .
+    name: Campus Scheduler

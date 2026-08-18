@@ -1,0 +1,34 @@
+# Node / build
+node_modules/
+dist/
+fabric-dist/
+*.tsbuildinfo
+
+# Rayfin / Fabric
+rayfin/.env
+rayfin/.deployments.json
+# Build scratch from `rayfin up`: the compiled entity classes and the generated Data API Builder
+# config. Regenerated on every deploy from rayfin/data/, so committing it would just go stale.
+rayfin/.temp/
+.env
+.env.local
+
+# Geodata caches and generated datasets — large, regenerable, never committed.
+# ⚠️ ANCHORED with a leading slash on purpose. Plain `data/` matches a directory called `data`
+# at ANY depth, which silently swallowed `tools/data/` — the timetable generator and the
+# building fetcher were untracked for a whole session and would have been lost on a fresh clone.
+/data/
+/public/terrain/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Test output
+test-results/
+playwright-report/
+
+# Rendered demo video: 15 MB of binary, reproducible with tools/demo/record-campus.mjs.
+# The .srt beside it IS tracked - the narration is written, not rendered.
+media/*.mp4

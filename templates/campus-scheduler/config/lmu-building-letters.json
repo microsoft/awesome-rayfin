@@ -1,0 +1,36 @@
+{
+  "$comment": "LMU building letters — MEASURED from OpenStreetMap on 2026-07-31, not invented and not recalled. ⚠️ THIS FILE EXISTS BECAUSE AN EARLIER ASSUMPTION WAS WRONG. The LMU AOI was written stating that LMU publishes no building-letter scheme and that every letter in this dataset would therefore be a lower-case placeholder. Then `fetch_buildings.py --site lmu` returned nine LMU buildings whose OSM *name* is a single capital letter — A, B, C, D, E, F, M, N — all of them inside the Hauptgebäude outline at Geschwister-Scholl-Platz 1, and all of them agreeing with the room refs the indoor probe measured ('A 001', 'A 014', 'A 105'). The letters were in the data the whole time; the assumption was that they would not be. Correcting it costs one file and keeps the room codes real.",
+
+  "$semanticWarning": "⚠️ A LETTER MEANS SOMETHING DIFFERENT HERE THAN AT OTH, and the two datasets must not be read the same way. At OTH a letter identifies a BUILDING campus-wide: 'K 001' is room 001 in Gebäude K, the Fakultät Informatik und Mathematik, which stands on its own at Galgenbergstraße 32. At LMU these letters identify WINGS OF ONE BUILDING: A, B, C, D, E, F, M and N are parts of the Hauptgebäude complex, which OSM maps as separate polygons because they are separately surveyed structures around the two courtyards. 'A 014' is a room in the A wing of the Hauptgebäude, not in a free-standing Gebäude A. The generator can treat them identically — each wing is its own OSM building with its own footprint and storey count — but any sentence written about them for a human must not promote a wing to a building.",
+
+  "source": "OpenStreetMap contributors, ODbL — the `name` tag on the buildings inside way/82672176 (LMU Hauptgebäude, Geschwister-Scholl-Platz 1)",
+  "measuredOn": "2026-07-31",
+  "measuredBy": "tools/data/fetch_buildings.py --site lmu, then temp/lmu_letters_scan.py over config/buildings-lmu.json",
+
+  "osmNameToLetter": {
+    "A": "A",
+    "B": "B",
+    "C": "C",
+    "D": "D",
+    "E": "E",
+    "F": "F",
+    "M": "M",
+    "N": "N"
+  },
+  "$mappingComment": "The mapping is the identity because OSM already stores the letter as the name — which is itself the evidence that these are LMU's own designations rather than something derived. Kept in the same `osmNameToLetter` shape as config/oth-building-letters.json so `building_rows()` needs no per-site branch.",
+
+  "measured": [
+    { "letter": "A", "osmId": "way/17973243", "footprintM2": 4113, "levels": null },
+    { "letter": "F", "osmId": "way/17974115", "footprintM2": 1773, "levels": 3 },
+    { "letter": "D", "osmId": "way/17973028", "footprintM2": 1679, "levels": 3 },
+    { "letter": "E", "osmId": "way/17973432", "footprintM2": 1618, "levels": null },
+    { "letter": "B", "osmId": "way/17972691", "footprintM2": 1510, "levels": 3 },
+    { "letter": "M", "osmId": "way/17973711", "footprintM2": 1366, "levels": 5 },
+    { "letter": "N", "osmId": "way/17973573", "footprintM2": 1299, "levels": null },
+    { "letter": "C", "osmId": "way/17972796", "footprintM2": 1030, "levels": 4 }
+  ],
+
+  "$notCovered": "Everything else keeps a LOWER-CASE placeholder letter, which is what a lower-case letter means everywhere in this dataset: ours, not the university's. That includes the building with by far the best data on the site — relation/116031, the Institut für Informatik at Oettingenstraße 67, whose 526 surveyed rooms carry wing refs A/C/D/E/F/G/H/L of their own. Those refs are real, but they belong to a DIFFERENT lettering (Oettingenstraße's Trakte), and mapping them into the same single-letter namespace as the Hauptgebäude's wings would produce two different rooms both called 'A 105'. Two local schemes are not one global scheme; the placeholder keeps them apart until LMU supplies a room list that says how they are actually distinguished.",
+
+  "$notPublished": "No claim is made that LMU publishes this as a list. It is not on a Standorte-und-Raumpläne page the way OTH's is; it is on the buildings, in the survey, and on the room signs the refs were copied from. That is a weaker provenance than OTH's published PDF and it is recorded as such rather than rounded up."
+}

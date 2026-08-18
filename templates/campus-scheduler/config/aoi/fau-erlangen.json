@@ -1,0 +1,117 @@
+{
+  "$comment": "Area of interest definition for FAU Erlangen-Nürnberg — the fifth twin, and the first built for the 'top ten German universities by student numbers' set (PLAN §37). FAU is 9th on that list at 40 382 students (DESTATIS GENESIS, WS 2024/25, via config/universities.json) and was chosen FIRST for a reason that is about cost rather than importance: it is in Bayern, so the LDBV pipeline that already serves OTH, LMU and Garching applies unchanged and no new survey authority has to be reverse-engineered. Köln, Aachen and Münster are larger and needed a Nordrhein-Westfalen adapter before they could be attempted at all.",
+
+  "id": "fau-erlangen",
+
+  "site": {
+    "name": { "de": "FAU Erlangen-Nürnberg", "en": "FAU Erlangen-Nürnberg" },
+    "region": { "de": "Erlangen, Bayern", "en": "Erlangen, Bavaria" },
+    "timezone": "Europe/Berlin"
+  },
+
+  "$nameComment": "⚠️ THE UNIVERSITY IS ERLANGEN-*NÜRNBERG* AND THIS AOI IS ERLANGEN ONLY. FAU teaches in both cities, ~17 km apart, plus Fürth. Covering both in one AOI would mean a ~20 x 12 km core — an order of magnitude more terrain, buildings and drape than any AOI here, for a corridor that is mostly other people's city. So this twin is honest about its extent in its own id (`fau-erlangen`) rather than claiming the whole institution, exactly as `garching` does not claim to be all of TUM. The Nürnberg sites (WiSo, Erziehungswissenschaften) are NOT in this box and no part of the app should imply otherwise.",
+
+  "lenses": [],
+  "$lensesComment": "Empty, deliberately, and the same state OTH shipped in first. A lens may only be declared where its data requirements can be met (`world.test.ts` enforces this and failed the original engine fork for exactly this reason). FAU publishes no timetable, so `occupancy`, `staffing` and `quality` are impossible; the indoor probe below found nothing, so room analytics are impossible; and `condition` would mean seeding an invented Sanierungsstau for a named real university, which is a decision to take deliberately rather than by copying Tübingen's block. Lenses return when data lands.",
+
+  "bbox": {
+    "crs": "EPSG:4326",
+    "west": 11.001,
+    "east": 11.0348,
+    "south": 49.5673,
+    "north": 49.6036,
+    "$comment": "HIGH-RESOLUTION CORE, ~2.44 x 4.04 km. Derived from the two campus clusters that find_campus_areas.py resolved out of OpenStreetMap (config/campus-candidates.json, HS131: 33 areas around Freyeslebenstraße and 25 around Röthelheim/Innenstadt), unioned and given ~250 m of margin. Tall rather than wide because that is the shape FAU actually has in Erlangen: the Technische Fakultät sits on the Südgelände at 49.570-49.582, the Schloss and Kollegienhaus are in the Innenstadt at 49.597-49.601, and Röthelheim lies between them. Comparable in area to OTH (3.07 x 2.84 km) and LMU (3.12 x 3.83 km)."
+  },
+
+  "shell": {
+    "crs": "EPSG:4326",
+    "west": 10.91,
+    "east": 11.13,
+    "south": 49.5,
+    "north": 49.67,
+    "$comment": "COARSE TERRAIN SHELL, ~15.9 x 18.9 km. Reaches the Rathsberg and the Burgberg ridge north-east of the city, the Regnitz and the Main-Donau-Kanal to the west, and the Sebalder Reichswald to the south — which is what actually closes the horizon from the Südgelände. Stops well short of Nürnberg: the shell exists to give the core a believable surround, not to render a second city at 90 m posting."
+  },
+
+  "workingCrs": "EPSG:25832",
+  "verticalDatum": "DHHN2016",
+
+  "elevationRangeM": {
+    "min": 260,
+    "max": 315,
+    "$measured": true,
+    "$comment": "MEASURED 2026-08-07 by build_terrain.py over the core: 268.34 .. 304.73 m, from 20 LDBV DGM1 tiles at 100% coverage (grid 1276 x 2051 at 2 m). The bracket is left slightly loose around the measurement so a re-run after an LDBV update does not trip the plausibility gate over a decimetre; uint16 quantisation over 55 m is ~0.8 mm.\n\n⚠️ THE FIRST VALUE HERE WAS A GUESS OF 250-450 AND IT WAS BADLY WRONG. Reasoning from published figures — the Regnitz at roughly 280 m, the Rathsberg ridge in the 380s — produced a bracket almost four times the real spread, because the RIDGE IS IN THE SHELL AND NOT IN THE CORE. Erlangen's core is genuinely flat: 36 m of relief over 4 km. Shipping the guess would have spent two thirds of the hypsometric ramp on elevations this AOI does not contain, which is the exact failure Tübingen's config records. The shell does reach 526 m; that is a different grid and a different range.\n\nGround heights at the resolved focus places came out at Erlangen Hbf 278.2 m, Chemikum 285.8 m, Physikum 287.6 m, Felix-Klein-Gebäude 292.2 m — all plausible, which is a second confirmation that the focus coordinates landed on the campus rather than somewhere the name also matched."
+  },
+
+  "drape": {
+    "maxPx": 4096,
+    "$comment": "Long side of the DOP20 mosaic, via the LDBV WMS. NOT larger: at 8192 px the mipmap chain is ~300 MB, which Chromium accepts and then silently samples BLACK. The drape texture must be loaded with flipY=false and WITHOUT mipmaps (PLAN §5.5)."
+  },
+
+  "grids": {
+    "sourceResolutionM": 1,
+    "renderResolutionM": 2,
+    "renderDecimation": 2,
+    "$comment": "LDBV DGM1 source, resampled to a 2 m heightmap, mesh decimated 2x -> 4 m posting. The same tier as every other AOI in this repo, so the renderer keeps one code path and the twins stay visually comparable."
+  },
+
+  "shellGrids": {
+    "sourceResolutionM": 30,
+    "renderResolutionM": 30,
+    "renderDecimation": 3,
+    "transitionBandM": 250,
+    "$comment": "Copernicus GLO-30 -> ~90 m posting. transitionBandM is written in metres for readability but MUST be applied as a fraction of the core (CORE_FADE_FRACTION ~0.08), never absolute — an absolute band tuned for a 9 km alpine AOI once ate 43% of a 2 km campus."
+  },
+
+  "indoorProbe": {
+    "probedOn": "2026-08-07",
+    "roomsFound": 0,
+    "$comment": "⚠️ Named `indoorProbe` and NOT `rooms`, because in this engine a `rooms` block MEANS 'real indoor geometry exists' and drives the hero-building explode. FAU has no NavigaTUM equivalent and no published per-floor plans that this project has found, so buildings here stay solid and the app says so rather than inventing interiors — the same answer OTH gave before its floor plans were OCR'd."
+  },
+
+  "focusPlaces": [
+    { "id": "schloss", "name": "Schloss Erlangen", "lat": 49.59788, "lon": 11.00452 },
+    { "id": "kollegienhaus", "name": "Kollegienhaus", "lat": 49.59731, "lon": 11.00708 },
+    { "id": "schlossgarten", "name": "Schlossgarten", "lat": 49.59822, "lon": 11.00737 },
+    { "id": "hoersaal_c", "name": "Hörsaal C", "lat": 49.60092, "lon": 11.01654 },
+    { "id": "technische_fakultaet", "name": "Technische Fakultät", "lat": 49.57335, "lon": 11.02598 },
+    { "id": "informatik", "name": "Informatik und Rechenzentrum (RRZE)", "lat": 49.57375, "lon": 11.02738 },
+    { "id": "mensa_sued", "name": "Mensa und Bibliothek Südgelände", "lat": 49.57455, "lon": 11.02951 },
+    { "id": "chemikum", "name": "Chemikum", "lat": 49.57812, "lon": 11.02858 },
+    { "id": "physikum", "name": "Physikum", "lat": 49.58029, "lon": 11.02933 },
+    { "id": "biologikum", "name": "Biologikum", "lat": 49.57937, "lon": 11.0292 },
+    { "id": "felix_klein", "name": "Felix-Klein-Gebäude", "lat": 49.57385, "lon": 11.03023 },
+    { "id": "roethelheim", "name": "Röthelheim-Campus", "lat": 49.59518, "lon": 11.0236 },
+    { "id": "bahnhof", "name": "Erlangen Hbf", "lat": 49.59607, "lon": 11.00159, "kind": "station" }
+  ],
+
+  "$focusPlacesComment": "Resolved 2026-08-07 from OpenStreetMap via Overpass BY TAG AND OPERATOR — not from memory, and not by name. Tübingen's config records why: a name match there returned a student fraternity for the castle and a bookshop for the Hölderlinturm. The query asked for `amenity=university`, `building=university`, university-operated buildings, stations and named parks inside the core box, and every coordinate above is the centre of a returned element (Schloss Erlangen way/27883772 and Kollegienhaus way/27883773 both carry `operator=FAU Friedrich-Alexander-Universität`; Erlangen Hbf is node/4530820005).\n\n⚠️ ONE TRAP WORTH RECORDING. The obvious anchor — `relation/3569139`, literally named 'Friedrich-Alexander-Universität Erlangen-Nürnberg' — has its centre at 49.51864, 11.05961, which is open country roughly 7 km SOUTH of this AOI. It is correct: the relation spans Erlangen AND Nürnberg, so its centroid falls in the gap between the two cities. Anchoring the AOI on the feature that carries the university's own name would have put the entire twin in a field. The centroid of a multi-site relation is not a campus.",
+
+  "geobasis": {
+    "authority": "Bayerische Vermessungsverwaltung (LDBV)",
+    "licence": "CC BY 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/4.0/deed.de",
+    "attribution": "Datenquelle: Bayerische Vermessungsverwaltung – www.geodaten.bayern.de [Daten bearbeitet]",
+    "downloadBase": "https://download1.bayernwolke.de",
+    "downloadMirror": "https://download2.bayernwolke.de",
+    "metalinkBase": "https://geodaten.bayern.de/odd",
+    "$comment": "Identical to the OTH, LMU and Garching AOIs — Erlangen is in Bayern, so the same survey authority, portal and licence apply, and pipeline.py's `in_bavaria` predicate keys on this string to select the LDBV steps. This is the entire reason FAU was built before the larger NRW universities: no new fetcher. The attribution is not optional."
+  },
+
+  "shellGeobasis": {
+    "authority": "ESA / DLR / Airbus Defence and Space — Copernicus DEM GLO-30",
+    "licence": "Copernicus DEM free licence (worldwide, free reuse with the prescribed notice)",
+    "licenceUrl": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+    "attribution": "produced using Copernicus WorldDEM-30 © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018 provided under COPERNICUS by the European Union and ESA; all rights reserved",
+    "$attributionComment": "The ADAPTED-DATA form of the notice, which is prescribed rather than stylistic: the pipeline resamples the tile onto a UTM grid and shifts it onto the core's vertical datum, so it is unambiguously modified.",
+    "cogUrlTemplate": "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM.tif",
+    "tiles": ["N49_E010", "N49_E011"],
+    "$tilesComment": "TWO tiles. The shell runs 10.91-11.13 E, so it crosses the 11 E meridian and the western strip falls in E010 even though Erlangen itself is comfortably inside E011. Latitude needs only N49 (49.50-49.67). A missing tile does not raise an error — it renders as a flat shelf across that side of the horizon, which is why the crossing is worked out here rather than discovered on screen."
+  },
+
+  "tour": [
+    { "placeId": "schloss", "captionKey": "tour.fau.schloss", "rangeM": 700, "holdMs": 6500 },
+    { "placeId": "technische_fakultaet", "captionKey": "tour.fau.technische", "rangeM": 1100, "holdMs": 6500 },
+    { "placeId": "informatik", "captionKey": "tour.fau.informatik", "rangeM": 500, "holdMs": 6000 },
+    { "placeId": "roethelheim", "captionKey": "tour.fau.roethelheim", "rangeM": 800, "holdMs": 6000 }
+  ]
+}

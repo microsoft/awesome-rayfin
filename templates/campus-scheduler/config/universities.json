@@ -1,0 +1,2281 @@
+{
+  "$provenance": {
+    "source": "DESTATIS GENESIS via Hochschul-Insights (hi_stud.json, hi_coords.json)",
+    "licence": "CC-BY (Statistisches Bundesamt)",
+    "term": "WS 2024/25",
+    "grouping": "5-character Hochschule_Code prefix; DESTATIS issues one code per SITE",
+    "coordinates": "cityPoint is a CITY CENTROID per institution, NOT a campus position — measured up to 16.07 km from the campus (Garching). Campus geometry comes from OpenStreetMap via find_campus_areas.py.",
+    "onlineExcluded": true,
+    "generatedBy": "tools/data/build_university_registry.py"
+  },
+  "suspectedOverMerge": [],
+  "universities": [
+    {
+      "id": "HS163",
+      "name": "TU München",
+      "city": "München",
+      "state": "Bayern",
+      "students": 54977,
+      "siteCount": 5,
+      "sites": [
+        {
+          "code": "HS1631",
+          "name": "TU München",
+          "city": "München",
+          "state": "Bayern",
+          "students": 24705,
+          "cityPoint": {
+            "lat": 48.1375,
+            "lon": 11.575
+          }
+        },
+        {
+          "code": "HS1633",
+          "name": "Technische Universität München",
+          "city": "München",
+          "state": "Bayern",
+          "students": 23067,
+          "cityPoint": {
+            "lat": 48.1375,
+            "lon": 11.575
+          }
+        },
+        {
+          "code": "HS1632",
+          "name": "TU München",
+          "city": "München",
+          "state": "Bayern",
+          "students": 4895,
+          "cityPoint": {
+            "lat": 48.1375,
+            "lon": 11.575
+          }
+        },
+        {
+          "code": "HS1634",
+          "name": "Technische Universität München",
+          "city": "München",
+          "state": "Bayern",
+          "students": 1303,
+          "cityPoint": {
+            "lat": 48.1375,
+            "lon": 11.575
+          }
+        },
+        {
+          "code": "HS1635",
+          "name": "TU München",
+          "city": "München",
+          "state": "Bayern",
+          "students": 1007,
+          "cityPoint": {
+            "lat": 48.1375,
+            "lon": 11.575
+          }
+        }
+      ],
+      "online": false,
+      "tier": "a",
+      "aoi": "garching"
+    },
+    {
+      "id": "HS132",
+      "name": "Universität München",
+      "city": "München",
+      "state": "Bayern",
+      "students": 53609,
+      "siteCount": 2,
+      "sites": [
+        {
+          "code": "HS1322",
+          "name": "Universität München",
+          "city": "München",
+          "state": "Bayern",
+          "students": 49604,
+          "cityPoint": {
+            "lat": 48.1375,
+            "lon": 11.575
+          }
+        },
+        {
+          "code": "HS1323",
+          "name": "Universität München im Landkreis München",
+          "city": "München",
+          "state": "Bayern",
+          "students": 4005,
+          "cityPoint": {
+            "lat": 48.1375,
+            "lon": 11.575
+          }
+        }
+      ],
+      "online": false,
+      "tier": "a",
+      "aoi": "lmu-muenchen"
+    },
+    {
+      "id": "HS111",
+      "name": "Universität Köln",
+      "city": "Köln",
+      "state": "Nordrhein-Westfalen",
+      "students": 47238,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1110",
+          "name": "Universität Köln",
+          "city": "Köln",
+          "state": "Nordrhein-Westfalen",
+          "students": 47238,
+          "cityPoint": {
+            "lat": 50.9407,
+            "lon": 6.95991
+          }
+        }
+      ],
+      "online": false,
+      "tier": "a",
+      "aoi": "koeln"
+    },
+    {
+      "id": "HS810",
+      "name": "Priv. FH für Ökon. u. Management Essen",
+      "city": "Essen",
+      "state": "Nordrhein-Westfalen",
+      "students": 45369,
+      "siteCount": 31,
+      "sites": [
+        {
+          "code": "HS8101",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 11462,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810P",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 5184,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS8108",
+          "name": "Priv. FH für Ökon. u. Managem. Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 5183,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS8104",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 3750,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810L",
+          "name": "Priv. FH für Ökon. u. Managem. Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 3165,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810V",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 2983,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS8109",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 2159,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810U",
+          "name": "H für Ökon. und Managem. Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 1866,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810G",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 1325,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810S",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 1297,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810A",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 1252,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810R",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 832,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810Q",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 655,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810J",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 498,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810T",
+          "name": "H für Ökon. und Managem. Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 378,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS8106",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 367,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810C",
+          "name": "Priv. FH für Ökon. u. Managem. Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 323,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS8103",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 322,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810B",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 309,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS8102",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 308,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810M",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 290,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810H",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 273,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810W",
+          "name": "H für Ökon. und Managem. Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 260,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810N",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 213,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS8105",
+          "name": "Priv. FH für Ökon. u. Managem. Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 162,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810F",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 156,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810Y",
+          "name": "Priv. FH f.Ökon. und Managem. Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 125,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810K",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 121,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810X",
+          "name": "Priv. FH f.Ökon. und Managem. Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 117,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS810D",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 22,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        },
+        {
+          "code": "HS8107",
+          "name": "Priv. FH für Ökon. u. Management Essen",
+          "city": "Essen",
+          "state": "Nordrhein-Westfalen",
+          "students": 12,
+          "cityPoint": {
+            "lat": 51.450833333,
+            "lon": 7.013055555
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS148",
+      "name": "Technische Hochschule Aachen",
+      "city": "Aachen",
+      "state": "Nordrhein-Westfalen",
+      "students": 45113,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1480",
+          "name": "Technische Hochschule Aachen",
+          "city": "Aachen",
+          "state": "Nordrhein-Westfalen",
+          "students": 45113,
+          "cityPoint": {
+            "lat": 50.776207,
+            "lon": 6.083788
+          }
+        }
+      ],
+      "online": false,
+      "tier": "a",
+      "aoi": "aachen"
+    },
+    {
+      "id": "HS102",
+      "name": "Universität Hamburg",
+      "city": "Hamburg",
+      "state": "Hamburg",
+      "students": 42193,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1020",
+          "name": "Universität Hamburg",
+          "city": "Hamburg",
+          "state": "Hamburg",
+          "students": 42193,
+          "cityPoint": {
+            "lat": 53.460958333,
+            "lon": 9.969505555
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS112",
+      "name": "Universität Münster",
+      "city": "Münster",
+      "state": "Nordrhein-Westfalen",
+      "students": 41962,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1120",
+          "name": "Universität Münster",
+          "city": "Münster",
+          "state": "Nordrhein-Westfalen",
+          "students": 41962,
+          "cityPoint": {
+            "lat": 51.961,
+            "lon": 7.60809
+          }
+        }
+      ],
+      "online": false,
+      "tier": "a",
+      "aoi": "muenster"
+    },
+    {
+      "id": "HS116",
+      "name": "Universität Frankfurt am Main",
+      "city": "Frankfurt am Main",
+      "state": "Hessen",
+      "students": 40954,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1160",
+          "name": "Universität Frankfurt am Main",
+          "city": "Frankfurt am Main",
+          "state": "Hessen",
+          "students": 40954,
+          "cityPoint": {
+            "lat": 50.110555555,
+            "lon": 8.682222222
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS131",
+      "name": "U Erlangen-Nürnberg",
+      "city": "Erlangen",
+      "state": "Bayern",
+      "students": 40382,
+      "siteCount": 2,
+      "sites": [
+        {
+          "code": "HS1311",
+          "name": "U Erlangen-Nürnberg",
+          "city": "Erlangen",
+          "state": "Bayern",
+          "students": 30562,
+          "cityPoint": {
+            "lat": 49.5925,
+            "lon": 11.005
+          }
+        },
+        {
+          "code": "HS1312",
+          "name": "U Erlangen-Nürnberg",
+          "city": "Erlangen",
+          "state": "Bayern",
+          "students": 9820,
+          "cityPoint": {
+            "lat": 49.5925,
+            "lon": 11.005
+          }
+        }
+      ],
+      "online": false,
+      "tier": "a",
+      "aoi": "fau-erlangen"
+    },
+    {
+      "id": "HS138",
+      "name": "Freie Universität Berlin",
+      "city": "Berlin",
+      "state": "Berlin",
+      "students": 38397,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1380",
+          "name": "Freie Universität Berlin",
+          "city": "Berlin",
+          "state": "Berlin",
+          "students": 38397,
+          "cityPoint": {
+            "lat": 52.4543245,
+            "lon": 13.2934768
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS108",
+      "name": "Universität Bochum",
+      "city": "Bochum",
+      "state": "Nordrhein-Westfalen",
+      "students": 37759,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1080",
+          "name": "Universität Bochum",
+          "city": "Bochum",
+          "state": "Nordrhein-Westfalen",
+          "students": 37759,
+          "cityPoint": {
+            "lat": 51.483333333,
+            "lon": 7.216666666
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS008",
+      "name": "U Duisburg-Essen",
+      "city": "Duisburg",
+      "state": "Nordrhein-Westfalen",
+      "students": 37567,
+      "siteCount": 2,
+      "sites": [
+        {
+          "code": "HS0080",
+          "name": "U Duisburg-Essen",
+          "city": "Duisburg",
+          "state": "Nordrhein-Westfalen",
+          "students": 24545,
+          "cityPoint": {
+            "lat": 51.432222222,
+            "lon": 6.761111111
+          }
+        },
+        {
+          "code": "HS0082",
+          "name": "U Duisburg-Essen",
+          "city": "Duisburg",
+          "state": "Nordrhein-Westfalen",
+          "students": 13022,
+          "cityPoint": {
+            "lat": 51.432222222,
+            "lon": 6.761111111
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS020",
+      "name": "Humboldt-Universität Berlin",
+      "city": "Berlin",
+      "state": "Berlin",
+      "students": 35845,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS0200",
+          "name": "Humboldt-Universität Berlin",
+          "city": "Berlin",
+          "state": "Berlin",
+          "students": 35845,
+          "cityPoint": {
+            "lat": 52.516666666,
+            "lon": 13.383333333
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS109",
+      "name": "Universität Bonn",
+      "city": "Bonn",
+      "state": "Nordrhein-Westfalen",
+      "students": 34744,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1090",
+          "name": "Universität Bonn",
+          "city": "Bonn",
+          "state": "Nordrhein-Westfalen",
+          "students": 34744,
+          "cityPoint": {
+            "lat": 50.735277777,
+            "lon": 7.102222222
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS169",
+      "name": "Technische Universität Berlin",
+      "city": "Berlin",
+      "state": "Berlin",
+      "students": 34550,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1690",
+          "name": "Technische Universität Berlin",
+          "city": "Berlin",
+          "state": "Berlin",
+          "students": 34550,
+          "cityPoint": {
+            "lat": 52.512,
+            "lon": 13.32725
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS817",
+      "name": "Duale HS Baden-Württemberg",
+      "city": "Stuttgart",
+      "state": "Baden-Württemberg",
+      "students": 33676,
+      "siteCount": 13,
+      "sites": [
+        {
+          "code": "HS817A",
+          "name": "Duale HS Baden-Württemberg",
+          "city": "Stuttgart",
+          "state": "Baden-Württemberg",
+          "students": 7107,
+          "cityPoint": {
+            "lat": 48.7736,
+            "lon": 9.17083
+          }
+        },
+        {
+          "code": "HS8177",
+          "name": "Duale HS Baden-Württemberg",
+          "city": "Mannheim",
+          "state": "Baden-Württemberg",
+          "students": 5836,
+          "cityPoint": {
+            "lat": 49.4744,
+            "lon": 8.53472
+          }
+        },
+        {
+          "code": "HS8175",
+          "name": "Duale HS Baden-Württemberg",
+          "city": "Karlsruhe",
+          "state": "Baden-Württemberg",
+          "students": 3169,
+          "cityPoint": {
+            "lat": 49.0261,
+            "lon": 8.38552
+          }
+        },
+        {
+          "code": "HS8178",
+          "name": "Duale HS Baden-Württemberg",
+          "city": "Mosbach",
+          "state": "Baden-Württemberg",
+          "students": 2589,
+          "cityPoint": {
+            "lat": 49.354158,
+            "lon": 9.15130546
+          }
+        },
+        {
+          "code": "HS8173",
+          "name": "Duale HS Baden-Württemberg",
+          "city": "Heidenheim an der Brenz",
+          "state": "Baden-Württemberg",
+          "students": 2544,
+          "cityPoint": {
+            "lat": 48.676111111,
+            "lon": 10.154444444
+          }
+        },
+        {
+          "code": "HS817C",
+          "name": "Duale HS Baden-Württ.",
+          "city": "Villingen-Schwenningen",
+          "state": "Baden-Württemberg",
+          "students": 2445,
+          "cityPoint": {
+            "lat": 48.063152,
+            "lon": 8.4929618
+          }
+        },
+        {
+          "code": "HS8179",
+          "name": "Duale HS Baden-Württemberg",
+          "city": "Ravensburg",
+          "state": "Baden-Württemberg",
+          "students": 2059,
+          "cityPoint": {
+            "lat": 47.779846,
+            "lon": 9.613434
+          }
+        },
+        {
+          "code": "HS8176",
+          "name": "Duale HS Baden-Württemberg",
+          "city": "Lörrach",
+          "state": "Baden-Württemberg",
+          "students": 2023,
+          "cityPoint": {
+            "lat": 47.61733,
+            "lon": 7.67724
+          }
+        },
+        {
+          "code": "HS8172",
+          "name": "Duale HS BW.",
+          "city": "Ravensburg",
+          "state": "Baden-Württemberg",
+          "students": 1708,
+          "cityPoint": {
+            "lat": 47.783055555,
+            "lon": 9.611388888
+          }
+        },
+        {
+          "code": "HS817D",
+          "name": "Duale HS Baden-Württemberg",
+          "city": "Heilbronn",
+          "state": "Baden-Württemberg",
+          "students": 1551,
+          "cityPoint": {
+            "lat": 49.140428,
+            "lon": 9.217953
+          }
+        },
+        {
+          "code": "HS817F",
+          "name": "Duale H Baden-Württemberg, CAS",
+          "city": "Heilbronn",
+          "state": "Baden-Württemberg",
+          "students": 1340,
+          "cityPoint": {
+            "lat": 49.140428,
+            "lon": 9.217953
+          }
+        },
+        {
+          "code": "HS8174",
+          "name": "Duale HS BW.",
+          "city": "Stuttgart",
+          "state": "Baden-Württemberg",
+          "students": 755,
+          "cityPoint": {
+            "lat": 48.7775,
+            "lon": 9.18
+          }
+        },
+        {
+          "code": "HS8171",
+          "name": "Duale HS BW.",
+          "city": "Bad Mergentheim",
+          "state": "Baden-Württemberg",
+          "students": 550,
+          "cityPoint": {
+            "lat": 49.490833333,
+            "lon": 9.773055555
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS125",
+      "name": "Universität Heidelberg",
+      "city": "Heidelberg",
+      "state": "Baden-Württemberg",
+      "students": 30603,
+      "siteCount": 2,
+      "sites": [
+        {
+          "code": "HS1250",
+          "name": "Universität Heidelberg",
+          "city": "Heidelberg",
+          "state": "Baden-Württemberg",
+          "students": 28075,
+          "cityPoint": {
+            "lat": 49.412222222,
+            "lon": 8.71
+          }
+        },
+        {
+          "code": "HS1252",
+          "name": "Universität Heidelberg",
+          "city": "Heidelberg",
+          "state": "Baden-Württemberg",
+          "students": 2528,
+          "cityPoint": {
+            "lat": 49.412222222,
+            "lon": 8.71
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS036",
+      "name": "Universität Leipzig",
+      "city": "Leipzig",
+      "state": "Sachsen",
+      "students": 30528,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS0360",
+          "name": "Universität Leipzig",
+          "city": "Leipzig",
+          "state": "Sachsen",
+          "students": 30528,
+          "cityPoint": {
+            "lat": 51.3406321,
+            "lon": 12.3747329
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS122",
+      "name": "Universität Mainz",
+      "city": "Mainz",
+      "state": "Rheinland-Pfalz",
+      "students": 29490,
+      "siteCount": 2,
+      "sites": [
+        {
+          "code": "HS1221",
+          "name": "Universität Mainz",
+          "city": "Mainz",
+          "state": "Rheinland-Pfalz",
+          "students": 28628,
+          "cityPoint": {
+            "lat": 49.999444444,
+            "lon": 8.273611111
+          }
+        },
+        {
+          "code": "HS1222",
+          "name": "Universität Mainz",
+          "city": "Mainz",
+          "state": "Rheinland-Pfalz",
+          "students": 862,
+          "cityPoint": {
+            "lat": 49.999444444,
+            "lon": 8.273611111
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS113",
+      "name": "Technische Universität Dortmund",
+      "city": "Dortmund",
+      "state": "Nordrhein-Westfalen",
+      "students": 29454,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1130",
+          "name": "Technische Universität Dortmund",
+          "city": "Dortmund",
+          "state": "Nordrhein-Westfalen",
+          "students": 29454,
+          "cityPoint": {
+            "lat": 51.4925,
+            "lon": 7.414169444
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS110",
+      "name": "Universität Düsseldorf",
+      "city": "Düsseldorf",
+      "state": "Nordrhein-Westfalen",
+      "students": 28641,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1100",
+          "name": "Universität Düsseldorf",
+          "city": "Düsseldorf",
+          "state": "Nordrhein-Westfalen",
+          "students": 28641,
+          "cityPoint": {
+            "lat": 51.247388888,
+            "lon": 6.791361111
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS127",
+      "name": "Universität Tübingen",
+      "city": "Tübingen",
+      "state": "Baden-Württemberg",
+      "students": 28258,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1270",
+          "name": "Universität Tübingen",
+          "city": "Tübingen",
+          "state": "Baden-Württemberg",
+          "students": 28258,
+          "cityPoint": {
+            "lat": 48.52,
+            "lon": 9.055555555
+          }
+        }
+      ],
+      "online": false,
+      "tier": "a",
+      "aoi": "tuebingen"
+    },
+    {
+      "id": "HS037",
+      "name": "Technische Universität Dresden",
+      "city": "Dresden",
+      "state": "Sachsen",
+      "students": 27812,
+      "siteCount": 3,
+      "sites": [
+        {
+          "code": "HS0370",
+          "name": "Technische Universität Dresden",
+          "city": "Dresden",
+          "state": "Sachsen",
+          "students": 26652,
+          "cityPoint": {
+            "lat": 51.0493286,
+            "lon": 13.7381437
+          }
+        },
+        {
+          "code": "HS0372",
+          "name": "Technische Universität Dresden",
+          "city": "Dresden",
+          "state": "Sachsen",
+          "students": 826,
+          "cityPoint": {
+            "lat": 51.0493286,
+            "lon": 13.7381437
+          }
+        },
+        {
+          "code": "HS0373",
+          "name": "Technische Universität Dresden",
+          "city": "Dresden",
+          "state": "Sachsen",
+          "students": 334,
+          "cityPoint": {
+            "lat": 51.0493286,
+            "lon": 13.7381437
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS103",
+      "name": "Universität Göttingen",
+      "city": "Göttingen",
+      "state": "Niedersachsen",
+      "students": 26824,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1030",
+          "name": "Universität Göttingen",
+          "city": "Göttingen",
+          "state": "Niedersachsen",
+          "students": 26824,
+          "cityPoint": {
+            "lat": 51.533888888,
+            "lon": 9.935555555
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS145",
+      "name": "Universität Hannover",
+      "city": "Hannover",
+      "state": "Niedersachsen",
+      "students": 26074,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1450",
+          "name": "Universität Hannover",
+          "city": "Hannover",
+          "state": "Niedersachsen",
+          "students": 26074,
+          "cityPoint": {
+            "lat": 52.35317,
+            "lon": 9.72249
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS133",
+      "name": "Universität Würzburg",
+      "city": "Würzburg",
+      "state": "Bayern",
+      "students": 26024,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1330",
+          "name": "Universität Würzburg",
+          "city": "Würzburg",
+          "state": "Bayern",
+          "students": 26024,
+          "cityPoint": {
+            "lat": 49.794444444,
+            "lon": 9.929444444
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS100",
+      "name": "Universität Kiel",
+      "city": "Kiel",
+      "state": "Schleswig-Holstein",
+      "students": 24936,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1000",
+          "name": "Universität Kiel",
+          "city": "Kiel",
+          "state": "Schleswig-Holstein",
+          "students": 24936,
+          "cityPoint": {
+            "lat": 54.323333333,
+            "lon": 10.139444444
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS117",
+      "name": "Universität Gießen",
+      "city": "Gießen",
+      "state": "Hessen",
+      "students": 24698,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1170",
+          "name": "Universität Gießen",
+          "city": "Gießen",
+          "state": "Hessen",
+          "students": 24698,
+          "cityPoint": {
+            "lat": 50.583333333,
+            "lon": 8.666666666
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS153",
+      "name": "Technische Universität Darmstadt",
+      "city": "Darmstadt",
+      "state": "Hessen",
+      "students": 24310,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1530",
+          "name": "Technische Universität Darmstadt",
+          "city": "Darmstadt",
+          "state": "Hessen",
+          "students": 24310,
+          "cityPoint": {
+            "lat": 49.875,
+            "lon": 8.656388888
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS124",
+      "name": "Universität Freiburg im Breisgau",
+      "city": "Freiburg im Breisgau",
+      "state": "Baden-Württemberg",
+      "students": 24135,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1240",
+          "name": "Universität Freiburg im Breisgau",
+          "city": "Freiburg im Breisgau",
+          "state": "Baden-Württemberg",
+          "students": 24135,
+          "cityPoint": {
+            "lat": 47.995,
+            "lon": 7.85
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS114",
+      "name": "Universität Bielefeld",
+      "city": "Bielefeld",
+      "state": "Nordrhein-Westfalen",
+      "students": 23433,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1140",
+          "name": "Universität Bielefeld",
+          "city": "Bielefeld",
+          "state": "Nordrhein-Westfalen",
+          "students": 23433,
+          "cityPoint": {
+            "lat": 52.0355,
+            "lon": 8.50315
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS158",
+      "name": "Karlsruher Institut für Technologie, Karlsruhe",
+      "city": "Karlsruhe",
+      "state": "Baden-Württemberg",
+      "students": 22007,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1580",
+          "name": "Karlsruher Institut für Technologie, Karlsruhe",
+          "city": "Karlsruhe",
+          "state": "Baden-Württemberg",
+          "students": 22007,
+          "cityPoint": {
+            "lat": 49.016666666,
+            "lon": 8.4
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS014",
+      "name": "Universität Wuppertal",
+      "city": "Wuppertal",
+      "state": "Nordrhein-Westfalen",
+      "students": 20724,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS0140",
+          "name": "Universität Wuppertal",
+          "city": "Wuppertal",
+          "state": "Nordrhein-Westfalen",
+          "students": 20724,
+          "cityPoint": {
+            "lat": 51.266666666,
+            "lon": 7.183333333
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS159",
+      "name": "Universität Stuttgart",
+      "city": "Stuttgart",
+      "state": "Baden-Württemberg",
+      "students": 20620,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1590",
+          "name": "Universität Stuttgart",
+          "city": "Stuttgart",
+          "state": "Baden-Württemberg",
+          "students": 20620,
+          "cityPoint": {
+            "lat": 48.7817,
+            "lon": 9.1752
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS583",
+      "name": "TH Köln",
+      "city": "Köln",
+      "state": "Nordrhein-Westfalen",
+      "students": 20438,
+      "siteCount": 3,
+      "sites": [
+        {
+          "code": "HS5831",
+          "name": "TH Köln",
+          "city": "Köln",
+          "state": "Nordrhein-Westfalen",
+          "students": 16502,
+          "cityPoint": {
+            "lat": 50.942222222,
+            "lon": 6.957777777
+          }
+        },
+        {
+          "code": "HS5832",
+          "name": "TH Köln",
+          "city": "Köln",
+          "state": "Nordrhein-Westfalen",
+          "students": 3313,
+          "cityPoint": {
+            "lat": 50.942222222,
+            "lon": 6.957777777
+          }
+        },
+        {
+          "code": "HS5833",
+          "name": "TH Köln",
+          "city": "Köln",
+          "state": "Nordrhein-Westfalen",
+          "students": 623,
+          "cityPoint": {
+            "lat": 50.942222222,
+            "lon": 6.957777777
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS134",
+      "name": "Universität Regensburg",
+      "city": "Regensburg",
+      "state": "Bayern",
+      "students": 20202,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1340",
+          "name": "Universität Regensburg",
+          "city": "Regensburg",
+          "state": "Bayern",
+          "students": 20202,
+          "cityPoint": {
+            "lat": 48.9992339,
+            "lon": 12.0931658
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS135",
+      "name": "Universität Augsburg",
+      "city": "Augsburg",
+      "state": "Bayern",
+      "students": 18788,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1350",
+          "name": "Universität Augsburg",
+          "city": "Augsburg",
+          "state": "Bayern",
+          "students": 18788,
+          "cityPoint": {
+            "lat": 48.3555,
+            "lon": 10.90553
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS724",
+      "name": "H für angewandte Wissenschaften München",
+      "city": "München",
+      "state": "Bayern",
+      "students": 18535,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS7240",
+          "name": "H für angewandte Wissenschaften München",
+          "city": "München",
+          "state": "Bayern",
+          "students": 18535,
+          "cityPoint": {
+            "lat": 48.153432,
+            "lon": 11.552752
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS012",
+      "name": "Universität Paderborn",
+      "city": "Paderborn",
+      "state": "Nordrhein-Westfalen",
+      "students": 17064,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS0121",
+          "name": "Universität Paderborn",
+          "city": "Paderborn",
+          "state": "Nordrhein-Westfalen",
+          "students": 17064,
+          "cityPoint": {
+            "lat": 51.708055555,
+            "lon": 8.772222222
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS013",
+      "name": "Universität Siegen",
+      "city": "Siegen",
+      "state": "Nordrhein-Westfalen",
+      "students": 14439,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS0130",
+          "name": "Universität Siegen",
+          "city": "Siegen",
+          "state": "Nordrhein-Westfalen",
+          "students": 14439,
+          "cityPoint": {
+            "lat": 50.9064,
+            "lon": 8.02833
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS589",
+      "name": "Fachhochschule Münster",
+      "city": "Münster",
+      "state": "Nordrhein-Westfalen",
+      "students": 14188,
+      "siteCount": 2,
+      "sites": [
+        {
+          "code": "HS5891",
+          "name": "Fachhochschule Münster",
+          "city": "Münster",
+          "state": "Nordrhein-Westfalen",
+          "students": 10602,
+          "cityPoint": {
+            "lat": 51.9625,
+            "lon": 7.625555555
+          }
+        },
+        {
+          "code": "HS5892",
+          "name": "Fachhochschule Münster",
+          "city": "Münster",
+          "state": "Nordrhein-Westfalen",
+          "students": 3586,
+          "cityPoint": {
+            "lat": 51.9625,
+            "lon": 7.625555555
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS607",
+      "name": "H für Polizei u. öff. Vw. NW",
+      "city": "Duisburg",
+      "state": "Nordrhein-Westfalen",
+      "students": 13815,
+      "siteCount": 8,
+      "sites": [
+        {
+          "code": "HS6074",
+          "name": "H für Polizei u. öff. Vw. NW",
+          "city": "Duisburg",
+          "state": "Nordrhein-Westfalen",
+          "students": 3098,
+          "cityPoint": {
+            "lat": 51.432222222,
+            "lon": 6.761111111
+          }
+        },
+        {
+          "code": "HS6076",
+          "name": "H für Polizei u. öff. Vw. NW",
+          "city": "Köln",
+          "state": "Nordrhein-Westfalen",
+          "students": 3037,
+          "cityPoint": {
+            "lat": 50.942222222,
+            "lon": 6.957777777
+          }
+        },
+        {
+          "code": "HS6072",
+          "name": "H f. P.u.öff.V.NW",
+          "city": "Dortmund",
+          "state": "Nordrhein-Westfalen",
+          "students": 1581,
+          "cityPoint": {
+            "lat": 51.513888888,
+            "lon": 7.465277777
+          }
+        },
+        {
+          "code": "HS6077",
+          "name": "H für Polizei u. öff. Vw. NW",
+          "city": "Münster",
+          "state": "Nordrhein-Westfalen",
+          "students": 1496,
+          "cityPoint": {
+            "lat": 51.9625,
+            "lon": 7.625555555
+          }
+        },
+        {
+          "code": "HS6071",
+          "name": "H f. Polizei u.öff.Vw.NW",
+          "city": "Gelsenkirchen",
+          "state": "Nordrhein-Westfalen",
+          "students": 1440,
+          "cityPoint": {
+            "lat": 51.510277777,
+            "lon": 7.094166666
+          }
+        },
+        {
+          "code": "HS607A",
+          "name": "H für Polizei u. öff. Vw. NW",
+          "city": "Bielefeld",
+          "state": "Nordrhein-Westfalen",
+          "students": 1209,
+          "cityPoint": {
+            "lat": 52.016666666,
+            "lon": 8.533333333
+          }
+        },
+        {
+          "code": "HS6075",
+          "name": "H für Polizei u. öff. Vw. NW",
+          "city": "Hagen",
+          "state": "Nordrhein-Westfalen",
+          "students": 1084,
+          "cityPoint": {
+            "lat": 51.359444444,
+            "lon": 7.475
+          }
+        },
+        {
+          "code": "HS607C",
+          "name": "H für Polizei u. öff. Vw. NW",
+          "city": "Aachen",
+          "state": "Nordrhein-Westfalen",
+          "students": 870,
+          "cityPoint": {
+            "lat": 50.776207,
+            "lon": 6.083788
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS571",
+      "name": "Fachhochschule Aachen",
+      "city": "Aachen",
+      "state": "Nordrhein-Westfalen",
+      "students": 13527,
+      "siteCount": 2,
+      "sites": [
+        {
+          "code": "HS5711",
+          "name": "Fachhochschule Aachen",
+          "city": "Aachen",
+          "state": "Nordrhein-Westfalen",
+          "students": 10095,
+          "cityPoint": {
+            "lat": 50.776207,
+            "lon": 6.083788
+          }
+        },
+        {
+          "code": "HS5712",
+          "name": "Fachhochschule Aachen",
+          "city": "Aachen",
+          "state": "Nordrhein-Westfalen",
+          "students": 3432,
+          "cityPoint": {
+            "lat": 50.776207,
+            "lon": 6.083788
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS577",
+      "name": "Fachhochschule Dortmund",
+      "city": "Dortmund",
+      "state": "Nordrhein-Westfalen",
+      "students": 13315,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS5770",
+          "name": "Fachhochschule Dortmund",
+          "city": "Dortmund",
+          "state": "Nordrhein-Westfalen",
+          "students": 13315,
+          "cityPoint": {
+            "lat": 51.4925,
+            "lon": 7.414169444
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS584",
+      "name": "H Niederrhein",
+      "city": "Mönchengladbach",
+      "state": "Nordrhein-Westfalen",
+      "students": 12969,
+      "siteCount": 2,
+      "sites": [
+        {
+          "code": "HS5842",
+          "name": "H Niederrhein",
+          "city": "Mönchengladbach",
+          "state": "Nordrhein-Westfalen",
+          "students": 8010,
+          "cityPoint": {
+            "lat": 51.2,
+            "lon": 6.433333333
+          }
+        },
+        {
+          "code": "HS5841",
+          "name": "H Niederrhein",
+          "city": "Krefeld",
+          "state": "Nordrhein-Westfalen",
+          "students": 4959,
+          "cityPoint": {
+            "lat": 51.333333333,
+            "lon": 6.566666666
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS725",
+      "name": "TH Nürnberg Georg Simon Ohm",
+      "city": "Nürnberg",
+      "state": "Bayern",
+      "students": 12547,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS7250",
+          "name": "TH Nürnberg Georg Simon Ohm",
+          "city": "Nürnberg",
+          "state": "Bayern",
+          "students": 12547,
+          "cityPoint": {
+            "lat": 49.453888888,
+            "lon": 11.0775
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS051",
+      "name": "U Bayreuth",
+      "city": "Bayreuth",
+      "state": "Bayern",
+      "students": 11689,
+      "siteCount": 2,
+      "sites": [
+        {
+          "code": "HS0510",
+          "name": "U Bayreuth",
+          "city": "Bayreuth",
+          "state": "Bayern",
+          "students": 11318,
+          "cityPoint": {
+            "lat": 49.948055555,
+            "lon": 11.578333333
+          }
+        },
+        {
+          "code": "HS0511",
+          "name": "Universität Bayreuth",
+          "city": "Bayreuth",
+          "state": "Bayern",
+          "students": 371,
+          "cityPoint": {
+            "lat": 49.948055555,
+            "lon": 11.578333333
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS181",
+      "name": "Universität Mannheim",
+      "city": "Mannheim",
+      "state": "Baden-Württemberg",
+      "students": 11486,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1810",
+          "name": "Universität Mannheim",
+          "city": "Mannheim",
+          "state": "Baden-Württemberg",
+          "students": 11486,
+          "cityPoint": {
+            "lat": 49.469555555,
+            "lon": 8.482208333
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS726",
+      "name": "Ostbayerische Technische Hochschule Regensburg",
+      "city": "Regensburg",
+      "state": "Bayern",
+      "students": 10999,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS7260",
+          "name": "Ostbayerische Technische Hochschule Regensburg",
+          "city": "Regensburg",
+          "state": "Bayern",
+          "students": 10999,
+          "cityPoint": {
+            "lat": 49.0037,
+            "lon": 12.0951
+          }
+        }
+      ],
+      "online": false,
+      "tier": "a",
+      "aoi": "oth-regensburg"
+    },
+    {
+      "id": "HS054",
+      "name": "Universität Passau",
+      "city": "Passau",
+      "state": "Bayern",
+      "students": 10683,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS0540",
+          "name": "Universität Passau",
+          "city": "Passau",
+          "state": "Bayern",
+          "students": 10683,
+          "cityPoint": {
+            "lat": 48.568333333,
+            "lon": 13.453333333
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS050",
+      "name": "Universität Bamberg",
+      "city": "Bamberg",
+      "state": "Bayern",
+      "students": 10129,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS0500",
+          "name": "Universität Bamberg",
+          "city": "Bamberg",
+          "state": "Bayern",
+          "students": 10129,
+          "cityPoint": {
+            "lat": 49.891666666,
+            "lon": 10.891666666
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS126",
+      "name": "Universität Konstanz",
+      "city": "Konstanz",
+      "state": "Baden-Württemberg",
+      "students": 10063,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1260",
+          "name": "Universität Konstanz",
+          "city": "Konstanz",
+          "state": "Baden-Württemberg",
+          "students": 10063,
+          "cityPoint": {
+            "lat": 47.690215,
+            "lon": 9.1881
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS182",
+      "name": "Universität Ulm",
+      "city": "Ulm",
+      "state": "Baden-Württemberg",
+      "students": 9814,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1820",
+          "name": "Universität Ulm",
+          "city": "Ulm",
+          "state": "Baden-Württemberg",
+          "students": 9814,
+          "cityPoint": {
+            "lat": 48.422111111,
+            "lon": 9.953805555
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS735",
+      "name": "TH Würzburg-Schweinfurt",
+      "city": "Würzburg",
+      "state": "Bayern",
+      "students": 9131,
+      "siteCount": 2,
+      "sites": [
+        {
+          "code": "HS7351",
+          "name": "TH Würzburg-Schweinfurt",
+          "city": "Würzburg",
+          "state": "Bayern",
+          "students": 5987,
+          "cityPoint": {
+            "lat": 49.794444444,
+            "lon": 9.929444444
+          }
+        },
+        {
+          "code": "HS7352",
+          "name": "TH Würzburg-Schweinfurt",
+          "city": "Würzburg",
+          "state": "Bayern",
+          "students": 3144,
+          "cityPoint": {
+            "lat": 49.794444444,
+            "lon": 9.929444444
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS752",
+      "name": "TH Deggendorf",
+      "city": "Deggendorf",
+      "state": "Bayern",
+      "students": 8854,
+      "siteCount": 3,
+      "sites": [
+        {
+          "code": "HS7521",
+          "name": "TH Deggendorf",
+          "city": "Deggendorf",
+          "state": "Bayern",
+          "students": 6705,
+          "cityPoint": {
+            "lat": 48.835277777,
+            "lon": 12.964444444
+          }
+        },
+        {
+          "code": "HS7522",
+          "name": "TH Deggendorf im Landkreis Rottal-Inn",
+          "city": "Deggendorf",
+          "state": "Bayern",
+          "students": 1589,
+          "cityPoint": {
+            "lat": 48.835277777,
+            "lon": 12.964444444
+          }
+        },
+        {
+          "code": "HS7523",
+          "name": "TH Deggendorf",
+          "city": "Deggendorf",
+          "state": "Bayern",
+          "students": 560,
+          "cityPoint": {
+            "lat": 48.835277777,
+            "lon": 12.964444444
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS180",
+      "name": "Universität Hohenheim",
+      "city": "Ostfildern",
+      "state": "Baden-Württemberg",
+      "students": 8427,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS1800",
+          "name": "Universität Hohenheim",
+          "city": "Ostfildern",
+          "state": "Baden-Württemberg",
+          "students": 8427,
+          "cityPoint": {
+            "lat": 48.7125,
+            "lon": 9.214
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS754",
+      "name": "Technische H Ingolstadt",
+      "city": "Ingolstadt",
+      "state": "Bayern",
+      "students": 8154,
+      "siteCount": 2,
+      "sites": [
+        {
+          "code": "HS7540",
+          "name": "Technische H Ingolstadt",
+          "city": "Ingolstadt",
+          "state": "Bayern",
+          "students": 7849,
+          "cityPoint": {
+            "lat": 48.763055555,
+            "lon": 11.425
+          }
+        },
+        {
+          "code": "HS7541",
+          "name": "Technische H Ingolstadt",
+          "city": "Ingolstadt",
+          "state": "Bayern",
+          "students": 305,
+          "cityPoint": {
+            "lat": 48.763055555,
+            "lon": 11.425
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS676",
+      "name": "Hochschule Technik und Wirtschaft Karlsruhe",
+      "city": "Karlsruhe",
+      "state": "Baden-Württemberg",
+      "students": 6946,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS6760",
+          "name": "Hochschule Technik und Wirtschaft Karlsruhe",
+          "city": "Karlsruhe",
+          "state": "Baden-Württemberg",
+          "students": 6946,
+          "cityPoint": {
+            "lat": 49.016666666,
+            "lon": 8.4
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS675",
+      "name": "H f.Techn.u.Wirtsch. Heilbronn (FH)",
+      "city": "Heilbronn",
+      "state": "Baden-Württemberg",
+      "students": 6609,
+      "siteCount": 3,
+      "sites": [
+        {
+          "code": "HS6751",
+          "name": "H f.Techn.u.Wirtsch. Heilbronn (FH)",
+          "city": "Heilbronn",
+          "state": "Baden-Württemberg",
+          "students": 5133,
+          "cityPoint": {
+            "lat": 49.140428,
+            "lon": 9.217953
+          }
+        },
+        {
+          "code": "HS6752",
+          "name": "H f.Techn.u.Wirtsch. Heilbronn (FH)",
+          "city": "Heilbronn",
+          "state": "Baden-Württemberg",
+          "students": 974,
+          "cityPoint": {
+            "lat": 49.140428,
+            "lon": 9.217953
+          }
+        },
+        {
+          "code": "HS6753",
+          "name": "H f.Techn.u.Wirtsch. Heilbronn (FH) i.Schwäb.-Hall",
+          "city": "Heilbronn",
+          "state": "Baden-Württemberg",
+          "students": 502,
+          "cityPoint": {
+            "lat": 49.140428,
+            "lon": 9.217953
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS673",
+      "name": "Hochschule Esslingen",
+      "city": "Esslingen am Neckar",
+      "state": "Baden-Württemberg",
+      "students": 6004,
+      "siteCount": 2,
+      "sites": [
+        {
+          "code": "HS6731",
+          "name": "Hochschule Esslingen",
+          "city": "Esslingen am Neckar",
+          "state": "Baden-Württemberg",
+          "students": 4820,
+          "cityPoint": {
+            "lat": 48.740555555,
+            "lon": 9.310833333
+          }
+        },
+        {
+          "code": "HS6732",
+          "name": "Hochschule Esslingen",
+          "city": "Göppingen",
+          "state": "Baden-Württemberg",
+          "students": 1184,
+          "cityPoint": {
+            "lat": 48.7025,
+            "lon": 9.652777777
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    },
+    {
+      "id": "HS371",
+      "name": "Pädagogische Hochschule Ludwigsburg",
+      "city": "Ludwigsburg",
+      "state": "Baden-Württemberg",
+      "students": 5833,
+      "siteCount": 1,
+      "sites": [
+        {
+          "code": "HS3711",
+          "name": "Pädagogische Hochschule Ludwigsburg",
+          "city": "Ludwigsburg",
+          "state": "Baden-Württemberg",
+          "students": 5833,
+          "cityPoint": {
+            "lat": 48.8975,
+            "lon": 9.191944444
+          }
+        }
+      ],
+      "online": false,
+      "tier": "b",
+      "aoi": null
+    }
+  ]
+}
