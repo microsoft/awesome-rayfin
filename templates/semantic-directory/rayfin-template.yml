@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: semantic-directory
+  displayName: Semantic Directory
+  description: A live, searchable directory for any Power BI or Fabric semantic model — search measures and fields, trace lineage and relationships, inspect measure DNA and change impact, and explore a bundled demo model with zero setup.
+entries:
+  - path: .
+    name: Semantic Directory
