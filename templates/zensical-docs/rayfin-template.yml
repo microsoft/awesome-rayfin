@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: zensical-docs
+  displayName: Zensical Docs
+  description: Documentation site built with Zensical and deployed to Microsoft Fabric as a static app via Rayfin
+entries:
+  - path: .
+    name: Zensical Docs
