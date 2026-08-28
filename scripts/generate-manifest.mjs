@@ -19,7 +19,10 @@ const TEMPLATES_DIR = join(ROOT, "templates");
 
 function toYamlScalar(value) {
   const text = String(value);
-  if (/^[\[\{!&*#?|>@`'"]/.test(text)) {
+  // Quote when a plain scalar would change meaning: leading indicators, an
+  // interior ": " or trailing ":" (parsed as a nested mapping), or " #"
+  // (parsed as a trailing comment).
+  if (/^[\[\{!&*#?|>@`'"]/.test(text) || /:(\s|$)/.test(text) || /\s#/.test(text)) {
     return `'${text.replace(/'/g, "''")}'`;
   }
   return text;

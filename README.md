@@ -55,6 +55,7 @@ The CLI reads `rayfin-template.yml` at the repo root and presents an interactive
 | **[Slide Deck](./templates/slide-deck)** | Interactive slide deck presenter with sessions, live slide tracking, and audience chat | ✅ | ✅ | React, Vite, Tailwind |
 | **[Blank App](./templates/static-blankapp)** | Bare-bones Rayfin app with authentication, but without any JS or CSS framework and a tiny TypeScript entry point | ✅ | ✅ | TypeScript, Vite |
 | **[[Experimental] Todo app with full local dev](./templates/todo-local-experimental)** | End-to-end todo CRUD with username/password auth, a Rayfin data model, and Docker local development — a working starter that exercises the full data path without Fabric | ✅ | ✅ | React, Vite, Tailwind |
+| **[Universal App](./templates/universal-app)** | A lean React + Vite starter that grows into anything. A built-in capability router reads what you ask for, then enables the right Rayfin services, installs the right modules, and activates the right skills, from sign-in and CRUD data models to Graphein charts and Fabric analytics dashboards. | ✅ | ✅ | React, Vite, Tailwind |
 
 > **Adding a template?** See the [Contributing Guide](CONTRIBUTING.md).
 
