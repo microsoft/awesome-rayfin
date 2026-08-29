@@ -31,3 +31,6 @@ entries:
   - path: templates/todo-local-experimental
     name: '[Experimental] Todo app with full local dev'
     description: End-to-end todo CRUD with username/password auth, a Rayfin data model, and Docker local development — a working starter that exercises the full data path without Fabric
+  - path: templates/universal-app
+    name: Universal App
+    description: A lean React + Vite starter that grows into anything. A built-in capability router reads what you ask for, then enables the right Rayfin services, installs the right modules, and activates the right skills, from sign-in and CRUD data models to Graphein charts and Fabric analytics dashboards.
