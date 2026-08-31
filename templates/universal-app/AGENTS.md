@@ -6,7 +6,7 @@
 > dashboard, a Power BI analytics dashboard, or any mix. Your job is to grow it
 > **on demand**, pulling in only the capabilities the request actually needs.
 
-**Before you write any code, do two things:**
+**Before you write any code, do three things:**
 
 1. **Route first.** Read the **`capability-router` skill**
    (`.agents/skills/capability-router/SKILL.md`). It maps a plain-English request
@@ -16,6 +16,10 @@
 2. **Stay lean.** Don't enable services, install modules, or copy in kit code the
    request doesn't need. The whole point of this template is that it starts small
    and only grows where the user is going.
+3. **Never answer Rayfin APIs from memory.** The router decides *what capabilities
+   to add*; the version-locked skill at `.agents/skills/rayfin/SKILL.md` stays
+   authoritative for *how Rayfin's APIs are actually called*. See
+   [Rayfin docs](#rayfin-docs).
 
 ---
 
@@ -89,6 +93,12 @@ When you finish a capability, build and deploy (`npm run rayfin:up`) to see it o
 Fabric.
 
 ## Rayfin docs
+
+Start with the in-project skill at `.agents/skills/rayfin/SKILL.md`. It ships with
+the packages installed here, so it is version-matched to this project, and it owns
+every Rayfin specific: schema and decorators, the typed data API and client queries,
+auth, storage, and deployment. Prefer it over remembered APIs, which are routinely
+wrong across versions.
 
 Rayfin docs are version-locked to the packages installed in this project.
 Prefer the `rayfin` MCP server in `.mcp.json` and its tools `search_docs`,
