@@ -10,6 +10,9 @@ entries:
   - path: templates/angular-dashboard
     name: Angular Dashboard App
     description: Responsive Angular Material dashboard — top navbar + collapsible side menu, Project/Task data model, and optional one-click GitHub Issues/PRs sync for a public repo.
+  - path: templates/doom
+    name: Doom
+    description: Shareware DOOM (Episode 1) running in the browser via DOSBox/js-dos, embedded in a Fabric-authenticated Rayfin app — with per-level stats read straight off the game's FINISHED screen, a shared leaderboard, and save games persisted through typed data entities
   - path: templates/field-technician
     name: Field Technician App
     description: Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric)
