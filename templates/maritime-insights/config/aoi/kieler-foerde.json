@@ -1,0 +1,191 @@
+{
+  "$comment": "Area of interest definition. Maritime-Insights is a reusable asset — no location is hard-coded in code. The Kieler Förde is the first instance, not the app. See PLAN.md §4. Every coordinate below came out of tools/geodata/resolve_places.py on 2026-07-29 and is an OpenStreetMap element id you can look up; none is recalled.",
+  "id": "kieler-foerde",
+  "site": {
+    "name": {
+      "de": "Kieler Förde",
+      "en": "Kiel Fjord"
+    },
+    "region": {
+      "de": "Kieler Bucht, Schleswig-Holstein",
+      "en": "Bay of Kiel, Schleswig-Holstein"
+    },
+    "timezone": "Europe/Berlin"
+  },
+  "bbox": {
+    "crs": "EPSG:4326",
+    "west": 10.09,
+    "east": 10.26,
+    "south": 54.305,
+    "north": 54.462,
+    "$comment": "HIGH-RESOLUTION CORE. Measured 11.33 x 17.65 km = 200 km² (UTM32 570654/6018005 -> 581985/6035657). Chosen AFTER resolving the places, not before — the box is drawn around what the query returned. It holds the whole fjord axis: the Hörn at the harbour head (54.31431/10.13540), the Nord-Ostsee-Kanal locks at Holtenau (54.36554/10.14188), the Friedrichsort narrows (54.39308/10.17902), Laboe (54.40225/10.22566) and the Bülk headland (54.45434/10.19591). Bülk is the northern anchor on purpose: it is the terrain that casts the shadow the whole demo is about, and cutting it to save area would remove the subject."
+  },
+  "shell": {
+    "crs": "EPSG:4326",
+    "west": 8.9,
+    "east": 11.7,
+    "south": 53.75,
+    "north": 55.15,
+    "$comment": "COARSE TERRAIN SHELL, widened 2026-07-30. 181 x 156 km = ~28 200 km2, stored at 90 m as 2240 x 1680 cells. Two jobs: (1) it is the horizon - a photoreal box that ends in a cliff of nothing reads as a diorama; (2) a geometric horizon from a tall mast reaches ~41 km, so the coverage surface has to end on real coastline rather than on the edge of the data. STORED AT 90 m, NOT 30 m: the renderer already decimated the 30 m grid by 3, so eight ninths of those bytes were never used geometrically. Storing what is actually drawn buys ~5x the area for less payload than the old 79 x 79 km shell."
+  },
+  "workingCrs": "EPSG:25832",
+  "verticalDatum": "DHHN2016",
+  "$verticalDatumComment": "Confirmed from the source itself, not assumed: every DGM1 tile record returned by the LVermGeo index carries hoehenbezu=DHHN2016_NH and quasigeoid=DE_AdV_GCG2016_QGH. The Copernicus shell is EGM2008, so the two tiers do NOT share a datum and the offset must be MEASURED in the overlap ring — over open ground only, never over canopy. See PLAN §4.4.",
+  "elevationRangeM": {
+    "min": -30,
+    "max": 90,
+    "$comment": "Provisional bracket. MEASURED 2026-07-29: -11.38 .. 60.75 m over the built core. Note how little relief there is - roughly 72 m against the Allgaeu's 1400 m - so every hillshade and colour-ramp constant has to be re-ranged rather than reused, and the hillshade matters MORE here, not less, because there is so little relief to read. The negative floor is real: DGM1 carries values below zero across the fjord."
+  },
+  "sea": {
+    "meanLevelM": 0.0,
+    "$comment": "The Baltic is effectively tideless (order 0.1-0.2 m), which is why this AOI was preferred over a North Sea one: the water surface is a plane at a constant level and v1 needs no tidal model. Wind-driven surge is a different matter entirely and is the subject of the Phase 8 module, not of this constant."
+  },
+  "grids": {
+    "sourceResolutionM": 1,
+    "renderResolutionM": 4,
+    "renderDecimation": 4,
+    "$comment": "1 m DGM1 source, resampled to a 4 m heightmap (2834 x 4414 cells = 12.5 M, 25 MB raw uint16), mesh decimated 4x to 16 m posting. ⚠️ An earlier version of this note claimed the raster would compress away 'because most of the AOI is water and therefore a constant'. MEASURED AND WRONG on both counts: DGM1 carries real varying values under water (-11.38 .. 0.05 m, std 4.59 m), and flattening the sea anyway only moved 21.11 MB to 18.14 MB because the payload is dominated by land detail. What actually halved it was quantising elevation to 0.05 m - inside DGM1's own accuracy - which gives 9.79 MB. See docs/phase1-terrain.md."
+  },
+  "shellGrids": {
+    "sourceResolutionM": 30,
+    "renderResolutionM": 90,
+    "renderDecimation": 2,
+    "transitionBandM": 1200,
+    "cogUrlTemplate": "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM.tif",
+    "$comment": "Copernicus DEM GLO-30. Tile N54/E010 verified reachable 2026-07-29 (HTTP 206, image/tiff, 14 644 958 bytes, range requests honoured) so the COG reader can fetch only the tiles it needs. This shell spans four one-degree tiles (N54 E009/E010, N54 E010 and the N54 row east), so unlike the sibling AOI it needs real mosaicking rather than the single-tile path.",
+    "$resolutionComment": "Source is 30 m; stored at 90 m via a 3x3 block mean, which is exactly the posting the renderer was already drawing. renderDecimation 2 on the 90 m grid gives a 180 m horizon mesh - invisible at 40-90 km, and it keeps the triangle count flat while the area grows."
+  },
+  "shellGeobasis": {
+    "tiles": [
+      "N53_E008",
+      "N53_E009",
+      "N53_E010",
+      "N53_E011",
+      "N54_E008",
+      "N54_E009",
+      "N54_E010",
+      "N54_E011",
+      "N55_E008",
+      "N55_E009",
+      "N55_E010",
+      "N55_E011"
+    ],
+    "$tilesComment": "Copernicus DEM GLO-30 one-degree tiles covering the widened shell window (8.90-11.70 E, 53.75-55.15 N). Probed with HEAD before fetching: GLO-30 only publishes squares that contain land, so an all-ocean tile legitimately 404s and has to be distinguished from a download that merely failed.",
+    "cogUrlTemplate": "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM.tif",
+    "authority": "ESA / DLR / Airbus Defence and Space — Copernicus DEM GLO-30",
+    "licence": "Copernicus DEM open licence (free reuse with attribution)",
+    "attribution": "© DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018 provided under COPERNICUS by the European Union and ESA; all rights reserved."
+  },
+  "verticalExaggeration": 1.0,
+  "$verticalExaggerationComment": "TRUE SCALE, and here it is a harder discipline than usual: with only ~90 m of relief the temptation to exaggerate is strong, and the whole point of the app is a shadow cast by real terrain. Exaggerating the coast would exaggerate the shadow, which would turn a geometric statement into a sales pitch. Offer 1.5 as a toggle; never as the default.",
+  "focusPlaces": [
+    {
+      "id": "kiel",
+      "name": "Kiel",
+      "lat": 54.3227085,
+      "lon": 10.1355559,
+      "osm": "node place=city",
+      "population": 246306
+    },
+    {
+      "id": "hoern",
+      "name": "Hörn",
+      "lat": 54.3143061,
+      "lon": 10.1354036,
+      "osm": "node seamark:type=harbour"
+    },
+    {
+      "id": "holtenau",
+      "name": "Holtenau",
+      "lat": 54.3725017,
+      "lon": 10.1361685,
+      "osm": "node place=suburb"
+    },
+    {
+      "id": "nok_schleusen",
+      "name": "Schleusen Holtenau",
+      "lat": 54.3655374,
+      "lon": 10.1418825,
+      "osm": "way seamark:type=lock_basin"
+    },
+    {
+      "id": "lotsenhafen",
+      "name": "Lotsenhafen",
+      "lat": 54.3701904,
+      "lon": 10.1550749,
+      "osm": "node seamark:type=harbour"
+    },
+    {
+      "id": "friedrichsort",
+      "name": "Friedrichsort",
+      "lat": 54.3930806,
+      "lon": 10.1790227,
+      "osm": "node place=suburb"
+    },
+    {
+      "id": "moenkeberg",
+      "name": "Mönkeberg",
+      "lat": 54.3503749,
+      "lon": 10.1925968,
+      "osm": "node place=village"
+    },
+    {
+      "id": "heikendorf",
+      "name": "Heikendorf",
+      "lat": 54.3692478,
+      "lon": 10.2026135,
+      "osm": "node place=town"
+    },
+    {
+      "id": "laboe",
+      "name": "Laboe",
+      "lat": 54.4022505,
+      "lon": 10.2256598,
+      "osm": "node place=town"
+    },
+    {
+      "id": "schilksee",
+      "name": "Schilksee",
+      "lat": 54.4210469,
+      "lon": 10.1703331,
+      "osm": "node place=suburb",
+      "population": 5030
+    },
+    {
+      "id": "strande",
+      "name": "Strande",
+      "lat": 54.4375311,
+      "lon": 10.1742103,
+      "osm": "node place=village",
+      "population": 1499
+    },
+    {
+      "id": "buelk",
+      "name": "Bülk",
+      "lat": 54.4543356,
+      "lon": 10.1959081,
+      "osm": "node place=hamlet"
+    }
+  ],
+  "$focusPlacesComment": "Resolved from OpenStreetMap 2026-07-29 by tools/geodata/resolve_places.py — 121 elements returned for the first-pass window, and these twelve were selected from them by hand. Ordered along the fjord from the harbour head outwards, which is also the order the water opens up in. They are camera bookmarks, nothing more; no analysis keys off them.",
+  "registrationChecks": {
+    "$comment": "PLAN §4.4. The build fails if these do not hold — a coverage shadow drawn over a misregistered coast is worse than no map, because it looks authoritative.",
+    "publishedLightHeights": [
+      {
+        "id": "holtenauer_schleusen",
+        "name": "Holtenauer Schleusen",
+        "lat": 54.3631185,
+        "lon": 10.1516779,
+        "heightM": 31,
+        "source": "OSM seamark light, tag height=31"
+      }
+    ],
+    "$publishedLightHeightsComment": "Only ONE light inside the window carries a published height in OSM (four more are present but unnamed and untagged). One check is thin, so the vertical check leans on the gauge datum and the land/water boundary instead, and more lights should be sought in the official light list before Phase 1 closes.",
+    "coastlineAgreement": "The DGM 0 m contour must coincide with the surveyed coastline, and the quay edges must line up with the orthophoto drape.",
+    "aisWitness": "🔴 The strongest check available, and it is free: ships are in the water. ANY AIS track that lands on rendered land means the terrain, the coastline or the projection is wrong. Independent of every survey source, continuous, and it costs nothing. Build this one first."
+  },
+  "sensorSites": {
+    "$comment": "PLAN §2.1 decision 3 and §3.2 rule 2. There are NO sensor sites in this file, and there never will be. The app depicts no real installation; a site is something the user places at run time, labelled 'fiktiver Standort'. This block exists solely so that the absence is explicit rather than an oversight.",
+    "policy": "user-placed-notional-only"
+  }
+}

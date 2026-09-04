@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Maritime-Insights — Verkehr & Sicht"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "f98c7780-fd96-47f4-b49a-46a9715ba116"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "maritime-insights-assistant",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Chat backend for Maritime-Insights. Azure OpenAI Responses API with tools grounded in the shipped AIS assets and the live relay.",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --watch server.mjs"
+  },
+  "dependencies": {
+    "@azure/identity": "^4.13.1"
+  }
+}

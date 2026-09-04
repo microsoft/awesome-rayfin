@@ -1,0 +1,119 @@
+table 'Measure'
+	lineageTag: 9d82bc0f-741e-4b32-94e2-0b19b6046985
+
+	column 'Value'
+		dataType: int64
+		isHidden
+		lineageTag: 1ea01278-49a4-40b1-9b29-cca8d029be01
+		sourceColumn: [Value]
+		summarizeBy: none
+
+	/// One row per continuous transit through the AOI.
+	/// The app calls these Fahrten.
+	measure 'Passages' = COUNTROWS('Passage')
+		formatString: #,0
+		lineageTag: b2344799-e8d2-432b-b827-e0e4b88978b5
+
+	/// Every AIS report that survived the AOI filter.
+	measure 'Positions' = COUNTROWS('Position')
+		formatString: #,0
+		lineageTag: 6588f073-5e0b-4c91-9bfa-cd244f3f1848
+
+	/// INTERVAL OVERLAP, matching deriveBeats() in the app.
+	/// A passage counts for an hour it crosses even if it reported no position inside it.
+	/// Grouping positions by hour instead would be plausible, easy, and wrong.
+	measure 'Vessels Under Way' =
+			VAR HourStart = MIN('Hour'[hour_start_second])
+			VAR HourEnd = MAX('Hour'[hour_end_second])
+			RETURN
+			CALCULATE(
+			    COUNTROWS('Passage'),
+			    FILTER(ALL('Passage'), 'Passage'[from_second] < HourEnd && 'Passage'[to_second] >= HourStart)
+			)
+		formatString: #,0
+		lineageTag: ae61e930-2196-4cc8-bd96-dda895b6b0fa
+
+	/// The busiest hour's count — the app's Verkehrsspitze beat.
+	measure 'Peak Vessels Under Way' = MAXX(ALL('Hour'), [Vessels Under Way])
+		formatString: #,0
+		lineageTag: 244002bd-e563-4186-9458-fca23fac27de
+
+	/// MINX breaks ties towards the earlier hour, exactly as the app's loop does.
+	measure 'Peak Hour' =
+			VAR Peak = [Peak Vessels Under Way]
+			RETURN
+			MINX(FILTER(ALL('Hour'), [Vessels Under Way] = Peak), 'Hour'[hour_label])
+		lineageTag: 33d05937-bc00-4ee2-bfa1-0235a299d8a3
+
+	measure 'Quietest Vessels Under Way' = MINX(ALL('Hour'), [Vessels Under Way])
+		formatString: #,0
+		lineageTag: 87a6d38c-dfa0-4d3a-b1ba-180c6b0390c4
+
+	measure 'Quietest Hour' =
+			VAR Quiet = [Quietest Vessels Under Way]
+			RETURN
+			MINX(FILTER(ALL('Hour'), [Vessels Under Way] = Quiet), 'Hour'[hour_label])
+		lineageTag: 4aab0c7e-7544-4329-922a-5255aa650a57
+
+	/// The day's own mean, used as the IBCS reference.
+	/// With a single day there is no prior period to compare against, so inventing one would be decoration; the daily average is a real baseline that the hourly profile genuinely varies around.
+	measure 'Average Vessels Under Way' = AVERAGEX(ALL('Hour'), [Vessels Under Way])
+		formatString: #,0.0
+		lineageTag: f5932e87-1395-42ee-9b77-5517db00b09a
+
+	/// ⚠️ DAX resolves the MODEL column name ('Speed kn'), not the physical sourceColumn ('speed_kn').
+	/// TMDL accepts the wrong one at deploy time and only fails at query time.
+	measure 'Average Speed (kn)' = AVERAGE('Position'[Speed kn])
+		formatString: #,0.0
+		lineageTag: 559f5bef-28cd-4c9d-b17e-7af8caa54537
+
+	/// Classes that ship with dimensions.
+	/// The rest are anonymised further — see NOTICE.md.
+	measure 'Commercial Passages' = CALCULATE(COUNTROWS('Passage'), 'Vessel Class'[is_commercial] = TRUE())
+		formatString: #,0
+		lineageTag: cce573d6-58ca-488d-bed8-00d09beecb49
+
+	measure 'Commercial Share' = DIVIDE([Commercial Passages], [Passages])
+		formatString: 0.0%
+		lineageTag: 5acdd39a-3087-48fd-b594-42668ecb75c3
+
+	measure 'Median Passage Duration (min)' = DIVIDE(MEDIANX('Passage', 'Passage'[Duration s]), 60)
+		formatString: #,0.0
+		lineageTag: 044a068d-cf67-491a-b4d7-018269bb0c65
+
+	/// Sensor plans a planner committed to the lakehouse from the app.
+	measure 'Committed Plans' = COUNTROWS('Plan')
+		formatString: #,0
+		lineageTag: 4fe1aed0-8305-4109-8076-7480545cf79d
+
+	measure 'Planned Masts' = SUM('Plan'[Masts])
+		formatString: #,0
+		lineageTag: e2eac097-7531-49f2-b87f-79f80ddc197b
+
+	/// ⚠️ Total mast height, never a price.
+	/// Mast cost depends on civil works, site access and frame agreements, none of which is in any dataset here — see PLAN §13.7.
+	/// This is the quantity a customer's own price list is applied to, and it is checkable.
+	measure 'Planned Mast Metres' = SUM('Plan'[Mast Metres])
+		formatString: #,0
+		lineageTag: b5a3a4a3-19d3-466f-bef1-ea1615eb98de
+
+	/// The best committed plan's share of transits observed.
+	measure 'Best Observed Share' = MAXX('Plan', 'Plan'[Observed Share])
+		formatString: 0.0%
+		lineageTag: d485c737-4396-4ca6-8d8b-b1b1e31cdf9e
+
+	/// Value for money, from measured quantities only: metres of mast per percentage point of traffic observed.
+	/// Lower is leaner.
+	measure 'Mast Metres per Point' = DIVIDE([Planned Mast Metres], MAXX('Plan', 'Plan'[Observed Share]) * 100)
+		formatString: #,0.0
+		lineageTag: ad9da178-10a1-4126-a64c-0e83b2869755
+
+	/// 🔴 Plans whose blocking surface carried no measured vegetation.
+	/// Their coverage figures are an UPPER BOUND and are not comparable with the rest — the caveat travels into the model with the figure, because a share queried here is further from its definition than one read on the screen, not closer to it.
+	measure 'Plans Missing Vegetation' = COALESCE(CALCULATE(COUNTROWS('Plan'), 'Plan'[Includes Vegetation] = FALSE()), 0)
+		formatString: #,0
+		lineageTag: 18d399d6-1e01-4b09-9979-8b8f9abd6c36
+
+	partition 'Measure' = calculated
+		mode: import
+		source = {0}

@@ -1,0 +1,32 @@
+table 'Vessel Class'
+	lineageTag: ae0b1352-3b71-4f4a-bd13-068f5aada499
+
+	column 'Vessel Type'
+		dataType: string
+		lineageTag: 5d5a86f0-37ea-4ee5-882a-c8b3594f7b83
+		summarizeBy: none
+		sourceColumn: vessel_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'is_commercial'
+		dataType: boolean
+		lineageTag: 7e2ea0a6-6bcd-413b-a877-0ea7c77040a4
+		summarizeBy: none
+		sourceColumn: is_commercial
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'carries_dimensions'
+		dataType: boolean
+		lineageTag: c95e978f-b255-44d2-be3f-f3e172cebba9
+		summarizeBy: none
+		sourceColumn: carries_dimensions
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'vessel_class' = entity
+		mode: directLake
+		source
+			entityName: vessel_class
+			expressionSource: 'DirectLake - MaritimeInsightsLakehouse'
