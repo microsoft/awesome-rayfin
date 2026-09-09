@@ -1,0 +1,618 @@
+{
+  "setup": {
+    "eyebrow": "Geodata not built yet",
+    "heading": "The terrain has to be generated once",
+    "body": "The elevation model, orthophoto, LoD2 buildings and vegetation run to several dozen megabytes and are deliberately not committed. The pipeline fetches them from the official sources and builds the render assets. Until then the scene shows only sky, a reference plane and the resolved places.",
+    "note": "The command is repeatable: tiles already downloaded are reused rather than fetched again."
+  },
+  "lens": {
+    "heading": "Analysis",
+    "pending": "from phase {{phase}}",
+    "noRooms": "No indoor data exists for this site, so the buildings stay closed. No rooms are invented to fill the gap.",
+    "occupancy": {
+      "label": "Rooms",
+      "blurb": "How well used are the lecture halls and labs? Occupancy from the planned timetable — buildings open up floor by floor."
+    },
+    "condition": {
+      "label": "Maintenance backlog & investment",
+      "blurb": "Condition grades, refurbishment need and investment scenarios to 2040."
+    },
+    "flow": {
+      "label": "Campus flow",
+      "blurb": "Movement between lectures, derived from the real timetable."
+    },
+    "staffing": {
+      "label": "Lecturers",
+      "blurb": "Who is carrying this plan? Planned contact hours against each contract."
+    },
+    "quality": {
+      "label": "Students",
+      "blurb": "What does their day look like? Idle gaps, day length, campus changes and fringe hours."
+    },
+    "intro": "The same week from three angles — depending on whom the question is about."
+  },
+  "quality": {
+    "intro": "A plan can be conflict-free and still unpleasant. This is what the day looks like for students — measured over the lectures a student group attends in full.",
+    "idleBlocks": "Idle blocks",
+    "daysWithGap": "Days with a gap",
+    "longestDay": "Longest day",
+    "campusChanges": "Campus changes",
+    "blocks": "{{n}} blocks",
+    "tightGood": "No transfer is too tight: every campus change leaves enough break for the walk.",
+    "tightBad": "{{n}} transfers are too tight — the walk takes longer than the break.",
+    "unpopular": "Fringe hours",
+    "unpopularCount": "{{n}} sessions sit in the least popular slots (desirability ≤ {{threshold}}).",
+    "worstCohorts": "Most affected",
+    "worstBlurb": "Ranked by students kept waiting, not by number of student groups. Selecting one opens that student group's week.",
+    "cohortDetail": "{{days}} of {{total}} days with a gap · {{head}} students",
+    "limitation": "Measured per whole-group lecture, not per student: the dataset knows group sizes but not who is in which group. What was checked instead is that no group ever clashes with its own student group's lectures ({{combos}} combinations, 0 collisions). The student-to-group mapping is what an Untis export supplies.",
+    "noData": "No plan quality has been computed for this site yet. tools/data/build_plan_quality.py derives it from the generated timetable.",
+    "synthetic": "The timetable is synthetic. The day shapes are genuinely derived from it, but they describe an invented plan."
+  },
+  "staffing": {
+    "intro": "A timetable assigns rooms and hours — but it also assigns teaching to people. This is how much each lecturer actually carries, measured against their contract.",
+    "total": "Total teaching load",
+    "ofContract": "{{planned}} of {{contract}} contact hours",
+    "courses": "{{n}} courses",
+    "spread": "{{over}} over contract, {{idle}} with no teaching — out of {{total}} lecturers.",
+    "overHeading": "Over contract",
+    "overBlurb": "These assignments exceed the agreed load. Selecting one opens that week and lights their rooms in the model.",
+    "idleHeading": "No teaching assigned",
+    "idleBlurb": "Contracted teaching capacity this plan does not use.",
+    "byFaculty": "By faculty",
+    "overShort": "{{n}} over contract",
+    "noQuota": "The professorial quota is deliberately not shown: every lecturer in this dataset is a professor, so the figure would be 100% by construction and would measure nothing. It needs adjunct and research staff modelled in the generator first.",
+    "noData": "No teaching load has been computed for this site yet. tools/data/build_staffing.py derives it from the generated timetable.",
+    "synthetic": "The timetable is synthetic. The teaching-load figures are genuinely derived from it, but they describe an invented plan."
+  },
+  "provenance": {
+    "measured": "measured",
+    "derived": "derived",
+    "synthetic": "synthetic"
+  },
+  "occupancy": {
+    "pickBuilding": "Choose a building — click it in the model, or pick one here. Its floors move apart and every room is coloured by how heavily it is actually booked.",
+    "roomsShort": "rooms",
+    "noCalendar": "no calendar",
+    "building": "Building {{code}}",
+    "partialLevels": "Only {{modelled}} of {{levels}} floors are modelled. The university publishes no floor plan for the rest — and none is invented. The building is larger than what you see here.",
+    "close": "close",
+    "when": "When",
+    "wholeWeek": "whole week",
+    "hour": "Time",
+    "play": "Play the week",
+    "pause": "Pause",
+    "shuttleNote": "While the week plays, a shuttle drives the road between the campuses, taking the time the route actually takes: {{km}} km, {{min}} minutes at free flow.",
+    "utilisation": "Time utilisation",
+    "overRooms": "across {{n}} rooms with a calendar",
+    "teachingRooms": "Teaching rooms",
+    "ofRooms": "of {{n}} rooms",
+    "area": "Floor area",
+    "areaDerived": "computed from the floor plans",
+    "teachingArea": "Teaching area",
+    "freeAt": "Free on {{day}} at {{hour}}",
+    "noneFree": "No teaching room in this building is free at that hour.",
+    "usage": "Usage type",
+    "floor": "Floor",
+    "seats": "Seats",
+    "week": "Bookings across the semester",
+    "weeks": "weeks",
+    "courses": "What runs here",
+    "roomNoCalendar": "The plan holds no booking for this room. It is grey for that reason — not empty, but unscheduled.",
+    "provenance": {
+      "$comment": "⚠️ ONE LINE PER SITE. This used to be a single sentence describing OTH's storey plans, and it was shown over TUM Garching and LMU too. At Garching it was wrong in both directions: the floor plans come from OpenStreetMap rather than an OTH CAD drawing, and the bookings are REAL TUMonline data rather than a generated timetable. The key is the AOI id.",
+      "garching": "Bookings: real TUMonline bookings via NavigaTUM ({{semester}}). Floor plans: OpenStreetMap, surveyed. Areas computed from the polygon, seats derived.",
+      "garching-synthetic": "Bookings: SYNTHETIC. An invented teaching week, generated per room and stable across rebuilds. This is not the university's timetable and no course titles are shown. Floor plans: OpenStreetMap, surveyed. Areas computed from the polygon, seats derived.",
+      "oth-regensburg": "Bookings: from the generated timetable ({{semester}}). Floor plans: Gebäude K, ground and first floor from OTH's published storey plans — 67 rooms taken straight from the CAD drawing; all other rooms generated inside the real building outline. Areas computed from the polygon, seats derived.",
+      "lmu-muenchen": "Bookings: from the generated timetable ({{semester}}). Floor plans: some surveyed via OpenStreetMap, all others generated inside the real building outline — LMU publishes no storey plans. Areas computed from the polygon, seats derived."
+    },
+    "day": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri"
+    }
+  },
+  "rooms": {
+    "heading": "Indoor rooms",
+    "count": "Rooms",
+    "buildings": "Buildings",
+    "withUsage": "with a usage type",
+    "withCalendar": "with a calendar",
+    "neverBooked": "of those, never booked",
+    "provenance": {
+      "garching": "Floor plans: OpenStreetMap, surveyed · usage types and bookings: NavigaTUM / TUMonline, real bookings · areas computed, seats derived.",
+      "garching-synthetic": "Floor plans: OpenStreetMap, surveyed · usage types read from the OpenStreetMap room tag, or inferred from floor area · bookings SYNTHETIC, not from the university · areas computed, seats derived.",
+      "oth-regensburg": "Floor plans: Gebäude K surveyed via OpenStreetMap · all other rooms generated inside the real building outline · occupancy from the synthetic timetable.",
+      "lmu-muenchen": "Floor plans: some surveyed via OpenStreetMap · all other rooms generated inside the real building outline · occupancy from the synthetic timetable."
+    }
+  },
+  "condition": {
+    "syntheticTitle": "Synthetic data",
+    "syntheticBody": "Condition grades, renovation costs and scenarios are entirely invented — produced by a seeded generator (build_condition.py). The University of Tübingen publishes no such figures. Only floor area and storey count are measured, from the LoD2 model.",
+    "scenario": "Scenario",
+    "scenarios": {
+      "nichtstun": "Do nothing",
+      "priorisiert": "Prioritised",
+      "gleichverteilt": "Spread evenly"
+    },
+    "year": "Year",
+    "backlog": "Renovation backlog",
+    "spent": "Invested to date",
+    "renovated": "Renovated",
+    "sharePoor": "Buildings at grade 4+",
+    "poorWeighted": "Used floor area at grade 4+",
+    "gradeMix": "Condition mix",
+    "grade": "Grade",
+    "gradeGood": "Grade 1 — sound",
+    "gradeBad": "Grade 5 — unusable",
+    "curve": "Backlog over time",
+    "crossover": "The two measures disagree: spreading the money renovates more buildings, prioritising protects more of the floor area people are actually in. That is why this is a decision rather than a calculation.",
+    "provenance": "Seed {{seed}} · annual budget {{budget}} · every figure comes from tools/geodata/build_condition.py"
+  },
+  "flow": {
+    "provenanceTitle": "Real routes, estimated head counts",
+    "$provenanceComment": "⚠️ ONLY GARCHING OFFERS THIS LENS. What stood here described a generated timetable — which is OTH and LMU, neither of which has the lens at all. Garching's transitions come from real TUMonline bookings; only the head counts are synthetic.",
+    "provenanceBody": "The room changes and timings come from real TUMonline bookings, and the routes from the real OpenStreetMap footpath network. ⚠️ How many people are walking is synthetic: derived seats times an assumed fill factor. Stairs are weighted ×2.2 — a model of effort, not a measurement.",
+    "transitions": "Routed transitions",
+    "courses": "Courses",
+    "peak": "Peak",
+    "when": "Time",
+    "timeline": "The teaching week — click or drag to pick a time",
+    "prevPeak": "Previous peak",
+    "nextPeak": "Next peak",
+    "peakCount": "{{count}} peaks",
+    "wholeWeek": "Whole week",
+    "showSlot": "Show the peak",
+    "walking": "walking",
+    "note": "Each ribbon is a path segment and its width is the load. The animation shows direction and density — it is not a simulation of individual people."
+  },
+  "places": {
+    "heading": "Places"
+  },
+  "drone": {
+    "idle": "Press W A S D to fly",
+    "hint": "W A S D to fly · Q / E altitude · R / F circle the view centre · drag or arrow keys to look · wheel for cruise speed · Shift to boost · Esc to leave",
+    "altitude": "Altitude AMSL",
+    "agl": "Above ground",
+    "speed": "Speed",
+    "heading": "Heading",
+    "cruise": "Cruise",
+    "offMap": "off the map"
+  },
+  "attribution": {
+    "more": "Further sources and licences: NOTICE.md"
+  },
+  "source": {
+    "label": "Source",
+    "pending": "source missing"
+  },
+  "facts": {
+    "reconstruction": "reconstruction"
+  },
+  "tour": {
+    "aachen": {
+      "audimax": "RWTH Aachen — at some 45,000 students, Germany's largest technical university.",
+      "templergraben": "The historic core on Templergraben: main building, library, mechanical engineering.",
+      "westcampus": "Two and a half kilometres separate the two halves — and they have their own station.",
+      "melaten": "Campus Melaten: the research estate that grew after the historic core ran out of room."
+    },
+    "fau": {
+      "schloss": "The palace is the university: a margravial residence of 1704, FAU's main building since 1825.",
+      "technische": "The Faculty of Engineering on the Südgelände — the part of FAU that looks like a campus.",
+      "informatik": "Computer science and the computing centre: Erlangen has worked here since the early days of computer architecture.",
+      "roethelheim": "Röthelheim campus — a former barracks that became a university."
+    },
+    "garching": {
+      "campus": "Garching research campus — some 60 buildings on the Munich gravel plain.",
+      "ubahn": "The U6 terminates in the middle of the campus. Its timetable decides when it gets crowded.",
+      "mw": "Mechanical Engineering: eight connected wings, around 2,700 mapped rooms.",
+      "mi": "Mathematics and Informatics — home to the most heavily booked lecture hall.",
+      "frm2": "The research reactor defines the campus skyline."
+    },
+    "koeln": {
+      "campus": "The University of Cologne — at some 47,000 students, the largest university in this model.",
+      "hoersaal": "The lecture hall building on Albertus-Magnus-Platz: where the crowd arrives.",
+      "philosophikum": "Philosophikum — a single building for one of Germany's largest faculties.",
+      "biozentrum": "The Biozentrum and the institutes along Zülpicher Straße."
+    },
+    "muenster": {
+      "schloss": "The university's main building is a baroque palace — the rectorate has sat here since 1954.",
+      "hoersaal": "The lecture hall building on Schlossplatz: the working day behind the baroque facade.",
+      "bibliothek": "The university library, which serves the region as well as the university.",
+      "naturwissenschaften": "The sciences sit two kilometres west, at the Coesfelder Kreuz."
+    },
+    "lmu": {
+      "hauptgebaeude": "The main building on Geschwister-Scholl-Platz — the yardstick everything here is measured against.",
+      "philologicum": "The Philologicum on Ludwigstraße: much of the teaching stock sits along this axis.",
+      "informatik": "Institute for Computer Science, Oettingenstraße 67 — the one building with a real interior: 707 rooms on three levels, their outlines read off LMU's own published floor plans.",
+      "klinikum": "University Hospital city campus — 2.4 km south. That is an U-Bahn ride, not a fifteen-minute break.",
+      "anatomie": "The Anatomische Anstalt on Pettenkoferstraße: pre-clinical teaching here, the lecture on the main campus — exactly the conflict this is about."
+    },
+    "oth": {
+      "campus": "Seybothstraße campus on the Galgenberg — the larger of the two sites.",
+      "hoersaal": "The lecture-hall building: the large events everything else is planned around.",
+      "informatik": "Faculty of Computer Science and Mathematics on Galgenbergstraße.",
+      "pruefening": "Prüfeninger Straße campus — 2.5 km away. That distance is what the plan has to work around."
+    },
+    "tuebingen": {
+      "schloss": "Hohentübingen Castle above the old town — institutes inside a fortress.",
+      "neckarfront": "The Neckar front and the Platanenallee: the image Tübingen is known for.",
+      "altstadt": "The university is not a compound; it is threaded through a medieval town.",
+      "aula": "Neue Aula — the university's ceremonial centre.",
+      "kupferbau": "Kupferbau: the large post-war lecture theatres."
+    }
+  },
+  "guide": {
+    "title": "Guided tour",
+    "open": "Guide",
+    "close": "Close the tour",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "$sourceComment": "⚠️ The badge on each card is the point of the tour. This dataset mixes surveyed geography, published floor plans and an invented timetable, and a viewer cannot tell them apart by looking.",
+    "source": {
+      "overview": "Overview",
+      "survey": "Official survey",
+      "published": "Published floor plans",
+      "generated": "Generated timetable",
+      "solver": "CP-SAT optimisation",
+      "foundry": "Azure AI Foundry",
+      "fabric": "Fabric SQL"
+    },
+    "step": {
+      "welcome": {
+        "title": "The Friday that moves everything",
+        "body": "Timetabling at {{university}} is still largely manual today: availabilities arrive as Excel files, the plan is built by hand — and when a lecturer drops out, somebody has to work out what that knocks over. This tour walks through exactly that case, from the cancellation to a confirmed new plan. At every step it says where the data came from."
+      },
+      "welcomeTwin": {
+        "title": "A campus you can take hold of",
+        "body": "This is a digital twin of {{university}} — terrain, buildings and vegetation from official data. No timetable exists for this site, so the app shows no planning here and claims none. This tour shows what is measured and what is not."
+      },
+      "campus": {
+        "title": "The map is not an illustration",
+        "body": "The ground comes from the official 2 m elevation model, the buildings from the state survey's LoD2 data, the aerial image and the trees from open cadastral data. None of it is drawn by hand — which is why distances, heights and walking routes agree with reality. You are seeing this university's sites in their true positions relative to each other."
+      },
+      "distance": {
+        "title": "Two sites, one fifteen-minute break",
+        "body": "Below are the journeys this plan asks people to make — computed on the real footpath network, and by bus between the sites. The break between two blocks is 15 minutes: if that is not enough for the journey, the change counts as a conflict. Between two sites a single minute often decides it — which is why travel time is a hard rule here rather than a nice-to-have."
+      },
+      "scenario": {
+        "title": "The cancellation arrives",
+        "body": "Now the everyday case: a lecturer can no longer teach on Fridays. Today this is where the handwork starts — find the affected sessions, find replacement slots, check what breaks next. ▶ Click the first example question below. It already names the lecturer who carries the most teaching in this plan."
+      },
+      "cascade": {
+        "title": "What hangs off it?",
+        "body": "This is the step that costs an afternoon today: which sessions fall away, which student groups are left stranded, which rooms free up, who would have to step in? The assistant reads that out of the plan instead of estimating it, and the affected sessions sit in the week above. One cancellation becomes its full consequences in seconds."
+      },
+      "review": {
+        "title": "A proposal, not a decision",
+        "body": "Several options come back, each with the number of sessions it moves. The proposal is laid into the week as a preview first — you see the change before it counts. A human decides whether to apply or discard it. This is precisely the review-and-adjust surface the target picture asks for: the machine computes, the planner is accountable."
+      },
+      "studentDay": {
+        "title": "The day the students actually live",
+        "body": "Idle hours, day length, unpopular fringe slots — and campus changes where the break is too short for the journey. These are the soft requirements from the target picture that a pure conflict check never catches: it is satisfied the moment nothing collides. This says what the plan costs the people in it, which is what makes it improvable."
+      },
+      "calendar": {
+        "title": "The week the planning happens in",
+        "body": "The grid shows a teaching week — by room, by student group or by lecturer. Sessions can be dragged, and the plan judges the move immediately: room free, capacity sufficient, lecturer available, student group not double-booked. ⚠️ The student groups, lecturers and sessions are generated rather than observed: the dataset is plausible, but it is nobody's actual timetable."
+      },
+      "interior": {
+        "title": "Real rooms wherever real plans exist",
+        "body": "Clicking a building opens it up by storey. Where the university publishes floor plans, the room outlines are read off those very drawings. Every other floor plate is generated, and the dataset marks it as such. Capacity and room type hang off each individual room, because without them any replanning is guesswork."
+      },
+      "lenses": {
+        "title": "Conflict-free is not the same as good",
+        "body": "A plan can satisfy every hard rule and still be miserable to live with. So here is the same week from three points of view: rooms, lecturers, students — how hard the lecture halls are working, who is over their contracted teaching load, and what a student group's day actually looks like."
+      },
+      "assistant": {
+        "title": "Ask in prose, get an answer with its working",
+        "body": "The assistant is an agent in Azure AI Foundry. It answers nothing from memory: it calls tools against the dataset and shows which ones — the tool trace under the answer is the evidence. No jargon and no fixed phrasing is required. ⚠️ The language model never places a session itself."
+      },
+      "solver": {
+        "title": "Repair means changing as little as possible",
+        "body": "A CP-SAT optimiser computes the repair — provably optimal, and explicitly aiming to move as few sessions as it can. It knows the same rules the checker does: availabilities, room capacity, double-booking — and the travel time between the sites. A proposal that sends somebody across the city in a fifteen-minute break is never offered in the first place."
+      },
+      "saving": {
+        "title": "A confirmed change outlives the container",
+        "body": "Every confirmed change is written to Fabric SQL — once as a log entry, and once as the session's current position. The plan is restored from that the next time the drawer opens, because the compute scales to zero and forgets everything it held. The change list stays auditable: who moved what, and when."
+      },
+      "provenance": {
+        "title": "What is real here, and what is not",
+        "body": "Measured: the terrain, the buildings, the trees, the footpaths — and the room outlines wherever the university publishes plans. Invented: the students, the lecturers, the courses and the whole timetable. In production the Untis export and the lecturers' own availabilities would take their place. The app says so at every figure, because a confident wrong answer is worse than an open gap."
+      },
+      "realData": {
+        "title": "This timetable is real",
+        "body": "The week on screen comes from TUMonline: 1,470 published bookings in 122 rooms, plus 1,699 hours where a room is occupied by something that is not teaching. The other universities publish no timetable, so theirs is generated. Only the lecturers and the student groups are invented here — TUMonline names neither, and the app refuses to answer questions about a person."
+      }
+    }
+  },
+  "chat": {
+    "heading": "Planning assistant",
+    "intro": "Ask in ordinary sentences — no jargon, no fixed phrasing needed. The assistant works the answer out and shows each step, so where a number came from stays traceable. It replies in German.",
+    "placeholder": "e.g. Prof. Meier can no longer teach on Fridays …",
+    "send": "Ask",
+    "clear": "Clear chat",
+    "thinking": "thinking and solving …",
+    "notConfigured": "The planning service is not set up (VITE_SCHEDULER_API). The 3D view still works, the assistant does not.",
+    "errAgent": "The assistant could not finish this request.",
+    "errRequest": "The assistant is unreachable right now. Please try again."
+  },
+  "panel": {
+    "hide": "Hide side panel",
+    "show": "Show side panel"
+  },
+  "twin": {
+    "loading": "Loading the campus",
+    "loadingStart": "Connecting …",
+    "loadingStep": "Step {{step}} of {{of}}",
+    "loading_terrain": "Terrain model and surroundings",
+    "loading_drape": "Aerial photograph, 20 cm resolution",
+    "loading_buildings": "LoD2 buildings from the cadastre",
+    "loading_vegetation": "Trees from the surface model",
+    "errScene": "The 3D view could not be loaded. Please reload the page."
+  },
+  "site": {
+    "switch": "Choose a university",
+    "noPlanner": "No timetable has been loaded for this location. Buildings, rooms and the lenses are here; the calendar and the assistant are not."
+  },
+  "theme": {
+    "toLight": "Switch to the light view",
+    "toDark": "Switch to the dark view"
+  },
+  "move": {
+    "hint": "Drag to move this session to another time",
+    "frozen": "This session is fixed and cannot be moved",
+    "target": "{{from}} → {{to}}",
+    "room": "Room",
+    "discard": "Discard",
+    "checking": "Checking …",
+    "checkFailed": "The check failed — this move has NOT been judged.",
+    "legal": "No conflicts — this slot works.",
+    "notSaved": "What-if: this move is not saved. Only a fully worked-out proposal can become a draft, and only once you have confirmed it.",
+    "clashRoom": "Room {{room}} is already booked at that time",
+    "clashTeacher": "{{teacher}} is already teaching at that time",
+    "clashCohort": "Student group {{cohort}} already has a lecture at that time",
+    "clashCapacity": "Too small: {{seats}} seats for {{attendees}} attending",
+    "clashRoomType": "Wrong room type: {{is}} instead of {{needs}}",
+    "clashUnavailable": "{{teacher}} is unavailable at that time",
+    "clashTransfer": "The campus change cannot be made in the break",
+    "clashOther": "Conflict: {{type}}"
+  },
+  "backend": {
+    "mismatchTitle": "The plan data belongs to a different site",
+    "mismatch": "What is being served right now is {{serving}}'s timetable. For {{expected}} the calendar and the assistant would therefore show another university's data — both are switched off here rather than presenting the wrong week under the right name. The model, room utilisation, teaching load and plan quality come from this site's own data and remain valid."
+  },
+  "resize": {
+    "calendarSplit": "Drag to divide the week grid and the walks",
+    "panel": "Resize the side panel — drag, arrow keys for fine steps, double-click for set sizes",
+    "calendar": "Resize the calendar — drag, arrow keys for fine steps, double-click for half and full",
+    "split": "Change the split between assistant and analysis — drag or use arrow keys"
+  },
+  "calendar": {
+    "heading": "Week plan",
+    "hide": "Close calendar",
+    "show": "Open calendar",
+    "loading": "loading …",
+    "errNoTeacher": "No lecturer with the id “{{key}}” in this timetable.",
+    "errNoCohort": "No student group with the id “{{key}}” in this timetable.",
+    "errNoRoom": "No room with the id “{{key}}” in this timetable.",
+    "errAmbiguous": "“{{key}}” is ambiguous — please be more specific.",
+    "errBadScope": "Unknown selection — lecturer, student group and room are the options.",
+    "errUnknown": "The timetable service could not answer this request.",
+    "errRequest": "The timetable service is unreachable right now. Please try again.",
+    "errApply": "The draft could not be applied. The plan is unchanged.",
+    "booked": "{{booked}} of {{total}} slots booked",
+    "unavailable": "unavailable",
+    "scope": {
+      "teacher": "Teacher",
+      "cohort": "Student group",
+      "room": "Room"
+    },
+    "tabWeek": "Week",
+    "tabDetail": "Analysis",
+    "paneWalks": "Walks",
+    "paneChanges": "Changes",
+    "noChanges": "No differences from the published plan.",
+    "changesIntro": "Sessions that differ from the published plan. Select which ones to take into the plan of record.",
+    "pickChange": "select {{session}} to be taken over",
+    "publishSelected": "Take {{count}} selected",
+    "deleteSelected": "Delete {{count}}",
+    "deleted": "Deleted {{rows}} saved row(s) across {{sessions}} session(s). ⚠️ Sessions already published stay in the plan of record — only the saved history was removed.",
+    "deleteErr": {
+      "no-session": "Not deleted: this needs a sign-in.",
+      "not-configured": "Not deleted: the plan store is not configured.",
+      "failed": "Not deleted: the plan store refused the change."
+    },
+    "clearSelection": "Clear selection",
+    "resetAll": "Reset everything to the shipped plan",
+    "reset": "Reset: {{rows}} saved row(s) deleted, {{drafts}} draft(s) discarded, published plan back to the shipped dataset.",
+    "realTimetable": "Real bookings",
+    "srcCodes": "lecturers as Untis codes",
+    "srcNoGeometry": "{{count}} rooms without a floor plan",
+    "srcNoCapacity": "no room sizes in the export",
+    "srcSummary": "{{count}} notes on the data source",
+    "errTeacherNotPublished": "At this site the teaching is real but the lecturers are invented, so a person cannot be looked up. Rooms and times are dependable.",
+    "searchSubject": "Filter",
+    "noSubjectMatch": "Nothing matches",
+    "paneAvailability": "Availability"
+  },
+  "proposal": {
+    "preview": "Preview: {{count}} sessions would move — nothing applied yet",
+    "option": "Option {{n}} · {{count}} sessions",
+    "optimal": "provably optimal",
+    "bestInTime": "best found in time",
+    "confirm": "Apply {{count}} sessions to a draft",
+    "applying": "applying …",
+    "discard": "Discard",
+    "applied": "{{count}} sessions applied to “{{label}}”",
+    "publishedUntouched": "The published plan is unchanged.",
+    "campusChange": "campus change",
+    "saved": "saved by {{who}}",
+    "savedLocally": "applied locally only — not stored permanently",
+    "saveNow": "store permanently",
+    "saving": "saving …",
+    "storeUnavailable": "storage not configured — please report"
+  },
+  "draft": {
+    "restoredLabel": "Saved state",
+    "restored": "Restored {{count}} saved change(s).",
+    "published": "Published",
+    "discard": "Discard draft",
+    "confirmedBy": "confirmed by {{who}}",
+    "publish": "Publish",
+    "publishHint": "Make this draft the plan of record — for everyone, and as the basis for any further replanning.",
+    "publishedNote": "Published: {{count}} session(s) changed, plan version {{version}}. Stored permanently.",
+    "publishedNoteVolatile": "Published: {{count}} session(s) changed, plan version {{version}}. ⚠️ Not stored permanently — this holds only while the service is running. Sign in and publish again.",
+    "publishErr": {
+      "stale_draft": "Another draft was published in the meantime. Run the repair again — this draft describes a plan that no longer exists.",
+      "would_add_conflicts": "Not published: this draft would create new hard conflicts.",
+      "not_confirmed": "Not published: an unattributed publish is not a publish.",
+      "unknown_draft": "That draft no longer exists.",
+      "wrong_site": "That draft belongs to a different university.",
+      "nothing_to_publish": "This draft changes nothing.",
+      "request": "The planning service is unavailable. Please try again."
+    },
+    "viewing": "You are looking at a draft, not the published plan."
+  },
+  "walk": {
+    "heading": "Walks between sessions",
+    "problems": "{{n}} of {{total}} critical",
+    "allFine": "{{total}} walks, all feasible",
+    "noRoutes": "No pedestrian network has been built for this site yet, so walking times are missing. tools/data/build_walk_routes.py derives them from OpenStreetMap.",
+    "minutesOf": "{{walk}} of {{gap}} min",
+    "unknownShort": "unknown",
+    "impossible": "Cannot be made — the walk takes {{short}} min longer than the break.",
+    "tight": "Tight: only {{spare}} min to spare.",
+    "comfortable": "{{spare}} min to spare, {{metres}} m on foot.",
+    "unknown": "No route was computed between these two buildings — the walking time is unknown, not unproblematic.",
+    "crossCampus": "campus change",
+    "campusLevel": "Site level: for at least one of these sessions only the campus is known, not the building — the room number in the Untis export matches no building outline. The journey is therefore measured and drawn site to site, not door to door.",
+    "show": "Show the route on campus",
+    "hide": "Hide the route",
+    "provenance": "The route and its length come from the OpenStreetMap footpath network. Walking pace (1.35 m/s), a penalty for stairs and the access point are assumptions: with no mapped entrances the walk starts at the nearest point of the path network. The bus time between campuses is an assumption of the dataset, not a timetable.",
+    "byBus": "Campus change by bus — on foot it would be {{walk}} min."
+  },
+  "place": {
+    "close": "Close note",
+    "noRooms": "This dataset holds no rooms for this place — it is a campus outline or a building with no teaching rooms. The building is real and is rendered; no rooms are invented for it.",
+    "source": "Source:",
+    "campus": "A campus outline, not a single building. Pick a building on the site to open its rooms."
+  },
+  "replan": {
+    "label": "Simulate an absence",
+    "hint": "Block {{day}} for this lecturer and have the week worked out again",
+    "working": "replanning {{day}} …",
+    "nothingOn": "This lecturer has nothing on {{day}} — there is nothing to replan.",
+    "noOption": "{{n}} sessions fall on {{day}}, but no conflict-free rearrangement exists. Every possibility was worked through — this is not an estimate."
+  },
+  "integration": {
+    "title": "Data source",
+    "menu": "Data source & Untis…",
+    "intro": "Where this timetable comes from, and whether the WebUntis API can actually be reached. Pressing Test performs a real login — a filled-in form is not reported as a connection.",
+    "inUse": "in use",
+    "sessions": "sessions",
+    "rooms": "rooms",
+    "teachers": "lecturers",
+    "untisNote": "Credentials are used for this one request and are not stored. A saved login can be re-tested without the browser ever receiving it.",
+    "test": "Test connection",
+    "testing": "testing…",
+    "noPlanner": "No planning system is connected for this site, so there is no data source to report.",
+    "writeback": "Write-back to Untis",
+    "writebackNote": "Not implemented, and deliberately not offered as a control. The route exists in Untis, but writing into a live timetable is a decision for the university, not a feature to switch on. What it would require:",
+    "field": {
+      "server": "Server",
+      "school": "School key",
+      "username": "User",
+      "password": "Password"
+    },
+    "state": {
+      "connected": "Connected",
+      "configured": "Configured, not yet tested",
+      "unconfigured": "Not configured",
+      "blocked": "Refused by this server",
+      "unreachable": "Not reachable",
+      "http-error": "Unexpected answer",
+      "rejected": "Rejected by WebUntis"
+    }
+  },
+  "national": {
+    "title": "Universities in Germany",
+    "all": "All {{n}} universities on a map…",
+    "intro": "{{n}} universities located from open data. {{built}} have a built twin and can be opened; the rest are placed but not modelled. Only the map loads up front \u2014 a campus is downloaded when you pick it.",
+    "close": "Close",
+    "pick": "Pick a university on the map.",
+    "cityPerRegistry": "The official register records {{city}}; the dot follows the campus.",
+    "enter": "Open this twin",
+    "students": "{{n}} students",
+    "notBuilt": "The campus is located, but no twin has been built for it. Terrain, buildings and rooms have to be generated per site before it can be opened.",
+    "precision": {
+      "twin": "Position from the built twin's own verified box.",
+      "campus": "Position from a campus boundary resolved out of OpenStreetMap.",
+      "city": "Approximate \u2014 the town centre. No campus boundary could be confirmed."
+    }
+  },
+  "analysis": {
+    "title": "Room utilisation",
+    "intro": "The share of the teaching week each building's rooms are committed. Time utilisation, not seat occupancy \u2014 how often a room is in use, regardless of how full it is.",
+    "meanUtilisation": "Mean utilisation",
+    "overRooms": "across {{n}} rooms with a calendar",
+    "buildings": "Buildings",
+    "rooms": "Rooms",
+    "building": "Building",
+    "utilisation": "Time utilisation",
+    "noCalendar": "no calendar",
+    "note": "Buildings without a timetable are listed but excluded from the mean rather than counted as empty. The mean is weighted by the number of rooms that actually have a calendar, so a building with two booked rooms does not weigh as much as a faculty with sixty."
+  },
+  "rail": {
+    "heading": "Sections",
+    "campus": "Campus",
+    "week": "Weekly plan",
+    "analysis": "Analysis",
+    "assistant": "Assistant",
+    "changes": "Changes",
+    "walks": "Walks",
+    "help": "Help",
+    "collapse": "Collapse",
+    "expand": "Expand",
+    "availability": "Availability"
+  },
+  "availability": {
+    "intro": "When this person can teach. Click a cell to change it.",
+    "loading": "loading …",
+    "pickTeacher": "Choose a lecturer above — availability belongs to a person, not to a room.",
+    "state": {
+      "verfuegbar": "free",
+      "eingeschraenkt": "limited",
+      "nicht_verfuegbar": "blocked"
+    },
+    "teaches": "teaches here",
+    "teachesHere": "{{session}} already takes place here.",
+    "saved": "Saved.",
+    "savedWithClash": "Saved — {{count}} scheduled session(s) now sit in blocked time.",
+    "savedNotStored": "Applied, but not stored permanently — that needs a sign-in.",
+    "clashTitle": "{{count}} session(s) in blocked time",
+    "clashHint": "Nothing has moved. Ask the assistant for a replan.",
+    "download": "Template for this person",
+    "downloadAll": "Template for everyone",
+    "upload": "Upload Excel",
+    "previewTitle": "{{file}}: {{read}} lecturer(s) read, {{changed}} with changes.",
+    "previewRow": "{{count}} change(s)",
+    "previewUnknown": "Not matched: {{names}} ({{count}} in total).",
+    "previewBad": "{{count}} cell(s) could not be read and were skipped — {{sample}}.",
+    "previewClash": "This would make {{count}} already-scheduled session(s) illegal — {{sample}}.",
+    "apply": "Apply for {{count}} lecturer(s)",
+    "discard": "Discard",
+    "imported": "Applied for {{teachers}} lecturer(s); {{clashes}} session(s) now sit in blocked time.",
+    "errLoad": "Availability could not be loaded.",
+    "errSave": "The change could not be saved.",
+    "errImport": "The file could not be processed.",
+    "downloadNoTeacher": "No lecturer loaded — this short code does not exist on this site.",
+    "importErr": {
+      "unreadable": "The file is not a readable Excel workbook.",
+      "no_rows": "The sheet contains no data rows.",
+      "no_slot_columns": "The header row carries no known time slots (Mo-1, Mo-2 …)."
+    }
+  }
+}

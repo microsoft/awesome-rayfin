@@ -126,7 +126,6 @@ finance-analytics/
 │   ├── fpa/                # Financial Statements workspace (linted; import via @/fpa)
 │   └── __tests__/          # vitest unit tests (lib + shell)
 ├── tests/e2e/              # Playwright smoke + axe accessibility checks
-├── .github/               # CI (typecheck/lint/test), CodeQL, issue/PR templates, Dependabot
 ├── vite.config.ts          # react-swc + tailwind + @ alias + chunking
 ├── vitest.config.ts
 ├── eslint.config.js

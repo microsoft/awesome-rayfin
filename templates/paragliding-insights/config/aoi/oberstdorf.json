@@ -1,0 +1,133 @@
+{
+  "$comment": "Area of interest definition. Gleitschirm-Insights is a reusable vertical asset — no location is hard-coded in code. Oberstdorf/Nebelhorn is the first instance, not the app. See PLAN.md §4.",
+  "id": "oberstdorf",
+  "site": {
+    "name": { "de": "Oberstdorf / Nebelhorn", "en": "Oberstdorf / Nebelhorn" },
+    "region": { "de": "Allgäuer Alpen, Bayern", "en": "Allgäu Alps, Bavaria" },
+    "timezone": "Europe/Berlin"
+  },
+  "bbox": {
+    "crs": "EPSG:4326",
+    "west": 10.255,
+    "east": 10.38,
+    "south": 47.37,
+    "north": 47.445,
+    "$comment": "HIGH-RESOLUTION CORE, ~9.4 x 8.3 km. Photoreal tier: DGM1 + DOP20 drape + LoD2 + trees + cableway. RE-CENTRED 2026-07-28 after the Oberstdorf coordinate was re-resolved from OSM: the previous box (10.274-10.380 / 47.355-47.437) was built around a place node 4.6 km SSE of the real town, so the town centre sat 260 m inside the western edge and the whole subject occupied the northern quarter while five kilometres of the south were spent on empty valley. This box holds Oberstdorf (47.4104/10.2774, 813 m) with real margin, the full Nebelhorn massif and summit (2224 m), Hoefatsblick (1932 m), both ends of the Nebelhornbahn, all four OSM launch sites, both landing zones, and the lower Trettachtal. All Bavarian territory, so LDBV covers it completely. See PLAN.md 4.1."
+  },
+  "shell": {
+    "crs": "EPSG:4326",
+    "west": 10.1,
+    "east": 10.5,
+    "south": 47.3,
+    "north": 47.6,
+    "$comment": "COARSE TERRAIN SHELL, ~30 x 33 km. Terrain only — hypsometric tint + hillshade, fading into aerial haze. Two jobs: (1) a real cross-country flight never runs off the edge of the map (the 2021-04-24 hero flight spans 47.365-47.541 N / 10.165-10.389 E), and (2) it IS the horizon — a photoreal box that ends in a cliff of nothing reads as a diorama. Deliberately crosses into Austria (Kleinwalsertal, Tirol) where LDBV stops, which is exactly why this tier uses Copernicus DEM instead of stitching on a second national portal."
+  },
+  "workingCrs": "EPSG:25832",
+  "verticalDatum": "DHHN2016",
+  "elevationRangeM": {
+    "min": 790,
+    "max": 2260,
+    "$comment": "Generous bracket around the real range (Trettach valley floor ~800 m, Nebelhorn summit 2224 m). Used to set the uint16 heightmap scaling in build_terrain.py and the shader range in terrainMaterial.ts. ~1400 m of relief vs. the Ahr AOI's ~85 m — every hillshade and colour ramp constant has to be re-ranged, not reused."
+  },
+  "grids": {
+    "sourceResolutionM": 1,
+    "renderResolutionM": 4,
+    "renderDecimation": 4,
+    "$comment": "1 m DGM1 source, resampled to a 4 m heightmap, mesh decimated 4x -> 16 m posting. For this bbox that is roughly 2000 x 2275 heightmap samples and ~285k mesh vertices."
+  },
+  "shellGrids": {
+    "sourceResolutionM": 30,
+    "renderResolutionM": 30,
+    "renderDecimation": 3,
+    "transitionBandM": 1200,
+    "$comment": "Copernicus DEM GLO-30 source -> ~90 m posting, ~120k mesh vertices. Cheap, and it buys the horizon. transitionBandM is the width of the ring in which the two tiers are reconciled, and it does two jobs: the shell's elevations are blended into the core's so the meshes meet without a step, and the core's OSM land-cover tint is faded out so they also meet in the same COLOUR. Tuned by looking at renders, in both directions: 600 m hid the elevation step but not the colour change, and a straight line where the greens stop is what makes a map read as two datasets stitched together; 2000 m hid it completely but stripped the tint from roughly 40% of a core that is only 9.4 km wide. 1200 m keeps the seam invisible while leaving the land cover intact where anyone actually looks. The two tiers do NOT share a vertical datum (core = DHHN2016 bare earth, shell = EGM2008 SURFACE model including canopy and buildings), so the shell is shifted by an offset MEASURED in the overlap ring - never assumed to be zero - and then feathered rather than butted against the core."
+  },
+  "$verticalScaleComment": "TRUE SCALE, and no longer configurable. The vertical-exaggeration lever was removed in full — uniform, per-layer setters and UI — because nothing in an Alpine AOI needs it: 1400 m of real relief is dramatic on its own, and stretching it makes the valley look like a video game instead of the place. The Ahr AOI this project was scaffolded from needed exaggeration to make 85 m of relief readable; that is the situation the lever existed for, and it is not this one.",
+  "focusPlaces": [
+    { "id": "oberstdorf", "name": "Oberstdorf", "lat": 47.4104347, "lon": 10.2774409 },
+    { "id": "nebelhorn", "name": "Nebelhorn", "lat": 47.4218727, "lon": 10.3423461 },
+    { "id": "hoefatsblick", "name": "Höfatsblick", "lat": 47.413923, "lon": 10.3465665 },
+    { "id": "nebelhornbahn_tal", "name": "Nebelhornbahn Talstation", "lat": 47.4047907, "lon": 10.285764 }
+  ],
+  "$focusPlacesComment": "OpenStreetMap nodes, re-resolved 2026-07-28 by tools/geodata/resolve_places.py — NOT recalled. TWO WERE WRONG in the previous draft, and both were caught by the terrain rather than by review: 'Oberstdorf' was node 47.3708539/10.3119292, which the freshly built heightmap put at 1115 m — impossible for a town whose published elevation is 813 m. It sat 4.6 km SSE of the real place node (1580312096, place=town, ele=813). 'nebelhornbahn_tal' was the ticket-office node; it is now the actual aerialway=station node 259551533 (ele 828). Nebelhorn (peak 276270971, ele 2224) and Höfatsblick (aerialway=station 259551537, ele 1932) were already correct. LESSON: a coordinate is only verified once something independent agrees with it — sampling the terrain at each place and comparing against its published elevation is that check, and it is now step 7 of phase 1. Outside the core bbox but inside the shell, kept for the later extension: Söllereck 47.3716886/10.2356574, Fellhorn 47.3449986/10.2236908.",
+  "flyingSites": [
+    { "id": "start_nebelhorngipfel", "name": "Startplatz Nebelhorngipfel", "kind": "launch", "lat": 47.4214399, "lon": 10.3422466, "publishedEleM": 2220, "osm": "node/305785731" },
+    { "id": "start_probsthaus", "name": "Startplatz Probsthaus", "kind": "launch", "lat": 47.413737, "lon": 10.3464704, "publishedEleM": 1930, "osm": "node/305785735" },
+    { "id": "start_zeigersattel", "name": "Startplatz Zeigersattel", "kind": "launch", "lat": 47.4121881, "lon": 10.3501672, "publishedEleM": 2032, "osm": "node/305785573" },
+    { "id": "start_geissfuss", "name": "Startplatz Geißfuß", "kind": "launch", "lat": 47.4177912, "lon": 10.3264242, "publishedEleM": 1980, "osm": "node/305785578" },
+    { "id": "lande_oybelehalle", "name": "Landeplatz Oybelehalle", "kind": "landing", "lat": 47.401656, "lon": 10.2881267, "publishedEleM": null, "osm": "way/27851843" },
+    { "id": "lande_seealpe", "name": "Landeplatz Seealpe", "kind": "landing", "lat": 47.407702, "lon": 10.3187574, "publishedEleM": null, "osm": "way/28287243" }
+  ],
+  "$flyingSitesComment": "Resolved 2026-07-28 from OpenStreetMap (sport=free_flying) by tools/geodata/resolve_places.py, per PLAN.md §4.2, which requires these to come from Overpass rather than from memory. All six lie inside the re-centred core box. publishedEleM is the OSM ele tag where present, and it is used ONLY as an independent check against the terrain model in verify_registration.py — never as the rendered elevation, which always comes from DGM1. The landing zones are OSM ways, so their coordinate is the centroid of the polygon.",
+  "geobasis": {
+    "authority": "Bayerische Vermessungsverwaltung (LDBV)",
+    "licence": "CC BY 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/4.0/deed.de",
+    "attribution": "Datenquelle: Bayerische Vermessungsverwaltung – www.geodaten.bayern.de [Daten bearbeitet]",
+    "downloadBase": "https://download1.bayernwolke.de",
+    "downloadMirror": "https://download2.bayernwolke.de",
+    "metalinkBase": "https://geodaten.bayern.de/odd",
+    "ags": null,
+    "$agsComment": "TODO phase 1. The AGS is only needed for the Metalink catalogues (per-tile SHA-256 + mirrors); the tile LIST is derived arithmetically from the bbox, because Bavarian tile filenames encode UTM32 easting/northing in km (e.g. 595_5259.tif). A probe of AGS 09780139 returned 74 tiles ~ 74 km2, but Oberstdorf municipality is ~230 km2, so that AGS is probably a neighbouring Oberallgäu municipality. Resolve it before trusting any hash."
+  },
+  "shellGeobasis": {
+    "authority": "ESA / DLR / Airbus Defence and Space — Copernicus DEM GLO-30",
+    "licence": "Copernicus DEM free licence (worldwide, free reuse with the prescribed notice)",
+    "licenceUrl": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+    "attribution": "produced using Copernicus WorldDEM-30 © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018 provided under COPERNICUS by the European Union and ESA; all rights reserved",
+    "$attributionComment": "⚠️ This is the ADAPTED-DATA form of the notice, and the distinction is prescribed rather than stylistic. ESA specifies one string for distributing GLO-30 as received and a different one beginning 'produced using Copernicus WorldDEM-30' where the data have been adapted or modified. This app resamples the tile onto a UTM grid at 30 m and shifts it onto the core's vertical datum, so it is unambiguously modified and the plain © form would be the wrong notice.",
+    "cogUrlTemplate": "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM.tif",
+    "tiles": ["N47_E010"],
+    "$comment": "Verified 2026-07-29: HTTP 200, image/tiff, 39.8 MB per 1x1 degree tile, anonymous access, no key. The single N47/E010 tile covers the ENTIRE shell (47-48 N, 10-11 E). It is a Cloud-Optimized GeoTIFF, so the fetcher range-requests the AOI window instead of pulling 40 MB. A 90 m variant exists at copernicus-dem-90m/...COG_30... (4.9 MB) if 30 m proves excessive. CAVEAT: this is a DSM (canopy and buildings included) on EGM2008, not a DHHN2016 bare-earth DTM — see shellGrids.$comment."
+  },
+  "cableways": [
+    {
+      "id": "nebelhornbahn",
+      "name": "Nebelhornbahn",
+      "osmTags": ["aerialway=cable_car", "aerialway=station"],
+      "$comment": "PLAN §5.7. Line geometry + terminals from Overpass via tools/geodata/build_cableway.py, rendered as a catenary between pylons with simple station volumes. Cheap, and it does real work: it explains how a pilot reaches 1932 m without flying, gives the eye a vertical line to read 1400 m of relief against, and makes the scene instantly recognisable. OSM data is ODbL - attribution required in NOTICE.md. NOTE: the height of the cable is NOT surveyed; it is interpolated between station elevations and lifted clear of the terrain."
+    }
+  ],
+  "liveTracking": {
+    "provider": "ogn",
+    "$providerComment": "Open Glider Network carries FLARM and FANET; Alpine paraglider instruments (Skytraxx, XCTracer, Naviter, Burnair) transmit FANET. APRS-IS is a raw TCP protocol and is NOT reachable from a browser — server/ hosts the relay. Fallback provider if the phase-3 spike disappoints: SkyLines (skylines.aero, AGPL-3.0).",
+    "aprsHost": "aprs.glidernet.org",
+    "aprsPortFiltered": 14580,
+    "aprsPortFull": 10152,
+    "ddbUrl": "http://ddb.glidernet.org/download/?j=1",
+    "radiusKm": 25,
+    "honourNoTrack": true,
+    "honourNoIdentify": true,
+    "$privacyComment": "Non-negotiable, PLAN §2.2.1. no-track devices are dropped in the RELAY, server-side, so they never reach the browser. no-identify devices are shown without pilot or registration. Devices absent from the DDB are treated as anonymous."
+  },
+  "tour": [
+    { "placeId": "oberstdorf", "captionKey": "tour.oberstdorf.town", "rangeM": 3200, "holdMs": 6500 },
+    { "placeId": "nebelhornbahn_tal", "captionKey": "tour.oberstdorf.talstation", "rangeM": 2200, "holdMs": 6000 },
+    { "placeId": "hoefatsblick", "captionKey": "tour.oberstdorf.hoefatsblick", "rangeM": 2400, "holdMs": 6500 },
+    { "placeId": "start_nebelhorngipfel", "captionKey": "tour.oberstdorf.launch", "rangeM": 1800, "holdMs": 6500 },
+    { "placeId": "nebelhorn", "captionKey": "tour.oberstdorf.summit", "rangeM": 4200, "holdMs": 7000 },
+    { "placeId": "lande_oybelehalle", "captionKey": "tour.oberstdorf.landing", "rangeM": 2600, "holdMs": 6500 }
+  ],
+  "$tourComment": "Moved here verbatim from the TOUR constant in src/twin3d/tour.ts in phase 7. The route is unchanged - the valley you land in, the lift that gets you up, the launch, the summit, and the flight that connects them - but it is now configuration, because a tour written against one site's place ids is exactly the kind of hard-coded location decision 21 says must not exist in code.",
+  "webcams": [
+    {
+      "id": "nebelhorn",
+      "name": "Nebelhorn — Gipfelstation",
+      "lat": 47.421681,
+      "lon": 10.342512,
+      "eleM": 2224,
+      "bearingDeg": 130,
+      "page": "https://www.foto-webcam.eu/webcam/nebelhorn/",
+      "operator": "foto-webcam.eu (Keuschnig & Radlherr)",
+      "use": "link-only",
+      "osm": "node/9569388012"
+    }
+  ],
+  "$webcamsComment": "Resolved from OpenStreetMap 2026-08-02 (tools/geodata/webcam_spike.py), never recalled — a webcam marker asserts 'the camera is here, looking that way', which §4.2 does not allow to be guessed. The bearing is OSM's camera:direction=130 and it CROSS-CHECKS against the operator's own caption, 'Blick nach Südosten'. The camera sits ~30 m from the Nebelhorn launch, so standing at the launch in the model and opening this picture is the same view twice. USE IS LINK-ONLY: foto-webcam.eu's Impressum forbids distributing, altering or copying their images without prior written consent, and in the same breath says links to the site and its subpages are 'generell gestattet und auch erwünscht'. See PLAN §5.9. A second camera exists at node/12174047614 (Panomax, 360 degrees, ok-bergbahnen) and is a separate operator with separate terms — not adopted here.",
+  "flights": {
+    "anonymise": true,
+    "displayLabel": { "de": "Beispielflug", "en": "Sample flight" },
+    "heroFlight": "2021-04-24",
+    "$comment": "PLAN §2.2.3 and decision 24. An IGC file is personal location history — where somebody was, on which day, for how long. Every bundled flight ships anonymised: the HFPLT pilot record and HFGID glider ID are STRIPPED AT IMPORT, not merely hidden in the UI. No pilot name appears anywhere in the app, including the author's own flights. The hero flight is 2021-04-24 from the local archive: 12586 points, 797-2692 m, ~20 km of ground — the only flight in the archive that reaches the Oberstdorf core, and the reason the shell tier exists at all."
+  }
+}

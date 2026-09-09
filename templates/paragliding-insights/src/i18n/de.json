@@ -1,0 +1,175 @@
+{
+  "app": {
+    "title": "Gleitschirm-Insights",
+    "subtitle": "Oberstdorf / Nebelhorn, Allgäuer Alpen",
+    "site": "Gebiet"
+  },
+  "disclaimer": {
+    "short": "Demonstrations- und Schulungszweck.",
+    "full": "Demonstrations- und Schulungszweck. Keine Flugvorbereitung, keine Wetterberatung, keine verbindliche Luftraumauskunft."
+  },
+  "facts": {
+    "reconstruction": "abgeleitet"
+  },
+  "source": {
+    "label": "Quelle",
+    "pending": "Quelle ausstehend — diese Zahl darf nicht ausgeliefert werden."
+  },
+  "shell": {
+    "phaseNotice": "Phase 0 — Gerüst. Der Geländezwilling ist noch nicht gebaut.",
+    "planLink": "Plan lesen"
+  },
+  "twin": {
+    "canvasLabel": "Geländeansicht {{site}}",
+    "places": "Orte",
+    "loading": "Gelände wird geladen",
+    "loadingStart": "Verbindung wird aufgebaut …",
+    "loadingStep": "Schritt {{step}} von {{of}}",
+    "loading_terrain": "Geländemodell und Landnutzung",
+    "loading_drape": "Luftbild",
+    "loading_buildings": "Gebäude aus dem Liegenschaftskataster",
+    "loading_vegetation": "Bäume aus dem Oberflächenmodell",
+    "trees": "Bäume",
+    "landuse": "Landnutzung",
+    "cableway": "Seilbahn",
+    "drape": "Luftbild",
+    "labels": "Beschriftung",
+    "modelNotice": "Geländemodell der Bayerischen Vermessungsverwaltung (DGM1), unverzerrt dargestellt und ohne Überhöhung. Die Bäume stehen dort, wo das Oberflächenmodell Bewuchs misst; Höhe und Kronenform sind gemessen, die Form trennt nadel- von laubartigen Kronen und ist keine Artbestimmung. Die Landnutzung stammt aus OpenStreetMap, bildet den heutigen Erfassungsstand ab und färbt ausschließlich die Oberfläche — sie geht in keine Berechnung ein."
+  },
+  "flight": {
+    "label": "Beispielflug",
+    "barogram": "Höhenverlauf",
+    "scrub": "Zeitpunkt im Flug wählen",
+    "play": "Abspielen",
+    "pause": "Anhalten",
+    "speed": "Abspielgeschwindigkeit",
+    "follow": "Kamera folgt",
+    "dropHere": "IGC-Datei hier ablegen — sie bleibt auf diesem Gerät.",
+    "wind": "Wind, aus dem Flug abgeleitet",
+    "windDerived": "Aus der Drift von {{turns}} vollständigen Vollkreisen gemessen. Kein Modell, keine Vorhersage. Höhenbänder ohne Kreisflug bleiben leer — dort wurde nichts gemessen.",
+    "windNone": "Kein Wind ableitbar: In diesem Flug wurden keine vollständigen Vollkreise geflogen. Ohne Kreisflug gibt es keine Drift, aus der sich Wind messen ließe.",
+    "notice": "Aufgezeichneter Flug, anonymisiert — Pilot- und Gerätekennung wurden beim Import entfernt. Die Farbe der Spur zeigt das Steigen und Sinken, abgeleitet aus der Druckhöhe; die angezeigte Höhe stammt aus dem GPS. Eine hier abgelegte IGC-Datei wird ausschließlich im Browser gelesen und nirgendwohin übertragen."
+  },
+  "tour": {
+    "label": "Führung",
+    "oberstdorf": {
+      "town": "Oberstdorf, 813 m. Der Talboden, auf dem jeder Flug endet — und der Maßstab für alles andere: von hier bis zum Nebelhorngipfel sind es 1.400 Höhenmeter.",
+      "talstation": "Talstation der Nebelhornbahn, 828 m. Von hier fährt man hinauf, statt zu laufen. Die Bahn ist der Grund, warum an einem guten Tag so viele Schirme gleichzeitig in der Luft sind.",
+      "hoefatsblick": "Höfatsblick, 1.932 m. Mittelstation und der meistgenutzte Startplatz am Berg — nah genug am Tal für einen Abgleiter, hoch genug für den ersten Bart.",
+      "launch": "Startplatz Nebelhorngipfel, 2.220 m. Der höchste Start im Gebiet. Wer hier abhebt, hat die Thermik des ganzen Tals vor sich.",
+      "summit": "Nebelhorn, 2.224 m. Die Kante, an der sich entscheidet, ob ein Flug ein Abgleiter bleibt oder nach Norden über die Allgäuer Voralpen weitergeht.",
+      "landing": "Landeplatz Oybelehalle. Zurück auf 830 m — dort, wo der Beispielflug nach drei Stunden und 98 Kilometern wieder aufsetzt."
+    },
+    "tegelberg": {
+      "hohenschwangau": "Hohenschwangau, 815 m. Der Talboden am Fuß des Massivs — und der Maßstab für alles andere: von hier bis zum Säuling sind es rund 1.230 Höhenmeter.",
+      "talstation": "Talstation der Tegelbergbahn, 824 m. Von hier fährt man hinauf, statt zu laufen — 1,96 km Seil bis zur Bergstation.",
+      "neuschwanstein": "Schloss Neuschwanstein, 965 m. Rund 150 m über dem Tal auf seinem Felssporn. Es steht hier als LoD2-Gebäudemodell der Bayerischen Vermessungsverwaltung, nicht als Symbol.",
+      "bergstation": "Bergstation Tegelbergbahn, 1.715 m. Rund 890 Höhenmeter über dem Tal — der Ausgangspunkt für die Flüge am Tegelberg.",
+      "saeuling": "Säuling, 2.047 m. Der markanteste Gipfel im Gebiet und zugleich die Grenze nach Tirol. Das Geländemodell misst 2.047 m, amtlich sind es 2.048 m — diese 1,3 m sind der Registrierungsnachweis für dieses Gebiet."
+    }
+  },
+  "drone": {
+    "label": "Drohnen-Modus",
+    "hint": "Oder einfach W A S D drücken.",
+    "help": "W A S D fliegen, Q/E ab und auf, R/F kreisen um den Punkt in der Bildmitte, Pfeiltasten oder Ziehen drehen die Blickrichtung, Shift beschleunigt kurz, das Mausrad ist der Gashebel. Nahe am Boden wird die Kamera automatisch langsamer. Kurz nichts drücken und die Karte bekommt die Kamera zurück — dann zoomt das Mausrad wieder und Ziehen dreht wieder um den Mittelpunkt. Ohne Kollision — dies ist eine Kamera, kein Flugsimulator.",
+    "altitude": "Höhe ü. NN",
+    "agl": "über Grund",
+    "speed": "Geschwindigkeit",
+    "heading": "Kurs"
+  },
+  "day": {
+    "label": "Der Tag",
+    "snapshot": "Direct Lake",
+    "cloudBase": "Basis",
+    "noConvection": "keine Quellbewölkung",
+    "coverage": "{{pct}} % der Fläche, {{hour}} UTC",
+    "cape": "Thermik (CAPE)",
+    "freezing": "Nullgradgrenze",
+    "byHour": "Basis im Tagesverlauf",
+    "flights": "Aufgezeichnete Flüge",
+    "ceiling": "Höchster Punkt",
+    "bestClimb": "Bestes Steigen",
+    "distance": "Strecke",
+    "notice": "Aus dem Direct-Lake-Semantikmodell über dem Fabric-Lakehouse, ICON-D2-Lauf {{run}} UTC. Momentaufnahme, keine Live-Abfrage: die veröffentlichte Anwendung läuft auf statischem Hosting und kann selbst kein Fabric-Token halten. Die Basishöhe gilt nur dort, wo das Modell überhaupt Quellbewölkung rechnet — deshalb steht der Flächenanteil daneben."
+  },
+  "live": {
+    "label": "Jetzt in der Luft",
+    "connecting": "Verbindung zum Empfangsnetz …",
+    "live": "Live",
+    "aircraft": "{{count}} in der Luft",
+    "empty": "Gerade ist hier niemand unterwegs — jedenfalls niemand, den das Empfangsnetz hört.",
+    "emptyHint": "Das ist ein normaler Zustand: Nachts, im Winter und bei schlechtem Wetter ist der Himmel über dem Nebelhorn schlicht leer.",
+    "unavailable": "Kein Live-Empfang",
+    "unavailableHint": "Die veröffentlichte Anwendung läuft auf statischem Hosting und kann selbst keine Netzwerkverbindung zum Open Glider Network aufbauen. Dafür ist das Relay in server/ zuständig — läuft es nicht, zeigt die Anwendung den aufgezeichneten Flug.",
+    "fallback": "Aufzeichnung",
+    "fallbackHint": "Statt Live-Verkehr wird der aufgezeichnete Beispielflug gezeigt.",
+    "follow": "Kamera folgt",
+    "freeFlightOnly": "Nur Freiflug",
+    "freeFlightOnlyHint": "Blendet Motorflug und Verkehrsflugzeuge aus. Über dem Allgäu sind ständig Linienflüge in 11 km Höhe unterwegs — echt, aber für diese Karte belanglos.",
+    "type_paraglider": "Gleitschirm",
+    "type_hangglider": "Drachen",
+    "type_glider": "Segelflugzeug",
+    "type_towplane": "Schleppflugzeug",
+    "type_aircraft": "Motorflugzeug",
+    "type_helicopter": "Hubschrauber",
+    "type_jet": "Verkehrsflugzeug",
+    "type_balloon": "Ballon",
+    "type_parachute": "Fallschirm",
+    "type_uav": "Unbemannt",
+    "type_dropplane": "Absetzflugzeug",
+    "type_airship": "Luftschiff",
+    "type_static": "Feste Station",
+    "type_ufo": "Unbekanntes Objekt",
+    "type_unknown": "Unbekannt",
+    "anonymous": "anonym",
+    "notice": "Live-Positionen aus dem Open Glider Network (FLARM und FANET), empfangen von ehrenamtlich betriebenen Bodenstationen. Wer der Veröffentlichung widersprochen hat, wird nicht übertragen; alle übrigen erscheinen ohne Kennzeichen, sofern der Halter der Identifizierung nicht ausdrücklich zugestimmt hat. Empfang ist Sichtverbindung — diese Karte zeigt, was gehört wird, nicht, was fliegt.",
+    "wrongArea": "Anderes Gebiet",
+    "wrongAreaHint": "Der erreichbare Relay beobachtet ein anderes Gebiet, deshalb wird sein Verkehr hier nicht angezeigt. Starte ihn mit dem passenden Gebiet: npm run relay -- --aoi <gebiet>.",
+    "close": "Schließen",
+    "altitude": "Höhe",
+    "climb": "Steigen",
+    "groundSpeed": "Geschwindigkeit",
+    "course": "Kurs",
+    "lastFix": "Letzte Position",
+    "secondsAgo": "vor {{seconds}} s",
+    "openSource": "Bei OGN ansehen",
+    "sourceNote": "Quelle: Open Glider Network. Der Link öffnet die OGN-Live-Karte an dieser Position — bewusst die Position und nicht das Gerät, damit ein hier anonymer Schirm nicht über den Umweg identifizierbar wird."
+  },
+  "attribution": {
+    "heading": "Datenherkunft",
+    "intro": "Jede Ebene dieser Anwendung stammt aus offen lizenzierten Daten."
+  },
+  "language": {
+    "label": "Sprache",
+    "de": "Deutsch",
+    "en": "English"
+  },
+  "setup": {
+    "eyebrow": "Einrichtung",
+    "heading": "Geodaten noch nicht erzeugt",
+    "body": "Diese Anwendung baut auf abgeleiteten Geodaten auf — Geländemodell, Landnutzung, Gebäude und Bewuchs. Sie liegen nicht im Repository, weil sie jederzeit aus offenen Quellen reproduzierbar sind. Ein Durchlauf der Pipeline erzeugt sie.",
+    "note": "Der Lauf lädt Daten der Bayerischen Vermessungsverwaltung, des Copernicus-Programms und von OpenStreetMap. Alle Quellen sind offen lizenziert; die Nachweise stehen in NOTICE.md."
+  },
+  "assistant": {
+    "label": "Frag den Berg",
+    "start": "Sprechen",
+    "stop": "Beenden",
+    "status_idle": "bereit",
+    "status_connecting": "verbindet",
+    "status_microphone": "Mikrofon freigeben",
+    "status_listening": "hört zu",
+    "status_unavailable": "nicht verfügbar",
+    "hint": "Frag zum Beispiel: „Wie hoch war die Basis?“, „Zeig mir den Startplatz“ oder „Starte die Führung“.",
+    "unavailable": "Der Assistent konnte nicht starten — der Grund steht in Klammern. Meist fehlt der Sprachdienst: die veröffentlichte Anwendung läuft auf statischem Hosting und kann kein Sitzungsgeheimnis anfordern, dafür ist der Dienst in server/voice/ zuständig. Ebenso häufig ist eine nicht erteilte Mikrofonfreigabe.",
+    "notice": "Realtime-Assistent über Azure AI Foundry. Der Ton geht direkt vom Browser zum Dienst; der Schlüssel bleibt auf dem Server, der Browser erhält nur ein zehn Minuten gültiges Sitzungsgeheimnis. Der Assistent nennt ausschließlich Zahlen, die diese Anwendung ihm liefert — weiß er etwas nicht, sagt er das, statt zu schätzen."
+  },
+  "webcam": {
+    "label": "Webcam",
+    "layer": "Webcams",
+    "direction": "Blickrichtung",
+    "operator": "Betreiber",
+    "open": "Bild öffnen",
+    "standHere": "Kameraposition",
+    "note": "Das Bild liegt beim Betreiber und wird dort geöffnet — diese Anwendung lädt, speichert und verändert es nicht. Die Bilder sind urheberrechtlich geschützt; Links sind ausdrücklich erwünscht. Position und Blickrichtung stammen aus OpenStreetMap und decken sich mit der Beschreibung des Betreibers."
+  }
+}

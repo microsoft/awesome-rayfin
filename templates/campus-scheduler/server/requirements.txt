@@ -1,0 +1,21 @@
+# Backend runtime. Deliberately short: the tools are plain Python over a dataset that fits in
+# memory, and the only heavy dependency is the solver — which is the one thing that cannot be
+# replaced by cleverness.
+fastapi>=0.115
+uvicorn[standard]>=0.32
+httpx>=0.27
+# CP-SAT. PLAN §4: the agent decides what to ask, this decides whether it is possible.
+ortools>=9.10
+# Managed identity for the Container App — no key in the environment.
+azure-identity>=1.19
+# The availability spreadsheet. The planner's real process is an Excel per professor (PLAN §25),
+# so the file is read and written where the dataset already lives rather than in the browser —
+# one parser, and the same one can take OTH's own Stundenverteilungsplan later.
+openpyxl>=3.1
+# Multipart form parsing, for the spreadsheet upload.
+python-multipart>=0.0.9
+# ⚠️ Timezone database, so `zoneinfo` resolves "Europe/Berlin" whatever the base image ships.
+# The availability download is stamped in the university's own local time (server/app.py:_stamp),
+# and a slim image without system tzdata would silently fall back to UTC — a filename that is
+# confidently two hours wrong is worse than one with no time in it at all.
+tzdata>=2024.1

@@ -1,0 +1,115 @@
+{
+  "$comment": "Area of interest definition. The second instance, and the one that proves the engine is not welded to Bavaria: every geobasis source below is a different authority with a different portal (LGL Baden-Württemberg instead of LDBV). See NOTICE.md for the attribution each survey requires.",
+  "id": "tuebingen",
+  "site": {
+    "name": { "de": "Universität Tübingen — Altstadt & Neckarfront", "en": "University of Tübingen — Old Town & Neckar Front" },
+    "region": { "de": "Tübingen, Baden-Württemberg", "en": "Tübingen, Baden-Württemberg" },
+    "timezone": "Europe/Berlin"
+  },
+  "lenses": ["condition"],
+  "$lensesComment": "PLAN D6. NO `occupancy`: the indoor-data probe of 2026-07-30 found 3 `indoor=room` elements at Morgenstelle and 0 in the Altstadt, against 2804 at Garching. Room-level analytics are therefore impossible here and the app must not pretend otherwise \u2014 buildings stay solid and say why. `condition` lives here instead, because a Sanierungsstau conversation belongs to historic stock, which is exactly what this AOI is. \u26a0\ufe0f `flow` WAS listed here and has been REMOVED (2026-07-30, Phase 8): decision D5 says Campus Flow is derived from the real lecture timetable, and T\u00fcbingen has no room bookings at all to derive it from. The footpath network exists and the Neckarbr\u00fccke really is the chokepoint between Altstadt and Wilhelmstra\u00dfe \u2014 but a flow map here could only be invented, and an invented crowd on a named real bridge is exactly the kind of claim this project refuses to make quietly. It can return if a timetable source ever does.",
+  "bbox": {
+    "crs": "EPSG:4326",
+    "west": 9.04,
+    "east": 9.075,
+    "south": 48.51,
+    "north": 48.532,
+    "$comment": "HIGH-RESOLUTION CORE, ~2.58 x 2.45 km. Chosen to hold every resolved focus place with margin: Schloss Hohentübingen at the western end (9.0508), Hegelbau at the eastern (9.0623), Hbf to the south (48.5157) and the Kupferbau/Neue Aula ridge to the north (48.5259). That span IS the university — Tübingen has no campus in the Garching sense, the institutes are threaded through a medieval town, and that is the thing worth rendering."
+  },
+  "shell": {
+    "crs": "EPSG:4326",
+    "west": 8.93,
+    "east": 9.19,
+    "south": 48.44,
+    "north": 48.61,
+    "$comment": "COARSE TERRAIN SHELL, ~19.1 x 18.9 km. Unlike Garching, this shell is doing real work: the Neckar valley runs out of the core in both directions and the Schönbuch ridge and the Alb foreland are what a viewer standing on the Schlossberg actually sees on the horizon. Reaches Bebenhausen and the Schönbuch to the north, the Steinlach valley and the Alb foothills to the south, Rottenburg to the west."
+  },
+  "workingCrs": "EPSG:25832",
+  "verticalDatum": "DHHN2016",
+  "elevationRangeM": {
+    "min": 310,
+    "max": 445,
+    "$comment": "MEASURED 2026-07-30 from the LGL DGM1 mosaic: 312.15 to 439.54 m over the core, 100% coverage. Bracketed slightly wider so the hypsometric ramp does not clip at the extremes. The first estimate here was 295-500, which was a guess from published summit heights and would have wasted a third of the colour ramp on elevations this AOI does not contain. Real landmarks check out: the Neckar at the Eberhardsbr\u00fccke reads 317.4 m, the Stiftskirche 340.2 m, Schloss Hohent\u00fcbingen 370.0 m and the \u00d6sterberg tops out at 439.5 m. 127 m of relief inside 2.6 km \u2014 the OPPOSITE problem to Garching (12 m across the whole core), and why this AOI exists."
+  },
+  "drape": {
+    "maxPx": 4096,
+    "$comment": "DOP20 via the LGL GeoWebCache layer `DOP_20_C` (GoogleMapsCompatible, EPSG:3857) rather than the 1.5 GB of per-cell ZIPs the portal offers for the same six cells \u2014 the mesh underneath is at 4 m posting and a 20 cm drape is neither loadable nor useful. At zoom 18 the service gives 0.597 m per pixel, which lands within a percent of Garching's 0.62 and keeps the two AOIs visually comparable. Reprojected from Web Mercator onto the UTM32 grid, because everything else in this app is UTM32 and a drape that disagrees with the terrain by even a few metres reads as the buildings being misplaced."
+  },
+  "grids": {
+    "sourceResolutionM": 1,
+    "renderResolutionM": 2,
+    "renderDecimation": 2,
+    "$comment": "1 m DGM1 source (LGL), resampled to 2 m, mesh decimated 2x -> 4 m posting. Same grid as Garching so the two AOIs are visually comparable and the renderer has one code path. ~1290 x 1225 samples (~3.2 MB), ~395k mesh vertices. On terrain this steep the 4 m posting is the honest limit of what the 1 m source supports after decimation; going coarser visibly rounds off the Schlossberg."
+  },
+  "shellGrids": {
+    "sourceResolutionM": 30,
+    "renderResolutionM": 30,
+    "renderDecimation": 3,
+    "transitionBandM": 1100,
+    "$comment": "Copernicus DEM GLO-30 -> ~90 m posting. Wider band than Garching (900 m) because there is real relief to reconcile at the seam: the shell is a SURFACE model that includes the Schönbuch canopy, the core is bare earth, and a forested ridge crossing the boundary is exactly where an unmeasured datum offset becomes a visible step. The offset is measured in the overlap ring, never assumed."
+  },
+  "focusPlaces": [
+    { "id": "schloss", "name": "Schloss Hohentübingen", "lat": 48.51949, "lon": 9.050794 },
+    { "id": "neue_aula", "name": "Neue Aula", "lat": 48.5240638, "lon": 9.0596848 },
+    { "id": "stiftskirche", "name": "Stiftskirche St. Georg", "lat": 48.520109, "lon": 9.0560684 },
+    { "id": "hoelderlinturm", "name": "Hölderlinturm", "lat": 48.5193288, "lon": 9.055677 },
+    { "id": "kupferbau", "name": "Kupferbau", "lat": 48.5259241, "lon": 9.0583541 },
+    { "id": "alte_burse", "name": "Alte Burse", "lat": 48.5194551, "lon": 9.0549007 },
+    { "id": "hegelbau", "name": "Hegelbau", "lat": 48.5259181, "lon": 9.062273 },
+    { "id": "rathaus", "name": "Rathaus", "lat": 48.5203431, "lon": 9.053101 },
+    { "id": "eberhardsbruecke", "name": "Eberhardsbrücke", "lat": 48.5190123, "lon": 9.0579405 },
+    { "id": "platanenallee", "name": "Platanenallee", "lat": 48.5189963, "lon": 9.0576943 },
+    { "id": "bahnhof", "name": "Tübingen Hbf", "lat": 48.5157271, "lon": 9.0557274, "kind": "station" }
+  ],
+  "$focusPlacesComment": "Resolved 2026-07-30 from OpenStreetMap via Overpass — NOT recalled — and then RE-resolved after the first pass returned three wrong features, which is worth recording because it is the exact failure the verify step exists to catch. A loose name match on 'Hohentübingen' returned the *Sängerschaft* Hohentübingen (a student fraternity, node/5725200864) instead of the castle; 'Hölderlinturm' matched the Lyrikhandlung bookshop next door; 'Rathaus' matched an annex in the Haaggasse. The second pass used tag filters rather than names — historic=castle (relation/19602), amenity=townhall (way/682712527) — and those are the coordinates above. LESSON, same as the Alpine AOI: a name match is not a resolution.",
+  "condition": {
+    "$comment": "⚠️ FULLY SYNTHETIC — PLAN Phase 7 and §6. No German university publishes its Sanierungsstau per building, and inventing one for a named real university is the single most reputationally dangerous thing this app could do quietly. So it is not quiet: every figure derived from this block carries a synthetic badge in the UI, and the generator is seeded and committed so any number on screen can be traced back to a rule rather than to a guess.",
+    "seed": 20260730,
+    "gradeScale": [1, 2, 3, 4, 5],
+    "gradeDistribution": [0.08, 0.22, 0.34, 0.26, 0.1],
+    "$gradeDistributionComment": "Deliberately skewed to grades 3-4. That shape is the widely discussed picture of German university building stock, not a measurement of Tübingen's. It is chosen so the story is recognisable to a Kanzler rather than flattering.",
+    "costPerM2ByGrade": { "1": 0, "2": 150, "3": 620, "4": 1450, "5": 2600 },
+    "priorityWeights": { "condition": 0.45, "usageIntensity": 0.25, "energy": 0.2, "heritage": 0.1 },
+    "scenarios": ["nichtstun", "priorisiert", "gleichverteilt"],
+    "horizonYears": { "from": 2026, "to": 2040 }
+  },
+  "geobasis": {
+    "authority": "Landesamt für Geoinformation und Landentwicklung Baden-Württemberg (LGL)",
+    "licence": "Datenlizenz Deutschland – Namensnennung – Version 2.0",
+    "licenceUrl": "https://www.govdata.de/dl-de/by-2-0",
+    "attribution": "Datenquelle: LGL, www.lgl-bw.de, dl-de/by-2-0",
+    "portal": "https://opengeodata.lgl-bw.de/",
+    "products": {
+      "dgm": "DGM1",
+      "orthophoto": "DOP20",
+      "buildings": "LoD2",
+      "canopy": "nDOM"
+    },
+    "$productsComment": "Verified 2026-07-30 against the LGL Open GeoData offering: DOP20, DGM, DOM1/bDOM/nDOM and LoD1+LoD2 are all published as open data under dl-de/by-2-0, which permits commercial use explicitly. The portal serves PRE-TILED ZIP archives rather than the per-tile GeoTIFF URLs the Bavarian fetcher builds arithmetically, so Phase 6 needs a genuinely new adapter (tools/geodata/fetch_lgl_bw.py) rather than a parameterisation of fetch_bvv.py.",
+    "$vegetationComment": "⚠️ Baden-Württemberg publishes NO tree cadastre, so the Bavarian `trees` step has no counterpart here. Vegetation is instead DERIVED from the nDOM (normalised digital surface model = canopy height above bare earth): threshold the canopy, find local maxima as stems, estimate crown radius from height. Fewer trees will be 'measured' than in Bavaria and they should be described as derived, not surveyed — but on the Platanenallee and the Schlossberg they carry most of the scene."
+  },
+  "shellGeobasis": {
+    "authority": "ESA / DLR / Airbus Defence and Space — Copernicus DEM GLO-30",
+    "licence": "Copernicus DEM free licence (worldwide, free reuse with the prescribed notice)",
+    "licenceUrl": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+    "attribution": "produced using Copernicus WorldDEM-30 © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018 provided under COPERNICUS by the European Union and ESA; all rights reserved",
+    "cogUrlTemplate": "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM.tif",
+    "tiles": ["N48_E008", "N48_E009"],
+    "$tilesComment": "TWO tiles, unlike Garching's one: the shell spans 8.93-9.19 E and therefore crosses the E009 meridian. The fetcher must mosaic them before resampling — a case the Bavarian AOIs never exercised, so treat the first Tübingen shell build as the test of that path."
+  },
+  "roomsAttribution": {
+    "osm": {
+      "authority": "OpenStreetMap contributors",
+      "licence": "ODbL 1.0",
+      "licenceUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+      "attribution": "© OpenStreetMap contributors, ODbL 1.0"
+    }
+  },
+  "tour": [
+    { "placeId": "schloss", "captionKey": "tour.tuebingen.schloss", "rangeM": 900, "holdMs": 7000 },
+    { "placeId": "platanenallee", "captionKey": "tour.tuebingen.neckarfront", "rangeM": 700, "holdMs": 7000 },
+    { "placeId": "stiftskirche", "captionKey": "tour.tuebingen.altstadt", "rangeM": 600, "holdMs": 6500 },
+    { "placeId": "neue_aula", "captionKey": "tour.tuebingen.aula", "rangeM": 600, "holdMs": 6500 },
+    { "placeId": "kupferbau", "captionKey": "tour.tuebingen.kupferbau", "rangeM": 700, "holdMs": 6500 }
+  ]
+}
