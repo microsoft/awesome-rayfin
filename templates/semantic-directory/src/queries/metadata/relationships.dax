@@ -1,0 +1,14 @@
+EVALUATE
+SELECTCOLUMNS(
+    INFO.VIEW.RELATIONSHIPS(),
+    "RelationshipId", [ID],
+    "IsActive", [IsActive],
+    "CrossFilteringBehavior", [CrossFilteringBehavior],
+    "FromTable", [FromTable],
+    "FromColumn", [FromColumn],
+    "FromCardinality", [FromCardinality],
+    "ToTable", [ToTable],
+    "ToColumn", [ToColumn],
+    "ToCardinality", [ToCardinality]
+)
+ORDER BY [FromTable], [ToTable]
