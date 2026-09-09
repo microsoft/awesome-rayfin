@@ -1,0 +1,16 @@
+# Everything the geodata and Fabric tooling needs. Nothing else is required — the downloads use
+# urllib from the standard library, and the coordinate transform in tools/geodata/utm.py is
+# implemented directly so that no GDAL or pyproj install stands between you and a working checkout.
+#
+#   python -m venv .venv
+#   .venv/Scripts/activate      # or: source .venv/bin/activate
+#   pip install -r tools/requirements.txt
+
+numpy>=1.26
+pillow>=10.0
+scipy>=1.11
+
+# Only tools/fabric/* needs these: they write Delta tables into OneLake. The geodata pipeline runs
+# without them, so a checkout that only wants the terrain build can skip this pair.
+deltalake>=0.15
+pyarrow>=15.0

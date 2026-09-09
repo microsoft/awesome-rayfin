@@ -1,0 +1,229 @@
+{
+  "$comment": "Area of interest for Campus-Scheduler. Every coordinate and every count in this file was MEASURED via Overpass on 2026-07-30 by tools/geodata/probe_oth.py — nothing here is recalled. Raw responses were written to temp/oth-probe-*.json. The rule is inherited from Campus-Insights / Gleitschirm-Insights: no coordinate enters config without being looked up, because an earlier project shipped an AOI built around a place node 4.6 km from the town it named.",
+  "id": "oth-regensburg",
+  "probedOn": "2026-07-30",
+  "site": {
+    "name": { "de": "OTH Regensburg", "en": "OTH Regensburg" },
+    "region": { "de": "Regensburg, Bayern", "en": "Regensburg, Bavaria" },
+    "timezone": "Europe/Berlin"
+  },
+
+  "campuses": [
+    {
+      "id": "seyboth",
+      "name": { "de": "Campus Seybothstraße / Galgenberg", "en": "Seybothstraße / Galgenberg campus" },
+      "anchor": { "lat": 49.00308, "lon": 12.09627 },
+      "anchorSource": "OSM way/28938080 amenity=university name='Ostbayerische Technische Hochschule Regensburg' addr=Seybothstraße 2",
+      "bbox": { "west": 12.09, "east": 12.1015, "south": 49.0, "north": 49.007 },
+      "$bboxComment": "~840 x 780 m. MEASURED extent of the campus polygon (OSM way/28938080, `out geom`): west 12.09331, east 12.09923, south 49.00202, north 49.00413 = 432 x 234 m. The box adds ~250 m of margin so the Seybothstraße frontage, the Galgenbergstraße faculty buildings and the OTH relation/1623803 node (49.00458, just north of the polygon) all sit inside rather than on the edge."
+    },
+    {
+      "id": "pruefening",
+      "name": { "de": "Campus Prüfeninger Straße", "en": "Prüfeninger Straße campus" },
+      "anchor": { "lat": 49.01742, "lon": 12.07024 },
+      "anchorSource": "OSM relation/1733231 amenity=university name='Ostbayerische Technische Hochschule Regensburg'",
+      "bbox": { "west": 12.0655, "east": 12.075, "south": 49.0142, "north": 49.0207 },
+      "$bboxComment": "~695 x 723 m. MEASURED extent of the campus polygon (OSM relation/1733231, `out geom`): west 12.06933, east 12.07116, south 49.01639, north 49.01845 = 134 x 230 m — a much smaller site than Seybothstraße. The box is that polygon plus ~250 m of margin, the same rule as campus A. ⚠️ 134 m of frontage is suspiciously narrow for a whole campus: OSM's outline here is probably partial, so re-check against the LoD2 footprints once they are built and widen if buildings fall outside."
+    }
+  ],
+
+  "campusSeparation": {
+    "straightLineKm": 2.48,
+    "$comment": "MEASURED between the two anchors above (haversine): 2.48 km. A second measurement between the OTH Regensburg node (49.00447/12.09331) and the Prüfening car park (49.01668/12.06982) gave 2.19 km. ⚠️ CORRECTION TO AN ASSUMPTION: the plan originally carried '~4-5 km' from the customer conversation. The two campuses are roughly HALF that apart in a straight line. Walking/PT distance will be longer (Regensburg street network, no direct line), and that is the number the travel-time matrix must actually use — measure it in phase 4 rather than inflating the straight line.",
+    "pairsM": {
+      "seyboth-pruefening": 2479,
+      "seyboth-techbase": 305,
+      "pruefening-techbase": 2760
+    },
+    "$pairsComment": "MEASURED between the anchors (haversine, 2026-08-03). ⚠️ THE THIRD SITE BREAKS THE 'DIFFERENT CAMPUS MEANS BUS' SHORTHAND. Seybothstraße to TechBase is 305 m — under four minutes on foot — while Seybothstraße to Prüfening is 2.5 km and has always been modelled as a bus. So a transfer must be judged by DISTANCE, not by whether the campus id changed. `build_walk_routes.py --matrix` already picks the quicker of walk and transit per pair, which is why it gets this right; the straight-line fallback in `generate_timetable.py` was campus-based and had to be fixed to match."
+  },
+
+  "ownership": {
+    "$comment": "How an OTH building is recognised. Stated explicitly rather than left to the default, because the default derives `outlineIds` from every campus `anchorSource` — and TechBase's anchor is a BUILDING outline, not a campus outline, so the default would have silently turned 'inside TechBase's own footprint' into an ownership test.",
+    "outlineIds": ["way/28938080", "relation/1733231"],
+    "$outlineComment": "The two real campus polygons only: Seybothstraße 2 and Prüfeninger Straße. TechBase is deliberately NOT here.",
+    "operatorPattern": "ostbayerische technische hochschule",
+    "extraIds": ["relation/5747922"],
+    "$extraComment": "⚠️ TechBase Regensburg, claimed by hand and only by hand. No general signal reaches it and none should: the building is `building=office` operated by TechBase Regensburg, and OTH is one tenant among Vector Informatik, GEFASOFT, intive and Sensorik-Bayern. What justifies the entry is OSM node/4149309792 — the Sensorik-Applikationszentrum, `operator=Ostbayerische Technische Hochschule Regensburg`, at Franz-Mayer-Straße 1 — which is OTH's own statement that it operates there. The allow-list is the right instrument precisely because this is a tenancy and a rule that generalised it would start pulling in the neighbours."
+  },
+
+  "bbox": {
+    "crs": "EPSG:4326",
+    "west": 12.062,
+    "east": 12.104,
+    "south": 48.9985,
+    "north": 49.024,
+    "$comment": "PHOTOREAL CORE, ~3.07 x 2.84 km, covering BOTH campuses AND the corridor between them. The corridor is not padding: the whole point of the twin is to make the inter-campus transition visible, so the ground between the two sites has to be rendered, not implied. Roughly 1535 x 1420 samples at the 2 m grid below."
+  },
+  "shell": {
+    "crs": "EPSG:4326",
+    "west": 11.98,
+    "east": 12.2,
+    "south": 48.93,
+    "north": 49.1,
+    "$comment": "COARSE TERRAIN SHELL, ~16 x 19 km. Terrain only, fading into haze. Unlike Garching this shell has something to show: the Danube valley to the north and the Bayerischer-Wald foothills to the east give the horizon real shape."
+  },
+  "workingCrs": "EPSG:25832",
+  "verticalDatum": "DHHN2016",
+
+  "elevationRangeM": {
+    "min": 320,
+    "max": 430,
+    "$measured": true,
+    "$comment": "MEASURED 2026-07-30 by build_terrain.py over the core: 328.0 .. 405.5 m, from 20 LDBV DGM1 tiles at 100% coverage. The declared bracket is left deliberately loose around the measurement so a re-run after an LDBV data update does not trip the plausibility gate over a decimetre; uint16 quantisation over a 110 m bracket is ~1.7 mm, far finer than the source. CONSEQUENCE: ~78 m of relief across the core against Garching's 20 m, so terrain shading does real work here. And the two campuses are NOT on the same level — Seybothstraße sits at ~365 m, Prüfening at 341 m (both sampled from the built terrain). The walk between them is 2.5 km AND 24 m downhill, which is a better answer to 'why can't the cohort just walk?' than a flat distance."
+  },
+
+  "verification": {
+    "$comment": "Registration gate, composite form (Campus-Insights checks A-F). The Alpine strategy of >=5 published summits is impossible here: an Overpass probe of the core on 2026-07-30 returned exactly TWO ele-tagged nodes in 3 x 2.8 km of city. So registration is proven from coverage, plausibility, focus places, control points and the LDBV-vs-Copernicus seam offset instead.",
+    "minCoveragePct": 99.5,
+    "toleranceM": 3.0,
+    "shellToleranceM": 12.0,
+    "maxSeamOffsetM": 3.0,
+    "controlPoints": [
+      { "name": "Ziegetsberg", "lat": 48.990092, "lon": 12.06664, "publishedM": 440, "tier": "shell", "source": "OSM node/1068928848 natural=peak ele=440" },
+      { "name": "Sallerner Berg", "lat": 49.042046, "lon": 12.107486, "publishedM": 390, "tier": "shell", "source": "OSM node/356304449 natural=peak ele=390" },
+      { "name": "Hoher Sand", "lat": 49.05444, "lon": 12.078738, "publishedM": 400, "tier": "shell", "source": "OSM node/1068890655 natural=peak ele=400" },
+      { "name": "Eichelberg", "lat": 49.065924, "lon": 12.072945, "publishedM": 420, "tier": "shell", "source": "OSM node/1068890653 natural=peak ele=420" },
+      { "name": "Mühlberg", "lat": 49.054818, "lon": 12.11269, "publishedM": 408, "tier": "shell", "source": "OSM node/1068936853 natural=peak ele=408" },
+      { "name": "Winzerer Höhe", "lat": 49.037703, "lon": 12.049844, "publishedM": 440, "tier": "shell", "source": "OSM node/1068931236 natural=peak ele=440" }
+    ],
+    "$controlPointsComment": "Resolved 2026-07-30 from an Overpass sweep for ele-tagged nodes, then VERIFIED against the built terrain. All six are named landforms around the Danube valley and all six pass at shell tolerance, reading +0.94 to +8.44 m above published — a consistent POSITIVE bias, which is exactly what a radar SURFACE model should do over vegetated ground. A set of control points that all err in the same direction by a physically explicable amount is better evidence than a set that scatters.",
+    "$noCoreControlPoint": "There is NO control point inside the core, and that is a measured conclusion rather than laziness. The core contains exactly two ele-tagged OSM nodes; one is an address node (rejected below) and the other, 'Königswiesener Berg', was TESTED AND REJECTED — see $rejectedCandidates. Garching's AOI is in the same position for the same reason, and the gate is designed for it: checks A, B, C and E carry the proof.",
+    "$rejectedCandidates": "Recorded so they are not silently re-added.\n\n(1) node/3544035334 'Königswiesener Berg' (49.007556/12.069562, natural=peak, ele=397) — the ONLY peak inside the core, and it FAILED the gate by -14.21 m. Investigated rather than deleted or excused: the LDBV DGM1 bare-earth model reads 382.82 m at the node and never exceeds 386.11 m ANYWHERE within 600 m of it, while the independent Copernicus radar SURFACE model reads 384.20 m at the node with a local maximum of 390.33 m. Two surveys — different sensors, different decades, different datums — agree with each other and disagree with OSM, and the canopy hypothesis does not rescue it either (only ~1.4 m of surface-minus-ground at the node). The published 397 m is therefore not supported by any measurement available here. ⚠️ DO NOT loosen `toleranceM` to make this pass: the tolerance is what makes the gate mean something, and this is the gate working.\n\n(2) node/2251378676 'Lydia Goldmann' (49.015352/12.100334, ele=343) — an ADDRESS node (addr:city/housenumber/postcode) that happens to carry an elevation. An address point is not a survey.\n\n(3) Benches (node/1242346088, node/1242346094, ele=449.0/449.5), a bollard (node/1222078669, ele=381.00) and other amenity nodes — GPS-tagged street furniture.\n\n(4) Settlement `place` nodes (Kleinprüfening 336, Lappersdorf 344, Sinzing 355 …) — village-centre labels with no defined ground point."
+  },
+
+  "drape": {
+    "maxPx": 4096,
+    "$built": "4096 x 3806 px at 0.78 m per pixel, 3.3 MB JPEG (measured 2026-07-30).",
+    "$comment": "Long side of the DOP20 mosaic. NOT larger: at 8192 px the mipmap chain is ~300 MB, which Chromium accepts and then silently samples BLACK. And the drape texture must be loaded with flipY=false and WITHOUT mipmaps (see PLAN §5.5)."
+  },
+  "grids": {
+    "sourceResolutionM": 1,
+    "renderResolutionM": 2,
+    "renderDecimation": 2,
+    "$comment": "LDBV DGM1 source, resampled to a 2 m heightmap, mesh decimated 2x -> 4 m posting. Same tier as Garching; the AOI is only ~20% wider so the vertex budget is comparable (~450k)."
+  },
+  "shellGrids": {
+    "sourceResolutionM": 30,
+    "renderResolutionM": 30,
+    "renderDecimation": 3,
+    "transitionBandM": 250,
+    "$comment": "Copernicus GLO-30 -> ~90 m posting. transitionBandM is expressed here in metres for readability but MUST be applied as a fraction of the core (CORE_FADE_FRACTION ~0.08), never absolute — an absolute band tuned for a 9 km alpine AOI ate 43% of a 2 km campus and turned the drape into a dark blob."
+  },
+
+  "buildings": {
+    "measured": {
+      "osmBuildingsInCore": 8193,
+      "osmWithBuildingLevels": 4675,
+      "lod2BuildingsBuilt": 9105,
+      "lod2Triangles": 483982,
+      "lod2AssetMB": 8.31,
+      "$comment": "The OSM count (8 193) was the PROBE; the LDBV LoD2 build produced 9 105 buildings and 483 982 triangles from 9 CityGML tiles. LoD2 is the authoritative cadastral source and legitimately holds buildings OSM has not mapped, so the higher number is expected rather than alarming. Either way this is an order of magnitude past Garching, whose whole core held 263."
+    },
+    "lodPolicy": {
+      "decision": "full LoD2 everywhere in the core",
+      "$comment": "⚠✅ THE PLANNED LoD1-CORRIDOR SPLIT TURNED OUT TO BE UNNECESSARY, and the plan said to measure before deciding. Forecast: 8 193 buildings at full LoD2 would blow a ~10 MB asset budget, so the corridor should drop to LoD1 box extrusion. Measurement: all 9 105 buildings at full LoD2 come to 8.31 MB, and the complete asset set (terrain, shell, drape, land cover, vegetation, buildings) to 20.2 MB. That is roughly twice Campus-Insights' 9.4 MB and entirely acceptable over Fabric static hosting. So the corridor keeps its real roof shapes, the Altstadt reads as the Altstadt, and a whole simplification code path was never written. Revisit only if the asset set grows past ~30 MB."
+    }
+  },
+
+  "vegetation": {
+    "osmTrees": 6078,
+    "osmTreeRows": 29,
+    "osmLanduseAreas": 1139,
+    "cadastreTreesRendered": 21681,
+    "$comment": "The OSM figures were the probe. The BUILD used the Bavarian tree cadastre (two Oberpfalz tiles, ~1.04 GB downloaded, cached and gitignored) and kept 21 681 trees at 9 m spacing — 3.6x what OSM knows about, in 0.20 MB of instance data. Same multiple Garching saw (14 081 cadastre vs 1 905 OSM)."
+  },
+
+  "network": {
+    "measuredFootways": 4240,
+    "measuredRoads": 2638,
+    "measuredPtStops": 217,
+    "measuredWater": 75,
+    "$comment": "MEASURED 2026-07-30. This is the network the phase-4 real-routing step will run on: 4240 footway/path/cycleway segments and 217 PT stops between the two campuses is more than enough to compute an honest walking + public-transport travel time instead of a straight-line guess."
+  },
+
+  "indoorProbe": {
+    "$comment": "⚠️ NOT a `rooms` block — deliberately. In this engine the presence of `rooms` MEANS 'this site has real indoor data', and OTH does not. This block records what the probe FOUND, so the absence is documented rather than merely empty. PLAN §5.4: OSM indoor mapping for OTH is effectively absent — 29 `indoor=room` features in the Seybothstraße core, all on level 0 of a single building, and ZERO at Prüfening. (Garching, for contrast, has ~2800 rooms carrying ref:tum plus the NavigaTUM API.) There is no NavigaTUM equivalent for OTH. => the twin runs on OTH floor plans if OTH provides them, otherwise on floor plates generated from the Untis room list, badged as derived. A `rooms` block appears here only when real geometry does.",
+    "osmIndoorRooms": { "seyboth": 29, "pruefening": 0 },
+    "codePattern": "^[A-Z]{1,2} ?\\d{3}$",
+    "$codePatternComment": "DERIVED FROM REAL DATA, not invented: the 29 mapped rooms carry refs of the form 'K 001', 'K 017', with names like 'K 001 Großer Hörsaal' and 'K 006 CIP-Pool'. So an OTH room code is a building letter plus a three-digit number — a different shape from TUM's 5606.EG.041, and the pattern the Untis room list should be validated against.",
+    "buildingsWithLevelTags": { "seyboth": 452, "pruefening": 696 },
+    "$levelsComment": "Ways carrying building:levels (or indoor tags) in each campus box. This is what makes option 2 viable: floor COUNTS are real even though floor PLANS are not, so generated floor plates sit at the right heights and the right number of storeys."
+  },
+
+  "focusPlaces": [
+    { "id": "oth", "name": "OTH Regensburg", "lat": 49.0045, "lon": 12.09333, "source": "OSM relation/1623803" },
+    { "id": "hoersaal", "name": "Hörsaalgebäude", "lat": 49.00372, "lon": 12.09518, "source": "OSM way/472818195" },
+    { "id": "bibliothek", "name": "Hochschulbibliothek", "lat": 49.00309, "lon": 12.09597, "source": "OSM way/29153707" },
+    { "id": "seminar", "name": "Seminargebäude", "lat": 49.00334, "lon": 12.09423, "source": "OSM relation/59800" },
+    { "id": "maschinenbau", "name": "Fakultät Maschinenbau", "lat": 49.00327, "lon": 12.09792, "source": "OSM relation/59801" },
+    { "id": "informatik", "name": "Fakultät Informatik und Mathematik", "lat": 49.00242, "lon": 12.0975, "source": "OSM relation/18374230" },
+    { "id": "architektur", "name": "Fakultät Architektur", "lat": 49.00246, "lon": 12.09847, "source": "OSM way/728790520" },
+    { "id": "elektrotechnik", "name": "Laborgebäude Elektrotechnik", "lat": 49.00281, "lon": 12.09463, "source": "OSM way/29153704" },
+    { "id": "mikrosystemtechnik", "name": "Laborgebäude Mikrosystemtechnik", "lat": 49.00273, "lon": 12.0938, "source": "OSM way/240509245" },
+    { "id": "forum", "name": "Hörsaalgebäude am Forum", "lat": 49.00291, "lon": 12.0975, "source": "OSM way/132014702" },
+    { "id": "pruefening", "name": "Campus Prüfeninger Straße", "lat": 49.01742, "lon": 12.07024, "source": "OSM relation/1733231" }
+  ],
+  "$focusPlacesComment": "All eleven resolved from the Overpass probe on 2026-07-30 with their OSM ids recorded. A coordinate is only verified once something independent agrees with it — here that will be the terrain build sampling each place and the LoD2 footprints landing on them.",
+
+  "$neighbourNote": "Universität Regensburg (OSM relation/6576273, centre 48.99653/12.09615) sits IMMEDIATELY south of the Seybothstraße campus. Its centre falls just outside the core box (south of 48.9985) but its northern buildings — e.g. 'SGLG Sammelgebäude' at 48.99888/12.09312 — are inside it, so UR WILL be rendered. It is a different institution and must never be presented as OTH: useful context in the render, a trap in the data. Filter by the OTH relations, never by proximity.",
+  "$altstadtNote": "Because the core spans both campuses AND the corridor, it also contains the Regensburg Altstadt, the Dom and the Danube — confirmed by a unit test that failed when the cathedral was used as an out-of-AOI reference point. Good for the demo (the twin shows a UNESCO old town, not an anonymous business park) and a reminder that this AOI is a slice of a city rather than a campus.",
+
+  "lenses": ["occupancy", "staffing", "quality"],
+  "$schedulerSiteComment": "⚠️ OTH's OWN UNTIS EXPORT IS THE DEFAULT, not the generated plan. Decided 2026-08-06: showing the customer their real week is a stronger demo than showing them ours, and the buildings, terrain and walking routes are identical either way because it is the same campus. The generated dataset is still built, still served (site 'oth') and still what every e2e spec pins — they pass '?scheduler=oth' explicitly rather than inheriting whatever the default happens to be. See PLAN §25 and §27.",
+  "schedulerSite": "oth-real",
+  "planQuality": {
+    "source": "tools/data/build_plan_quality.py — whole-cohort lecture days + slot desirability",
+    "studentGroupMappingModelled": false
+  },
+  "staffing": {
+    "source": "tools/data/build_staffing.py — course.sws joined to teacher.contractSws",
+    "lecturerTypesModelled": false
+  },
+  "$lensesComment": "`occupancy` is declared because the data to support it now EXISTS — tools/data/build_room_geometry.py writes rooms.json/rooms.bin/occupancy.bin, with Gebäude K's ground floor as surveyed OSM outlines and every other floor as plates laid out inside the real building footprint. It was deliberately EMPTY before that, and the engine's own test ('declares only lenses whose data requirements it can meet') failed the first attempt to declare it early. `flow` stays off until cohort movement is built.",
+
+  "rooms": {
+    "$comment": "Room-level analytics are possible here, but only partly from survey. Gebäude K, Ebene 0 = 28 rooms OpenStreetMap actually mapped, with real outlines, areas and names. Everything else = generated plates inside the real footprint at the real storey count: right number, right area, right floor, arranged rather than surveyed, and badged `generated` on every record. Occupancy comes from the synthetic timetable rather than being invented separately, so the colour a room takes IS the plan the solver is working on.",
+    "codePattern": "^[A-Za-z]{1,2} ?\\d{3}$",
+    "osmRefKey": "ref",
+    "heroBuilding": "K",
+    "$heroBuildingComment": "The demo opens on K because it is the only building whose interior is real — and it happens to be the Fakultät Informatik und Mathematik, one of the two faculties modelled. K 001 Großer Hörsaal (105 m²) and the two CIP-Pools are surveyed rooms, not props.",
+    "storeyHeightM": 3.5,
+    "$storeyHeightComment": "ASSUMED. LoD2 gives building heights but not floor-to-floor pitch, and OSM has no level heights for these buildings. It is the weakest number in the interior and it is the one that shows: get it wrong and exploded floors interpenetrate.",
+    "referenceSemester": {
+      "id": "synthetic",
+      "startDate": "2026-10-01",
+      "endDate": "2027-02-05",
+      "$comment": "One representative teaching week from the generated plan, not a real semester."
+    }
+  },
+
+  "geobasis": {
+    "authority": "Bayerische Vermessungsverwaltung (LDBV)",
+    "licence": "CC BY 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/4.0/deed.de",
+    "attribution": "Datenquelle: Bayerische Vermessungsverwaltung – www.geodaten.bayern.de [Daten bearbeitet]",
+    "downloadBase": "https://download1.bayernwolke.de",
+    "downloadMirror": "https://download2.bayernwolke.de",
+    "metalinkBase": "https://geodaten.bayern.de/odd",
+    "$comment": "Identical to the Garching AOI — Regensburg is in Bayern, so the same survey authority, the same portal and the same licence apply. This is why the pipeline needed no new fetcher (unlike Tübingen, which is Baden-Württemberg and required an LGL adapter). The attribution is not optional."
+  },
+  "shellGeobasis": {
+    "authority": "ESA / DLR / Airbus Defence and Space — Copernicus DEM GLO-30",
+    "licence": "Copernicus DEM free licence (worldwide, free reuse with the prescribed notice)",
+    "licenceUrl": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+    "attribution": "produced using Copernicus WorldDEM-30 © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018 provided under COPERNICUS by the European Union and ESA; all rights reserved",
+    "$attributionComment": "The ADAPTED-DATA form of the notice, which is prescribed rather than stylistic: the pipeline resamples the tile onto a UTM grid and shifts it onto the core's vertical datum, so it is unambiguously modified.",
+    "cogUrlTemplate": "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM.tif",
+    "tiles": ["N48_E011", "N48_E012", "N49_E011", "N49_E012"],
+    "$tilesComment": "FOUR tiles, not one: the shell spans 48.93-49.10 N and 11.98-12.20 E, so it crosses BOTH the 49 N parallel and the 12 E meridian. Garching needed a single tile and it would be easy to inherit that assumption — a missing N49 tile shows up as a flat shelf across the northern horizon, not as an error."
+  },
+
+  "tour": [
+    { "placeId": "oth", "captionKey": "tour.oth.campus", "rangeM": 1200, "holdMs": 6500 },
+    { "placeId": "hoersaal", "captionKey": "tour.oth.hoersaal", "rangeM": 450, "holdMs": 6000 },
+    { "placeId": "informatik", "captionKey": "tour.oth.informatik", "rangeM": 500, "holdMs": 6000 },
+    { "placeId": "pruefening", "captionKey": "tour.oth.pruefening", "rangeM": 900, "holdMs": 7000 }
+  ],
+  "$tourComment": "Ends at Prüfening on purpose: the last thing the viewer should see is the OTHER campus, 2.48 km away, because that distance is the constraint the whole product exists to handle."
+}

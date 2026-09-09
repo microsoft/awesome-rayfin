@@ -1,0 +1,74 @@
+# What does NOT go into the gallery template.
+#
+# ⚠️ THIS FILE IS A PUBLICATION BOUNDARY, NOT A TIDINESS PREFERENCE. Two of the entries below are
+# the difference between a template and a licence problem — see `config/release.json` for the full
+# reasoning. `tools/verify_publishable.py` re-checks the result as bytes rather than trusting this
+# list, because a list is only as good as the last person who remembered to update it.
+
+# ---------------------------------------------------------------------------------------------
+# Downloaded and derived geodata.
+#
+# Rebuilt by `npm run data:build` from the open sources listed in NOTICE.md — 1.5 GB of survey
+# tiles for eight AOIs, and far too large to ship inside a template. `data/` also holds the two
+# datasets that may not be redistributed at all (`data/tum/`, `data/oth-real/`).
+# ---------------------------------------------------------------------------------------------
+data/
+public/terrain/
+
+# ---------------------------------------------------------------------------------------------
+# One tenant's deployment state. A template that carries these points every clone at one item.
+# ---------------------------------------------------------------------------------------------
+rayfin/.deployments.json
+rayfin/.env
+rayfin/.temp/
+.env
+.env.local
+.env.production
+tools/fabric/.fabric-ids.json
+docs/internal/
+
+# Screen recordings made against our own Fabric tenant — they walk through a workspace, a folder
+# and an item that exist in exactly one place, so they are documentation for us and a dead end for
+# anyone else.
+media/
+
+# ⚠️ THE INTERNAL BUILD LOG AND THE CUSTOMER'S OWN REQUIREMENT CAPTURE.
+#
+# PLAN.md is a running record of an engagement: it names the tenant, the workspace, the item and
+# the account they were deployed under, and it quotes meetings with people at the university by
+# name. REQUIREMENTS.md is their description of how their timetabling actually works, written down
+# in German as they said it.
+#
+# Both are genuinely useful and neither is ours to publish. They are also not what a gallery
+# template is for — what a reader needs is README.md and AGENTS.md, which are written for them
+# rather than for us. `tools/verify_publishable.py` fails if either reaches a staged tree.
+PLAN.md
+REQUIREMENTS.md
+
+# ⚠️ THE SEMANTIC MODEL IS GENERATOR OUTPUT, AND IT IS ONE LAKEHOUSE'S COORDINATES.
+#
+# `tools/fabric/build_semantic_model.py` writes every file under `fabric/` — the TMDL, the
+# relationships, the measures — and `definition/expressions.tmdl` embeds the OneLake URL of the
+# workspace and lakehouse it was built against. A clone would carry a Direct Lake model pointing at
+# storage nobody else can reach, which is worse than carrying none: it looks like it should work.
+#
+# `fabric/CampusInsights.SemanticModel/` is worse again — the archived predecessor's model, whose
+# Fabric items were deleted, sharing a `logicalId` with the live one and so confusing Fabric git
+# integration on first sync.
+#
+# The generator ships. Run it against your own workspace and it writes your own model:
+#   $env:FABRIC_WORKSPACE_ID = "…"; $env:FABRIC_LAKEHOUSE_ID = "…"
+#   python tools/fabric/setup_lakehouse.py; python tools/fabric/build_lakehouse_tables.py
+#   python tools/fabric/build_semantic_model.py
+fabric/
+
+# ---------------------------------------------------------------------------------------------
+# Build and test output
+# ---------------------------------------------------------------------------------------------
+dist/
+fabric-dist/
+test-results/
+playwright-report/
+node_modules/
+__pycache__/
+*.tsbuildinfo

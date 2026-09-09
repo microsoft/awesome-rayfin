@@ -1,0 +1,112 @@
+{
+  "$comment": "Area of interest definition for the Universität zu Köln — the sixth twin, and the FIRST built on Nordrhein-Westfalen geodata (PLAN §37). Köln is 3rd nationally at 47 238 students (DESTATIS GENESIS, WS 2024/25) and the largest university this project can reach: the two ahead of it are TU München and LMU, both already built. Getting here required a third survey authority, because NRW is where the German university system's mass actually sits — Köln, Aachen, Münster, Bochum, Duisburg-Essen and Bonn are all in this one state.",
+
+  "id": "koeln",
+
+  "site": {
+    "name": { "de": "Universität zu Köln", "en": "University of Cologne" },
+    "region": { "de": "Köln, Nordrhein-Westfalen", "en": "Cologne, North Rhine-Westphalia" },
+    "timezone": "Europe/Berlin"
+  },
+
+  "lenses": [],
+  "$lensesComment": "Empty, deliberately — the same state OTH and FAU shipped in. A lens may only be declared where its data requirements can be met (`world.test.ts` enforces this). Köln publishes no timetable this project has access to, and no indoor geometry has been probed, so occupancy, staffing and quality are all impossible here. Declaring one anyway would produce a card that opens onto nothing, which this repo has shipped twice and does not intend to again.",
+
+  "bbox": {
+    "crs": "EPSG:4326",
+    "west": 6.91,
+    "east": 6.9406,
+    "south": 50.9226,
+    "north": 50.9373,
+    "$comment": "HIGH-RESOLUTION CORE, ~2.15 x 1.64 km. Taken from the campus cluster find_campus_areas.py resolved out of OpenStreetMap (config/campus-candidates.json, HS111: 11 areas around Albertus-Magnus-Platz) plus ~250 m of margin. This is the Lindenthal Hauptcampus — the Philosophikum, Hörsaalgebäude, Seminargebäude, Mensa and the science institutes along Zülpicher Straße. The medical campus and the outlying institutes are NOT in this box; Köln's second resolved cluster is a 40 x 10 m fragment and was not worth widening the AOI for."
+  },
+
+  "shell": {
+    "crs": "EPSG:4326",
+    "west": 6.79,
+    "east": 7.06,
+    "south": 50.845,
+    "north": 51.015,
+    "$comment": "COARSE TERRAIN SHELL, ~18.9 x 18.9 km. Holds the Rhine, the Innenstadt and the Ville ridge west of the city. ⚠️ Expect this shell to do LESS work than Tübingen's: the Cologne Bight is close to flat, so the horizon here is made of buildings rather than of terrain. The shell is still needed — without it the core would end in a cliff — but nobody will point at it."
+  },
+
+  "workingCrs": "EPSG:25832",
+  "verticalDatum": "DHHN2016",
+
+  "elevationRangeM": {
+    "min": 35,
+    "max": 75,
+    "$measured": true,
+    "$comment": "MEASURED 2026-08-07 by build_terrain.py over the core: 40.42 .. 65.21 m, from 6 Geobasis NRW DGM1 tiles at 100% coverage (grid 1099 x 849 at 2 m). Left slightly loose around the measurement so a re-run after a NRW update does not trip the plausibility gate over a decimetre.\n\n⚠️ 25 METRES OF RELIEF ACROSS THE WHOLE CORE — the flattest AOI in this repo by some distance (FAU 36 m, OTH ~78 m, Tübingen 127 m). The hypsometric ramp is doing almost nothing here and the terrain shading has nothing to shade; what makes this twin readable is the buildings and the drape. That is a fact about the Cologne Bight, not a defect in the build, and it is written down so nobody 'fixes' the terrain later.\n\nGround heights at the resolved focus places came out at Humanwissenschaftliche Fakultät 49.3 m and Köln Süd 55.4 m — plausible, and a second confirmation that the focus coordinates landed on the campus."
+  },
+
+  "drape": {
+    "maxPx": 4096,
+    "$comment": "Long side of the DOP mosaic, via the Geobasis NRW WMS (layer nw_dop_rgb, 10 cm source). NOT larger: at 8192 px the mipmap chain is ~300 MB, which Chromium accepts and then silently samples BLACK."
+  },
+
+  "grids": {
+    "sourceResolutionM": 1,
+    "renderResolutionM": 2,
+    "renderDecimation": 2,
+    "$comment": "Geobasis NRW DGM1 source, resampled to a 2 m heightmap, mesh decimated 2x -> 4 m posting. The same tier as every other AOI here. ⚠️ Unlike Baden-Württemberg, NRW publishes DGM1 already as a float32 GeoTIFF with the ModelTiepoint/ModelPixelScale pair build_terrain.py reads, so there is no conversion step between the download and this grid."
+  },
+
+  "shellGrids": {
+    "sourceResolutionM": 30,
+    "renderResolutionM": 30,
+    "renderDecimation": 3,
+    "transitionBandM": 250,
+    "$comment": "Copernicus GLO-30 -> ~90 m posting. transitionBandM is written in metres for readability but MUST be applied as a fraction of the core (CORE_FADE_FRACTION ~0.08), never absolute."
+  },
+
+  "indoorProbe": {
+    "probedOn": "2026-08-07",
+    "roomsFound": 0,
+    "$comment": "⚠️ Named `indoorProbe` and NOT `rooms` — in this engine a `rooms` block MEANS real indoor geometry exists and drives the hero-building explode. Nothing has been found for Köln, so buildings stay solid and the app says so rather than inventing interiors."
+  },
+
+  "focusPlaces": [
+    { "id": "hauptcampus", "name": "Universität zu Köln", "lat": 50.92854, "lon": 6.92575 },
+    { "id": "hoersaalgebaeude", "name": "Hörsaalgebäude", "lat": 50.92707, "lon": 6.92779 },
+    { "id": "philosophikum", "name": "Philosophikum", "lat": 50.92797, "lon": 6.927 },
+    { "id": "seminargebaeude", "name": "Seminargebäude", "lat": 50.92689, "lon": 6.92715 },
+    { "id": "mensa", "name": "UniMensa", "lat": 50.9278, "lon": 6.93297 },
+    { "id": "mathematik", "name": "Mathematisches Institut", "lat": 50.92906, "lon": 6.92429 },
+    { "id": "biozentrum", "name": "Biozentrum Köln", "lat": 50.92682, "lon": 6.93624 },
+    { "id": "cecad", "name": "CECAD", "lat": 50.9255, "lon": 6.92035 },
+    { "id": "geowissenschaften", "name": "Geowissenschaften", "lat": 50.92693, "lon": 6.93466 },
+    { "id": "humanwissenschaften", "name": "Humanwissenschaftliche Fakultät", "lat": 50.93419, "lon": 6.91974 },
+    { "id": "bahnhof", "name": "Köln Süd", "lat": 50.9276, "lon": 6.93727, "kind": "station" }
+  ],
+
+  "$focusPlacesComment": "Resolved 2026-08-07 from OpenStreetMap via Overpass BY TAG — `amenity=university`, `building=university`, university-operated buildings, libraries and stations inside the core box — and not by name, for the reason Tübingen's config records at length.\n\n⚠️ TWO DIFFERENT OSM RELATIONS ARE BOTH NAMED 'Universität zu Köln': relation/8727202 at 50.92854/6.92575, which is the Hauptcampus and is used above, and relation/1253808 at 50.92225/6.93468, roughly 600 m south-east. Picking by name alone is a coin toss between them. The one above was chosen because it sits inside the resolved campus cluster; the other is recorded here so the next person does not 'fix' it.",
+
+  "geobasis": {
+    "authority": "Geobasis NRW (Bezirksregierung Köln)",
+    "licence": "Datenlizenz Deutschland – Zero – Version 2.0",
+    "licenceUrl": "https://www.govdata.de/dl-de/zero-2-0",
+    "attribution": "Datenquelle: Land NRW (Geobasis NRW), dl-de/zero-2-0",
+    "downloadBase": "https://www.opengeodata.nrw.de/produkte/geobasis/",
+    "dopWms": "https://www.wms.nrw.de/geobasis/wms_nw_dop",
+    "$comment": "The THIRD survey authority in this repo, after the Bavarian LDBV and Baden-Württemberg's LGL. pipeline.py's `in_nordrhein_westfalen` predicate keys on the string 'Geobasis NRW' here to select the NRW steps, so this field is load-bearing and not decoration.\n\n⚠️ dl-de/ZERO-2-0, not by-2-0: NRW places its geobasis data in the public domain and requires no attribution at all. The attribution is given anyway — every other source in this app is credited, and a licence that permits silence is not a reason to be silent about where a campus came from."
+  },
+
+  "shellGeobasis": {
+    "authority": "ESA / DLR / Airbus Defence and Space — Copernicus DEM GLO-30",
+    "licence": "Copernicus DEM free licence (worldwide, free reuse with the prescribed notice)",
+    "licenceUrl": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+    "attribution": "produced using Copernicus WorldDEM-30 © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018 provided under COPERNICUS by the European Union and ESA; all rights reserved",
+    "$attributionComment": "The ADAPTED-DATA form of the notice, which is prescribed rather than stylistic: the pipeline resamples the tile onto a UTM grid and shifts it onto the core's vertical datum.",
+    "cogUrlTemplate": "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM.tif",
+    "tiles": ["N50_E006", "N50_E007", "N51_E006", "N51_E007"],
+    "$tilesComment": "FOUR tiles. The shell runs 50.845-51.015 N and 6.79-7.06 E, so it crosses BOTH the 51 N parallel and the 7 E meridian — the same four-corner case as OTH Regensburg. A missing tile does not raise an error; it renders as a flat shelf across that side of the horizon."
+  },
+
+  "tour": [
+    { "placeId": "hauptcampus", "captionKey": "tour.koeln.campus", "rangeM": 1000, "holdMs": 6500 },
+    { "placeId": "hoersaalgebaeude", "captionKey": "tour.koeln.hoersaal", "rangeM": 450, "holdMs": 6000 },
+    { "placeId": "philosophikum", "captionKey": "tour.koeln.philosophikum", "rangeM": 500, "holdMs": 6000 },
+    { "placeId": "biozentrum", "captionKey": "tour.koeln.biozentrum", "rangeM": 600, "holdMs": 6000 }
+  ]
+}
