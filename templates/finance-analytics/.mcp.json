@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "rayfin": {
+      "command": "npx",
+      "args": ["-y", "@microsoft/rayfin-mcp", "start"]
+    }
+  }
+}

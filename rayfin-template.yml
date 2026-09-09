@@ -16,6 +16,9 @@ entries:
   - path: templates/field-technician
     name: Field Technician App
     description: Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric)
+  - path: templates/finance-analytics
+    name: Finance Analytics
+    description: Config-driven FP&A app for Microsoft Fabric — variance/trend/aging tables with native Excel copy, accessible charts, filters + cross-filter, a deterministic intelligence rail, and PowerPoint/Excel/CSV export. Runs offline on sample data or against a live semantic model.
   - path: templates/helsinki-public-transport
     name: Helsinki Public Transport
     description: Live public transport over a Fabric Real-Time Intelligence Eventhouse - a DirectQuery semantic model queried straight from the browser, drawn on a 2D map and on a token-free 3D city twin built from open geodata

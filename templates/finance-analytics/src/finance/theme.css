@@ -1,0 +1,425 @@
+/* Shared org design tokens — the single source of truth every Fabric app imports.
+   Light by default; the dark "Intent Telescope" palette applies under `.dark`.
+   This is the SAME Fluent-based design language as the reference Surface Daily
+   app: a 100-based type scale, a 4px spacing grid, a radius scale, an icon-size
+   scale, the Bahnschrift numeric face for KPI values, and a restrained,
+   GPU-friendly motion library.
+   PERF: pure CSS processed by the CONSUMER's Tailwind build at build time — zero
+   runtime JS, no network cost; it ships inside the app's own static stylesheet. */
+
+@custom-variant dark (&:is(.dark *));
+
+/* Bridged tokens — kept in `@theme static` so the CSS vars are always emitted,
+   not tree-shaken when no Tailwind utility consumes them (charts read them at
+   runtime). */
+@theme static {
+  --color-brand: #0f6cbd;
+  --color-brand-foreground: #0f6cbd;
+  --color-hover: #f5f5f5;
+}
+
+@theme {
+  /* ---- Color tokens — light theme ------------------------------------- */
+  --color-background: #ffffff;
+  --color-foreground: #242424;
+
+  --color-card: #ffffff;
+  --color-card-foreground: #242424;
+
+  --color-popover: #ffffff;
+  --color-popover-foreground: #242424;
+
+  --color-primary: #0f6cbd;
+  --color-primary-foreground: #ffffff;
+
+  --color-secondary: #fafafa;
+  --color-secondary-foreground: #242424;
+
+  --color-muted: #f0f0f0;
+  --color-muted-foreground: #595959;
+
+  --color-accent: #eef2f8;
+  --color-accent-foreground: #242424;
+
+  --color-success: #0e700e;
+  --color-success-foreground: #ffffff;
+  --color-destructive: #c50f1f;
+  --color-destructive-foreground: #ffffff;
+
+  --color-border: #e0e0e0;
+  --color-input: #e0e0e0;
+  --color-ring: #0f6cbd;
+
+  /* ---- Radius scale --------------------------------------------------- */
+  --radius-none: 0;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-2xl: 12px;
+  --radius-3xl: 16px;
+  --radius-4xl: 24px;
+  --radius-5xl: 32px;
+  --radius-6xl: 40px;
+  --radius-full: 9999px;
+  --radius: 6px;
+
+  /* ---- Spacing — 4px baseline grid (use p-l, gap-xs, etc.) ------------ */
+  --spacing-none: 0;
+  --spacing-xxs: 2px;
+  --spacing-xs: 4px;
+  --spacing-s-nudge: 6px;
+  --spacing-s: 8px;
+  --spacing-m-nudge: 10px;
+  --spacing-m: 12px;
+  --spacing-l: 16px;
+  --spacing-xl: 20px;
+  --spacing-xxl: 24px;
+  --spacing-xxxl: 32px;
+
+  /* ---- Shell header height — the sticky rail + nav reference this so they
+     scroll independently underneath the sticky header. Keep in sync with the
+     header's own vertical size. ---------------------------------------- */
+  --fabric-header-h: 60px;
+
+  /* ---- Font sizes — 100-based scale (use text-300, text-hero-700) ----- */
+  --text-100: 10px;
+  --text-200: 12px;
+  --text-300: 14px;
+  --text-400: 16px;
+  --text-500: 18px;
+  --text-600: 20px;
+  --text-hero-700: 24px;
+  --text-hero-800: 32px;
+  --text-hero-900: 40px;
+  --text-hero-1000: 68px;
+
+  /* ---- Line heights — paired with the font sizes --------------------- */
+  --leading-100: 14px;
+  --leading-200: 16px;
+  --leading-300: 20px;
+  --leading-400: 22px;
+  --leading-500: 24px;
+  --leading-600: 28px;
+  --leading-hero-700: 30px;
+  --leading-hero-800: 40px;
+  --leading-hero-900: 52px;
+  --leading-hero-1000: 92px;
+
+  /* ---- Font weights --------------------------------------------------- */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ---- Font families -------------------------------------------------- */
+  --font-base: "Segoe UI", "Segoe UI Web (West European)", -apple-system,
+    BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+  --font-heading: "Segoe UI", "Segoe UI Web (West European)", -apple-system,
+    BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+  --font-numeric: Bahnschrift, "Segoe UI", "Segoe UI Web (West European)",
+    -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+  --font-monospace: Consolas, "Courier New", Courier, monospace;
+
+  /* ---- Icon sizes — 100-based scale (icon-size-200 -> 16px) ----------- */
+  --icon-size-100: 12px;
+  --icon-size-200: 16px;
+  --icon-size-300: 20px;
+  --icon-size-400: 24px;
+  --icon-size-500: 28px;
+  --icon-size-600: 32px;
+  --icon-size-700: 48px;
+
+  /* ---- Elevation shadows — semantic depth (use shadow-e1 … shadow-e4) - */
+  --shadow-e1: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.05);
+  --shadow-e2: 0 2px 4px rgba(16, 24, 40, 0.06), 0 10px 20px -6px rgba(16, 24, 40, 0.12);
+  --shadow-e3: 0 8px 20px -8px rgba(16, 24, 40, 0.18), 0 20px 44px -20px rgba(16, 24, 40, 0.28);
+  --shadow-e4: 0 24px 60px -20px rgba(16, 24, 40, 0.34);
+
+  /* ---- Motion tokens — single source for duration/easing ------------- */
+  --ease-standard: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 0.15s;
+  --duration-base: 0.28s;
+  --duration-slow: 0.45s;
+
+  /* ---- Z-index scale — one layering contract for the whole app ------- */
+  --z-header: 20;
+  --z-nav: 20;
+  --z-overlay: 40;
+  --z-popover: 50;
+  --z-modal: 50;
+  --z-tooltip: 60;
+  --z-toast: 70;
+
+  /* ---- Categorical chart palette — hue-separated, colorblind-aware.
+     Exposed as --color-* so charts read them by name and they also emit
+     bg-chart-1 / text-chart-1 utilities. --------------------------------- */
+  --color-chart-1: #0f6cbd;
+  --color-chart-2: #b146c2;
+  --color-chart-3: #0e700e;
+  --color-chart-4: #d13438;
+  --color-chart-5: #c19c00;
+  --color-chart-6: #007a7a;
+  --color-chart-7: #8764b8;
+  --color-chart-8: #886f68;
+}
+
+@utility icon-size-* {
+  width: --value(--icon-size-*);
+  height: --value(--icon-size-*);
+}
+
+@layer base {
+  /* ---- Color tokens — dark theme ("Intent Telescope") ----------------- */
+  .dark {
+    --color-background: #070b14;
+    --color-foreground: #eaf0fb;
+
+    --color-card: #121a2e;
+    --color-card-foreground: #eaf0fb;
+
+    --color-popover: #192342;
+    --color-popover-foreground: #eaf0fb;
+
+    --color-primary: #4cc9ff;
+    --color-primary-foreground: #06101d;
+
+    --color-secondary: #192342;
+    --color-secondary-foreground: #eaf0fb;
+
+    --color-muted: #0c1322;
+    --color-muted-foreground: #9aa6c4;
+
+    --color-accent: #1f2c50;
+    --color-accent-foreground: #eaf0fb;
+
+    --color-success: #3ddc97;
+    --color-success-foreground: #06101d;
+    --color-destructive: #ff5c75;
+    --color-destructive-foreground: #06101d;
+
+    --color-border: #1f2a44;
+    --color-input: #2c3a5c;
+    --color-ring: #4cc9ff;
+
+    --color-brand: #4cc9ff;
+    --color-brand-foreground: #7c8cff;
+    --color-hover: #1f2c50;
+
+    /* Brighter categorical palette tuned for the deep-navy dark surface. */
+    --color-chart-1: #4cc9ff;
+    --color-chart-2: #e06be0;
+    --color-chart-3: #3ddc97;
+    --color-chart-4: #ff6b7a;
+    --color-chart-5: #f2c14e;
+    --color-chart-6: #2fd9d9;
+    --color-chart-7: #b39bff;
+    --color-chart-8: #c9b7b0;
+  }
+
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-base);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Signature ambient glow on the deep-navy base (dark theme only). */
+  .dark body {
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(124, 140, 255, 0.08), transparent 60%),
+      radial-gradient(900px 500px at 5% 0%, rgba(76, 201, 255, 0.05), transparent 55%),
+      var(--color-background);
+  }
+
+  /* Theme-aware scrollbars (dark on the navy theme, light otherwise). */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-muted-foreground);
+  }
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* ======================================================================
+   App canvas — a layered, token-driven backdrop so surfaces read with real
+   depth instead of floating on flat white. Light gets a soft cool wash with
+   restrained brand glows; dark keeps the deep-navy ambient. Unlayered so it
+   wins over the `bg-background` utility on the shell root. Cards stay pure
+   `bg-card`, so they lift cleanly off the canvas.
+   ====================================================================== */
+.app-canvas {
+  background:
+    radial-gradient(1100px 520px at 88% -6%, rgba(15, 108, 189, 0.09), transparent 58%),
+    radial-gradient(760px 460px at 0% 3%, rgba(177, 70, 194, 0.06), transparent 55%),
+    linear-gradient(180deg, #e5eaf3 0%, #edf1f8 42%, #f3f6fb 100%);
+}
+
+.dark .app-canvas {
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(124, 140, 255, 0.1), transparent 60%),
+    radial-gradient(900px 500px at 5% 0%, rgba(76, 201, 255, 0.06), transparent 55%),
+    var(--color-background);
+}
+
+/* ======================================================================
+   Compact density — tightens the spacing scale app-wide by overriding the
+   spacing tokens. Any component using standard spacing utilities (p-l, gap-s,
+   py-m …) compacts together, no per-component wiring. Set via applyDensity().
+   ====================================================================== */
+:root[data-density="compact"] {
+  --spacing-s-nudge: 5px;
+  --spacing-s: 6px;
+  --spacing-m-nudge: 8px;
+  --spacing-m: 9px;
+  --spacing-l: 12px;
+  --spacing-xl: 15px;
+  --spacing-xxl: 18px;
+  --spacing-xxxl: 24px;
+}
+
+/* ======================================================================
+   Restrained entrance motion — GPU-friendly transform/opacity only.
+   Every animation is disabled under `prefers-reduced-motion`.
+   ====================================================================== */
+
+@keyframes kpi-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.kpi-rise { animation: kpi-rise 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) backwards; }
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-enter { animation: page-enter 0.32s cubic-bezier(0.22, 0.61, 0.36, 1) backwards; }
+
+@keyframes panel-slide-in {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.panel-slide-in { animation: panel-slide-in 0.28s cubic-bezier(0.22, 0.61, 0.36, 1) backwards; }
+
+@keyframes panel-slide-in-left {
+  from { opacity: 0; transform: translateX(-24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.panel-slide-in-left { animation: panel-slide-in-left 0.28s cubic-bezier(0.22, 0.61, 0.36, 1) backwards; }
+
+@keyframes nav-accent {
+  from { opacity: 0; transform: translateY(-50%) scaleY(0.25); }
+  to { opacity: 1; transform: translateY(-50%) scaleY(1); }
+}
+.nav-accent { animation: nav-accent 0.34s cubic-bezier(0.22, 0.61, 0.36, 1) backwards; }
+
+@keyframes nav-label-in {
+  from { opacity: 0; transform: translateX(-5px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.nav-label-in { animation: nav-label-in 0.26s cubic-bezier(0.22, 0.61, 0.36, 1) backwards; }
+
+/* Vertical bar "grow-in" (scales up from the baseline). */
+@keyframes bar-grow {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+.bar-grow { transform-origin: bottom; animation: bar-grow 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) backwards; }
+
+/* Horizontal bar "grow-in" (scales out from a per-bar transform-origin set
+   inline — left for positive/right-side bars, right for negative/left-side). */
+@keyframes bar-grow-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.bar-grow-x { animation: bar-grow-x 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) backwards; }
+
+/* Left->right clip-path "draw-in" for time-series charts. */
+@keyframes chart-wipe {
+  from { clip-path: inset(0 100% 0 0); opacity: 0.3; }
+  to { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+.chart-wipe { animation: chart-wipe 0.66s cubic-bezier(0.22, 0.61, 0.36, 1) backwards; }
+
+/* Soft scale-up "pop" for radial / compositional visuals. */
+@keyframes chart-pop {
+  from { opacity: 0; transform: scale(0.965); }
+  to { opacity: 1; transform: scale(1); }
+}
+.chart-pop { animation: chart-pop 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) backwards; }
+
+/* SVG stroke "draw" for line paths (uses pathLength=1). */
+@keyframes chart-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.chart-draw { stroke-dasharray: 1; animation: chart-draw 0.9s ease forwards; }
+
+/* Donut segment fade-in (staggered via inline delay). */
+@keyframes seg-in { from { opacity: 0; } to { opacity: 1; } }
+.chart-draw-dash { animation: seg-in 0.5s ease backwards; }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+.toast-in { animation: toast-in 0.22s cubic-bezier(0.22, 0.61, 0.36, 1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .kpi-rise, .page-enter, .panel-slide-in, .panel-slide-in-left, .nav-accent,
+  .nav-label-in, .bar-grow, .bar-grow-x, .chart-wipe, .chart-pop, .chart-draw,
+  .chart-draw-dash, .toast-in, .animate-ping {
+    animation: none !important;
+  }
+  /* Blanket safety net: neutralize any remaining animation/transition so
+     motion-sensitive users never get surprised by a component we add later. */
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ======================================================================
+   High-contrast / Windows forced-colors: keep structure legible when the
+   OS overrides our palette. Preserve focus rings and interactive borders
+   using system color keywords so nothing disappears.
+   ====================================================================== */
+@media (forced-colors: active) {
+  *:focus-visible {
+    outline: 2px solid CanvasText !important;
+    outline-offset: 2px;
+  }
+  button, [role="button"], [role="menuitem"], [role="option"], a {
+    forced-color-adjust: none;
+  }
+  .shadow-e1, .shadow-e2, .shadow-e3, .shadow-e4 {
+    border: 1px solid CanvasText;
+  }
+}

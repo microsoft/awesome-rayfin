@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: finance-analytics
+  displayName: Finance Analytics
+  description: Config-driven FP&A app for Microsoft Fabric — variance/trend/aging tables with native Excel copy, accessible charts, filters + cross-filter, a deterministic intelligence rail, and PowerPoint/Excel/CSV export. Runs offline on sample data or against a live semantic model.
+entries:
+  - path: .
+    name: Finance Analytics

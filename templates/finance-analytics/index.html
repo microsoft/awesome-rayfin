@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Finance Analytics — Rayfin Template</title>
+    <!-- No-flash theme init: mirrors THEME_INIT_SNIPPET from the finance library.
+         Runs before the bundle so there's no light->dark flash on first paint. -->
+    <script>
+      (function () {
+        try {
+          var k = "fabric-standard-theme";
+          var m = localStorage.getItem(k);
+          var d =
+            m === "dark" ||
+            ((m === null || m === "system") &&
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.classList.toggle("dark", d);
+        } catch (e) {}
+      })();
+    </script>
+    <script>
+      (function () {
+        try {
+          var d = localStorage.getItem("fabric-standard-density");
+          document.documentElement.dataset.density = d === "comfortable" ? "comfortable" : "compact";
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

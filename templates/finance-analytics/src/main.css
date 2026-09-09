@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Tailwind v4 source scanning for the finance component library.
+   Tailwind only generates the utility classes it can SEE. The finance
+   components live as source under `src/finance`, so we add that directory to
+   Tailwind's source scan. If the shell renders UNSTYLED, this line is the
+   first thing to check.
+--------------------------------------------------------------------------- */
+@source "./finance";
+@source "./fpa";
+
+/* Finance design tokens (light + dark) — the single source of truth for the
+   palette, elevation, motion, z-index and chart-categorical colors. */
+@import "./finance/theme.css";
+
+/* ---------------------------------------------------------------------------
+   FP&A board vertical rhythm. Semantic so both the board-pack print override and
+   the density toggle can retarget the spacing without fighting a literal Tailwind
+   `space-y-*` value. Default (compact) is a tight 1rem; comfortable opens it up.
+--------------------------------------------------------------------------- */
+.fpa-board-stack > * + * {
+  margin-top: 1rem;
+}
+:root[data-density="comfortable"] .fpa-board-stack > * + * {
+  margin-top: 1.5rem;
+}
+
+
+/* ---------------------------------------------------------------------------
+   Board-pack print mode. Scoped so it NEVER affects the on-screen layout: the
+   rules only apply inside an @media print block. When printing the Financial
+   Statements page, everything outside the `.fpa-board` root is hidden and the
+   board is promoted to the page, giving a clean board-ready PDF via the
+   browser's native "Save as PDF". Elements marked `.fpa-no-print` (local
+   controls, toolbars) are dropped from the printout.
+--------------------------------------------------------------------------- */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .fpa-board,
+  .fpa-board * {
+    visibility: visible;
+  }
+  .fpa-board {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 0;
+    /* Board typography: tighter than the on-screen app so finance tables read dense. */
+    font-size: 10px;
+    line-height: 1.25;
+  }
+  .fpa-no-print {
+    display: none !important;
+  }
+  /* Print-only cover header (hidden on screen via the `hidden` utility). */
+  .fpa-print-only {
+    display: block !important;
+  }
+  .fpa-board .fpa-page-break {
+    break-before: page;
+  }
+
+  /* Kill on-screen chrome that wastes paper: card padding, radii, shadows, big gaps. */
+  .fpa-board .fpa-board-stack > * + * {
+    margin-top: 0.5rem !important;
+  }
+  .fpa-board [class*="rounded"] {
+    border-radius: 0 !important;
+  }
+  .fpa-board [class*="shadow"] {
+    box-shadow: none !important;
+  }
+  /* Condense every table cell — the #1 finance-print complaint is dead space. */
+  .fpa-board th,
+  .fpa-board td {
+    padding-top: 1.5px !important;
+    padding-bottom: 1.5px !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+    font-size: 9.5px !important;
+  }
+  /* Cap chart heights so a page isn't dominated by one visual. */
+  .fpa-board svg {
+    max-height: 200px;
+  }
+  /* Avoid splitting a visual across pages. */
+  .fpa-board section,
+  .fpa-board table {
+    break-inside: avoid;
+  }
+  /* Force color/heat fills to print (browsers strip backgrounds by default). */
+  .fpa-board * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
