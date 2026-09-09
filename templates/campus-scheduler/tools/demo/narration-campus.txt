@@ -1,0 +1,15 @@
+This is Campus Insights, a photoreal three-D campus twin running as a Microsoft Fabric App.
+
+Everything you can see here is measured. The terrain is one-metre laser survey. The ground is a twenty-centimetre orthophoto. Every building comes from the official cadastre, and every tree is a real surveyed tree.
+
+This is T U M Garching. Click a building, and it opens.
+
+Three thousand nine hundred real rooms, mapped in OpenStreetMap, joined to actual TUMonline lecture bookings. Three hundred and ten of them publish a calendar, and a hundred and thirty four were never booked once, all semester. Bookable, and completely unused.
+
+Campus Flow routes real lecture cohorts along real footpaths, to show where the campus actually gets crowded.
+
+Now switch site. The same engine draws Tübingen from a different survey authority entirely. A hundred and twenty seven metres of relief, six thousand medieval buildings, and the Neckar.
+
+Here the question is the renovation backlog. Those figures are synthetic, and the app says so permanently, right above the numbers.
+
+Measured where it can be. Labelled where it cannot.
