@@ -1,0 +1,173 @@
+{
+  "$comment": "Area of interest definition. The location is configuration — nothing about a place is hard-coded in the app, which is why eight universities ship from one build. This one arrived with the engine fork and was its first instance. ⚠️ Its interiors are governed by config/release.json: `navigatumData` decides whether the rooms carry TUM's own semantics, an invented week, or nothing at all.",
+  "id": "garching",
+  "site": {
+    "name": { "de": "TUM Garching Forschungszentrum", "en": "TUM Garching Research Campus" },
+    "region": { "de": "Garching bei München, Bayern", "en": "Garching near Munich, Bavaria" },
+    "timezone": "Europe/Berlin"
+  },
+  "lenses": ["occupancy", "flow"],
+  "schedulerSite": "tum",
+  "$schedulerSiteComment": "⚠️ THIS ONE LINE TURNS THE PLANNER ON — `hasPlanner` is `Boolean(schedulerSite)` — so it must never be added without a matching entry in `SITE_BASES` in src/api/scheduler.ts. `apiBase()` falls back to the single-backend URL for an unknown site, which is another university's container: Garching would render TUM's campus over OTH's timetable, confidently and without an error. `sites.test.ts` asserts the pair. Garching is also the only site here whose timetable is REAL — 1,470 published TUMonline bookings, reshaped by tools/data/build_tum_dataset.py — while its lecturers and cohorts are invented, because TUMonline publishes neither. The app refuses lecturer questions on this site for exactly that reason; see `teacher_attribution_invented`.",
+  "$lensesComment": "PLAN D6: lenses are AOI-scoped. Garching carries `occupancy` because it is the only campus in this project with real indoor data (see `rooms` below). It does NOT carry `condition` — a Sanierungsstau story on a research campus whose buildings are actively funded would be the least credible version of that conversation, and Tübingen's historic stock is the honest place for it.",
+  "bbox": {
+    "crs": "EPSG:4326",
+    "west": 11.657,
+    "east": 11.69,
+    "south": 48.258,
+    "north": 48.276,
+    "$comment": "HIGH-RESOLUTION CORE, ~2.44 x 2.00 km. Photoreal tier: DGM1 + DOP20 drape + LoD2 + trees. Deliberately tight: this is a campus, not a massif, and the camera spends its life between 200 m and 1500 m above a 2 km square. The box is the one the indoor-data probe used (2026-07-30), widened by ~250 m on each side so the Boltzmannstraße frontage, the U-Bahn portal and the Mensa forecourt all have margin rather than sitting on the edge. Every resolved focus place below lies inside it: lon 11.6678-11.6759, lat 48.2624-48.2688."
+  },
+  "shell": {
+    "crs": "EPSG:4326",
+    "west": 11.55,
+    "east": 11.79,
+    "south": 48.19,
+    "north": 48.33,
+    "$comment": "COARSE TERRAIN SHELL, ~17.8 x 15.6 km. Terrain only, fading into aerial haze. Garching is on the Münchner Schotterebene and the relief is almost nil, so the shell is doing a different job here than in an Alpine AOI: it is not there for drama, it is there so the photoreal 2 km square does not end in a cliff of nothing. It reaches the Isar to the east, Garching town and Hochbrück to the south, and the edge of Munich — which is what a viewer looking north from the campus actually sees."
+  },
+  "workingCrs": "EPSG:25832",
+  "verticalDatum": "DHHN2016",
+  "elevationRangeM": {
+    "min": 460,
+    "max": 510,
+    "$comment": "MEASURED 2026-07-30 by build_terrain.py: 464.9 .. 484.7 m, i.e. ~20 m of relief across the entire core, versus 1400 m in the Alpine AOI this engine was built for. (An earlier draft of this note guessed 478-490 m; the model disagreed, and the model wins.) The bracket is left deliberately loose around the measurement so a re-run after an LDBV data update does not trip the plausibility gate over a decimetre. CONSEQUENCE, and it drives Phase 1: every hillshade constant tuned for a mountain does nothing here. On flat ground the realism has to come from the DOP20 drape, the LoD2 roofs and CAST SHADOWS, not from terrain shading. The uint16 quantisation over a 50 m bracket is ~0.8 mm, far finer than the source, so nothing is lost by keeping it loose."
+  },
+  "verification": {
+    "$comment": "PLAN rule 1 — the registration gate. The Alpine strategy (>=5 published summits inside the core) is IMPOSSIBLE here: an Overpass probe of this bbox on 2026-07-30 returned zero `ele`-tagged nodes of any kind, and with 20 m of relief a two-kilometre horizontal error would still sample ~475 m. Rather than delete the gate, verify_registration.py proves registration from the evidence that does exist — see its module docstring for checks A-F.",
+    "minCoveragePct": 99.5,
+    "toleranceM": 3.0,
+    "shellToleranceM": 12.0,
+    "$shellToleranceComment": "Looser because the shell is Copernicus GLO-30, a SURFACE model: it includes canopy and buildings, so a control point in a built-up or wooded 30 m cell reads high by design. This is not a softer test, it is the correct test for that product.",
+    "maxSeamOffsetM": 3.0,
+    "$maxSeamOffsetComment": "The strongest check available on flat ground. build_shell.py measures the offset between the LDBV airborne-laser BARE-EARTH model and the Copernicus satellite SURFACE model in the overlap ring, on open ground only. Measured 2026-07-30: +0.17 m. Two independent surveys with different sensors, different vertical datums and different acquisition decades agreeing to 17 cm is not something a misplaced grid produces.",
+    "minPeaks": 5,
+    "controlPoints": [
+      { "name": "Garching bei München (Ortsmittelpunkt)", "lat": 48.2513878, "lon": 11.6509662, "publishedM": 482, "source": "OSM node/240084687 place=town ele=482" },
+      { "name": "Höhenpunkt Dietersheim", "lat": 48.2943186, "lon": 11.6535492, "publishedM": 468.04, "source": "OSM node/267951933 ele=468.04" },
+      { "name": "Messstation Garching 2", "lat": 48.2511325, "lon": 11.6405778, "publishedM": 481.79, "source": "OSM node/11570554013 man_made=monitoring_station ele=481.79" }
+    ],
+    "$controlPointsComment": "Resolved 2026-07-30 by an Overpass query for any `ele`-tagged element in and around the core. All three lie in the SHELL rather than the core, because the core has none — that is fine, they still prove the model describes this place and not another. The two carrying two decimal places are surveyed values rather than rounded map labels, which is why they are worth more than the town node. TWO CANDIDATES WERE REJECTED and are recorded here so they are not silently re-added: `PSW automotive engineering GmbH` (node/2245285380, ele=510) is ~30 m above surrounding ground and is almost certainly a building height mis-tagged as an elevation; `amenity=recycling` (node/9180239919) carries ele=0, which is not an elevation at all. A control point is only a control point if somebody surveyed it."
+  },
+  "drape": {
+    "maxPx": 4096,
+    "$comment": "Long side of the DOP20 mosaic, in pixels. For this 2.52 km core that is ~0.62 m per pixel — still far finer than the 4 m terrain mesh beneath it, and sharp enough to read road markings and parking bays. NOT larger, and the reason is rendering rather than photography: the drape is uploaded with mipmaps, and at 8192 px the chain is ~300 MB. Chromium accepted the texture, silently failed to finish the chain, and sampled BLACK — the entire campus rendered as a black lozenge under correctly-lit buildings, with nothing logged anywhere. See tools/geodata/fetch_dop20.py."
+  },
+  "grids": {
+    "sourceResolutionM": 1,
+    "renderResolutionM": 2,
+    "renderDecimation": 2,
+    "$comment": "1 m DGM1 source, resampled to a 2 m heightmap, mesh decimated 2x -> 4 m posting. FINER than the Alpine AOI (4 m / 16 m) and deliberately so: the subject is 2 km across rather than 9 km, the camera gets much closer to the ground, and kerbs, steps and the Mensa terrace are the scale that reads. Roughly 1220 x 1000 heightmap samples (~2.4 MB) and ~305k mesh vertices — cheaper than the Alpine core despite the finer grid, because the area is 16x smaller."
+  },
+  "shellGrids": {
+    "sourceResolutionM": 30,
+    "renderResolutionM": 30,
+    "renderDecimation": 3,
+    "transitionBandM": 900,
+    "$comment": "Copernicus DEM GLO-30 -> ~90 m posting. transitionBandM is narrower than the Alpine AOI's 1200 m because the core is only 2 km wide and a 1200 m band would consume more than half of it. The two tiers do NOT share a vertical datum (core = DHHN2016 bare earth, shell = EGM2008 surface model including canopy and buildings), so the shell is shifted by an offset MEASURED in the overlap ring, never assumed to be zero. On ground this flat the seam is far more forgiving than in the Alps — but the colour seam is not, so the land-cover fade still matters."
+  },
+  "focusPlaces": [
+    { "id": "garching", "name": "Campus Garching", "lat": 48.26538, "lon": 11.67152 },
+    { "id": "mw", "name": "Maschinenwesen", "lat": 48.26562, "lon": 11.66921 },
+    { "id": "mi", "name": "Mathematik / Informatik", "lat": 48.26252, "lon": 11.66808 },
+    { "id": "physik", "name": "Physik", "lat": 48.26725, "lon": 11.6759 },
+    { "id": "chemie", "name": "Chemie", "lat": 48.2688, "lon": 11.66979 },
+    { "id": "frm2", "name": "FRM II", "lat": 48.26574, "lon": 11.67569 },
+    { "id": "galileo", "name": "Galileo / Conference Center", "lat": 48.26539, "lon": 11.67211 },
+    { "id": "ubahn", "name": "U-Bahn Garching-Forschungszentrum", "lat": 48.2647408, "lon": 11.6714052, "kind": "station" }
+  ],
+  "$focusPlacesComment": "Resolved 2026-07-30 from the NavigaTUM API (/api/locations/{id}) and, for the U-Bahn station, from OpenStreetMap node/2643681873 — NOT recalled. Same rule as the Alpine AOI: a coordinate is only verified once something independent agrees with it, which for this AOI is step `verify` sampling the built terrain at each place. NavigaTUM reports its own coords.source per entry: `navigatum` for the curated campus/faculty anchors above, `roomfinder` for the individual building parts in `rooms.exploreBuildings`.",
+  "rooms": {
+    "$comment": "PLAN §2.1 and Phase 2. This block is what makes `occupancy` possible at all, and it is the only AOI in the project that can carry it. THREE independent open sources join cleanly on the TUM room code: OSM indoor room POLYGONS carry `ref:tum` (e.g. 5606.EG.041), NavigaTUM supplies the room SEMANTICS for that code, and the NavigaTUM calendar supplies REAL TUMonline bookings. Verified live 2026-07-30 — see PLAN §2.1 for the counts.",
+    "codePattern": "^\\d{4}\\.[A-Z0-9]{2}\\.\\d{3}$",
+    "osmRefKey": "ref:tum",
+    "navigatumBase": "https://nav.tum.de/api",
+    "navigatumCampusId": "garching",
+    "referenceSemester": {
+      "id": "ws2025",
+      "startDate": "2025-10-13",
+      "endDate": "2026-02-07",
+      "$comment": "The window baked into the Lakehouse (PLAN D4). A FULL semester rather than a sample week, so 'Auslastung' is a semester statistic and not an anecdote about one Tuesday. Lecture-free weeks are included and are visible in the result — that is the point, not a defect."
+    },
+    "exploreBuildings": [
+      { "code": "5501", "name": "MW – Mechatronik", "osmRooms": 382, "navigatumRooms": 462, "levels": ["-1", "0", "1", "2", "3"] },
+      { "code": "5502", "name": "MW – Werkstoffe und Verarbeitung", "osmRooms": 260, "navigatumRooms": 435, "levels": ["-1", "0", "1", "2", "3"] },
+      { "code": "5503", "name": "MW – Produktionstechnik", "osmRooms": 347, "navigatumRooms": 419, "levels": ["-1", "0", "1", "2", "3"] },
+      { "code": "5504", "name": "MW – Verfahrenstechnik", "osmRooms": 382, "navigatumRooms": 466, "levels": ["-1", "0", "1", "2", "3"] },
+      { "code": "5505", "name": "MW – Maschinentechnik", "osmRooms": 331, "navigatumRooms": 419, "levels": ["-1", "0", "1", "2", "3"] },
+      { "code": "5506", "name": "MW – Luft- und Raumfahrt", "osmRooms": 395, "navigatumRooms": 480, "levels": ["-1", "0", "1", "2", "3"] },
+      { "code": "5507", "name": "MW – Energietechnik", "osmRooms": 275, "navigatumRooms": 346, "levels": ["-1", "0", "1", "2", "3", "4"] },
+      { "code": "5508", "name": "MW – Hörsaal West", "osmRooms": 30, "navigatumRooms": 39, "levels": ["-1", "0", "1", "2"] },
+      { "code": "5510", "name": "Hörsaal, Bibliothek u. Verwaltung", "osmRooms": 241, "navigatumRooms": 291, "levels": ["-2", "-1", "0", "1", "2", "3"] },
+      { "code": "5514", "name": "MW – Nebengebäude", "osmRooms": 15, "navigatumRooms": null, "levels": ["0", "1"] },
+      { "code": "5515", "name": "MW – Nebengebäude", "osmRooms": 18, "navigatumRooms": null, "levels": ["0", "1"] },
+      { "code": "5532", "name": "StudiTUM Garching", "osmRooms": 41, "navigatumRooms": 83, "levels": ["-1", "0", "1", "2", "3", "4"] },
+      { "code": "5602", "name": "MI – Hörsaal 1", "osmRooms": 2, "navigatumRooms": 4, "levels": ["0"] },
+      { "code": "5604", "name": "MI – Finger 04", "osmRooms": 125, "navigatumRooms": null, "levels": ["-1", "0", "1", "2", "3"] },
+      { "code": "5606", "name": "MI – Finger 06", "osmRooms": 161, "navigatumRooms": null, "levels": ["-1", "0", "1", "2", "3"] },
+      { "code": "5607", "name": "MI – Finger 07", "osmRooms": 163, "navigatumRooms": null, "levels": ["-1", "0", "1", "2", "3"] },
+      { "code": "5608", "name": "MI – Finger 08", "osmRooms": 10, "navigatumRooms": null, "levels": ["0"] },
+      { "code": "5609", "name": "MI – Finger 09", "osmRooms": 162, "navigatumRooms": null, "levels": ["-1", "0", "1", "2", "3"] },
+      { "code": "5610", "name": "MI – Finger 10", "osmRooms": 145, "navigatumRooms": null, "levels": ["-1", "0", "1", "2", "3"] },
+      { "code": "5611", "name": "MI – Finger 11", "osmRooms": 143, "navigatumRooms": null, "levels": ["-1", "0", "1", "2", "3"] },
+      { "code": "5612", "name": "MI – Finger 12", "osmRooms": 146, "navigatumRooms": null, "levels": ["-1", "0", "1", "2", "3"] },
+      { "code": "5613", "name": "MI – Finger 13", "osmRooms": 149, "navigatumRooms": null, "levels": ["-1", "0", "1", "2", "3"] },
+      { "code": "8120", "name": "Galileo", "osmRooms": 7, "navigatumRooms": null, "levels": ["0", "1", "2", "3"] }
+    ],
+    "$exploreBuildingsComment": "MEASURED counts, corrected 2026-07-30 from a complete `out geom` fetch of every `indoor=room` in the core, deduplicated by OSM id. They replace an earlier set taken from a quadrant-split probe that both over-counted some buildings (5506 read 429, actually 395) and MISSED THE ENTIRE MI COMPLEX (5602-5613, ~1 200 rooms) because those quadrants returned nothing. Recorded here so Phase 2 has a regression baseline: if the pipeline yields materially fewer rooms than `osmRooms`, the join or the fetch has silently broken. `osmRooms` < `navigatumRooms` is EXPECTED and not an error — OSM indoor mapping is volunteer work and runs at roughly 80-90% of the official room list. `navigatumRooms` is null where the official per-building count was not published separately (the MI and MW 'fingers' are reported by NavigaTUM as one joined building). Buildings absent from this list are absent from OSM indoor mapping entirely; they stay SOLID in the app and say so. No room is ever invented to fill a gap (PLAN §0).",
+    "heroBuilding": "5506",
+    "$heroBuildingComment": "The scripted demo path. 5506 has the highest OSM room count (395) in the MW complex, whose eight wings are physically connected — so the camera can explode one wing while the rest of the complex stays solid as context. The MI complex (5604-5613) is a strong second: fewer rooms per finger, but it is the building with the slide and is the more recognisable of the two.",
+    "storeyHeightM": 3.6,
+    "$storeyHeightComment": "Fallback only. Phase 2 derives per-building storey height from the LoD2 total height divided by the OSM level count; this value is used where that fails. It is the weakest number in the pipeline and it is the one that shows — get it wrong and exploded floors interpenetrate. Override per building here when Phase 2 finds a bad fit.",
+    "seatDensityM2": {
+      "Hörsaal": 0.8,
+      "Seminarraum": 2.0,
+      "Übungsraum": 2.0,
+      "Unterrichtsraum": 2.0,
+      "Studentenarbeitsraum": 3.0,
+      "Praktikumsraum - EDV": 3.0,
+      "Büro": 12.0
+    },
+    "$seatDensityComment": "⚠️ SYNTHETIC. Seat counts are NOT published: the `capacity` tag is present on ~1.5% of OSM rooms and NavigaTUM does not expose one. Seats are therefore DERIVED as floor area / density, and every figure computed from them is marked synthetic in the UI (PLAN §6). The densities are ordinary German planning rules of thumb, not a survey of these rooms. Room AREA itself is honest — it is computed by shoelace from the real OSM polygon in EPSG:25832."
+  },
+  "geobasis": {
+    "authority": "Bayerische Vermessungsverwaltung (LDBV)",
+    "licence": "CC BY 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/4.0/deed.de",
+    "attribution": "Datenquelle: Bayerische Vermessungsverwaltung – www.geodaten.bayern.de [Daten bearbeitet]",
+    "downloadBase": "https://download1.bayernwolke.de",
+    "downloadMirror": "https://download2.bayernwolke.de",
+    "metalinkBase": "https://geodaten.bayern.de/odd"
+  },
+  "shellGeobasis": {
+    "authority": "ESA / DLR / Airbus Defence and Space — Copernicus DEM GLO-30",
+    "licence": "Copernicus DEM free licence (worldwide, free reuse with the prescribed notice)",
+    "licenceUrl": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+    "attribution": "produced using Copernicus WorldDEM-30 © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018 provided under COPERNICUS by the European Union and ESA; all rights reserved",
+    "$attributionComment": "The ADAPTED-DATA form of the notice, which is prescribed rather than stylistic: the pipeline resamples the tile onto a UTM grid and shifts it onto the core's vertical datum, so it is unambiguously modified and the plain © form would be the wrong notice.",
+    "cogUrlTemplate": "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM.tif",
+    "tiles": ["N48_E011"],
+    "$tilesComment": "The single N48/E011 tile covers the entire shell (48-49 N, 11-12 E). Cloud-Optimized GeoTIFF, so the fetcher range-requests the AOI window rather than pulling the whole file."
+  },
+  "roomsAttribution": {
+    "osm": {
+      "authority": "OpenStreetMap contributors",
+      "licence": "ODbL 1.0",
+      "licenceUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+      "attribution": "© OpenStreetMap contributors, ODbL 1.0"
+    },
+    "navigatum": {
+      "authority": "NavigaTUM (TUM-Dev) / TUMonline",
+      "projectUrl": "https://github.com/TUM-Dev/NavigaTUM",
+      "projectLicence": "GPL-3.0 (software)",
+      "$comment": "⚠️ OPEN ITEM, PLAN §7. The GPL-3.0 licence covers the NavigaTUM SOFTWARE; the room and calendar DATA originate from TUMonline and their redistribution terms are NOT yet established. Internal demonstration is fine. This MUST be resolved before any public gallery release, and before the baked semester snapshot is committed anywhere public."
+    }
+  },
+  "tour": [
+    { "placeId": "garching", "captionKey": "tour.garching.campus", "rangeM": 1500, "holdMs": 6500 },
+    { "placeId": "ubahn", "captionKey": "tour.garching.ubahn", "rangeM": 700, "holdMs": 6000 },
+    { "placeId": "mw", "captionKey": "tour.garching.mw", "rangeM": 600, "holdMs": 7000 },
+    { "placeId": "mi", "captionKey": "tour.garching.mi", "rangeM": 600, "holdMs": 6500 },
+    { "placeId": "frm2", "captionKey": "tour.garching.frm2", "rangeM": 800, "holdMs": 6500 }
+  ]
+}
