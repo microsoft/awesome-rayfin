@@ -1,0 +1,15 @@
+# Downloaded and derived geodata. Everything here is rebuilt by `npm run data:build` from the
+# open sources listed in NOTICE.md, and it is far too large to ship inside a template.
+data/
+public/terrain/
+
+# Local deployment state — points at one specific Fabric item in one specific tenant.
+rayfin/.deployments.json
+rayfin/.env
+tools/fabric/.fabric-ids.json
+
+# Test and build output
+dist/
+test-results/
+playwright-report/
+node_modules/

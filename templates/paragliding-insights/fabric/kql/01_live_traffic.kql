@@ -1,0 +1,84 @@
+// Live traffic — the Real-Time Intelligence half of PLAN §6, phase 4.
+//
+// This schema is deployed as the `DatabaseSchema.kql` definition part of the KQL database, so the
+// database and its table are created in a single Fabric API call and there is exactly one place
+// the shape of the data is written down (`tools/fabric/setup_eventhouse.py`).
+//
+// What lands here is what the relay already decided to publish: pilots who opted out are absent,
+// and everyone else carries the relay's rotating anonymous id rather than a hardware address. So
+// there is no privacy filtering in KQL — by the time a row reaches Fabric the decision is made and
+// cannot be undone by a query.
+
+.create-merge table LiveFix (
+    Timestamp: datetime,
+    AircraftId: string,
+    AircraftType: string,
+    Lat: real,
+    Lon: real,
+    AltM: int,
+    ClimbMs: real,
+    GroundMs: real,
+    CourseDeg: int
+)
+
+.alter table LiveFix docstring "One OGN position report, as published by the Gleitschirm-Insights relay. AircraftId is anonymous unless the owner registered the device and consented to being identified; it is regenerated whenever the relay restarts, so it is stable within a session and deliberately not across sessions."
+
+// ⚠️ **24 hours, and this is a licence term rather than a preference.**
+//
+// OGN publishes its data under ODbL with two additional rules, and one of them is: *"You do not
+// re-distribute OGN data older than 24 hours"* (<https://www.glidernet.org/ogn-data-usage/>). An app
+// that queries this table and shows the result is redistributing it, so raw fixes cannot outlive a
+// day — the first draft of this schema said 7d, which would have quietly put the deployed app in
+// breach the moment Mode D read from it.
+//
+// Longer history is still available and still honest: it lives in `DailySummary` below, which keeps
+// aggregate counts rather than positions. An aggregate over a day is not a redistribution of the
+// fixes that went into it.
+.alter-merge table LiveFix policy retention softdelete = 1d recoverability = disabled
+
+// Streaming ingestion, because the point of this table is that it is live. Batched ingestion would
+// hold rows for minutes, which is longer than the aircraft stays in the same thermal.
+.alter table LiveFix policy streamingingestion enable
+
+.create-or-alter table LiveFix ingestion json mapping "LiveFixMapping"
+```[
+  {"column":"Timestamp","Properties":{"path":"$.ts"}},
+  {"column":"AircraftId","Properties":{"path":"$.id"}},
+  {"column":"AircraftType","Properties":{"path":"$.type"}},
+  {"column":"Lat","Properties":{"path":"$.lat"}},
+  {"column":"Lon","Properties":{"path":"$.lon"}},
+  {"column":"AltM","Properties":{"path":"$.alt_m"}},
+  {"column":"ClimbMs","Properties":{"path":"$.climb_ms"}},
+  {"column":"GroundMs","Properties":{"path":"$.ground_ms"}},
+  {"column":"CourseDeg","Properties":{"path":"$.course_deg"}}
+]```
+
+// Who is up, and where — the query Mode C would ask if it read from Fabric rather than from the
+// relay directly. A materialized view rather than a stored function because `arg_max` over a
+// growing table gets steadily more expensive, and this is the one query that will be asked most.
+.create-ifnotexists materialized-view with (backfill=true) LatestFix on table LiveFix
+{
+    LiveFix
+    | summarize arg_max(Timestamp, *) by AircraftId
+}
+
+// The day, as Mode D will want it (PLAN §3): how many were up, how high it went, when it worked.
+//
+// A **materialized view rather than a function**, because it is also what makes the 24-hour
+// retention survivable: the aggregate is computed continuously and persists after the fixes behind
+// it have been deleted. Counts, a ceiling and a climb percentile are not a redistribution of
+// anybody's track, so they can be kept and compared across a season.
+//
+// No AircraftId in the grouping, deliberately — per-pilot history is exactly what PLAN §2.2.3 says
+// this app does not build.
+.create-ifnotexists materialized-view with (backfill=true) DailySummary on table LiveFix
+{
+    LiveFix
+    | where AircraftType in ("paraglider", "hangglider", "glider")
+    | summarize
+        Pilots = dcount(AircraftId),
+        CeilingM = max(AltM),
+        BestClimbMs = max(ClimbMs),
+        Fixes = count()
+      by Tag = bin(Timestamp, 1d), AircraftType
+}
