@@ -13,12 +13,18 @@ entries:
   - path: templates/field-technician
     name: Field Technician App
     description: Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric)
+  - path: templates/helsinki-public-transport
+    name: Helsinki Public Transport
+    description: Live public transport over a Fabric Real-Time Intelligence Eventhouse - a DirectQuery semantic model queried straight from the browser, drawn on a 2D map and on a token-free 3D city twin built from open geodata
   - path: templates/ibcs-trainer
     name: IBCS Trainer
     description: HTML5 Canvas platformer that teaches IBCS chart rules level by level, embedded in a Fabric-authenticated Rayfin app; each play-through is persisted to a typed GameStats entity
   - path: templates/pbi-fixer
     name: Power BI Fixer
     description: Fabric-authenticated workspace that inspects, documents, and fixes Power BI semantic models and reports — a best-practice analyzer with one-click and batch fixes, a report explorer with PBIR diffs, AI-assisted metadata cleanup, and a free IBCS visual, all powered server-side by Fabric User Data Functions
+  - path: templates/semantic-directory
+    name: Semantic Directory
+    description: A live, searchable directory for any Power BI or Fabric semantic model — search measures and fields, trace lineage and relationships, inspect measure DNA and change impact, and explore a bundled demo model with zero setup.
   - path: templates/slide-deck
     name: Slide Deck
     description: Interactive slide deck presenter with sessions, live slide tracking, and audience chat
@@ -28,3 +34,6 @@ entries:
   - path: templates/todo-local-experimental
     name: '[Experimental] Todo app with full local dev'
     description: End-to-end todo CRUD with username/password auth, a Rayfin data model, and Docker local development — a working starter that exercises the full data path without Fabric
+  - path: templates/universal-app
+    name: Universal App
+    description: A lean React + Vite starter that grows into anything. A built-in capability router reads what you ask for, then enables the right Rayfin services, installs the right modules, and activates the right skills, from sign-in and CRUD data models to Graphein charts and Fabric analytics dashboards.

@@ -1,0 +1,145 @@
+{
+  "schema_version": 75,
+  "changeDetection": {
+    "kind": "liveUpdates",
+    "fallbackRefreshRate": "30s",
+    "minRefreshRate": "10s"
+  },
+  "tiles": [
+    {
+      "id": "49e208e5-198c-4de4-8eb4-ce0fbadade76",
+      "title": "Untitled",
+      "visualType": "map",
+      "pageId": "8f7cc039-8b30-429f-9e78-69d027ab8f7d",
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 13,
+        "height": 16
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "f6570c56-9170-4f5d-b7e3-8d4ae0e442b9"
+      },
+      "visualOptions": {
+        "map__latitudeColumn": "position_latitude",
+        "map__longitudeColumn": null,
+        "map__labelColumn": null,
+        "map__sizeColumn": null,
+        "map__sizeDisabled": true,
+        "map__geoType": "numeric",
+        "map__geoPointColumn": null
+      }
+    },
+    {
+      "id": "4c81cd66-7520-4e32-8a5d-1b9c828f6d7c",
+      "title": "Untitled",
+      "visualType": "card",
+      "pageId": "8f7cc039-8b30-429f-9e78-69d027ab8f7d",
+      "layout": {
+        "x": 13,
+        "y": 0,
+        "width": 11,
+        "height": 4
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "a07e5cc6-255e-46b9-aa21-7830c1231ded"
+      },
+      "visualOptions": {
+        "multiStat__textSize": "large",
+        "multiStat__valueColumn": "max_timestamp",
+        "colorRulesDisabled": false,
+        "colorRules": []
+      }
+    },
+    {
+      "id": "d3da71be-76c5-49e0-ba36-a4bdb674e592",
+      "title": "Untitled",
+      "visualType": "card",
+      "pageId": "8f7cc039-8b30-429f-9e78-69d027ab8f7d",
+      "layout": {
+        "x": 13,
+        "y": 4,
+        "width": 5,
+        "height": 3
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "8c5fe667-edad-4ad2-94e3-71b98b5abfcb"
+      },
+      "visualOptions": {
+        "multiStat__textSize": "auto",
+        "multiStat__valueColumn": null,
+        "colorRulesDisabled": false,
+        "colorRules": []
+      }
+    }
+  ],
+  "baseQueries": [],
+  "parameters": [
+    {
+      "kind": "duration",
+      "id": "928fc024-3861-4e6d-a5f9-5af1d9292bac",
+      "displayName": "Time range",
+      "description": "",
+      "beginVariableName": "_startTime",
+      "endVariableName": "_endTime",
+      "defaultValue": {
+        "kind": "dynamic",
+        "count": 1,
+        "unit": "hours"
+      },
+      "showOnPages": {
+        "kind": "all"
+      }
+    }
+  ],
+  "dataSources": [
+    {
+      "kind": "kusto-trident",
+      "clusterUri": "https://<eventhouse>.kusto.fabric.microsoft.com",
+      "name": "HSL_EH",
+      "databaseArtifactId": "00000000-0000-0000-0000-000000000000",
+      "database": "00000000-0000-0000-0000-000000000000",
+      "workspace": "00000000-0000-0000-0000-000000000000",
+      "id": "d784861f-42a6-4219-ac3d-46e76e7f4599"
+    }
+  ],
+  "pages": [
+    {
+      "name": "Page 1",
+      "id": "8f7cc039-8b30-429f-9e78-69d027ab8f7d"
+    }
+  ],
+  "queries": [
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "d784861f-42a6-4219-ac3d-46e76e7f4599"
+      },
+      "text": "last_vehicle_position\r\n",
+      "id": "f6570c56-9170-4f5d-b7e3-8d4ae0e442b9",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "d784861f-42a6-4219-ac3d-46e76e7f4599"
+      },
+      "text": "last_vehicle_position\r\n| summarize format_datetime(max(timestamp), 'yyyy-MM-dd HH:mm:ss')",
+      "id": "a07e5cc6-255e-46b9-aa21-7830c1231ded",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "d784861f-42a6-4219-ac3d-46e76e7f4599"
+      },
+      "text": "vehicle_positions\r\n| count",
+      "id": "8c5fe667-edad-4ad2-94e3-71b98b5abfcb",
+      "usedVariables": []
+    }
+  ],
+  "embeddedApps": []
+}

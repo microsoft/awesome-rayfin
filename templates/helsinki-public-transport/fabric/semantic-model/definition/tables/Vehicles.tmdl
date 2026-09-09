@@ -1,0 +1,33 @@
+table Vehicles
+	lineageTag: 8703f089-e978-49b4-b1d8-870263fe8844
+
+	column vehicle_id
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 383e4e8e-355f-42ef-bacf-e38599bb772d
+		summarizeBy: none
+		sourceColumn: vehicle_id
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 2,
+				  "kind": 1,
+				  "selectAllValue": "__SelectAll__"
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Vehicles = m
+		mode: directQuery
+		source =
+				let
+				Source = AzureDataExplorer.Contents("https://<eventhouse>.kusto.fabric.microsoft.com", "00000000-0000-0000-0000-000000000000", "last_vehicle_position
+				| where timestamp > now() - 2h", []),
+				    #"Removed Other Columns" = Table.SelectColumns(Source,{"vehicle_id"})
+				in
+				#"Removed Other Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

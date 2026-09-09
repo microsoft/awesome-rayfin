@@ -1,0 +1,17 @@
+EVALUATE
+SELECTCOLUMNS(
+    INFO.VIEW.COLUMNS(),
+    "ColumnId", [ID],
+    "Table", [Table],
+    "Column", [Name],
+    "DataType", [DataType],
+    "Description", [Description],
+    "DisplayFolder", [DisplayFolder],
+    "FormatString", [FormatString],
+    "IsHidden", [IsHidden],
+    "SummarizeBy", [SummarizeBy],
+    "DataCategory", [DataCategory],
+    "SortByColumn", [SortByColumn],
+    "LineageTag", [LineageTag]
+)
+ORDER BY [Table], [Column]

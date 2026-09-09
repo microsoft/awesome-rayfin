@@ -1,0 +1,20 @@
+# Fabric semantic-model bindings for this Rayfin Data App.
+#
+# The `model` alias below is what the app queries at runtime (see
+# src/queries/metadata/index.ts -> CONNECTION = "model"). `fabric-app-data`
+# reads this file to generate typed connections into src/fabric.generated.ts.
+#
+# DEMO MODE (default): you can run `npm run dev` without touching this file —
+# the app renders a bundled sample model. The placeholder IDs below are ignored
+# until a real Fabric session is available.
+#
+# LIVE MODE: replace the workspaceId/itemId with YOUR Fabric workspace + the
+# semantic model item you want the directory to explore. Keep the alias key as
+# `model` (or rename it in BOTH this file and src/queries/metadata/index.ts).
+activeProfile: default
+profiles:
+  default:
+    semanticModels:
+      model:
+        workspaceId: 00000000-0000-0000-0000-000000000000
+        itemId: 00000000-0000-0000-0000-000000000000

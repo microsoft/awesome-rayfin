@@ -1,0 +1,345 @@
+@import "tailwindcss";
+@import "./styles/effects.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Bridged tokens — kept in `@theme static` so the CSS vars are always
+   emitted, not tree-shaken when no Tailwind utility consumes them.
+   Required because <VegaVisual> and <DataGrid> read these at runtime via
+   `useCssTheme()` and project them into a JS theme object (Vega's SVG output
+   cannot resolve `var()` references). */
+@theme static {
+  --color-brand:            #2563eb;  /* bar/area fills, button-like brand surfaces */
+  --color-brand-foreground: #2563eb;  /* line/point marks, branded text & emphasis */
+  --color-hover:            #eef4ff;  /* row/cell hover surface in DataGrid + visuals */
+}
+
+@theme {
+  /* Color tokens — LIGHT theme (cobalt accent).
+     Usage: bg-*, text-*, border-* (e.g. bg-primary text-primary-foreground)
+     Each token has a -foreground pair for text on that surface. */
+  --color-background: #f7f9fc;                                       /* page background (cool slate-white) */
+  --color-foreground: #0f172a;                                       /* default text */
+
+  --color-card: #ffffff;                                             /* card surfaces */
+  --color-card-foreground: #0f172a;
+
+  --color-popover: #ffffff;                                          /* popover/dropdown surfaces */
+  --color-popover-foreground: #0f172a;
+
+  --color-primary: #2563eb;                                          /* primary actions & buttons — cobalt accent */
+  --color-primary-foreground: #ffffff;
+
+  --color-secondary: #eef2f9;                                        /* secondary actions */
+  --color-secondary-foreground: #0f172a;
+
+  --color-muted: #eef2f7;                                            /* subtle backgrounds */
+  --color-muted-foreground: #475569;                                 /* subdued text */
+
+  --color-accent: #e6eefc;                                           /* accent highlights */
+  --color-accent-foreground: #0f172a;
+
+  --color-destructive: #c50f1f;                                      /* errors & destructive actions */
+  --color-destructive-foreground: #ffffff;
+
+  --color-border: #dbe3ef;                                           /* default border */
+  --color-input: #dbe3ef;                                            /* input field borders */
+  --color-ring: #2563eb;                                             /* focus rings — cobalt accent */
+
+  --radius-none: 0;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-2xl: 12px;
+  --radius-3xl: 16px;
+  --radius-4xl: 24px;
+  --radius-5xl: 32px;
+  --radius-6xl: 40px;
+  --radius-full: 9999px;
+  --radius: 6px;
+
+    /* Spacing — 4px baseline grid
+      Usage: p-*, m-*, gap-* (e.g. p-l gap-m) */
+  --spacing-none: 0;
+  --spacing-xxs: 2px;
+  --spacing-xs: 4px;
+  --spacing-s-nudge: 6px;
+  --spacing-s: 8px;
+  --spacing-m-nudge: 10px;
+  --spacing-m: 12px;
+  --spacing-l: 16px;
+  --spacing-xl: 20px;
+  --spacing-xxl: 24px;
+  --spacing-xxxl: 32px;
+
+  /* Font Sizes — 100-based scale
+     Usage: text-* (e.g. text-300, text-hero-900) */
+  --text-100: 10px;
+  --text-200: 12px;
+  --text-300: 14px;
+  --text-400: 16px;
+  --text-500: 20px;
+  --text-600: 24px;
+  --text-hero-700: 28px;
+  --text-hero-800: 32px;
+  --text-hero-900: 40px;
+  --text-hero-1000: 68px;
+
+  /* Line Heights — paired with font sizes
+     Usage: leading-* (e.g. leading-300) */
+  --leading-100: 14px;
+  --leading-200: 16px;
+  --leading-300: 20px;
+  --leading-400: 22px;
+  --leading-500: 28px;
+  --leading-600: 32px;
+  --leading-hero-700: 36px;
+  --leading-hero-800: 40px;
+  --leading-hero-900: 52px;
+  --leading-hero-1000: 92px;
+
+  /* Font Weights
+     Usage: font-* (e.g. font-semibold) */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Font Families
+     Usage: font-* (e.g. font-heading, font-base) */
+  --font-heading: 'Segoe UI', 'Segoe UI Web (West European)',       /* headings, titles, display text */
+    -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', sans-serif;
+  --font-base: 'Segoe UI', 'Segoe UI Web (West European)',          /* body text, labels, UI controls */
+    -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', sans-serif;
+  --font-monospace: Consolas, 'Courier New', Courier, monospace;     /* code, pre-formatted text */
+  --font-numeric: Bahnschrift, 'Segoe UI',                          /* KPI values, numeric displays */
+    'Segoe UI Web (West European)', -apple-system, BlinkMacSystemFont, Roboto,
+    'Helvetica Neue', sans-serif;
+
+  /* Icon Sizes — 100-based scale
+     Usage: icon-size-* custom utility (e.g. icon-size-200) */
+  --icon-size-100: 12px;
+  --icon-size-200: 16px;
+  --icon-size-300: 20px;
+  --icon-size-400: 24px;
+  --icon-size-500: 28px;
+  --icon-size-600: 32px;
+  --icon-size-700: 48px;
+
+  /* Motion primitives — referenced via arbitrary values + JS motion lib. */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+  --dur-4: 480ms;
+}
+
+/* -------------------------------------------------------------------------
+   Semantic design tokens (plain custom props so both themes can override).
+   Referenced from components via arbitrary values, e.g. shadow-[var(--e2)].
+   ------------------------------------------------------------------------- */
+:root {
+  /* Elevation */
+  --e1: 0 1px 2px rgba(16, 40, 24, 0.06), 0 1px 1px rgba(16, 40, 24, 0.04);
+  --e2: 0 4px 14px rgba(16, 40, 24, 0.08), 0 2px 4px rgba(16, 40, 24, 0.05);
+  --e3: 0 16px 40px rgba(16, 40, 24, 0.14), 0 4px 10px rgba(16, 40, 24, 0.07);
+  /* Luminous "energy" accents — EMISSIVE ONLY (glows, rings, live-dot, stars,
+     nebula). Never used as text on light surfaces (they fail contrast). */
+  --energy: #3b82f6;                                                 /* light-surface glow — cobalt */
+  --energy-lime: #60a5fa;                                            /* azure spark — star/nebula accent */
+
+  --glow: 0 0 0 1px color-mix(in oklab, var(--color-primary) 32%, transparent),
+    0 10px 30px color-mix(in oklab, var(--energy) 22%, transparent);
+
+  /* Glass */
+  --glass-bg: color-mix(in oklab, #ffffff 74%, transparent);
+  --glass-border: color-mix(in oklab, var(--color-border) 70%, #ffffff);
+
+  /* Kind hues: measure=green, column/dimension=cyan, table=amber */
+  --hue-measure: #107c10;
+  --hue-measure-soft: color-mix(in oklab, #107c10 12%, transparent);
+  --hue-column: #0e7490;
+  --hue-column-soft: color-mix(in oklab, #0e7490 12%, transparent);
+  --hue-table: #b45309;
+  --hue-table-soft: color-mix(in oklab, #b45309 12%, transparent);
+
+  /* Trust levels — high (green) / watch (amber) / low (red) */
+  --trust-high-fg: #0f6d2b;
+  --trust-high-bg: color-mix(in oklab, #16a34a 12%, transparent);
+  --trust-high-border: color-mix(in oklab, #16a34a 34%, transparent);
+  --trust-watch-fg: #8a5a00;
+  --trust-watch-bg: color-mix(in oklab, #d97706 14%, transparent);
+  --trust-watch-border: color-mix(in oklab, #d97706 36%, transparent);
+  --trust-low-fg: #b0121f;
+  --trust-low-bg: color-mix(in oklab, #dc2626 12%, transparent);
+  --trust-low-border: color-mix(in oklab, #dc2626 34%, transparent);
+
+  /* App background — soft mesh of cobalt light on cool white (kept subtle so dense
+     catalog/detail pages stay calm; the constellation carries the drama). */
+  --app-bg:
+    radial-gradient(62rem 42rem at 88% -8%, color-mix(in oklab, var(--color-primary) 15%, transparent), transparent 60%),
+    radial-gradient(50rem 38rem at -6% 6%, color-mix(in oklab, var(--energy) 12%, transparent), transparent 56%),
+    radial-gradient(40rem 30rem at 98% 102%, color-mix(in oklab, var(--energy-lime) 7%, transparent), transparent 60%),
+    var(--color-background);
+
+  --sheen: color-mix(in oklab, #ffffff 55%, transparent);
+
+  /* Interaction tokens */
+  --focus-ring: color-mix(in oklab, var(--color-ring) 65%, transparent);
+  --disabled-opacity: 0.45;
+}
+
+.dark {
+  /* Color tokens — DARK theme (Semantic Directory — cobalt accent) */
+  --color-background: #080b12;
+  --color-foreground: #e8eef7;
+
+  --color-card: #0f1520;
+  --color-card-foreground: #e8eef7;
+
+  --color-popover: #111826;
+  --color-popover-foreground: #e8eef7;
+
+  --color-primary: #4d8dff;
+  --color-primary-foreground: #04070d;
+
+  --color-secondary: #111a2b;
+  --color-secondary-foreground: #e8eef7;
+
+  --color-muted: #0f1520;
+  --color-muted-foreground: #93a4bf;
+
+  --color-accent: #14203a;
+  --color-accent-foreground: #e8eef7;
+
+  --color-destructive: #ff5a5f;
+  --color-destructive-foreground: #ffffff;
+
+  --color-border: #1c2740;
+  --color-input: #1c2740;
+  --color-ring: #4d8dff;
+
+  --color-brand:            #4d8dff;
+  --color-brand-foreground: #8fbaff;
+  --color-hover:            #14203a;
+
+  /* Elevation (deeper on dark) */
+  --e1: 0 1px 2px rgba(0, 0, 0, 0.45);
+  --e2: 0 6px 20px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.4);
+  --e3: 0 20px 46px rgba(0, 0, 0, 0.6), 0 6px 14px rgba(0, 0, 0, 0.45);
+  --glow: 0 0 0 1px color-mix(in oklab, var(--color-primary) 45%, transparent),
+    0 10px 34px color-mix(in oklab, var(--color-primary) 28%, transparent);
+
+  /* Luminous "energy" accents (parity with light) */
+  --energy: #5b9bff;
+  --energy-lime: #7db4ff;
+
+  /* Constellation-stage muted label lift (see effects.css) */
+  --stage-muted-fg: #aebfd6;
+
+  /* Glass */
+  --glass-bg: color-mix(in oklab, #0f1520 68%, transparent);
+  --glass-border: color-mix(in oklab, var(--color-border) 85%, transparent);
+
+  /* Kind hues (brighter on dark) */
+  --hue-measure: #35d15a;
+  --hue-measure-soft: color-mix(in oklab, #35d15a 16%, transparent);
+  --hue-column: #38bdf8;
+  --hue-column-soft: color-mix(in oklab, #38bdf8 16%, transparent);
+  --hue-table: #f5b83d;
+  --hue-table-soft: color-mix(in oklab, #f5b83d 16%, transparent);
+
+  /* Trust levels — brighter on dark */
+  --trust-high-fg: #6ee7a0;
+  --trust-high-bg: color-mix(in oklab, #22c55e 20%, transparent);
+  --trust-high-border: color-mix(in oklab, #22c55e 42%, transparent);
+  --trust-watch-fg: #fbd38d;
+  --trust-watch-bg: color-mix(in oklab, #f59e0b 22%, transparent);
+  --trust-watch-border: color-mix(in oklab, #f59e0b 44%, transparent);
+  --trust-low-fg: #ff9ba0;
+  --trust-low-bg: color-mix(in oklab, #ef4444 22%, transparent);
+  --trust-low-border: color-mix(in oklab, #ef4444 44%, transparent);
+
+  /* App background — cobalt glows on near-black */
+  --app-bg:
+    radial-gradient(64rem 42rem at 86% -10%, color-mix(in oklab, var(--color-primary) 20%, transparent), transparent 60%),
+    radial-gradient(52rem 40rem at -8% 4%, color-mix(in oklab, var(--energy-lime) 10%, transparent), transparent 55%),
+    var(--color-background);
+
+  --sheen: color-mix(in oklab, #ffffff 14%, transparent);
+}
+
+/* -------------------------------------------------------------------------
+   Utilities
+   ------------------------------------------------------------------------- */
+@utility icon-size-* {
+  width: --value(--icon-size-*);
+  height: --value(--icon-size-*);
+}
+
+/* Frosted-glass surface */
+@utility glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  border: 1px solid var(--glass-border);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply text-foreground antialiased;
+    background: var(--app-bg);
+    background-attachment: fixed;
+  }
+
+  /* Numeric displays: instrument typeface + tabular figures */
+  .font-numeric {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1, "lnum" 1;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  /* Default visible focus for keyboard users */
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-background),
+      0 0 0 4px color-mix(in oklab, var(--color-ring) 78%, transparent);
+    border-radius: var(--radius-lg);
+  }
+
+  /* Styled scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--color-border) 90%, transparent) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--color-border) 90%, transparent);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklab, var(--color-muted-foreground) 45%, transparent);
+    background-clip: padding-box;
+  }
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
