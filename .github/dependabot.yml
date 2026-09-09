@@ -1,28 +1,52 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directory: "/templates/field-engineer"
+    directories:
+      - "/scripts"
+      - "/templates/*"
     schedule:
       interval: "weekly"
     labels:
       - "dependencies"
-      - "field-engineer"
     groups:
       rayfin:
         patterns:
           - "@microsoft/rayfin-*"
-
-  - package-ecosystem: "npm"
-    directory: "/templates/events-app"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "dependencies"
-      - "events-app"
-    groups:
-      rayfin:
+      runtime-security:
+        applies-to: security-updates
         patterns:
-          - "@microsoft/rayfin-*"
+          - "protobufjs"
+          - "react-router"
+          - "form-data"
+          - "ws"
+          - "socket.io-parser"
+          - "hono"
+      parser-utility-security:
+        applies-to: security-updates
+        patterns:
+          - "js-yaml"
+          - "brace-expansion"
+          - "nanoid"
+          - "tmp"
+          - "image-size"
+      build-security:
+        applies-to: security-updates
+        patterns:
+          - "postcss"
+          - "tar"
+          - "esbuild"
+          - "uuid"
+      test-browser-security:
+        applies-to: security-updates
+        patterns:
+          - "vitest"
+          - "@vitest/mocker"
+          - "browserslist"
+          - "baseline-browser-mapping"
+      remaining-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
