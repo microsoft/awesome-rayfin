@@ -1,0 +1,66 @@
+{
+  "$comment": "LMU München demo theme. PLAN §6.4: university branding is a THEME FILE, never hard-coded — swap this file and the same app becomes a neutral build or another university's build. Every value below was LIFTED from the live LMU stylesheet on 2026-07-31, not designed: https://cms-cdn.lmu.de/assets/css/app.bundle.css?v=20260710 (987 162 characters, linked from https://www.lmu.de/de/index.html; probe script: temp/lmu_brand_probe.py). Where a colour is quoted, the CSS selector that carries it is quoted with it, because a hex code with no selector is a recollection.",
+  "id": "lmu",
+  "name": "LMU München",
+
+  "brand": {
+    "primary": "#00883a",
+    "$primaryComment": "`.is-bg-green { background-color: #00883a }`, and the single most-used colour on the site after the text black — 368 occurrences against 429 for #232323. This is the opposite situation to OTH, whose corporate web design is monochrome and has NO brand colour: LMU's green is unmistakably theirs and the app should use it.",
+    "primaryDark": "#005524",
+    "$primaryDarkComment": "The stylesheet's own hover state for the green button (`.form__input-group-button:hover`). Taking their hover colour rather than darkening the primary ourselves keeps the pair theirs.",
+    "primaryLight": "#66b889",
+    "$primaryLightComment": "`.c-footer .footer__content-link` — green on dark, i.e. the tint LMU themselves use when the green has to sit on a dark ground. The cockpit needs exactly that and would otherwise have invented it.",
+    "textBase": "#232323",
+    "$textBaseComment": "`.is-bg-dark`. Not #000 — LMU's black is a soft one, and the difference is visible over a large surface.",
+    "inverted": "#ffffff"
+  },
+
+  "neutrals": {
+    "$comment": "Frequency-ranked from the same stylesheet; `.is-bg-light` is #f5f5f5.",
+    "100": "#f5f5f5",
+    "300": "#e6e6e7",
+    "500": "#c0c1c3",
+    "700": "#626468",
+    "900": "#232323"
+  },
+
+  "accents": [
+    { "id": "es-color1", "hex": "#194f29", "note": "deep green" },
+    { "id": "es-color2", "hex": "#064c4d", "note": "teal" },
+    { "id": "es-color3", "hex": "#0f4767", "note": "petrol blue" },
+    { "id": "es-color4", "hex": "#393977", "note": "indigo" },
+    { "id": "es-color5", "hex": "#4b336f", "note": "violet" },
+    { "id": "es-color6", "hex": "#602b5c", "note": "aubergine" },
+    { "id": "es-color7", "hex": "#6e2636", "note": "burgundy" },
+    { "id": "es-color8", "hex": "#712706", "note": "rust" },
+    { "id": "es-color9", "hex": "#643500", "note": "umber" },
+    { "id": "es-color10", "hex": "#4d4300", "note": "olive" }
+  ],
+  "$accentsComment": "MEASURED: `.c-stage-frontpage--einsichten .stage-frontpage__large-teaser-content.is-es-color1 … .is-es-color10` — a TEN-colour categorical palette LMU applies to the teasers of their Einsichten magazine. It is an ordered hue sweep (green → teal → blue → indigo → violet → aubergine → burgundy → rust → umber → olive) at a deliberately uniform darkness, which is exactly what a categorical scale needs and almost never what an ad-hoc palette gets. Structurally the same gift OTH's `.theme1..9` was, with one more slot. ⚠️ The mapping accent → faculty below is OURS. LMU numbers these colours; it does not name them, and it certainly does not assign them to faculties. Confirm with LMU before presenting it as their scheme.",
+
+  "facultyPalette": {
+    "$comment": "PROPOSED mapping only (see above). Kept separate from `accents` so the honest boundary stays visible.",
+    "strategy": "assign accents in order to the faculties present in the data, deterministic by faculty id",
+    "reserve": ["es-color10"],
+    "$reserveComment": "es-color10 (#4d4300, olive) is held back for 'no faculty / shared / central'. Unlike OTH's sand there is no neutral member of this palette, so the reserve slot is the one whose hue is furthest from any faculty likely to be modelled, rather than a genuinely neutral colour. Stated because it is a weaker choice than OTH's and should not be read as the same decision."
+  },
+
+  "semantic": {
+    "$comment": "Cockpit state colours. Conflict and warning are LMU's OWN — `#d71919` is the colour their forms use for a destructive link and `#F18700` is the border of their `.is-notice` info box — so the states are brand-native rather than generic. They also sit clearly outside the Einsichten palette, which matters more: a faculty tinted the same red as a conflict would look permanently broken.",
+    "conflict": "#d71919",
+    "warning": "#f18700",
+    "ok": "#00883a",
+    "$okComment": "⚠️ 'OK' is the brand green, which is a deliberate collision risk worth naming: the deep green es-color1 (#194f29) may end up on a faculty. They are far enough apart in lightness to read differently, but if the first faculty ever looks like a status badge, this is the line to change.",
+    "unknown": "#626468",
+    "$unknownComment": "Grey means 'no data', never 'zero'. Inherited rule from Campus-Insights: a room without a calendar is grey, never 0 %."
+  },
+
+  "typography": {
+    "$comment": "MEASURED from the same stylesheet: LMU sets `font-family: \"Roboto-regular\", sans-serif` on body copy. Roboto is Apache-2.0 and redistributable, unlike the OTH case where nothing had to be resolved because their stack is generic. The app still falls back to the system stack — a web font is a download the twin does not need.",
+    "family": "Roboto, 'Segoe UI', system-ui, sans-serif"
+  },
+
+  "logo": {
+    "$comment": "Not bundled. The LMU seal and wordmark are protected marks and must be obtained from LMU's corporate design office before they go into a customer-facing build. The app renders the wordmark 'Campus-Scheduler' until then."
+  }
+}
