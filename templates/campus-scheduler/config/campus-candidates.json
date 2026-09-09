@@ -1,0 +1,6149 @@
+{
+  "$note": "CANDIDATES — nothing here is confirmed. See find_campus_areas.py.",
+  "results": {
+    "HS020": {
+      "id": "HS020",
+      "name": "Humboldt-Universität Berlin",
+      "city": "Berlin",
+      "discriminatingTokens": [
+        "humboldt"
+      ],
+      "elementsSeen": 619,
+      "accepted": 11,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 52.4651315,
+            "maxLat": 52.4693203,
+            "minLon": 13.2948613,
+            "maxLon": 13.303235
+          },
+          "widthKm": 0.57,
+          "heightKm": 0.47,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/174910521",
+              "name": "Humboldt-Universität zu Berlin - Standort Dahlem",
+              "operator": null,
+              "score": 6,
+              "evidence": [
+                "name:['humboldt']",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 52.4216484,
+            "maxLat": 52.4326487,
+            "minLon": 13.5222458,
+            "maxLon": 13.5344507
+          },
+          "widthKm": 0.83,
+          "heightKm": 1.22,
+          "areaCount": 5,
+          "areas": [
+            {
+              "osmId": "way/704093623",
+              "name": "Alfred-Rühl-Haus",
+              "operator": "Humboldt-Universität zu Berlin",
+              "score": 6,
+              "evidence": [
+                "operator:['humboldt']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24527529",
+              "name": "Erwin-Schrödinger-Zentrum",
+              "operator": "Humboldt-Universität zu Berlin",
+              "score": 6,
+              "evidence": [
+                "operator:['humboldt']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/142598705",
+              "name": "Wolfgang-Köhler-Haus",
+              "operator": "Humboldt-Universität zu Berlin",
+              "score": 6,
+              "evidence": [
+                "operator:['humboldt']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/377706272",
+              "name": "Johann-von-Neumann-Haus",
+              "operator": "Humboldt-Universität zu Berlin",
+              "score": 12,
+              "evidence": [
+                "wikidata+name",
+                "operator:['humboldt']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/156066224",
+              "name": "Humboldt-Universität Sportzentrum Adlershof",
+              "operator": null,
+              "score": 6,
+              "evidence": [
+                "name:['humboldt']",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 52.5282938,
+            "maxLat": 52.5303985,
+            "minLon": 13.3805176,
+            "maxLon": 13.383406
+          },
+          "widthKm": 0.2,
+          "heightKm": 0.23,
+          "areaCount": 2,
+          "areas": [
+            {
+              "osmId": "way/43041469",
+              "name": "Zweigbibliothek Campus Nord",
+              "operator": "Universitätsbibliothek der Humboldt-Universität zu Berlin",
+              "score": 6,
+              "evidence": [
+                "operator:['humboldt']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/43041296",
+              "name": "Institutsgebäude HU Berlin",
+              "operator": "Humboldt-Universität zu Berlin",
+              "score": 6,
+              "evidence": [
+                "operator:['humboldt']",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 52.516627,
+            "maxLat": 52.5175287,
+            "minLon": 13.3213656,
+            "maxLon": 13.322943
+          },
+          "widthKm": 0.11,
+          "heightKm": 0.1,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/97283527",
+              "name": "Universitätsarchiv – Universität der Künste Berlin",
+              "operator": "Universität der Künste",
+              "score": 4,
+              "evidence": [
+                "wikidata",
+                "amenity=university",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 52.5208686,
+            "maxLat": 52.5234413,
+            "minLon": 13.3913567,
+            "maxLon": 13.4013564
+          },
+          "widthKm": 0.68,
+          "heightKm": 0.29,
+          "areaCount": 2,
+          "areas": [
+            {
+              "osmId": "way/327516758",
+              "name": "Career Center (HU)",
+              "operator": "Humboldt-Universität zu Berlin",
+              "score": 6,
+              "evidence": [
+                "operator:['humboldt']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/23853100",
+              "name": "Theologische Fakultät der HU",
+              "operator": "Humboldt-Universität zu Berlin",
+              "score": 14,
+              "evidence": [
+                "wikidata+name",
+                "operator:['humboldt']",
+                "amenity=university",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS102": {
+      "id": "HS102",
+      "name": "Universität Hamburg",
+      "city": "Hamburg",
+      "discriminatingTokens": [],
+      "elementsSeen": 235,
+      "accepted": 13,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 53.5597489,
+            "maxLat": 53.5708883,
+            "minLon": 9.9733768,
+            "maxLon": 9.9934715
+          },
+          "widthKm": 1.33,
+          "heightKm": 1.24,
+          "areaCount": 12,
+          "areas": [
+            {
+              "osmId": "way/1204647866",
+              "name": "Cube",
+              "operator": "Universität Hamburg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/26315374",
+              "name": "Audimax",
+              "operator": "Universität Hamburg",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/26611759",
+              "name": "Philturm",
+              "operator": "Universität Hamburg",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/26624762",
+              "name": "Mineralogisch-Petrographisches Institut",
+              "operator": "Universität Hamburg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/30273753",
+              "name": "Universität Hamburg",
+              "operator": null,
+              "score": 11,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/35212277",
+              "name": "Hochschulsport Hamburg",
+              "operator": "Universität Hamburg",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/39163211",
+              "name": "Campus-Center Universität Hamburg",
+              "operator": "Universität Hamburg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/46148750",
+              "name": null,
+              "operator": "Universität Hamburg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 53.5530866,
+            "maxLat": 53.5535346,
+            "minLon": 9.9387551,
+            "maxLon": 9.939387
+          },
+          "widthKm": 0.04,
+          "heightKm": 0.05,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/43230718",
+              "name": null,
+              "operator": "Universität Hamburg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS108": {
+      "id": "HS108",
+      "name": "Universität Bochum",
+      "city": "Bochum",
+      "discriminatingTokens": [],
+      "elementsSeen": 149,
+      "accepted": 14,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 51.439883,
+            "maxLat": 51.4514903,
+            "minLon": 7.2532798,
+            "maxLon": 7.2695593
+          },
+          "widthKm": 1.13,
+          "heightKm": 1.29,
+          "areaCount": 11,
+          "areas": [
+            {
+              "osmId": "way/151330212",
+              "name": "Uniforum",
+              "operator": "Ruhr-Universität Bochum",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.88",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24847806",
+              "name": "IC",
+              "operator": "Ruhr-Universität Bochum",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.88",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24847939",
+              "name": "HIB",
+              "operator": "Ruhr-Universität Bochum",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.88",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/31008475",
+              "name": "Ruhr-Universität Bochum",
+              "operator": "Ministerium für Innovation, Wissenschaft und Forschung des Landes Nordrhein-Westfalen",
+              "score": 11,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:0.88",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/60418498",
+              "name": "ICFW",
+              "operator": "Ruhr-Universität Bochum",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.88",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/60418499",
+              "name": "ICFO",
+              "operator": "Ruhr-Universität Bochum",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.88",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/60418522",
+              "name": null,
+              "operator": "Ruhr-Universität Bochum",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.88",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/60418523",
+              "name": null,
+              "operator": "Ruhr-Universität Bochum",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.88",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 51.4490384,
+            "maxLat": 51.4507752,
+            "minLon": 7.2766361,
+            "maxLon": 7.279682
+          },
+          "widthKm": 0.21,
+          "heightKm": 0.19,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/775138906",
+              "name": null,
+              "operator": "Ruhr-Universität Bochum",
+              "score": 11,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:0.88",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 51.4474447,
+            "maxLat": 51.4486964,
+            "minLon": 7.2444059,
+            "maxLon": 7.247079
+          },
+          "widthKm": 0.19,
+          "heightKm": 0.14,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/1350464935",
+              "name": "Fakultät für Sportwissenschaft",
+              "operator": "Ruhr-Universität Bochum",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:0.88",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 51.4895266,
+            "maxLat": 51.4900879,
+            "minLon": 7.2168019,
+            "maxLon": 7.217255
+          },
+          "widthKm": 0.03,
+          "heightKm": 0.06,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/769671900",
+              "name": "Institut für Archäologische Wissenschaften",
+              "operator": "Ruhr-Universität Bochum",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.88",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS111": {
+      "id": "HS111",
+      "name": "Universität Köln",
+      "city": "Köln",
+      "discriminatingTokens": [],
+      "elementsSeen": 171,
+      "accepted": 12,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 50.9248802,
+            "maxLat": 50.9349836,
+            "minLon": 6.9136004,
+            "maxLon": 6.9370467
+          },
+          "widthKm": 1.64,
+          "heightKm": 1.12,
+          "areaCount": 11,
+          "areas": [
+            {
+              "osmId": "way/500394530",
+              "name": "InnoDom Cologne",
+              "operator": "Universität zu Köln",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.91",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/51549383",
+              "name": "Biochemie / Nuklearchemie",
+              "operator": "Universität zu Köln",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.91",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/83400614",
+              "name": "Cologne Center for Advanced Studies in International History and Law (CHL)",
+              "operator": "Universität zu Köln",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.91",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/84075986",
+              "name": null,
+              "operator": "Universität zu Köln",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.91",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/84075998",
+              "name": "Theologie",
+              "operator": "Universität zu Köln",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.91",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/125014714",
+              "name": "Humanwissenschaftliche Fakultät",
+              "operator": "Universität zu Köln",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.91",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/254122568",
+              "name": "Institut für Politische Wissenschaft und Europäische Fragen",
+              "operator": "Universität zu Köln",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.91",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/254131064",
+              "name": null,
+              "operator": "Universität zu Köln",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.91",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 50.9143067,
+            "maxLat": 50.9144224,
+            "minLon": 6.9421171,
+            "maxLon": 6.9427498
+          },
+          "widthKm": 0.04,
+          "heightKm": 0.01,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/113438685",
+              "name": "Universität zu Köln",
+              "operator": null,
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:0.91",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS810": {
+      "id": "HS810",
+      "name": "Priv. FH für Ökon. u. Management Essen",
+      "city": "Essen",
+      "discriminatingTokens": [
+        "management",
+        "okon"
+      ],
+      "elementsSeen": 104,
+      "accepted": 2,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 51.4565704,
+            "maxLat": 51.457446,
+            "minLon": 7.0230031,
+            "maxLon": 7.0239659
+          },
+          "widthKm": 0.07,
+          "heightKm": 0.1,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/27374176",
+              "name": "FOM Hochschule für Oekonomie & Management",
+              "operator": null,
+              "score": 4,
+              "evidence": [
+                "name-generic:['management']",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        },
+        {
+          "bbox": {
+            "minLat": 51.4736275,
+            "maxLat": 51.4740539,
+            "minLon": 7.0036937,
+            "maxLon": 7.0043955
+          },
+          "widthKm": 0.05,
+          "heightKm": 0.05,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/49325516",
+              "name": "FOM Studienzentrum Essen SHZ II",
+              "operator": "FOM Hochschule für Oekonomie & Management",
+              "score": 4,
+              "evidence": [
+                "operator-generic:['management']",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": true,
+      "reviewReason": "every cluster was rejected as too small"
+    },
+    "HS148": {
+      "id": "HS148",
+      "name": "Technische Hochschule Aachen",
+      "city": "Aachen",
+      "discriminatingTokens": [
+        "rheinisch",
+        "rwth",
+        "westfalische"
+      ],
+      "elementsSeen": 229,
+      "accepted": 39,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 50.7741373,
+            "maxLat": 50.7913771,
+            "minLon": 6.0477013,
+            "maxLon": 6.0818457
+          },
+          "widthKm": 2.4,
+          "heightKm": 1.92,
+          "areaCount": 39,
+          "areas": [
+            {
+              "osmId": "way/1522573919",
+              "name": "Verkehrswissenschaftliches Institut (VIA) der RWTH Aachen",
+              "operator": "RWTH Aachen University",
+              "score": 10,
+              "evidence": [
+                "operator:['rwth']",
+                "name:['rwth']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/27081931",
+              "name": "Institut für Aerodynamik",
+              "operator": "RWTH Aachen",
+              "score": 9,
+              "evidence": [
+                "operator:['rwth']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/27329147",
+              "name": "Institut für Schweißtechnik und Fügetechnik",
+              "operator": "RWTH Aachen",
+              "score": 9,
+              "evidence": [
+                "operator:['rwth']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/27523977",
+              "name": "Audimax",
+              "operator": "RWTH Aachen",
+              "score": 9,
+              "evidence": [
+                "operator:['rwth']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/27558361",
+              "name": "Institut für Maschinenelemente und Systementwicklung",
+              "operator": "RWTH Aachen",
+              "score": 9,
+              "evidence": [
+                "operator:['rwth']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/30440679",
+              "name": "Institut für Werkstoffanwendungen im Maschinenbau",
+              "operator": "RWTH Aachen",
+              "score": 9,
+              "evidence": [
+                "operator:['rwth']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/32348178",
+              "name": "Lehrstuhl und Institut für Schienenfahrzeuge",
+              "operator": "RWTH Aachen",
+              "score": 9,
+              "evidence": [
+                "operator:['rwth']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/34427394",
+              "name": "Institut für Metallkunde und Materialphysik",
+              "operator": "RWTH Aachen",
+              "score": 9,
+              "evidence": [
+                "operator:['rwth']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS112": {
+      "id": "HS112",
+      "name": "Universität Münster",
+      "city": "Münster",
+      "discriminatingTokens": [],
+      "elementsSeen": 217,
+      "accepted": 36,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 51.9594902,
+            "maxLat": 51.9761964,
+            "minLon": 7.5936679,
+            "maxLon": 7.6257583
+          },
+          "widthKm": 2.2,
+          "heightKm": 1.86,
+          "areaCount": 31,
+          "areas": [
+            {
+              "osmId": "way/908790574",
+              "name": "Universitäts- und Landesbibliothek",
+              "operator": "Universität Münster",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/13742054",
+              "name": "Fürstbischöfliches Schloss",
+              "operator": "Universität Münster",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/28997192",
+              "name": "Vom-Stein-Haus",
+              "operator": "Universität Münster",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/41421730",
+              "name": null,
+              "operator": "Universität Münster",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/42110531",
+              "name": "Botanicum",
+              "operator": "Universität Münster",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/96647249",
+              "name": "Informationsverarbeitungs-Versorgungseinheit 1 - Geisteswissenschaften",
+              "operator": "Universität Münster",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/97196226",
+              "name": "Prüfungsamt I",
+              "operator": "Universität Münster",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/103453985",
+              "name": "Exzellenzcluster Religion und Politik",
+              "operator": "Universität Münster",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 51.9492587,
+            "maxLat": 51.9513229,
+            "minLon": 7.6068854,
+            "maxLon": 7.6089707
+          },
+          "widthKm": 0.14,
+          "heightKm": 0.23,
+          "areaCount": 4,
+          "areas": [
+            {
+              "osmId": "way/297084693",
+              "name": "Institut für Politikwissenschaft",
+              "operator": "Universität Münster",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/114730506",
+              "name": "Institut für Soziologie",
+              "operator": "Universität Münster",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/114730508",
+              "name": "Aula am Aasee",
+              "operator": "Universität Münster",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/124808958",
+              "name": "Zweigbibliothek Sozialwissenschaften",
+              "operator": "Universität Münster",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 51.9473475,
+            "maxLat": 51.9476061,
+            "minLon": 7.6242061,
+            "maxLon": 7.6248858
+          },
+          "widthKm": 0.05,
+          "heightKm": 0.03,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/136191799",
+              "name": "Centrum für religionsbezogene Studien",
+              "operator": "Universität Münster",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS116": {
+      "id": "HS116",
+      "name": "Universität Frankfurt am Main",
+      "city": "Frankfurt am Main",
+      "discriminatingTokens": [
+        "goethe"
+      ],
+      "elementsSeen": 152,
+      "accepted": 7,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 50.1688533,
+            "maxLat": 50.1760031,
+            "minLon": 8.6262592,
+            "maxLon": 8.6352726
+          },
+          "widthKm": 0.64,
+          "heightKm": 0.8,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/4839763",
+              "name": "Johann-Wolfgang-Goethe Universität - Campus Riedberg",
+              "operator": null,
+              "score": 6,
+              "evidence": [
+                "name:['goethe']",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 50.123771,
+            "maxLat": 50.1311096,
+            "minLon": 8.6635177,
+            "maxLon": 8.6710411
+          },
+          "widthKm": 0.54,
+          "heightKm": 0.82,
+          "areaCount": 4,
+          "areas": [
+            {
+              "osmId": "way/494382046",
+              "name": "Goethe-Card Service Westend",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "name:['goethe']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/4794787",
+              "name": "Johann-Wolfgang-Goethe-Universität Campus Westend",
+              "operator": "Goethe-Universität",
+              "score": 11,
+              "evidence": [
+                "operator:['goethe']",
+                "name:['goethe']",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/294669574",
+              "name": "Seminarpavillon",
+              "operator": "Goethe-Universität",
+              "score": 6,
+              "evidence": [
+                "operator:['goethe']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/294673347",
+              "name": "Seminarpavillon",
+              "operator": "Goethe-Universität",
+              "score": 13,
+              "evidence": [
+                "wikidata+name",
+                "operator:['goethe']",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 50.1155531,
+            "maxLat": 50.1198449,
+            "minLon": 8.6489989,
+            "maxLon": 8.6533036
+          },
+          "widthKm": 0.31,
+          "heightKm": 0.48,
+          "areaCount": 2,
+          "areas": [
+            {
+              "osmId": "way/284788804",
+              "name": "Goethe Universität - Campus Bockenheim",
+              "operator": null,
+              "score": 6,
+              "evidence": [
+                "name:['goethe']",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/30119115",
+              "name": "Sozialzentrum, Neue Mensa, Goethe Universität - Campus Bockenheim",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "name:['goethe']",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS131": {
+      "id": "HS131",
+      "name": "U Erlangen-Nürnberg",
+      "city": "Erlangen",
+      "discriminatingTokens": [
+        "nurnberg"
+      ],
+      "elementsSeen": 140,
+      "accepted": 58,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 49.5696483,
+            "maxLat": 49.5814933,
+            "minLon": 11.009893,
+            "maxLon": 11.0312509
+          },
+          "widthKm": 1.54,
+          "heightKm": 1.32,
+          "areaCount": 33,
+          "areas": [
+            {
+              "osmId": "way/1456690316",
+              "name": "FAU Campus Erlangen Süd (Freyeslebenstraße)",
+              "operator": "Friedrich-Alexander-Universität Erlangen-Nürnberg",
+              "score": 7,
+              "evidence": [
+                "operator:['nurnberg']",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/25843734",
+              "name": "Maschinenbau / Department CBI",
+              "operator": "Friedrich-Alexander-Universität Erlangen-Nürnberg",
+              "score": 6,
+              "evidence": [
+                "operator:['nurnberg']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/26719084",
+              "name": "Werkstoffwissenschaften",
+              "operator": "Friedrich-Alexander-Universität Erlangen-Nürnberg",
+              "score": 6,
+              "evidence": [
+                "operator:['nurnberg']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/30372669",
+              "name": "Reinraum",
+              "operator": "Friedrich-Alexander-Universität Erlangen-Nürnberg",
+              "score": 6,
+              "evidence": [
+                "operator:['nurnberg']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/30372671",
+              "name": "Department Chemie- und Bioingenieurwesen (CBI)",
+              "operator": "Friedrich-Alexander-Universität Erlangen-Nürnberg",
+              "score": 6,
+              "evidence": [
+                "operator:['nurnberg']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/30372672",
+              "name": "CBI Technische Halle",
+              "operator": "Friedrich-Alexander-Universität Erlangen-Nürnberg",
+              "score": 6,
+              "evidence": [
+                "operator:['nurnberg']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/39539625",
+              "name": "Zentrales Hochdrucklabor der Technischen Fakultät",
+              "operator": "Friedrich-Alexander-Universität Erlangen-Nürnberg",
+              "score": 6,
+              "evidence": [
+                "operator:['nurnberg']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/40828451",
+              "name": "Lehrstuhl für Konstruktionstechnik KTmfk",
+              "operator": "Friedrich-Alexander-Universität Erlangen-Nürnberg",
+              "score": 6,
+              "evidence": [
+                "operator:['nurnberg']",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 49.5928318,
+            "maxLat": 49.6012566,
+            "minLon": 11.0045305,
+            "maxLon": 11.0310218
+          },
+          "widthKm": 1.91,
+          "heightKm": 0.94,
+          "areaCount": 25,
+          "areas": [
+            {
+              "osmId": "way/520748151",
+              "name": "FAU Röthelheim Campus",
+              "operator": "Friedrich-Alexander-Universität Erlangen-Nürnberg",
+              "score": 7,
+              "evidence": [
+                "operator:['nurnberg']",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/39500669",
+              "name": null,
+              "operator": "Friedrich-Alexander-Universität Erlangen-Nürnberg",
+              "score": 6,
+              "evidence": [
+                "operator:['nurnberg']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/42751429",
+              "name": "Lehrstuhl für Paläoumwelt",
+              "operator": "Friedrich-Alexander-Universität Erlangen-Nürnberg",
+              "score": 6,
+              "evidence": [
+                "operator:['nurnberg']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/42811502",
+              "name": "FAU CAS-E (Gebäude D1)",
+              "operator": "Friedrich-Alexander-Universität Erlangen-Nürnberg",
+              "score": 6,
+              "evidence": [
+                "operator:['nurnberg']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/42811503",
+              "name": "FAU Sinologie (Gebäude D3)",
+              "operator": "Friedrich-Alexander-Universität Erlangen-Nürnberg",
+              "score": 6,
+              "evidence": [
+                "operator:['nurnberg']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/43025206",
+              "name": "Physiologisches Institut II",
+              "operator": "FAU Friedrich-Alexander-Universität Erlangen-Nürnberg",
+              "score": 6,
+              "evidence": [
+                "operator:['nurnberg']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/114394410",
+              "name": "Juridicum",
+              "operator": "FAU Friedrich-Alexander-Universität Erlangen-Nürnberg",
+              "score": 6,
+              "evidence": [
+                "operator:['nurnberg']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/114394414",
+              "name": "Juridicum",
+              "operator": "FAU Friedrich-Alexander-Universität Erlangen-Nürnberg",
+              "score": 6,
+              "evidence": [
+                "operator:['nurnberg']",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS138": {
+      "id": "HS138",
+      "name": "Freie Universität Berlin",
+      "city": "Berlin",
+      "discriminatingTokens": [
+        "freie"
+      ],
+      "elementsSeen": 620,
+      "accepted": 180,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 52.4449691,
+            "maxLat": 52.4703928,
+            "minLon": 13.2723647,
+            "maxLon": 13.3106151
+          },
+          "widthKm": 2.59,
+          "heightKm": 2.83,
+          "areaCount": 130,
+          "areas": [
+            {
+              "osmId": "way/1456459881",
+              "name": null,
+              "operator": "Freie Universität Berlin",
+              "score": 10,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/26763411",
+              "name": "Rost- und Silberlaube",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/27175541",
+              "name": "Studierendenverwaltung",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/27175680",
+              "name": "AStA",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/27182346",
+              "name": "Kleines Tierhaus",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/27182371",
+              "name": "FUB-IT",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/27182436",
+              "name": "FB Biologie, Chemie, Pharmazie",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/27182477",
+              "name": "FB Biologie, Chemie, Pharmazie",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 52.4246956,
+            "maxLat": 52.4278095,
+            "minLon": 13.3555017,
+            "maxLon": 13.3605925
+          },
+          "widthKm": 0.35,
+          "heightKm": 0.35,
+          "areaCount": 22,
+          "areas": [
+            {
+              "osmId": "way/200124561",
+              "name": null,
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24894215",
+              "name": "Haus G",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24894259",
+              "name": "Haus H",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24894288",
+              "name": "Haus K",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24894304",
+              "name": "Haus L",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24894338",
+              "name": "Haus Q",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24894348",
+              "name": "Haus I",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24894352",
+              "name": "Haus M",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 52.4266825,
+            "maxLat": 52.4310574,
+            "minLon": 13.2341941,
+            "maxLon": 13.2388322
+          },
+          "widthKm": 0.31,
+          "heightKm": 0.49,
+          "areaCount": 23,
+          "areas": [
+            {
+              "osmId": "way/374827935",
+              "name": "Haus 36",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/49327121",
+              "name": "Haus 34",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/49327132",
+              "name": "Haus 31",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/49327133",
+              "name": "Haus 32",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/49327134",
+              "name": "Haus 26",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/49327135",
+              "name": "Haus 27",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/49327136",
+              "name": "Haus 21",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/51382249",
+              "name": "Haus 35",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 52.4511306,
+            "maxLat": 52.4521755,
+            "minLon": 13.3568879,
+            "maxLon": 13.3585537
+          },
+          "widthKm": 0.11,
+          "heightKm": 0.12,
+          "areaCount": 3,
+          "areas": [
+            {
+              "osmId": "way/641308856",
+              "name": "FU Institut f. Pharmazie",
+              "operator": "Freie Universität Berlin",
+              "score": 10,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/49115946",
+              "name": "FU Institut f. Pharmazie",
+              "operator": "Freie Universität Berlin",
+              "score": 10,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/269001492",
+              "name": "FB Biologie, Chemie, Pharmazie",
+              "operator": "Freie Universität Berlin",
+              "score": 10,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 52.432527,
+            "maxLat": 52.4329682,
+            "minLon": 13.184631,
+            "maxLon": 13.1852505
+          },
+          "widthKm": 0.04,
+          "heightKm": 0.05,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/23557224",
+              "name": "ZE Hochschulsport",
+              "operator": "Freie Universität Berlin",
+              "score": 10,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        },
+        {
+          "bbox": {
+            "minLat": 52.4437625,
+            "maxLat": 52.4439631,
+            "minLon": 13.2362311,
+            "maxLon": 13.2365904
+          },
+          "widthKm": 0.02,
+          "heightKm": 0.02,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/118204689",
+              "name": "Clubhaus FU-Berlin",
+              "operator": "Freie Universität Berlin",
+              "score": 9,
+              "evidence": [
+                "operator:['freie']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS008": {
+      "id": "HS008",
+      "name": "U Duisburg-Essen",
+      "city": "Duisburg",
+      "discriminatingTokens": [
+        "essen"
+      ],
+      "elementsSeen": 60,
+      "accepted": 38,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 51.4253127,
+            "maxLat": 51.4334619,
+            "minLon": 6.7834661,
+            "maxLon": 6.8030864
+          },
+          "widthKm": 1.36,
+          "heightKm": 0.91,
+          "areaCount": 37,
+          "areas": [
+            {
+              "osmId": "way/241608871",
+              "name": "LX",
+              "operator": "Universität Duisburg-Essen",
+              "score": 6,
+              "evidence": [
+                "operator:['essen']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/23618873",
+              "name": "LT",
+              "operator": "Universität Duisburg-Essen",
+              "score": 6,
+              "evidence": [
+                "operator:['essen']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/23618904",
+              "name": "SG",
+              "operator": "Universität Duisburg-Essen",
+              "score": 6,
+              "evidence": [
+                "operator:['essen']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24989326",
+              "name": "BC",
+              "operator": "Universität Duisburg-Essen",
+              "score": 6,
+              "evidence": [
+                "operator:['essen']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24989327",
+              "name": "BE",
+              "operator": "Universität Duisburg-Essen",
+              "score": 6,
+              "evidence": [
+                "operator:['essen']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/25056972",
+              "name": "BA",
+              "operator": "Universität Duisburg-Essen",
+              "score": 6,
+              "evidence": [
+                "operator:['essen']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/25057105",
+              "name": "BD",
+              "operator": "Universität Duisburg-Essen",
+              "score": 6,
+              "evidence": [
+                "operator:['essen']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/25461411",
+              "name": "LE",
+              "operator": "Universität Duisburg-Essen",
+              "score": 6,
+              "evidence": [
+                "operator:['essen']",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 51.4628478,
+            "maxLat": 51.4644593,
+            "minLon": 6.7346242,
+            "maxLon": 6.7358224
+          },
+          "widthKm": 0.08,
+          "heightKm": 0.18,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/232895559",
+              "name": "ST",
+              "operator": "Universität Duisburg-Essen",
+              "score": 6,
+              "evidence": [
+                "operator:['essen']",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS109": {
+      "id": "HS109",
+      "name": "Universität Bonn",
+      "city": "Bonn",
+      "discriminatingTokens": [],
+      "elementsSeen": 161,
+      "accepted": 38,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 50.7231476,
+            "maxLat": 50.7346614,
+            "minLon": 7.0824718,
+            "maxLon": 7.1088968
+          },
+          "widthKm": 1.86,
+          "heightKm": 1.28,
+          "areaCount": 37,
+          "areas": [
+            {
+              "osmId": "way/1035372181",
+              "name": "Institut für Nutzpflanzenwissenschaften und Ressourcenschutz",
+              "operator": "Universität Bonn",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24825487",
+              "name": "Wolfgang-Paul-Hörsaal",
+              "operator": "Universität Bonn",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/25066698",
+              "name": "Institut für Geodäsie und Geoinformation",
+              "operator": "Universität Bonn",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/38573074",
+              "name": "Elektronen Stretcher Anlage (ELSA)",
+              "operator": "Universität Bonn",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/50171999",
+              "name": "Geozentrum",
+              "operator": "Universität Bonn",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/54135346",
+              "name": "Institut für Geodäsie und Geoinformation",
+              "operator": "Universität Bonn",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/54135349",
+              "name": "Hörsaal Anatomie",
+              "operator": "Universität Bonn",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/54135350",
+              "name": null,
+              "operator": "Universität Bonn",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 50.7050553,
+            "maxLat": 50.7059289,
+            "minLon": 7.1283746,
+            "maxLon": 7.1301872
+          },
+          "widthKm": 0.13,
+          "heightKm": 0.1,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/26626851",
+              "name": "Universität Bonn",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS169": {
+      "id": "HS169",
+      "name": "Technische Universität Berlin",
+      "city": "Berlin",
+      "discriminatingTokens": [],
+      "elementsSeen": 620,
+      "accepted": 54,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 52.5097754,
+            "maxLat": 52.5204498,
+            "minLon": 13.3198515,
+            "maxLon": 13.333461
+          },
+          "widthKm": 0.92,
+          "heightKm": 1.19,
+          "areaCount": 49,
+          "areas": [
+            {
+              "osmId": "way/1415450116",
+              "name": "CIF (im Bau)",
+              "operator": "Technische Universität Berlin",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/23517691",
+              "name": "W",
+              "operator": "Technische Universität Berlin",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/23517849",
+              "name": "B",
+              "operator": "Technische Universität Berlin",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/23517902",
+              "name": "ER",
+              "operator": "Technische Universität Berlin",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/25036502",
+              "name": "AM",
+              "operator": "Technische Universität Berlin",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/25142264",
+              "name": "KF",
+              "operator": "Technische Universität Berlin",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/26292019",
+              "name": "TC",
+              "operator": "Technische Universität Berlin",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/26462957",
+              "name": "Villa Bell",
+              "operator": "Technische Universität Berlin",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 52.5382304,
+            "maxLat": 52.5424987,
+            "minLon": 13.383097,
+            "maxLon": 13.3857271
+          },
+          "widthKm": 0.18,
+          "heightKm": 0.47,
+          "areaCount": 5,
+          "areas": [
+            {
+              "osmId": "way/633752404",
+              "name": "TU Berlin Standort Ackerstraße",
+              "operator": "Technische Universität Berlin",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/26410648",
+              "name": "TIB 15",
+              "operator": "Technische Universität Berlin",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/26410649",
+              "name": null,
+              "operator": "Technische Universität Berlin",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/105806545",
+              "name": null,
+              "operator": "Technische Universität Berlin",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/122507455",
+              "name": null,
+              "operator": "Technische Universität Berlin",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS817": {
+      "id": "HS817",
+      "name": "Duale HS Baden-Württemberg",
+      "city": "Stuttgart",
+      "discriminatingTokens": [
+        "baden",
+        "duale",
+        "wurttemberg"
+      ],
+      "elementsSeen": 229,
+      "accepted": 4,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 48.7822679,
+            "maxLat": 48.7862295,
+            "minLon": 9.1663173,
+            "maxLon": 9.1679234
+          },
+          "widthKm": 0.12,
+          "heightKm": 0.44,
+          "areaCount": 2,
+          "areas": [
+            {
+              "osmId": "way/397836408",
+              "name": "Duale Hochschule Baden-Württemberg",
+              "operator": "Duale Hochschule Baden-Württemberg Stuttgart",
+              "score": 12,
+              "evidence": [
+                "operator:['baden', 'duale', 'wurttemberg']",
+                "name:['baden', 'duale', 'wurttemberg']",
+                "amenity=university",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/43120668",
+              "name": "MINT-Kolleg Baden-Württemberg",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "name:['baden', 'wurttemberg']",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 48.7699994,
+            "maxLat": 48.7703356,
+            "minLon": 9.1568649,
+            "maxLon": 9.1576823
+          },
+          "widthKm": 0.06,
+          "heightKm": 0.04,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/27956956",
+              "name": "duale Hochschule",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "name:['duale']",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        },
+        {
+          "bbox": {
+            "minLat": 48.7506971,
+            "maxLat": 48.7510549,
+            "minLon": 9.1033783,
+            "maxLon": 9.1040712
+          },
+          "widthKm": 0.05,
+          "heightKm": 0.04,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/82906003",
+              "name": "Raumfahrtzentrum Baden-Württemberg",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "name:['baden', 'wurttemberg']",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS125": {
+      "id": "HS125",
+      "name": "Universität Heidelberg",
+      "city": "Heidelberg",
+      "discriminatingTokens": [],
+      "elementsSeen": 212,
+      "accepted": 4,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 49.4114784,
+            "maxLat": 49.4256056,
+            "minLon": 8.6607752,
+            "maxLon": 8.6762822
+          },
+          "widthKm": 1.12,
+          "heightKm": 1.57,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/26946230",
+              "name": "Uni Heidelberg Campus Im Neuenheimer Feld",
+              "operator": "Universität Heidelberg",
+              "score": 11,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 49.4079276,
+            "maxLat": 49.4109483,
+            "minLon": 8.682945,
+            "maxLon": 8.6911259
+          },
+          "widthKm": 0.59,
+          "heightKm": 0.34,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/323484193",
+              "name": "Uni Heidelberg Campus Bergheim",
+              "operator": "Universität Heidelberg",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 49.4124433,
+            "maxLat": 49.4129861,
+            "minLon": 8.7141911,
+            "maxLon": 8.7149573
+          },
+          "widthKm": 0.06,
+          "heightKm": 0.06,
+          "areaCount": 2,
+          "areas": [
+            {
+              "osmId": "way/91601179",
+              "name": "Ökumenisches Institut, Wohnheim",
+              "operator": "Universität Heidelberg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/35775671",
+              "name": "Theologisches Seminar",
+              "operator": "Universität Heidelberg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS036": {
+      "id": "HS036",
+      "name": "Universität Leipzig",
+      "city": "Leipzig",
+      "discriminatingTokens": [],
+      "elementsSeen": 140,
+      "accepted": 30,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 51.3357865,
+            "maxLat": 51.3407423,
+            "minLon": 12.3491351,
+            "maxLon": 12.3555523
+          },
+          "widthKm": 0.45,
+          "heightKm": 0.55,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/37904577",
+              "name": "Universität Leipzig - Sportwissenschaft",
+              "operator": "Universität Leipzig",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 51.3203809,
+            "maxLat": 51.339624,
+            "minLon": 12.3673907,
+            "maxLon": 12.4012598
+          },
+          "widthKm": 2.35,
+          "heightKm": 2.14,
+          "areaCount": 28,
+          "areas": [
+            {
+              "osmId": "way/1199489813",
+              "name": "Institut für Biochemie",
+              "operator": "Universität Leipzig",
+              "score": 6,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/19609096",
+              "name": "Fakultät für Chemie und Mineralogie",
+              "operator": "Universität Leipzig",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24160049",
+              "name": "Technikum-Analytikum",
+              "operator": "Universität Leipzig",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24160153",
+              "name": "Fakultät für Physik und Geowissenschaften",
+              "operator": "Universität Leipzig",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24160177",
+              "name": "Wilhelm-Ostwald-Institut für Physikalische und Theoretische Chemie",
+              "operator": "Universität Leipzig",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/25848584",
+              "name": "Institut für Pathologie",
+              "operator": "Universität Leipzig",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/30837903",
+              "name": "Pharmazeutische Technologie - Institut für Pharmazie",
+              "operator": "Universität Leipzig",
+              "score": 6,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/31511395",
+              "name": "Universität Leipzig - Archiv",
+              "operator": "Universität Leipzig",
+              "score": 12,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "amenity=university",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 51.3193452,
+            "maxLat": 51.319483,
+            "minLon": 12.3758532,
+            "maxLon": 12.3761522
+          },
+          "widthKm": 0.02,
+          "heightKm": 0.02,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/40017040",
+              "name": "Institut für Mineralogie, Kristallographie und Materialwissenschaft",
+              "operator": "Universität Leipzig",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS122": {
+      "id": "HS122",
+      "name": "Universität Mainz",
+      "city": "Mainz",
+      "discriminatingTokens": [
+        "gutenberg",
+        "johannes"
+      ],
+      "elementsSeen": 147,
+      "accepted": 15,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 49.989091,
+            "maxLat": 49.996044,
+            "minLon": 8.2277509,
+            "maxLon": 8.2460049
+          },
+          "widthKm": 1.3,
+          "heightKm": 0.77,
+          "areaCount": 15,
+          "areas": [
+            {
+              "osmId": "way/1536475268",
+              "name": null,
+              "operator": "Johannes Gutenberg-Universität Mainz",
+              "score": 8,
+              "evidence": [
+                "operator:['gutenberg', 'johannes']",
+                "nameSimilarity:1.00",
+                "landuse=education(weak)"
+              ]
+            },
+            {
+              "osmId": "way/28005057",
+              "name": "Muschel",
+              "operator": "Johannes Gutenberg-Universität Mainz",
+              "score": 9,
+              "evidence": [
+                "operator:['gutenberg', 'johannes']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/28042089",
+              "name": "Forum Universitatis",
+              "operator": "Johannes Gutenberg-Universität Mainz",
+              "score": 9,
+              "evidence": [
+                "operator:['gutenberg', 'johannes']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/28194356",
+              "name": "Recht und Wirtschaft I",
+              "operator": "Johannes Gutenberg-Universität Mainz",
+              "score": 9,
+              "evidence": [
+                "operator:['gutenberg', 'johannes']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/34179680",
+              "name": "Hochschule für Musik",
+              "operator": "Johannes Gutenberg-Universität Mainz",
+              "score": 15,
+              "evidence": [
+                "wikidata+name",
+                "operator:['gutenberg', 'johannes']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/35573536",
+              "name": "Recht und Wirtschaft II",
+              "operator": "Johannes Gutenberg-Universität Mainz",
+              "score": 9,
+              "evidence": [
+                "operator:['gutenberg', 'johannes']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/477212303",
+              "name": "Infobox",
+              "operator": "Johannes Gutenberg-Universität Mainz",
+              "score": 9,
+              "evidence": [
+                "operator:['gutenberg', 'johannes']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/599039363",
+              "name": "Forschungsreaktor Mainz",
+              "operator": "Universität Mainz",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS113": {
+      "id": "HS113",
+      "name": "Technische Universität Dortmund",
+      "city": "Dortmund",
+      "discriminatingTokens": [],
+      "elementsSeen": 95,
+      "accepted": 1,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 51.49116,
+            "maxLat": 51.4914488,
+            "minLon": 7.4064637,
+            "maxLon": 7.4074875
+          },
+          "widthKm": 0.07,
+          "heightKm": 0.03,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/1179680969",
+              "name": "Co Learning Space und HyLeC",
+              "operator": "TU Dortmund",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": true,
+      "reviewReason": "every cluster was rejected as too small"
+    },
+    "HS110": {
+      "id": "HS110",
+      "name": "Universität Düsseldorf",
+      "city": "Düsseldorf",
+      "discriminatingTokens": [
+        "heine",
+        "heinrich"
+      ],
+      "elementsSeen": 132,
+      "accepted": 2,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 51.1863339,
+            "maxLat": 51.1869697,
+            "minLon": 6.796936,
+            "maxLon": 6.7977228
+          },
+          "widthKm": 0.05,
+          "heightKm": 0.07,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/23698508",
+              "name": "25.41",
+              "operator": "Heinrich-Heine-Universität Düsseldorf",
+              "score": 9,
+              "evidence": [
+                "operator:['heine', 'heinrich']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        },
+        {
+          "bbox": {
+            "minLat": 51.2262731,
+            "maxLat": 51.2264395,
+            "minLon": 6.7809065,
+            "maxLon": 6.7813387
+          },
+          "widthKm": 0.03,
+          "heightKm": 0.02,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/142783059",
+              "name": "Haus der Universität",
+              "operator": "Heinrich-Heine-Universität Düsseldorf",
+              "score": 15,
+              "evidence": [
+                "wikidata+name",
+                "operator:['heine', 'heinrich']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": true,
+      "reviewReason": "every cluster was rejected as too small"
+    },
+    "HS037": {
+      "id": "HS037",
+      "name": "Technische Universität Dresden",
+      "city": "Dresden",
+      "discriminatingTokens": [],
+      "elementsSeen": 178,
+      "accepted": 84,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 51.0244879,
+            "maxLat": 51.0354254,
+            "minLon": 13.7138788,
+            "maxLon": 13.754263
+          },
+          "widthKm": 2.82,
+          "heightKm": 1.22,
+          "areaCount": 77,
+          "areas": [
+            {
+              "osmId": "way/1384939462",
+              "name": "LaunchHub42",
+              "operator": "TU Dresden",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/22903446",
+              "name": "Hörsaalzentrum",
+              "operator": "TU Dresden",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/22903470",
+              "name": "Trefftz-Bau",
+              "operator": "TU Dresden",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/22986953",
+              "name": "Containerlabor am ASB",
+              "operator": "TU Dresden",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/22987097",
+              "name": "Weberplatz",
+              "operator": "TU Dresden",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/22987219",
+              "name": "Versuchshalle",
+              "operator": "TU Dresden",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/23290106",
+              "name": "Görges-Bau",
+              "operator": "TU Dresden",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/23290108",
+              "name": "Binder-Bau",
+              "operator": "TU Dresden",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 51.0576743,
+            "maxLat": 51.0588486,
+            "minLon": 13.9478068,
+            "maxLon": 13.9513376
+          },
+          "widthKm": 0.25,
+          "heightKm": 0.13,
+          "areaCount": 2,
+          "areas": [
+            {
+              "osmId": "way/163243571",
+              "name": "622",
+              "operator": "TU Dresden",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/46653432",
+              "name": "542 - ELBE",
+              "operator": "TU Dresden",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 51.0085181,
+            "maxLat": 51.0104889,
+            "minLon": 13.811757,
+            "maxLon": 13.8145578
+          },
+          "widthKm": 0.2,
+          "heightKm": 0.22,
+          "areaCount": 3,
+          "areas": [
+            {
+              "osmId": "way/1374139805",
+              "name": "Gebäude A",
+              "operator": "TU Dresden",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/392572230",
+              "name": null,
+              "operator": "TU Dresden",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/575893259",
+              "name": "Gebäude D, Breitscheidstraße",
+              "operator": "TU Dresden",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 51.0221222,
+            "maxLat": 51.0224606,
+            "minLon": 13.7019414,
+            "maxLon": 13.7023164
+          },
+          "widthKm": 0.03,
+          "heightKm": 0.04,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/897638067",
+              "name": null,
+              "operator": "TU Dresden",
+              "score": 11,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        },
+        {
+          "bbox": {
+            "minLat": 51.0702715,
+            "maxLat": 51.0704673,
+            "minLon": 13.6791481,
+            "maxLon": 13.6795664
+          },
+          "widthKm": 0.03,
+          "heightKm": 0.02,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/588105116",
+              "name": "Laborgebäude",
+              "operator": "TU Dresden",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS103": {
+      "id": "HS103",
+      "name": "Universität Göttingen",
+      "city": "Göttingen",
+      "discriminatingTokens": [
+        "august",
+        "georg"
+      ],
+      "elementsSeen": 295,
+      "accepted": 7,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 51.5386651,
+            "maxLat": 51.5445135,
+            "minLon": 9.9328105,
+            "maxLon": 9.9417517
+          },
+          "widthKm": 0.62,
+          "heightKm": 0.65,
+          "areaCount": 4,
+          "areas": [
+            {
+              "osmId": "way/314261660",
+              "name": "Kartenstelle der Universtität",
+              "operator": "Georg-August-Universität Göttingen",
+              "score": 9,
+              "evidence": [
+                "operator:['august', 'georg']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/27775444",
+              "name": "Zentralcampus Georg-August-Universität Göttingen",
+              "operator": null,
+              "score": 6,
+              "evidence": [
+                "name:['august', 'georg']",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/125141562",
+              "name": "Zentrale Einrichtung für Sprachen und Schlüsselkompetenzen",
+              "operator": "Georg-August-Universität Göttingen",
+              "score": 9,
+              "evidence": [
+                "operator:['august', 'georg']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/314261659",
+              "name": "Kartenstelle der Universität",
+              "operator": "Georg-August-Universität Göttingen",
+              "score": 9,
+              "evidence": [
+                "operator:['august', 'georg']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 51.5281924,
+            "maxLat": 51.5287719,
+            "minLon": 9.9319691,
+            "maxLon": 9.9330581
+          },
+          "widthKm": 0.08,
+          "heightKm": 0.06,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/42461290",
+              "name": "Georg-August-Universität Göttingen, Mathematisches Institut",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "name:['august', 'georg']",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        },
+        {
+          "bbox": {
+            "minLat": 51.5603408,
+            "maxLat": 51.560775,
+            "minLon": 9.9453524,
+            "maxLon": 9.9461259
+          },
+          "widthKm": 0.05,
+          "heightKm": 0.05,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/88506943",
+              "name": "Zentrales Sammellager für Gefahrgut",
+              "operator": "Georg-August-Universität Göttingen",
+              "score": 9,
+              "evidence": [
+                "operator:['august', 'georg']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        },
+        {
+          "bbox": {
+            "minLat": 51.547181,
+            "maxLat": 51.5475951,
+            "minLon": 9.949358,
+            "maxLon": 9.9498851
+          },
+          "widthKm": 0.04,
+          "heightKm": 0.05,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/88414968",
+              "name": "Georg-August-Universität Göttingen - Abteilung Agrartechnik",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "name:['august', 'georg']",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS145": {
+      "id": "HS145",
+      "name": "Universität Hannover",
+      "city": "Hannover",
+      "discriminatingTokens": [
+        "gottfried",
+        "leibniz",
+        "wilhelm"
+      ],
+      "elementsSeen": 269,
+      "accepted": 13,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 52.4186426,
+            "maxLat": 52.4203836,
+            "minLon": 9.6211696,
+            "maxLon": 9.6274304
+          },
+          "widthKm": 0.42,
+          "heightKm": 0.19,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/28304812",
+              "name": "Leibniz Universität Hannover",
+              "operator": null,
+              "score": 12,
+              "evidence": [
+                "wikidata+name",
+                "name:['leibniz']",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 52.3761885,
+            "maxLat": 52.3936464,
+            "minLon": 9.6948999,
+            "maxLon": 9.7239
+          },
+          "widthKm": 1.97,
+          "heightKm": 1.94,
+          "areaCount": 11,
+          "areas": [
+            {
+              "osmId": "way/1037166310",
+              "name": "Leibniz School of Education (LSE)",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "name:['leibniz']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/27871016",
+              "name": "Exzellenzcluster PhoenixD / Leibniz School of Optics & Photonics",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "name:['leibniz']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/30635651",
+              "name": "Philosophische Fakultät",
+              "operator": "Leibniz Universität Hannover",
+              "score": 15,
+              "evidence": [
+                "wikidata+name",
+                "operator:['leibniz']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/30635652",
+              "name": "Leibniz Universität IT Services",
+              "operator": null,
+              "score": 11,
+              "evidence": [
+                "wikidata+name",
+                "name:['leibniz']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/41586149",
+              "name": "Laboratorium für Nano- und Quantenengineering",
+              "operator": "Leibniz Universität Hannover",
+              "score": 15,
+              "evidence": [
+                "wikidata+name",
+                "operator:['leibniz']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/151671496",
+              "name": "Leibniz Universität Hannover",
+              "operator": null,
+              "score": 12,
+              "evidence": [
+                "wikidata+name",
+                "name:['leibniz']",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/206666681",
+              "name": "Leibniz Universität Hannover",
+              "operator": null,
+              "score": 12,
+              "evidence": [
+                "wikidata+name",
+                "name:['leibniz']",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/330365760",
+              "name": "Hannover Institut für Technologie (HITec)",
+              "operator": "Leibniz Universität Hannover",
+              "score": 15,
+              "evidence": [
+                "wikidata+name",
+                "operator:['leibniz']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 52.3211408,
+            "maxLat": 52.3215389,
+            "minLon": 9.8185357,
+            "maxLon": 9.8193752
+          },
+          "widthKm": 0.06,
+          "heightKm": 0.04,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/675813034",
+              "name": "Leibniz-Fachhochschule",
+              "operator": null,
+              "score": 12,
+              "evidence": [
+                "wikidata+name",
+                "name:['leibniz']",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS133": {
+      "id": "HS133",
+      "name": "Universität Würzburg",
+      "city": "Würzburg",
+      "discriminatingTokens": [],
+      "elementsSeen": 127,
+      "accepted": 8,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 49.7744974,
+            "maxLat": 49.7887001,
+            "minLon": 9.9644203,
+            "maxLon": 9.9793794
+          },
+          "widthKm": 1.07,
+          "heightKm": 1.58,
+          "areaCount": 5,
+          "areas": [
+            {
+              "osmId": "way/193202547",
+              "name": "Universitätsbibliothek",
+              "operator": "Universität Würzburg",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/4481969",
+              "name": "Campus Hubland Süd",
+              "operator": "Universität Würzburg",
+              "score": 11,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/57723974",
+              "name": "Campus Hubland Nord",
+              "operator": "Universität Würzburg",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/83475684",
+              "name": "C1 - Institut für Organische Chemie",
+              "operator": "Universität Würzburg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/108143442",
+              "name": "P3 (ZEF)",
+              "operator": "Universität Würzburg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 49.8038826,
+            "maxLat": 49.8045762,
+            "minLon": 9.959373,
+            "maxLon": 9.9602994
+          },
+          "widthKm": 0.07,
+          "heightKm": 0.08,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/33524785",
+              "name": "E6 - Institut für Pharmakologie und Toxikologie / Institut für Systemimmunologie",
+              "operator": "Universität Würzburg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        },
+        {
+          "bbox": {
+            "minLat": 49.7899866,
+            "maxLat": 49.7926246,
+            "minLon": 9.9353377,
+            "maxLon": 9.9385845
+          },
+          "widthKm": 0.23,
+          "heightKm": 0.29,
+          "areaCount": 2,
+          "areas": [
+            {
+              "osmId": "way/244599870",
+              "name": "Institut für Philosophie",
+              "operator": "Universität Würzburg",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/131506190",
+              "name": "Alte IHK",
+              "operator": "Universität Würzburg",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS100": {
+      "id": "HS100",
+      "name": "Universität Kiel",
+      "city": "Kiel",
+      "discriminatingTokens": [
+        "albrechts",
+        "christian"
+      ],
+      "elementsSeen": 140,
+      "accepted": 1,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 54.3316043,
+            "maxLat": 54.3320297,
+            "minLon": 10.1404444,
+            "maxLon": 10.141127
+          },
+          "widthKm": 0.04,
+          "heightKm": 0.05,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/455182007",
+              "name": "Quincke-Forschungszentrum",
+              "operator": "Christian-Albrechts-Universität",
+              "score": 9,
+              "evidence": [
+                "operator:['albrechts', 'christian']",
+                "nameSimilarity:0.89",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": true,
+      "reviewReason": "every cluster was rejected as too small"
+    },
+    "HS117": {
+      "id": "HS117",
+      "name": "Universität Gießen",
+      "city": "Gießen",
+      "discriminatingTokens": [
+        "justus",
+        "liebig"
+      ],
+      "elementsSeen": 262,
+      "accepted": 186,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 50.5614467,
+            "maxLat": 50.5882629,
+            "minLon": 8.6568202,
+            "maxLon": 8.7045675
+          },
+          "widthKm": 3.37,
+          "heightKm": 2.98,
+          "areaCount": 170,
+          "areas": [
+            {
+              "osmId": "way/1460769703",
+              "name": "Büro- und Seminargebäude der Justus-Liebig-Universität",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "name:['justus', 'liebig']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/29100392",
+              "name": "Haus F",
+              "operator": "Justus-Liebig-Universität Gießen (Philosophikum II)",
+              "score": 6,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/29103126",
+              "name": "Haus J - Café am Kunstweg",
+              "operator": "Justus-Liebig-Universität Gießen (Philosophikum II)",
+              "score": 6,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/29103282",
+              "name": null,
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 9,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/29103285",
+              "name": "Haus N - Werkstattgebäude",
+              "operator": "Justus-Liebig-Universität Gießen (Philosophikum II)",
+              "score": 6,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/29103291",
+              "name": "Haus L - Gewächshaus",
+              "operator": "Justus-Liebig-Universität Gießen (Philosophikum II)",
+              "score": 6,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/29103319",
+              "name": "Haus D",
+              "operator": "Justus-Liebig-Universität Gießen  (Philosophikum II)",
+              "score": 6,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/29160564",
+              "name": "Institutsgebäude",
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 9,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 50.5979924,
+            "maxLat": 50.5989654,
+            "minLon": 8.6663267,
+            "maxLon": 8.6682132
+          },
+          "widthKm": 0.13,
+          "heightKm": 0.11,
+          "areaCount": 5,
+          "areas": [
+            {
+              "osmId": "way/385245413",
+              "name": "Gewächshaus",
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 9,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/171832484",
+              "name": "Landwirtschaftliche Lehr- und Forschungseinrichtung \"Launsbacher Weg\"",
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 10,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/198493377",
+              "name": "Feldlabor",
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 9,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/198493385",
+              "name": "Gewächshaus",
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 9,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/385245311",
+              "name": "Vegetationshalle und Drahthaus",
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 9,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 50.5987543,
+            "maxLat": 50.6019139,
+            "minLon": 8.6441954,
+            "maxLon": 8.6543498
+          },
+          "widthKm": 0.72,
+          "heightKm": 0.35,
+          "areaCount": 9,
+          "areas": [
+            {
+              "osmId": "way/393510781",
+              "name": "Schweinestall",
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 9,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/165020449",
+              "name": "Verwaltungsgebäude FB09 -Lehr- und Forschungseinrichtung",
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 9,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/165020477",
+              "name": "Labor- und Hörsaalgebäude",
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 9,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/200790051",
+              "name": "Wirtschaftsgebäude -FB 09 - Landwirtschaftliche Lehr- und Forschungseinrichtung (LFE)",
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 9,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/200790058",
+              "name": "Maschinengarage",
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 9,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/200790059",
+              "name": "Maschinen- und Gerätescheune",
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 9,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/200790070",
+              "name": "Werkstatt und Trocknungshalle",
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 9,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/200790077",
+              "name": "Gerätehalle",
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 9,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 50.5567776,
+            "maxLat": 50.5570113,
+            "minLon": 8.7157895,
+            "maxLon": 8.7161457
+          },
+          "widthKm": 0.03,
+          "heightKm": 0.03,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/453518277",
+              "name": "Institutsgebäude",
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 9,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        },
+        {
+          "bbox": {
+            "minLat": 50.5735172,
+            "maxLat": 50.5737933,
+            "minLon": 8.7281335,
+            "maxLon": 8.7283613
+          },
+          "widthKm": 0.02,
+          "heightKm": 0.03,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/97477803",
+              "name": "Biotechnologische GmbH",
+              "operator": "Justus-Liebig-Universität Gießen",
+              "score": 9,
+              "evidence": [
+                "operator:['justus', 'liebig']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS153": {
+      "id": "HS153",
+      "name": "Technische Universität Darmstadt",
+      "city": "Darmstadt",
+      "discriminatingTokens": [],
+      "elementsSeen": 159,
+      "accepted": 3,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 49.8598486,
+            "maxLat": 49.8620033,
+            "minLon": 8.6811711,
+            "maxLon": 8.6849135
+          },
+          "widthKm": 0.27,
+          "heightKm": 0.24,
+          "areaCount": 2,
+          "areas": [
+            {
+              "osmId": "way/560547893",
+              "name": "Gerhard Pahl-Zentrum",
+              "operator": "Technische Universität Darmstadt",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/24481445",
+              "name": "Materialwissenschaft",
+              "operator": "Technische Universität Darmstadt",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 49.8749197,
+            "maxLat": 49.8754188,
+            "minLon": 8.6571465,
+            "maxLon": 8.6577662
+          },
+          "widthKm": 0.04,
+          "heightKm": 0.06,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/25790362",
+              "name": "Karl Plagge-Haus​/806qm",
+              "operator": "Technische Universität Darmstadt",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS124": {
+      "id": "HS124",
+      "name": "Universität Freiburg im Breisgau",
+      "city": "Freiburg im Breisgau",
+      "discriminatingTokens": [
+        "albert",
+        "ludwigs"
+      ],
+      "elementsSeen": 186,
+      "accepted": 50,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 48.0117568,
+            "maxLat": 48.018693,
+            "minLon": 7.827164,
+            "maxLon": 7.836597
+          },
+          "widthKm": 0.7,
+          "heightKm": 0.77,
+          "areaCount": 12,
+          "areas": [
+            {
+              "osmId": "way/385438376",
+              "name": "Freiburg Center for Interactive Materials and Bioinspired Technologies (FIT)",
+              "operator": "Albert-Ludwigs-Universität Freiburg",
+              "score": 9,
+              "evidence": [
+                "operator:['albert', 'ludwigs']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/4498466",
+              "name": "Technische Fakultät",
+              "operator": "Albert-Ludwigs-Universität Freiburg",
+              "score": 8,
+              "evidence": [
+                "operator:['albert', 'ludwigs']",
+                "nameSimilarity:1.00",
+                "landuse=education(weak)"
+              ]
+            },
+            {
+              "osmId": "way/24049630",
+              "name": "Gebäude 52",
+              "operator": "Albert-Ludwigs-Universität Freiburg",
+              "score": 9,
+              "evidence": [
+                "operator:['albert', 'ludwigs']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/33903391",
+              "name": "Gebäude 101",
+              "operator": "Albert-Ludwigs-Universität Freiburg",
+              "score": 9,
+              "evidence": [
+                "operator:['albert', 'ludwigs']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/33903463",
+              "name": "Gebäude 102 - IMTEK",
+              "operator": "Albert-Ludwigs-Universität Freiburg",
+              "score": 9,
+              "evidence": [
+                "operator:['albert', 'ludwigs']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/33903506",
+              "name": "Gebäude 103 - IMTEK",
+              "operator": "Albert-Ludwigs-Universität Freiburg",
+              "score": 9,
+              "evidence": [
+                "operator:['albert', 'ludwigs']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/33903541",
+              "name": "Gebäude 104 - IMTEK",
+              "operator": "Albert-Ludwigs-Universität Freiburg",
+              "score": 9,
+              "evidence": [
+                "operator:['albert', 'ludwigs']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/33903607",
+              "name": "Gebäude 79",
+              "operator": "Albert-Ludwigs-Universität Freiburg",
+              "score": 9,
+              "evidence": [
+                "operator:['albert', 'ludwigs']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 47.9923709,
+            "maxLat": 48.0110725,
+            "minLon": 7.8326291,
+            "maxLon": 7.862205
+          },
+          "widthKm": 2.2,
+          "heightKm": 2.08,
+          "areaCount": 38,
+          "areas": [
+            {
+              "osmId": "way/1464238773",
+              "name": "Fakultät für Biologie",
+              "operator": "Albert-Ludwigs-Universität Freiburg",
+              "score": 10,
+              "evidence": [
+                "operator:['albert', 'ludwigs']",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/72560450",
+              "name": "Werkstätten",
+              "operator": "Albert-Ludwigs-Universität Freiburg",
+              "score": 9,
+              "evidence": [
+                "operator:['albert', 'ludwigs']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/91332395",
+              "name": "Rechenzentrum",
+              "operator": "Albert-Ludwigs-Universität Freiburg",
+              "score": 9,
+              "evidence": [
+                "operator:['albert', 'ludwigs']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/91333740",
+              "name": "Hörsaal Rundbau",
+              "operator": "Albert-Ludwigs-Universität Freiburg",
+              "score": 9,
+              "evidence": [
+                "operator:['albert', 'ludwigs']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/91381787",
+              "name": "Geologie & Mineralogie",
+              "operator": "Albert-Ludwigs-Universität Freiburg",
+              "score": 9,
+              "evidence": [
+                "operator:['albert', 'ludwigs']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/91381788",
+              "name": "Geologie & Mineralogie",
+              "operator": "Albert-Ludwigs-Universität Freiburg",
+              "score": 9,
+              "evidence": [
+                "operator:['albert', 'ludwigs']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/91406323",
+              "name": "Hörsaal Anatomie",
+              "operator": "Albert-Ludwigs-Universität Freiburg",
+              "score": 9,
+              "evidence": [
+                "operator:['albert', 'ludwigs']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/91407212",
+              "name": "Zentrum für Neurowissenschaften",
+              "operator": "Albert-Ludwigs-Universität Freiburg",
+              "score": 9,
+              "evidence": [
+                "operator:['albert', 'ludwigs']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS158": {
+      "id": "HS158",
+      "name": "Karlsruher Institut für Technologie, Karlsruhe",
+      "city": "Karlsruhe",
+      "discriminatingTokens": [
+        "institut",
+        "karlsruher",
+        "technologie"
+      ],
+      "elementsSeen": 236,
+      "accepted": 37,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 49.0062989,
+            "maxLat": 49.0151987,
+            "minLon": 8.4042397,
+            "maxLon": 8.4217831
+          },
+          "widthKm": 1.28,
+          "heightKm": 0.99,
+          "areaCount": 29,
+          "areas": [
+            {
+              "osmId": "way/1134008604",
+              "name": "Altes Maschinenbaugebäude",
+              "operator": "Karlsruher Institut für Technologie",
+              "score": 9,
+              "evidence": [
+                "operator:['institut', 'karlsruher', 'technologie']",
+                "nameSimilarity:0.86",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/37787397",
+              "name": null,
+              "operator": "Karlsruher Institut für Technologie",
+              "score": 9,
+              "evidence": [
+                "operator:['institut', 'karlsruher', 'technologie']",
+                "nameSimilarity:0.86",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/37787400",
+              "name": "Labor- und Versuchsgebäude IFL",
+              "operator": "Karlsruher Institut für Technologie",
+              "score": 15,
+              "evidence": [
+                "wikidata+name",
+                "operator:['institut', 'karlsruher', 'technologie']",
+                "nameSimilarity:0.86",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/37787402",
+              "name": "Hörsaal am Fasanengarten",
+              "operator": "Karlsruher Institut für Technologie",
+              "score": 9,
+              "evidence": [
+                "operator:['institut', 'karlsruher', 'technologie']",
+                "nameSimilarity:0.86",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/37787420",
+              "name": "Institut für Arbeitswissenschaft und Betriebsorganisation",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "name:['institut']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/37801020",
+              "name": "Altes Bauingenieurgebäude",
+              "operator": "Karlsruher Institut für Technologie",
+              "score": 9,
+              "evidence": [
+                "operator:['institut', 'karlsruher', 'technologie']",
+                "nameSimilarity:0.86",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/37801026",
+              "name": "Karl-Möhler-Holzbaulaboratorium",
+              "operator": "Karlsruher Institut für Technologie",
+              "score": 9,
+              "evidence": [
+                "operator:['institut', 'karlsruher', 'technologie']",
+                "nameSimilarity:0.86",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/37801027",
+              "name": null,
+              "operator": "Karlsruher Institut für Technologie",
+              "score": 9,
+              "evidence": [
+                "operator:['institut', 'karlsruher', 'technologie']",
+                "nameSimilarity:0.86",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 49.0216559,
+            "maxLat": 49.0232741,
+            "minLon": 8.4290261,
+            "maxLon": 8.4344661
+          },
+          "widthKm": 0.4,
+          "heightKm": 0.18,
+          "areaCount": 4,
+          "areas": [
+            {
+              "osmId": "way/712150150",
+              "name": "Karlsruher Forschungsfabrik",
+              "operator": "Fraunhofer-Institut für Optronik, Systemtechnik und Bildauswertung;Karlsruher Institut für Technologie;Fraunhofer-Institut für Chemische Technologie",
+              "score": 10,
+              "evidence": [
+                "operator:['institut', 'karlsruher', 'technologie']",
+                "name:['karlsruher']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/96291240",
+              "name": "Bürogebäude 70.04",
+              "operator": "Karlsruher Institut für Technologie",
+              "score": 9,
+              "evidence": [
+                "operator:['institut', 'karlsruher', 'technologie']",
+                "nameSimilarity:0.86",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/96291246",
+              "name": "Kollegiengebäude 70.03",
+              "operator": "Karlsruher Institut für Technologie",
+              "score": 9,
+              "evidence": [
+                "operator:['institut', 'karlsruher', 'technologie']",
+                "nameSimilarity:0.86",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/96291248",
+              "name": null,
+              "operator": "Karlsruher Institut für Technologie",
+              "score": 9,
+              "evidence": [
+                "operator:['institut', 'karlsruher', 'technologie']",
+                "nameSimilarity:0.86",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 49.0203908,
+            "maxLat": 49.0222944,
+            "minLon": 8.3659361,
+            "maxLon": 8.3674992
+          },
+          "widthKm": 0.11,
+          "heightKm": 0.21,
+          "areaCount": 2,
+          "areas": [
+            {
+              "osmId": "way/25058882",
+              "name": "Geophysikalisches Institut",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "name:['institut']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/25058881",
+              "name": "Institut für Industrielle Informationstechnik (IIIT)",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "name:['institut']",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 49.0039324,
+            "maxLat": 49.0042033,
+            "minLon": 8.4275525,
+            "maxLon": 8.428309
+          },
+          "widthKm": 0.06,
+          "heightKm": 0.03,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/54568943",
+              "name": "Institut für MusikTheater",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "name:['institut']",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        },
+        {
+          "bbox": {
+            "minLat": 49.012871,
+            "maxLat": 49.0131699,
+            "minLon": 8.3751296,
+            "maxLon": 8.3755424
+          },
+          "widthKm": 0.03,
+          "heightKm": 0.03,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/160725456",
+              "name": null,
+              "operator": "Karlsruher Institut für Technologie",
+              "score": 9,
+              "evidence": [
+                "operator:['institut', 'karlsruher', 'technologie']",
+                "nameSimilarity:0.86",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS159": {
+      "id": "HS159",
+      "name": "Universität Stuttgart",
+      "city": "Stuttgart",
+      "discriminatingTokens": [],
+      "elementsSeen": 229,
+      "accepted": 1,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 48.7434795,
+            "maxLat": 48.7474881,
+            "minLon": 9.1025836,
+            "maxLon": 9.1085127
+          },
+          "widthKm": 0.43,
+          "heightKm": 0.45,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/1286894940",
+              "name": "Universität Stuttgart",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS134": {
+      "id": "HS134",
+      "name": "Universität Regensburg",
+      "city": "Regensburg",
+      "discriminatingTokens": [],
+      "elementsSeen": 68,
+      "accepted": 17,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 48.9967089,
+            "maxLat": 49.0006052,
+            "minLon": 12.0925514,
+            "maxLon": 12.0977385
+          },
+          "widthKm": 0.38,
+          "heightKm": 0.43,
+          "areaCount": 17,
+          "areas": [
+            {
+              "osmId": "way/1341040886",
+              "name": null,
+              "operator": "Universität Regensburg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/28996029",
+              "name": "Recht und Wirtschaft - Lehrstuhlgebäude",
+              "operator": "Universität Regensburg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/29123124",
+              "name": "Mathematik",
+              "operator": "Universität Regensburg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/29133667",
+              "name": "Rechenzentrum",
+              "operator": "Universität Regensburg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/29144400",
+              "name": "Zentralbibliothek Universität Regensburg",
+              "operator": "Universität Regensburg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/29144401",
+              "name": "Verwaltung",
+              "operator": "Universität Regensburg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/29176790",
+              "name": "Verfügungsgebäude PT5",
+              "operator": "Universität Regensburg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/29291594",
+              "name": "Wirtschaftsinformatik",
+              "operator": "Universität Regensburg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS135": {
+      "id": "HS135",
+      "name": "Universität Augsburg",
+      "city": "Augsburg",
+      "discriminatingTokens": [],
+      "elementsSeen": 61,
+      "accepted": 0,
+      "campuses": [],
+      "needsReview": true,
+      "reviewReason": "nothing matched — no area in this city names or operates for this university"
+    },
+    "HS724": {
+      "id": "HS724",
+      "name": "H für angewandte Wissenschaften München",
+      "city": "München",
+      "discriminatingTokens": [],
+      "elementsSeen": 240,
+      "accepted": 9,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 48.1408834,
+            "maxLat": 48.1422863,
+            "minLon": 11.4497551,
+            "maxLon": 11.4519836
+          },
+          "widthKm": 0.17,
+          "heightKm": 0.16,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/28018009",
+              "name": "Hochschule für angewandte Wissenschaften München",
+              "operator": null,
+              "score": 11,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:0.90",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 48.1424474,
+            "maxLat": 48.1437205,
+            "minLon": 11.5680515,
+            "maxLon": 11.5693889
+          },
+          "widthKm": 0.1,
+          "heightKm": 0.14,
+          "areaCount": 7,
+          "areas": [
+            {
+              "osmId": "way/346311422",
+              "name": null,
+              "operator": "Hochschule für angewandte Wissenschaften München",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:0.90",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/12254119",
+              "name": null,
+              "operator": "Hochschule für angewandte Wissenschaften München",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:0.90",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/43040837",
+              "name": null,
+              "operator": "Hochschule für angewandte Wissenschaften München",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:0.90",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/43040854",
+              "name": null,
+              "operator": "Hochschule für angewandte Wissenschaften München",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:0.90",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/203185653",
+              "name": "Hochschule für angewandte Wissenschaften München, Campus Karlstraße",
+              "operator": "Hochschule für angewandte Wissenschaften München",
+              "score": 11,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:0.90",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/333652751",
+              "name": null,
+              "operator": "Hochschule für angewandte Wissenschaften München",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:0.90",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/346311421",
+              "name": null,
+              "operator": "Hochschule für angewandte Wissenschaften München",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:0.90",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 48.1593153,
+            "maxLat": 48.1596879,
+            "minLon": 11.5545752,
+            "maxLon": 11.5550783
+          },
+          "widthKm": 0.04,
+          "heightKm": 0.04,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/37446454",
+              "name": "Hochschule für angewandte Wissenschaften München",
+              "operator": null,
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:0.90",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS725": {
+      "id": "HS725",
+      "name": "TH Nürnberg Georg Simon Ohm",
+      "city": "Nürnberg",
+      "discriminatingTokens": [
+        "georg",
+        "ohm",
+        "simon"
+      ],
+      "elementsSeen": 27,
+      "accepted": 6,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 49.4479969,
+            "maxLat": 49.458471,
+            "minLon": 11.0922148,
+            "maxLon": 11.102797
+          },
+          "widthKm": 0.76,
+          "heightKm": 1.16,
+          "areaCount": 5,
+          "areas": [
+            {
+              "osmId": "way/239208056",
+              "name": "Technische Hochschule Nürnberg Georg Simon Ohm",
+              "operator": null,
+              "score": 6,
+              "evidence": [
+                "name:['georg', 'ohm', 'simon']",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/129888411",
+              "name": "Technische Hochschule Nürnberg Georg Simon Ohm",
+              "operator": null,
+              "score": 12,
+              "evidence": [
+                "wikidata+name",
+                "name:['georg', 'ohm', 'simon']",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/129888412",
+              "name": "Technische Hochschule Nürnberg Georg Simon Ohm",
+              "operator": null,
+              "score": 6,
+              "evidence": [
+                "name:['georg', 'ohm', 'simon']",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/136795322",
+              "name": "Technische Hochschule Nürnberg Georg Simon Ohm Standort BL",
+              "operator": null,
+              "score": 6,
+              "evidence": [
+                "name:['georg', 'ohm', 'simon']",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/215387868",
+              "name": "Technische Hochschule Nürnberg Georg Simon Ohm",
+              "operator": null,
+              "score": 6,
+              "evidence": [
+                "name:['georg', 'ohm', 'simon']",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 49.4198966,
+            "maxLat": 49.4201864,
+            "minLon": 11.1024341,
+            "maxLon": 11.1027692
+          },
+          "widthKm": 0.02,
+          "heightKm": 0.03,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/1389914818",
+              "name": "Ohm",
+              "operator": "Technische Hochschule Nürnberg Georg Simon Ohm",
+              "score": 10,
+              "evidence": [
+                "operator:['georg', 'ohm', 'simon']",
+                "name:['ohm']",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS051": {
+      "id": "HS051",
+      "name": "U Bayreuth",
+      "city": "Bayreuth",
+      "discriminatingTokens": [],
+      "elementsSeen": 64,
+      "accepted": 0,
+      "campuses": [],
+      "needsReview": true,
+      "reviewReason": "nothing matched — no area in this city names or operates for this university"
+    },
+    "HS181": {
+      "id": "HS181",
+      "name": "Universität Mannheim",
+      "city": "Mannheim",
+      "discriminatingTokens": [],
+      "elementsSeen": 79,
+      "accepted": 5,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 49.4808124,
+            "maxLat": 49.4882045,
+            "minLon": 8.4561379,
+            "maxLon": 8.4701557
+          },
+          "widthKm": 1.01,
+          "heightKm": 0.82,
+          "areaCount": 5,
+          "areas": [
+            {
+              "osmId": "way/1083109170",
+              "name": "Universität Mannheim A5",
+              "operator": "Universität Mannheim",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/142292887",
+              "name": "Gästehaus der Universität (IBZ) M2",
+              "operator": "Universität Mannheim",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/175506913",
+              "name": "Gästehaus der Universität (IBZ) L2",
+              "operator": "Universität Mannheim",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/240974013",
+              "name": "Universität Mannheim B6",
+              "operator": "Universität Mannheim",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/335980511",
+              "name": "Universitäts-IT",
+              "operator": "Universität Mannheim",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS054": {
+      "id": "HS054",
+      "name": "Universität Passau",
+      "city": "Passau",
+      "discriminatingTokens": [],
+      "elementsSeen": 23,
+      "accepted": 1,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 48.5641287,
+            "maxLat": 48.570939,
+            "minLon": 13.4466577,
+            "maxLon": 13.4583806
+          },
+          "widthKm": 0.86,
+          "heightKm": 0.76,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/152747900",
+              "name": "Universität Passau",
+              "operator": null,
+              "score": 11,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS050": {
+      "id": "HS050",
+      "name": "Universität Bamberg",
+      "city": "Bamberg",
+      "discriminatingTokens": [],
+      "elementsSeen": 47,
+      "accepted": 7,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 49.8924577,
+            "maxLat": 49.8946376,
+            "minLon": 10.8859143,
+            "maxLon": 10.8883339
+          },
+          "widthKm": 0.17,
+          "heightKm": 0.24,
+          "areaCount": 7,
+          "areas": [
+            {
+              "osmId": "way/37894022",
+              "name": "U2",
+              "operator": "Universität Bamberg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/37736994",
+              "name": "KR12",
+              "operator": "Universität Bamberg",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/37752030",
+              "name": "K16",
+              "operator": "Universität Bamberg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/37864821",
+              "name": "KR1",
+              "operator": "Universität Bamberg",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/37865275",
+              "name": "FI5",
+              "operator": "Universität Bamberg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/37894015",
+              "name": "U11",
+              "operator": "Universität Bamberg",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/37894016",
+              "name": "U9",
+              "operator": "Universität Bamberg",
+              "score": 10,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS126": {
+      "id": "HS126",
+      "name": "Universität Konstanz",
+      "city": "Konstanz",
+      "discriminatingTokens": [],
+      "elementsSeen": 56,
+      "accepted": 1,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 47.6881104,
+            "maxLat": 47.6918464,
+            "minLon": 9.1854907,
+            "maxLon": 9.1913398
+          },
+          "widthKm": 0.44,
+          "heightKm": 0.42,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/26878618",
+              "name": "Universität Konstanz",
+              "operator": null,
+              "score": 11,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS182": {
+      "id": "HS182",
+      "name": "Universität Ulm",
+      "city": "Ulm",
+      "discriminatingTokens": [],
+      "elementsSeen": 61,
+      "accepted": 11,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 48.4172614,
+            "maxLat": 48.4253638,
+            "minLon": 9.9474648,
+            "maxLon": 9.9624035
+          },
+          "widthKm": 1.1,
+          "heightKm": 0.9,
+          "areaCount": 11,
+          "areas": [
+            {
+              "osmId": "way/1082095744",
+              "name": "Mez-Starck Haus",
+              "operator": "Universität Ulm",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/329782187",
+              "name": "M24",
+              "operator": "Universität Ulm",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/329782188",
+              "name": "M25",
+              "operator": "Universität Ulm",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/329782194",
+              "name": "N26",
+              "operator": "Universität Ulm",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/329782195",
+              "name": "O25",
+              "operator": "Universität Ulm",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/329782196",
+              "name": "O26",
+              "operator": "Universität Ulm",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/460602804",
+              "name": "M26",
+              "operator": "Universität Ulm",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/700286086",
+              "name": "Mikroskopgebäude",
+              "operator": "Univeristät Ulm",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:0.93",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS735": {
+      "id": "HS735",
+      "name": "TH Würzburg-Schweinfurt",
+      "city": "Würzburg",
+      "discriminatingTokens": [
+        "schweinfurt"
+      ],
+      "elementsSeen": 127,
+      "accepted": 2,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 49.777064,
+            "maxLat": 49.7779454,
+            "minLon": 9.9619234,
+            "maxLon": 9.9644227
+          },
+          "widthKm": 0.18,
+          "heightKm": 0.1,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/1104480887",
+              "name": "Technische Hochschule Würzburg-Schweinfurt",
+              "operator": "THWS",
+              "score": 12,
+              "evidence": [
+                "wikidata+name",
+                "name:['schweinfurt']",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 49.7959576,
+            "maxLat": 49.7963352,
+            "minLon": 9.9130639,
+            "maxLon": 9.9132749
+          },
+          "widthKm": 0.02,
+          "heightKm": 0.04,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/87310683",
+              "name": "Hochschule für angewandte Wissenschaften Würzburg-Schweinfurt",
+              "operator": "FHWS",
+              "score": 6,
+              "evidence": [
+                "name:['schweinfurt']",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS752": {
+      "id": "HS752",
+      "name": "TH Deggendorf",
+      "city": "Deggendorf",
+      "discriminatingTokens": [],
+      "elementsSeen": 15,
+      "accepted": 0,
+      "campuses": [],
+      "needsReview": true,
+      "reviewReason": "nothing matched — no area in this city names or operates for this university"
+    },
+    "HS180": {
+      "id": "HS180",
+      "name": "Universität Hohenheim",
+      "city": "Stuttgart",
+      "discriminatingTokens": [
+        "hohenheim"
+      ],
+      "elementsSeen": 229,
+      "accepted": 19,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 48.708554,
+            "maxLat": 48.7181163,
+            "minLon": 9.203889,
+            "maxLon": 9.2181351
+          },
+          "widthKm": 1.05,
+          "heightKm": 1.06,
+          "areaCount": 19,
+          "areas": [
+            {
+              "osmId": "way/505052760",
+              "name": null,
+              "operator": "Studierendenwerk Tübingen-Hohenheim",
+              "score": 7,
+              "evidence": [
+                "operator:['hohenheim']",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/31506542",
+              "name": "EURO-Forum",
+              "operator": "Universität Hohenheim",
+              "score": 9,
+              "evidence": [
+                "operator:['hohenheim']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/47248107",
+              "name": "Institut für Tierproduktion in den Tropen und Subtropen",
+              "operator": "Universität Hohenheim",
+              "score": 9,
+              "evidence": [
+                "operator:['hohenheim']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/49208990",
+              "name": "Studierendenwerk Tübingen-Hohenheim",
+              "operator": "Universität Hohenheim",
+              "score": 10,
+              "evidence": [
+                "operator:['hohenheim']",
+                "name:['hohenheim']",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/49208997",
+              "name": null,
+              "operator": "Universität Hohenheim",
+              "score": 9,
+              "evidence": [
+                "operator:['hohenheim']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/49208998",
+              "name": null,
+              "operator": "Universität Hohenheim",
+              "score": 9,
+              "evidence": [
+                "operator:['hohenheim']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/49209001",
+              "name": null,
+              "operator": "Universität Hohenheim",
+              "score": 9,
+              "evidence": [
+                "operator:['hohenheim']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/49229788",
+              "name": "Tropenzentrum",
+              "operator": "Universität Hohenheim",
+              "score": 9,
+              "evidence": [
+                "operator:['hohenheim']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS754": {
+      "id": "HS754",
+      "name": "Technische H Ingolstadt",
+      "city": "Ingolstadt",
+      "discriminatingTokens": [],
+      "elementsSeen": 18,
+      "accepted": 0,
+      "campuses": [],
+      "needsReview": true,
+      "reviewReason": "nothing matched — no area in this city names or operates for this university"
+    },
+    "HS676": {
+      "id": "HS676",
+      "name": "Hochschule Technik und Wirtschaft Karlsruhe",
+      "city": "Karlsruhe",
+      "discriminatingTokens": [
+        "technik",
+        "wirtschaft"
+      ],
+      "elementsSeen": 236,
+      "accepted": 0,
+      "campuses": [],
+      "needsReview": true,
+      "reviewReason": "nothing matched — no area in this city names or operates for this university"
+    },
+    "HS675": {
+      "id": "HS675",
+      "name": "H f.Techn.u.Wirtsch. Heilbronn (FH)",
+      "city": "Heilbronn",
+      "discriminatingTokens": [
+        "techn",
+        "wirtsch"
+      ],
+      "elementsSeen": 32,
+      "accepted": 0,
+      "campuses": [],
+      "needsReview": true,
+      "reviewReason": "nothing matched — no area in this city names or operates for this university"
+    },
+    "HS673": {
+      "id": "HS673",
+      "name": "Hochschule Esslingen",
+      "city": "Esslingen am Neckar",
+      "discriminatingTokens": [],
+      "elementsSeen": 18,
+      "accepted": 12,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 48.7368707,
+            "maxLat": 48.7391569,
+            "minLon": 9.3093726,
+            "maxLon": 9.31379
+          },
+          "widthKm": 0.32,
+          "heightKm": 0.25,
+          "areaCount": 11,
+          "areas": [
+            {
+              "osmId": "way/246389207",
+              "name": "Hochschule Esslingen",
+              "operator": null,
+              "score": 11,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            },
+            {
+              "osmId": "way/35543349",
+              "name": "Gebäude 10",
+              "operator": "Hochschule Esslingen",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/35543352",
+              "name": "Gebäude 1",
+              "operator": "Hochschule Esslingen",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/40817398",
+              "name": "Gebäude 13",
+              "operator": "Hochschule Esslingen",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/40817700",
+              "name": "Gebäude 14",
+              "operator": "Hochschule Esslingen",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/42463280",
+              "name": "Gebäude 12",
+              "operator": "Hochschule Esslingen",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/47798836",
+              "name": "Gebäude 5",
+              "operator": "Hochschule Esslingen",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/89891448",
+              "name": "Gebäude 9",
+              "operator": "Hochschule Esslingen",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 48.7447506,
+            "maxLat": 48.7460075,
+            "minLon": 9.3210644,
+            "maxLon": 9.322856
+          },
+          "widthKm": 0.13,
+          "heightKm": 0.14,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/185494464",
+              "name": "Gebäude 1",
+              "operator": "Hochschule Esslingen",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS371": {
+      "id": "HS371",
+      "name": "Pädagogische Hochschule Ludwigsburg",
+      "city": "Ludwigsburg",
+      "discriminatingTokens": [
+        "padagogische"
+      ],
+      "elementsSeen": 23,
+      "accepted": 2,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 48.9092627,
+            "maxLat": 48.9097294,
+            "minLon": 9.1823378,
+            "maxLon": 9.1843346
+          },
+          "widthKm": 0.15,
+          "heightKm": 0.05,
+          "areaCount": 2,
+          "areas": [
+            {
+              "osmId": "way/1072403306",
+              "name": "Gebäude 1a",
+              "operator": "Pädagogische Hochschule Ludwigsburg",
+              "score": 6,
+              "evidence": [
+                "operator-generic:['padagogische']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/56077049",
+              "name": "Gebäude 1",
+              "operator": "Pädagogische Hochschule Ludwigsburg",
+              "score": 6,
+              "evidence": [
+                "operator-generic:['padagogische']",
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": true,
+      "reviewReason": "every cluster was rejected as too small"
+    },
+    "HS114": {
+      "id": "HS114",
+      "name": "Universität Bielefeld",
+      "city": "Bielefeld",
+      "discriminatingTokens": [],
+      "elementsSeen": 35,
+      "accepted": 5,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 52.0346093,
+            "maxLat": 52.0369388,
+            "minLon": 8.4892171,
+            "maxLon": 8.4946517
+          },
+          "widthKm": 0.37,
+          "heightKm": 0.26,
+          "areaCount": 5,
+          "areas": [
+            {
+              "osmId": "way/864612650",
+              "name": "Gebäude Y",
+              "operator": "Universität Bielefeld",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/30922320",
+              "name": "Gebäude R8 (Verhaltensforschung)",
+              "operator": "Universität Bielefeld",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/34766649",
+              "name": "Gebäude H",
+              "operator": "Universität Bielefeld",
+              "score": 6,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/342287749",
+              "name": "Gebäude Experimentalphysik",
+              "operator": "Universität Bielefeld",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/637444848",
+              "name": "Gebäude Z",
+              "operator": "Universität Bielefeld",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS014": {
+      "id": "HS014",
+      "name": "Universität Wuppertal",
+      "city": "Wuppertal",
+      "discriminatingTokens": [],
+      "elementsSeen": 146,
+      "accepted": 0,
+      "campuses": [],
+      "needsReview": true,
+      "reviewReason": "nothing matched — no area in this city names or operates for this university"
+    },
+    "HS583": {
+      "id": "HS583",
+      "name": "TH Köln",
+      "city": "Köln",
+      "discriminatingTokens": [],
+      "elementsSeen": 171,
+      "accepted": 1,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 50.9208863,
+            "maxLat": 50.9216107,
+            "minLon": 6.962582,
+            "maxLon": 6.9636661
+          },
+          "widthKm": 0.08,
+          "heightKm": 0.08,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/249181385",
+              "name": "TH Köln",
+              "operator": "Technische Hochschule Köln",
+              "score": 11,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": true,
+      "reviewReason": "every cluster was rejected as too small"
+    },
+    "HS012": {
+      "id": "HS012",
+      "name": "Universität Paderborn",
+      "city": "Paderborn",
+      "discriminatingTokens": [],
+      "elementsSeen": 66,
+      "accepted": 1,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 51.7044652,
+            "maxLat": 51.7105142,
+            "minLon": 8.7660567,
+            "maxLon": 8.7760705
+          },
+          "widthKm": 0.69,
+          "heightKm": 0.67,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/19385318",
+              "name": "Universität Paderborn",
+              "operator": null,
+              "score": 11,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS013": {
+      "id": "HS013",
+      "name": "Universität Siegen",
+      "city": "Siegen",
+      "discriminatingTokens": [],
+      "elementsSeen": 99,
+      "accepted": 5,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 50.8921856,
+            "maxLat": 50.8933669,
+            "minLon": 8.0320702,
+            "maxLon": 8.0326761
+          },
+          "widthKm": 0.04,
+          "heightKm": 0.13,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/149767643",
+              "name": "B",
+              "operator": "Universität Siegen",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        },
+        {
+          "bbox": {
+            "minLat": 50.8740016,
+            "maxLat": 50.8744786,
+            "minLon": 8.0219241,
+            "maxLon": 8.0229197
+          },
+          "widthKm": 0.07,
+          "heightKm": 0.05,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/1018520074",
+              "name": "US-C",
+              "operator": "Universität Siegen",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        },
+        {
+          "bbox": {
+            "minLat": 50.9096673,
+            "maxLat": 50.9129156,
+            "minLon": 8.0251593,
+            "maxLon": 8.0279645
+          },
+          "widthKm": 0.2,
+          "heightKm": 0.36,
+          "areaCount": 2,
+          "areas": [
+            {
+              "osmId": "way/152338445",
+              "name": "P",
+              "operator": "Universität Siegen",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/49430582",
+              "name": "Sporthalle (AR-S)",
+              "operator": "Universität Siegen",
+              "score": 4,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 50.9010663,
+            "maxLat": 50.9013537,
+            "minLon": 8.0239794,
+            "maxLon": 8.0244767
+          },
+          "widthKm": 0.03,
+          "heightKm": 0.03,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/75077242",
+              "name": "Universität Siegen - WS",
+              "operator": null,
+              "score": 6,
+              "evidence": [
+                "nameSimilarity:0.88",
+                "amenity=university",
+                "building=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS589": {
+      "id": "HS589",
+      "name": "Fachhochschule Münster",
+      "city": "Münster",
+      "discriminatingTokens": [],
+      "elementsSeen": 217,
+      "accepted": 2,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 51.9726391,
+            "maxLat": 51.9763583,
+            "minLon": 7.5989869,
+            "maxLon": 7.6042829
+          },
+          "widthKm": 0.36,
+          "heightKm": 0.41,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/83601495",
+              "name": "Kunstakademie Münster",
+              "operator": "Fachhochschule Münster",
+              "score": 11,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        },
+        {
+          "bbox": {
+            "minLat": 51.9730397,
+            "maxLat": 51.9739143,
+            "minLon": 7.6162604,
+            "maxLon": 7.6171257
+          },
+          "widthKm": 0.06,
+          "heightKm": 0.1,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/1461909199",
+              "name": "Fachhochschule Münster – Fachbereich Sozialwesen",
+              "operator": "Fachhochschule Münster",
+              "score": 5,
+              "evidence": [
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS607": {
+      "id": "HS607",
+      "name": "H für Polizei u. öff. Vw. NW",
+      "city": "Duisburg",
+      "discriminatingTokens": [
+        "off",
+        "polizei"
+      ],
+      "elementsSeen": 60,
+      "accepted": 1,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 51.4268229,
+            "maxLat": 51.4276403,
+            "minLon": 6.7731859,
+            "maxLon": 6.7740224
+          },
+          "widthKm": 0.06,
+          "heightKm": 0.09,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/1206613345",
+              "name": "Hochschule für Polizei und öffentliche Verwaltung NRW (Campus Duisburg)",
+              "operator": null,
+              "score": 4,
+              "evidence": [
+                "name-generic:['polizei']",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": true
+        }
+      ],
+      "needsReview": true,
+      "reviewReason": "every cluster was rejected as too small"
+    },
+    "HS571": {
+      "id": "HS571",
+      "name": "Fachhochschule Aachen",
+      "city": "Aachen",
+      "discriminatingTokens": [],
+      "elementsSeen": 229,
+      "accepted": 0,
+      "campuses": [],
+      "needsReview": true,
+      "reviewReason": "nothing matched — no area in this city names or operates for this university"
+    },
+    "HS577": {
+      "id": "HS577",
+      "name": "Fachhochschule Dortmund",
+      "city": "Dortmund",
+      "discriminatingTokens": [],
+      "elementsSeen": 95,
+      "accepted": 1,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 51.5054973,
+            "maxLat": 51.5066878,
+            "minLon": 7.4555989,
+            "maxLon": 7.4582907
+          },
+          "widthKm": 0.19,
+          "heightKm": 0.13,
+          "areaCount": 1,
+          "areas": [
+            {
+              "osmId": "way/32488172",
+              "name": "Fachhochschule Dortmund",
+              "operator": null,
+              "score": 11,
+              "evidence": [
+                "wikidata+name",
+                "nameSimilarity:1.00",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    },
+    "HS584": {
+      "id": "HS584",
+      "name": "H Niederrhein",
+      "city": "Mönchengladbach",
+      "discriminatingTokens": [
+        "niederrhein"
+      ],
+      "elementsSeen": 40,
+      "accepted": 2,
+      "campuses": [
+        {
+          "bbox": {
+            "minLat": 51.1775133,
+            "maxLat": 51.1823347,
+            "minLon": 6.4393351,
+            "maxLon": 6.450063
+          },
+          "widthKm": 0.75,
+          "heightKm": 0.54,
+          "areaCount": 2,
+          "areas": [
+            {
+              "osmId": "way/293216989",
+              "name": "FB08 Cyber Security Managment",
+              "operator": "HS Niederrhein",
+              "score": 9,
+              "evidence": [
+                "operator:['niederrhein']",
+                "nameSimilarity:0.96",
+                "building=university"
+              ]
+            },
+            {
+              "osmId": "way/23909135",
+              "name": "Hochschule Niederrhein (Campus Mönchengladbach)",
+              "operator": null,
+              "score": 6,
+              "evidence": [
+                "name:['niederrhein']",
+                "amenity=university"
+              ]
+            }
+          ],
+          "tooWide": false,
+          "tooSmall": false
+        }
+      ],
+      "needsReview": false,
+      "reviewReason": ""
+    }
+  }
+}

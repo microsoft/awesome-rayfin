@@ -1,0 +1,35 @@
+# Allowlist, not a blocklist.
+#
+# The image needs exactly two things: the FastAPI/CP-SAT service and the generated dataset it
+# answers from. Everything else in this repo is frontend, geodata or tooling — `public/` alone
+# carries ~20 MB of terrain, orthophoto and LoD2 assets, and node_modules is tens of thousands
+# of files. Uploading those as build context made `az acr build` look hung for minutes before
+# the build even started.
+#
+# Excluding everything first means a new top-level folder is silently ignored rather than
+# silently shipped, which is the safer default for a container that talks to a model endpoint.
+*
+
+!server/
+!data/synthetic/
+# ⚠️ BOTH universities, because `SCHEDULER_SITE` picks the dataset AT RUN TIME from a path inside
+# the image (`schedule_store.py`). One image serves either; a container started with
+# `SCHEDULER_SITE=lmu` against an image built without this line fails at import with a missing
+# directory, which reads as a broken deployment rather than a missing file.
+!data/synthetic-lmu/
+# ⚠️ AND TUM, WHICH IS NOT SYNTHETIC AT ALL. `data/tum/` is the real TUMonline timetable reshaped
+# by `build_tum_dataset.py`, and it ships in the same image for the same reason: one image, three
+# universities, `SCHEDULER_SITE` chooses at run time. It is included BEFORE the TUM container app
+# exists, deliberately — the alternative is discovering the omission at the moment you first start
+# that container, which is exactly how the LMU line came to be written.
+!data/tum/
+# ⚠️ AND OTH'S REAL TIMETABLE. `data/oth-real/` is the university's own Untis export read by
+# `read_untis_gpu.py` (PLAN §25). It sits beside the generated `data/synthetic/` rather than
+# replacing it, so a container can serve either and the two can be compared side by side.
+!data/oth-real/
+
+# Re-exclude noise that can appear inside the allowed folders.
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/.venv/
