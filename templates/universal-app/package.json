@@ -21,9 +21,9 @@
     "pack:add": "node scripts/scaffold.mjs"
   },
   "dependencies": {
-    "@microsoft/rayfin-auth-provider-fabric": "^1.33.2",
-    "@microsoft/rayfin-client": "^1.33.2",
-    "@microsoft/rayfin-core": "^1.33.2",
+    "@microsoft/rayfin-auth-provider-fabric": "^1.34.0",
+    "@microsoft/rayfin-client": "^1.34.0",
+    "@microsoft/rayfin-core": "^1.34.0",
     "@tailwindcss/vite": "^4.1.11",
     "graphein": ">=0.16.0",
     "react": "^19.0.0",
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
-    "@microsoft/rayfin-cli": "^1.33.2",
+    "@microsoft/rayfin-cli": "^1.34.0",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react-swc": "^4.2.2",
