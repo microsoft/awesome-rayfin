@@ -59,6 +59,8 @@
     },
     "@opentelemetry/otlp-transformer": {
       "protobufjs": "8.8.0"
-    }
+    },
+    "@opentelemetry/core": "2.11.0",
+    "@opentelemetry/propagator-jaeger": "2.11.0"
   }
 }

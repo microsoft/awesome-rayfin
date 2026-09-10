@@ -21,11 +21,11 @@
   },
   "dependencies": {
     "@azure/msal-browser": "^4.5.0",
+    "@fluentui/react-components": "^9.54.0",
+    "@fluentui/react-icons": "^2.0.245",
     "@microsoft/rayfin-auth-provider-fabric": "^1.34.0",
     "@microsoft/rayfin-client": "^1.34.0",
     "@microsoft/rayfin-core": "^1.34.0",
-    "@fluentui/react-components": "^9.54.0",
-    "@fluentui/react-icons": "^2.0.245",
     "@tailwindcss/vite": "^4.1.11",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -61,6 +61,8 @@
     },
     "@opentelemetry/otlp-transformer": {
       "protobufjs": "8.8.0"
-    }
+    },
+    "@opentelemetry/core": "2.11.0",
+    "@opentelemetry/propagator-jaeger": "2.11.0"
   }
 }

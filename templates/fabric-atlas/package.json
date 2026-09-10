@@ -66,11 +66,37 @@
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.38.0",
     "vite": "^8.0.16",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.11"
   },
   "overrides": {
     "esbuild": "0.28.2",
     "nanoid": "3.3.18",
-    "postcss": "8.5.26"
+    "postcss": "8.5.26",
+    "@opentelemetry/otlp-transformer": {
+      "protobufjs": "8.8.0"
+    },
+    "@grpc/proto-loader": {
+      "protobufjs": "7.6.6"
+    },
+    "@opentelemetry/core": "2.11.0",
+    "@opentelemetry/propagator-jaeger": "2.11.0",
+    "@hono/node-server": "1.19.15",
+    "axios": "1.18.0",
+    "baseline-browser-mapping": "2.11.21",
+    "brace-expansion": "5.0.9",
+    "glob": {
+      "brace-expansion": "2.1.4"
+    },
+    "readdir-glob": {
+      "brace-expansion": "2.1.4"
+    },
+    "browserslist": "4.28.9",
+    "fast-uri": "3.1.6",
+    "form-data": "4.0.6",
+    "hono": "4.13.5",
+    "ip-address": "10.3.1",
+    "undici": "7.29.0",
+    "body-parser": "2.3.0",
+    "qs": "6.16.0"
   }
 }
