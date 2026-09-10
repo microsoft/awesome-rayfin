@@ -1,0 +1,12 @@
+{
+  "templateId": "airport-iq",
+  "icon": "airport-iq",
+  "services": {
+    "auth": true,
+    "data": false,
+    "storage": false,
+    "staticHosting": true
+  },
+  "hasDabSchema": false,
+  "tokens": []
+}

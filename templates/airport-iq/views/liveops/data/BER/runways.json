@@ -1,0 +1,4 @@
+{"source":"OpenStreetMap · aeroway=runway (© OpenStreetMap contributors, ODbL)","projection":"ENU origin lat0=52.3648 lon0=13.5095 (same as ber_buildings.json)","runways":[
+{"ref":"06L/24R","role":"arrivals","w":45,"a":[1129.2,-1396.5],"b":[-1665.1,-318.2],"refA":"24R","refB":"06L"},
+{"ref":"06R/24L","role":"departures","w":60,"a":[929.3,704.1],"b":[-2791.6,2140.9],"refA":"24L","refB":"06R"}
+]}
