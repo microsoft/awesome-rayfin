@@ -3,7 +3,7 @@
   "description": "Gallery tooling — conventional-changelog and commitlint",
   "devDependencies": {
     "@commitlint/cli": "^21.2.2",
-    "@commitlint/config-conventional": "^19.0.0",
+    "@commitlint/config-conventional": "^21.2.2",
     "conventional-changelog-cli": "^5.0.0",
     "conventional-changelog-conventionalcommits": "^10.4.0"
   },
