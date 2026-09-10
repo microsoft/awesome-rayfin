@@ -20,9 +20,9 @@
     "rayfin:up": "rayfin up"
   },
   "dependencies": {
-    "@microsoft/rayfin-auth-provider-fabric": "^1.33.0",
-    "@microsoft/rayfin-client": "^1.33.0",
-    "@microsoft/rayfin-core": "^1.33.0",
+    "@microsoft/rayfin-auth-provider-fabric": "^1.34.0",
+    "@microsoft/rayfin-client": "^1.34.0",
+    "@microsoft/rayfin-core": "^1.34.0",
     "@tailwindcss/vite": "^4.1.11",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
-    "@microsoft/rayfin-cli": "^1.33.0",
+    "@microsoft/rayfin-cli": "^1.34.0",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
