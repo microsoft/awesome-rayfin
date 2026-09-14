@@ -1,0 +1,38 @@
+id: campus-scheduler
+name: campus-scheduler
+version: 0.1.0
+services:
+  auth:
+    enabled: true
+    fabric:
+      enabled: true
+    password:
+      enabled: false
+    allowedRedirectUris:
+      # ⚠️ LOCAL ORIGINS ONLY, ON PURPOSE. `rayfin up` adds the hosting URL of the item it just
+      # created, so naming a deployment here buys nothing and puts one tenant's app address into
+      # every clone of this template.
+      - http://localhost:5173
+      - http://127.0.0.1:4175
+  data:
+    # A Fabric SQL database, provisioned by this flag. It holds ONE table — the plan changes a
+    # planner confirmed (`data/PlanChange.ts`).
+    #
+    # ⚠️ It exists because confirmed work was evaporating. The drafts lived in a module-level dict
+    # inside the solver container (`server/proposals.py::_drafts`), and that container scales to
+    # zero — so a plan someone had checked and saved came back looking untouched, which is the
+    # worst way to lose work: silently, and indistinguishably from never having done it.
+    #
+    # ⚠️ `dialect` is REQUIRED whenever this is on; without it the deploy fails outright with
+    # "Dialect is required when Data module is enabled". Fabric Apps is MSSQL only.
+    enabled: true
+    dialect: mssql
+  staticHosting:
+    enabled: true
+    folder: dist
+    buildCommand: npm run build:fabric
+    indexDocument: index.html
+  storage:
+    enabled: false
+  functions:
+    enabled: false

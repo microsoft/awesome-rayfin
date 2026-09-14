@@ -1,0 +1,8 @@
+expression Selected_Vehicle = "40/104" meta [IsParameterQuery=true, Type="Any", IsParameterQueryRequired=true]
+	lineageTag: de1c6387-87ce-424c-9d2f-4cc174237d0a
+	parameterValuesColumn: Vehicles.vehicle_id
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+

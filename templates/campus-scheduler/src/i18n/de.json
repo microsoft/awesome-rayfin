@@ -1,0 +1,618 @@
+{
+  "setup": {
+    "eyebrow": "Geodaten noch nicht gebaut",
+    "heading": "Das Gelände muss einmal erzeugt werden",
+    "body": "Höhenmodell, Orthophoto, LoD2-Gebäude und Vegetation umfassen mehrere Dutzend Megabyte und werden bewusst nicht eingecheckt. Die Pipeline lädt sie aus den amtlichen Quellen und baut daraus die Renderdaten. Bis dahin zeigt die Szene nur Himmel, Bezugsebene und die aufgelösten Orte.",
+    "note": "Der Aufruf ist wiederholbar: bereits geladene Kacheln werden zwischengespeichert."
+  },
+  "lens": {
+    "heading": "Auswertung",
+    "pending": "ab Phase {{phase}}",
+    "noRooms": "Für diesen Standort liegen keine Innenraumdaten vor. Die Gebäude bleiben deshalb geschlossen — es werden keine Räume erfunden, um die Lücke zu füllen.",
+    "occupancy": {
+      "label": "Räume",
+      "blurb": "Wie gut sind Hörsäle und Labore ausgelastet? Belegung aus dem geplanten Stundenplan — Gebäude lassen sich nach Geschossen aufklappen."
+    },
+    "condition": {
+      "label": "Sanierungsstau & Bauinvestitionen",
+      "blurb": "Zustandsnoten, Sanierungsbedarf und Investitionsszenarien bis 2040."
+    },
+    "flow": {
+      "label": "Campus-Flow",
+      "blurb": "Wege zwischen Veranstaltungen, abgeleitet aus dem realen Stundenplan."
+    },
+    "staffing": {
+      "label": "Lehrende",
+      "blurb": "Wer trägt diesen Plan? Geplante SWS gegen das vertragliche Deputat, pro Person."
+    },
+    "quality": {
+      "label": "Studierende",
+      "blurb": "Wie sieht ihr Tag aus? Hohlstunden, Tageslänge, Standortwechsel und Randzeiten."
+    },
+    "intro": "Dieselbe Woche, drei Blickwinkel — je nachdem, wen die Frage betrifft."
+  },
+  "quality": {
+    "intro": "Ein Plan kann konfliktfrei und trotzdem unangenehm sein. Hier steht, wie der Tag für die Studierenden aussieht — gemessen an den Vorlesungen, die eine Semestergruppe vollständig besucht.",
+    "idleBlocks": "Hohlstunden",
+    "daysWithGap": "Tage mit Lücke",
+    "longestDay": "Längster Tag",
+    "campusChanges": "Standortwechsel",
+    "blocks": "{{n}} Blöcke",
+    "tightGood": "Kein Wechsel ist zu knapp: bei jedem Standortwechsel reicht die Pause für den Weg.",
+    "tightBad": "{{n}} Wechsel sind zu knapp — der Weg dauert länger als die Pause.",
+    "unpopular": "Randzeiten",
+    "unpopularCount": "{{n}} Veranstaltungen liegen in den unbeliebtesten Zeitfenstern (Attraktivität ≤ {{threshold}}).",
+    "worstCohorts": "Am stärksten betroffen",
+    "worstBlurb": "Sortiert nach wartenden Studierenden, nicht nach Anzahl der Semestergruppen. Auswählen öffnet die Woche dieser Semestergruppe.",
+    "cohortDetail": "{{days}} von {{total}} Tagen mit Lücke · {{head}} Studierende",
+    "limitation": "Gemessen wird die Vorlesung der ganzen Semestergruppe, nicht der einzelne Studierende: der Datensatz kennt die Gruppengrößen, aber nicht, wer in welcher Gruppe ist. Geprüft wurde dafür, dass keine Gruppe mit den Vorlesungen ihrer eigenen Semestergruppe kollidiert ({{combos}} Kombinationen, 0 Kollisionen). Die Zuordnung Studierende→Gruppe liefert ein Untis-Export.",
+    "noData": "Für diesen Standort wurde noch keine Planqualität berechnet. tools/data/build_plan_quality.py erzeugt sie aus dem generierten Stundenplan.",
+    "synthetic": "Der Stundenplan ist synthetisch. Die Tagesform ist echt daraus gerechnet, beschreibt aber einen erfundenen Plan."
+  },
+  "staffing": {
+    "intro": "Der Stundenplan verteilt Räume und Zeiten — aber auch Lehre auf Personen. Hier steht, wie viel jede Lehrperson tatsächlich trägt, gemessen an ihrem Vertrag.",
+    "total": "Gesamtes Lehrdeputat",
+    "ofContract": "{{planned}} von {{contract}} SWS",
+    "courses": "{{n}} Lehrveranstaltungen",
+    "spread": "{{over}} über Vertrag, {{idle}} ohne Lehrauftrag — von {{total}} Lehrpersonen.",
+    "overHeading": "Über Vertrag",
+    "overBlurb": "Diese Zuordnungen überschreiten das vereinbarte Deputat. Auswählen öffnet die Woche und hebt die Räume im Modell hervor.",
+    "idleHeading": "Ohne Lehrauftrag",
+    "idleBlurb": "Vertraglich eingeplante Lehrkapazität, die dieser Plan nicht nutzt.",
+    "byFaculty": "Nach Fakultät",
+    "overShort": "{{n}} über Vertrag",
+    "noQuota": "Eine professorale Quote wird bewusst nicht ausgewiesen: in diesem Datensatz ist jede Lehrperson Professorin oder Professor, die Quote wäre also konstruktionsbedingt 100 % und würde nichts messen. Dafür müssten Lehrbeauftragte und Mitarbeitende im Generator modelliert werden.",
+    "noData": "Für diesen Standort wurde noch kein Lehrdeputat berechnet. tools/data/build_staffing.py erzeugt es aus dem generierten Stundenplan.",
+    "synthetic": "Der Stundenplan ist synthetisch. Die Deputatsrechnung darauf ist echt gerechnet, aber sie beschreibt einen erfundenen Plan."
+  },
+  "provenance": {
+    "measured": "gemessen",
+    "derived": "abgeleitet",
+    "synthetic": "synthetisch"
+  },
+  "occupancy": {
+    "pickBuilding": "Ein Gebäude auswählen — im Modell anklicken oder hier aus der Liste. Die Geschosse fahren auseinander und jeder Raum wird nach seiner tatsächlichen Belegung eingefärbt.",
+    "roomsShort": "Räume",
+    "noCalendar": "kein Kalender",
+    "building": "Gebäude {{code}}",
+    "partialLevels": "Nur {{modelled}} von {{levels}} Geschossen sind modelliert. Für die übrigen veröffentlicht die Hochschule keinen Grundriss — und es wird keiner erfunden. Das Gebäude ist also größer als das, was hier zu sehen ist.",
+    "close": "schließen",
+    "when": "Zeitpunkt",
+    "wholeWeek": "ganze Woche",
+    "hour": "Uhrzeit",
+    "play": "Woche abspielen",
+    "pause": "Anhalten",
+    "shuttleNote": "Beim Abspielen fährt ein Shuttle die Straßenverbindung zwischen den Standorten — in der Zeit, die die Strecke tatsächlich braucht: {{km}} km, {{min}} Minuten ohne Verkehr.",
+    "utilisation": "Zeitliche Auslastung",
+    "overRooms": "über {{n}} Räume mit Kalender",
+    "teachingRooms": "Lehrräume",
+    "ofRooms": "von {{n}} Räumen",
+    "area": "Fläche",
+    "areaDerived": "aus den Grundrissen berechnet",
+    "teachingArea": "Lehrfläche",
+    "freeAt": "Frei am {{day}} um {{hour}}",
+    "noneFree": "Zu dieser Zeit ist kein Lehrraum dieses Gebäudes frei.",
+    "usage": "Nutzungsart",
+    "floor": "Geschoss",
+    "seats": "Plätze",
+    "week": "Belegung im Semester",
+    "weeks": "Wochen",
+    "courses": "Was hier stattfindet",
+    "roomNoCalendar": "Für diesen Raum enthält der Plan keine Belegung. Er ist deshalb grau — nicht leer, sondern ohne Eintrag.",
+    "provenance": {
+      "$comment": "⚠️ EINE ZEILE JE STANDORT. Vorher stand hier EIN Satz, der die Geschoßpläne der OTH beschrieb — und er wurde auch über TUM Garching und der LMU angezeigt. In Garching war er in beide Richtungen falsch: die Grundrisse stammen aus OpenStreetMap, nicht aus einer CAD-Zeichnung der OTH, und die Belegungen sind ECHTE Buchungen aus TUMonline, nicht ein generierter Stundenplan. Der Schlüssel ist die AOI-Id.",
+      "garching": "Belegungen: echte Buchungen aus TUMonline über NavigaTUM ({{semester}}). Grundrisse: OpenStreetMap, vermessen. Flächen aus dem Polygon berechnet, Sitzplätze abgeleitet.",
+      "garching-synthetic": "Belegungen: SYNTHETISCH. Eine erfundene Lehrwoche, je Raum erzeugt und bei jedem Neuaufbau der Daten identisch. Das ist nicht der Stundenplan der Hochschule, und es werden keine Lehrveranstaltungen genannt. Grundrisse: OpenStreetMap, vermessen. Flächen aus dem Polygon berechnet, Sitzplätze abgeleitet.",
+      "oth-regensburg": "Belegungen: aus dem generierten Stundenplan ({{semester}}). Grundrisse: Gebäude K, EG und 1. OG aus den veröffentlichten Geschoßplänen der OTH — 67 Räume direkt aus der CAD-Zeichnung; übrige Räume im echten Gebäudeumriss generiert. Flächen aus dem Polygon berechnet, Sitzplätze abgeleitet.",
+      "lmu-muenchen": "Belegungen: aus dem generierten Stundenplan ({{semester}}). Grundrisse: ein Teil aus OpenStreetMap vermessen, alle übrigen im echten Gebäudeumriss generiert — die LMU veröffentlicht keine Geschoßpläne. Flächen aus dem Polygon berechnet, Sitzplätze abgeleitet."
+    },
+    "day": {
+      "mon": "Mo",
+      "tue": "Di",
+      "wed": "Mi",
+      "thu": "Do",
+      "fri": "Fr"
+    }
+  },
+  "rooms": {
+    "heading": "Innenräume",
+    "count": "Räume",
+    "buildings": "Gebäude",
+    "withUsage": "mit Nutzungsart",
+    "withCalendar": "mit Kalender",
+    "neverBooked": "davon nie belegt",
+    "provenance": {
+      "garching": "Grundrisse: OpenStreetMap, vermessen · Nutzungsarten und Belegungen: NavigaTUM / TUMonline, echte Buchungen · Flächen berechnet, Sitzplätze abgeleitet.",
+      "garching-synthetic": "Grundrisse: OpenStreetMap, vermessen · Nutzungsarten aus dem OpenStreetMap-Raumtag gelesen oder aus der Fläche geschätzt · Belegungen SYNTHETISCH, nicht von der Hochschule · Flächen berechnet, Sitzplätze abgeleitet.",
+      "oth-regensburg": "Grundrisse: Gebäude K aus OpenStreetMap vermessen · alle übrigen Räume generiert im echten Gebäudeumriss · Belegung aus dem synthetischen Stundenplan.",
+      "lmu-muenchen": "Grundrisse: ein Teil aus OpenStreetMap vermessen · alle übrigen Räume generiert im echten Gebäudeumriss · Belegung aus dem synthetischen Stundenplan."
+    }
+  },
+  "condition": {
+    "syntheticTitle": "Synthetische Daten",
+    "syntheticBody": "Zustandsnoten, Sanierungskosten und Szenarien sind vollständig erfunden — erzeugt von einem festen Zufallsgenerator (build_condition.py). Die Universität Tübingen veröffentlicht keine solchen Zahlen. Gemessen sind nur Grundfläche und Geschosszahl aus dem LoD2-Modell.",
+    "scenario": "Szenario",
+    "scenarios": {
+      "nichtstun": "Nichtstun",
+      "priorisiert": "Priorisiert",
+      "gleichverteilt": "Gleichverteilt"
+    },
+    "year": "Jahr",
+    "backlog": "Sanierungsstau",
+    "spent": "Investiert kumuliert",
+    "renovated": "Saniert",
+    "sharePoor": "Gebäude in Note 4+",
+    "poorWeighted": "Genutzte Fläche in Note 4+",
+    "gradeMix": "Zustandsverteilung",
+    "grade": "Note",
+    "gradeGood": "Note 1 — gut",
+    "gradeBad": "Note 5 — unbrauchbar",
+    "curve": "Sanierungsstau im Zeitverlauf",
+    "crossover": "Die beiden Maße widersprechen sich: Gleichverteilt saniert mehr Gebäude, Priorisiert schützt mehr genutzte Fläche. Genau darum ist die Wahl eine Entscheidung und keine Rechenaufgabe.",
+    "provenance": "Seed {{seed}} · Jahresbudget {{budget}} · jede Zahl stammt aus tools/geodata/build_condition.py"
+  },
+  "flow": {
+    "provenanceTitle": "Wege echt, Personenzahlen geschätzt",
+    "$provenanceComment": "⚠️ NUR GARCHING BIETET DIESE LINSE AN. Hier stand vorher der Satz für einen erzeugten Stundenplan — der beschreibt OTH und LMU, die diese Linse gar nicht haben. Garchings Wechsel stammen aus echten TUMonline-Buchungen; synthetisch sind nur die Kopfzahlen.",
+    "provenanceBody": "Die Raumwechsel und Zeiten stammen aus echten TUMonline-Buchungen, die Routen aus dem echten OpenStreetMap-Wegenetz. ⚠️ Wie viele Personen unterwegs sind, ist synthetisch: abgeleitete Sitzplätze mal einem angenommenen Füllgrad. Treppen sind mit Faktor 2,2 gewichtet — ein Modell des Aufwands, keine Messung.",
+    "transitions": "Geroutete Wechsel",
+    "courses": "Lehrveranstaltungen",
+    "peak": "Spitze",
+    "when": "Zeitpunkt",
+    "timeline": "Wochenverlauf — klicken oder ziehen, um einen Zeitpunkt zu wählen",
+    "prevPeak": "Vorherige Spitze",
+    "nextPeak": "Nächste Spitze",
+    "peakCount": "{{count}} Spitzen",
+    "wholeWeek": "Ganze Woche",
+    "showSlot": "Spitze zeigen",
+    "walking": "unterwegs",
+    "note": "Jede Rippe ist ein Wegabschnitt, ihre Breite die Last. Die Animation zeigt Richtung und Dichte — sie ist keine Simulation einzelner Personen."
+  },
+  "places": {
+    "heading": "Orte"
+  },
+  "drone": {
+    "idle": "W A S D drücken zum Fliegen",
+    "hint": "W A S D fliegen · Q / E Höhe · R / F um die Bildmitte kreisen · Ziehen oder Pfeiltasten blicken · Mausrad Reisegeschwindigkeit · Umschalt Boost · Esc beenden",
+    "altitude": "Höhe ü. NN",
+    "agl": "über Grund",
+    "speed": "Geschwindigkeit",
+    "heading": "Kurs",
+    "cruise": "Reisestufe",
+    "offMap": "außerhalb"
+  },
+  "attribution": {
+    "more": "Weitere Quellen und Lizenzen: NOTICE.md"
+  },
+  "source": {
+    "label": "Quelle",
+    "pending": "Quelle fehlt"
+  },
+  "facts": {
+    "reconstruction": "Rekonstruktion"
+  },
+  "tour": {
+    "aachen": {
+      "audimax": "RWTH Aachen — mit rund 45.000 Studierenden die größte technische Hochschule Deutschlands.",
+      "templergraben": "Der historische Kern am Templergraben: Hauptgebäude, Bibliothek, Maschinenwesen.",
+      "westcampus": "Zwischen den beiden Hälften liegen 2,5 Kilometer — und ein eigener Bahnhof.",
+      "melaten": "Campus Melaten: Forschungsbauten, die nach dem historischen Kern entstanden sind."
+    },
+    "fau": {
+      "schloss": "Das Schloss ist die Universität: Markgrafenresidenz von 1704, seit 1825 Hauptgebäude der FAU.",
+      "technische": "Technische Fakultät auf dem Südgelände — der Teil der FAU, der wie ein Campus aussieht.",
+      "informatik": "Informatik und Rechenzentrum: Erlangen forscht hier seit den Anfängen der Rechnerarchitektur.",
+      "roethelheim": "Röthelheim-Campus — eine ehemalige Kaserne, die zur Universität wurde."
+    },
+    "garching": {
+      "campus": "Forschungscampus Garching — rund 60 Gebäude auf der Münchner Schotterebene.",
+      "ubahn": "Die U6 endet mitten auf dem Campus. Der Takt bestimmt, wann es voll wird.",
+      "mw": "Maschinenwesen: acht verbundene Flügel, rund 2.700 kartierte Räume.",
+      "mi": "Mathematik und Informatik — hier liegt der Hörsaal mit den meisten Buchungen.",
+      "frm2": "Der Forschungsreaktor prägt die Silhouette des Campus."
+    },
+    "koeln": {
+      "campus": "Universität zu Köln — mit rund 47.000 Studierenden die größte Universität in diesem Modell.",
+      "hoersaal": "Das Hörsaalgebäude am Albertus-Magnus-Platz: der Ort, an dem die Masse ankommt.",
+      "philosophikum": "Philosophikum — ein einzelnes Gebäude für eine der größten Fakultäten Deutschlands.",
+      "biozentrum": "Biozentrum und die Institute entlang der Zülpicher Straße."
+    },
+    "muenster": {
+      "schloss": "Das Hauptgebäude der Universität ist ein Barockschloss — seit 1954 sitzt hier das Rektorat.",
+      "hoersaal": "Hörsaalgebäude am Schlossplatz: der Alltag hinter der barocken Fassade.",
+      "bibliothek": "Universitäts- und Landesbibliothek — Bibliothek der Universität und des Landesteils zugleich.",
+      "naturwissenschaften": "Die Naturwissenschaften liegen zwei Kilometer westlich, am Coesfelder Kreuz."
+    },
+    "lmu": {
+      "hauptgebaeude": "Hauptgebäude am Geschwister-Scholl-Platz — der Maßstab, an dem hier alles gemessen wird.",
+      "philologicum": "Philologicum an der Ludwigstraße: ein großer Teil des Lehrraumbestands liegt an dieser Achse.",
+      "informatik": "Institut für Informatik, Oettingenstraße 67 — das einzige Gebäude mit echten Innenräumen: 707 Räume auf drei Ebenen, die Umrisse aus den veröffentlichten Grundrissen der LMU.",
+      "klinikum": "Klinikum Campus Innenstadt — 2,4 km südlich. Diese Strecke fährt man mit der U-Bahn, nicht in einer Viertelstunde Pause.",
+      "anatomie": "Anatomische Anstalt an der Pettenkoferstraße: Vorklinik hier, Vorlesung im Stammgelände — genau der Konflikt, um den es geht."
+    },
+    "oth": {
+      "campus": "Campus Seybothstraße am Galgenberg — der größere der beiden Standorte.",
+      "hoersaal": "Hörsaalgebäude: die großen Veranstaltungen, um die herum geplant wird.",
+      "informatik": "Fakultät Informatik und Mathematik an der Galgenbergstraße.",
+      "pruefening": "Campus Prüfeninger Straße — 2,5 km entfernt. Diese Strecke ist die Nebenbedingung."
+    },
+    "tuebingen": {
+      "schloss": "Schloss Hohentübingen über der Altstadt — Institute in einer Burg.",
+      "neckarfront": "Neckarfront und Platanenallee: das Bild, das Tübingen ausmacht.",
+      "altstadt": "Die Universität ist keine Anlage, sondern durch die Altstadt gefädelt.",
+      "aula": "Neue Aula — der repräsentative Mittelpunkt der Universität.",
+      "kupferbau": "Kupferbau: die großen Hörsäle der Nachkriegsmoderne."
+    }
+  },
+  "guide": {
+    "title": "Führung",
+    "open": "Guide",
+    "close": "Führung schließen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "done": "Fertig",
+    "$sourceComment": "⚠️ Das Abzeichen auf jeder Karte ist der eigentliche Zweck der Führung. Dieser Datensatz mischt vermessene Geografie, veröffentlichte Grundrisse und einen erfundenen Stundenplan — von außen ist das nicht zu unterscheiden.",
+    "source": {
+      "overview": "Überblick",
+      "survey": "Amtliche Vermessung",
+      "published": "Veröffentlichte Grundrisse",
+      "generated": "Erzeugter Stundenplan",
+      "solver": "CP-SAT-Optimierung",
+      "foundry": "Azure AI Foundry",
+      "fabric": "Fabric SQL"
+    },
+    "step": {
+      "welcome": {
+        "title": "Der Freitag, der alles verschiebt",
+        "body": "Heute läuft die Stundenplanung an der {{university}} weitgehend manuell: Verfügbarkeiten kommen per Excel, der Plan entsteht von Hand — und wenn eine Lehrperson absagt, muss jemand herausfinden, was dadurch alles kippt. Diese Führung geht genau diesen Fall durch: von der Absage bis zum bestätigten neuen Plan. Bei jedem Schritt steht, woher die Daten stammen."
+      },
+      "welcomeTwin": {
+        "title": "Ein Campus, den man anfassen kann",
+        "body": "Das ist ein digitaler Zwilling der {{university}} — Gelände, Gebäude und Bewuchs aus amtlichen Daten. Für diesen Standort liegt kein Stundenplan vor, deshalb zeigt die App hier keine Planung und behauptet auch keine. Diese Führung zeigt, was gemessen ist und was nicht."
+      },
+      "campus": {
+        "title": "Die Karte ist keine Illustration",
+        "body": "Das Gelände stammt aus dem amtlichen Höhenmodell (2 m Raster), die Gebäude aus LoD2-Daten der Landesvermessung, das Luftbild und der Baumbestand aus offenen Katasterdaten. Nichts davon ist nachgezeichnet — deshalb stimmen Abstände, Höhen und Wege mit der Wirklichkeit überein. Sie sehen die Standorte dieser Hochschule in ihrer tatsächlichen Lage zueinander."
+      },
+      "distance": {
+        "title": "Zwei Standorte, eine Viertelstunde Pause",
+        "body": "Unten stehen die Wege, die dieser Plan den Menschen zumutet — gerechnet auf dem echten Fußwegenetz, zwischen den Standorten als Busfahrt. Die Pause zwischen zwei Blöcken ist 15 Minuten lang: reicht sie für den Weg nicht, gilt der Wechsel als Konflikt. Bei den Wegen zwischen zwei Standorten entscheidet das oft eine einzige Minute — deshalb ist die Wegzeit eine harte Regel und keine nette Zusatzinfo."
+      },
+      "scenario": {
+        "title": "Die Absage kommt",
+        "body": "Jetzt der Fall aus dem Alltag: eine Lehrperson kann freitags nicht mehr. Heute beginnt hier die Handarbeit — betroffene Veranstaltungen suchen, Ersatztermine finden, Folgekonflikte prüfen. ▶ Klicken Sie unten die erste Beispielfrage an. Sie ist bereits mit der Lehrperson gefüllt, die in diesem Plan die meiste Lehre trägt."
+      },
+      "cascade": {
+        "title": "Was hängt daran?",
+        "body": "Das ist der Schritt, der heute einen Nachmittag kostet: Welche Veranstaltungen fallen weg, welche Semestergruppen sitzen dann ohne Anschluss da, welche Räume werden frei, wer müsste einspringen? Der Assistent liest das aus dem Plan, statt es zu schätzen, und die betroffenen Termine stehen in der Woche darüber. Aus einer Absage werden so in Sekunden die vollständigen Folgen."
+      },
+      "review": {
+        "title": "Vorschlag, nicht Beschluss",
+        "body": "Es kommen mehrere Varianten, jede mit der Anzahl verschobener Termine. Der Vorschlag wird zuerst nur als Vorschau in die Woche gelegt — Sie sehen die Änderung, bevor sie gilt. Übernehmen oder verwerfen entscheidet der Mensch. Genau das ist die Oberfläche zur Prüfung und Anpassung, die im Zielbild steht: die Maschine rechnet, die Planung verantwortet."
+      },
+      "studentDay": {
+        "title": "Der Tag, den die Studierenden erleben",
+        "body": "Hohlstunden, Tageslänge, Randzeiten — und Standortwechsel, bei denen die Pause für den Weg nicht reicht. Das sind die weichen Anforderungen aus dem Zielbild, die eine reine Konfliktprüfung nie erwischt: sie ist zufrieden, sobald nichts kollidiert. Hier steht, was der Plan den Menschen abverlangt, und danach lässt er sich gezielt verbessern."
+      },
+      "calendar": {
+        "title": "Die Woche, in der geplant wird",
+        "body": "Das Raster zeigt eine Lehrwoche — nach Raum, Semestergruppe oder Lehrperson. Termine lassen sich ziehen, und der Plan prüft sofort, ob der Zug erlaubt ist: Raum frei, Kapazität ausreichend, Lehrperson verfügbar, Semestergruppe nicht doppelt verplant. ⚠️ Semestergruppen, Lehrende und Termine sind erzeugt, nicht erhoben: der Datensatz ist plausibel, aber niemandes echter Stundenplan."
+      },
+      "interior": {
+        "title": "Echte Räume, wo es echte Pläne gibt",
+        "body": "Ein Klick auf ein Gebäude klappt es nach Geschossen auf. Wo die Hochschule Grundrisse veröffentlicht, sind die Raumumrisse aus genau diesen Plänen gelesen. Alle anderen Grundflächen sind erzeugt und im Datensatz als solche gekennzeichnet. Kapazität und Raumart hängen an jedem einzelnen Raum, denn ohne sie ist jede Umplanung geraten."
+      },
+      "lenses": {
+        "title": "Konfliktfrei ist noch nicht gut",
+        "body": "Ein Plan kann jede harte Regel einhalten und trotzdem unzumutbar sein. Deshalb dieselbe Woche aus drei Blickwinkeln: Räume, Lehrende, Studierende — wie gut die Hörsäle ausgelastet sind, wer über seinem Deputat liegt, und wie der Tag einer Semestergruppe tatsächlich aussieht."
+      },
+      "assistant": {
+        "title": "Fragen in Prosa, Antworten mit Beleg",
+        "body": "Der Assistent ist ein Agent in Azure AI Foundry. Er beantwortet nichts aus dem Gedächtnis, sondern ruft Werkzeuge auf dem Datensatz auf und zeigt, welche — die Werkzeugspur unter der Antwort ist der Beleg. Es braucht keine Fachsprache und keine feste Formulierung. ⚠️ Das Sprachmodell setzt niemals selbst einen Termin."
+      },
+      "solver": {
+        "title": "Umplanen heißt: so wenig ändern wie möglich",
+        "body": "Die Reparatur rechnet ein CP-SAT-Optimierer — beweisbar optimal und mit dem ausdrücklichen Ziel, möglichst wenige Termine zu verschieben. Er kennt dieselben Regeln wie die Prüfung: Verfügbarkeiten, Raumkapazität, Doppelbelegung — und die Wegzeit zwischen den Standorten. Ein Vorschlag, der jemanden in der Pause quer durch die Stadt schickt, wird gar nicht erst angeboten."
+      },
+      "saving": {
+        "title": "Bestätigtes überlebt den Container",
+        "body": "Jede bestätigte Änderung wird nach Fabric SQL geschrieben — einmal als Protokollzeile und einmal als aktueller Sitzplatz des Termins. Beim nächsten Öffnen wird der Plan daraus wiederhergestellt, denn der Rechendienst fährt auf null herunter und vergisst alles. Die Liste der Änderungen bleibt nachvollziehbar: wer wann was verschoben hat."
+      },
+      "provenance": {
+        "title": "Was echt ist und was nicht",
+        "body": "Gemessen: Gelände, Gebäude, Bäume, Wege — und die Raumumrisse dort, wo die Hochschule Pläne veröffentlicht. Erfunden: Studierende, Lehrende, Veranstaltungen und der gesamte Stundenplan. Im Echtbetrieb träten an diese Stelle der Untis-Export und die Verfügbarkeiten der Lehrenden. Die App sagt das an jeder Zahl, weil eine sichere falsche Antwort schlimmer ist als eine offene Lücke."
+      },
+      "realData": {
+        "title": "Dieser Stundenplan ist echt",
+        "body": "Die Woche auf dem Bildschirm stammt aus TUMonline: 1 470 veröffentlichte Buchungen in 122 Räumen, dazu 1 699 Stunden, in denen ein Raum belegt ist, ohne dass dort gelehrt wird. Die anderen Hochschulen veröffentlichen keinen Stundenplan, deshalb ist ihrer erzeugt. Erfunden sind hier nur Lehrende und Semestergruppen — TUMonline nennt beide nicht, und die App weigert sich, Fragen nach einer Person zu beantworten."
+      }
+    }
+  },
+  "chat": {
+    "heading": "Planungsassistent",
+    "intro": "Fragen Sie in ganz normalen Sätzen — kein Fachbegriff, keine feste Formulierung nötig. Der Assistent rechnet die Frage durch und zeigt die einzelnen Schritte mit, damit nachvollziehbar bleibt, woher eine Zahl kommt.",
+    "placeholder": "z. B. Prof. Meier kann freitags nicht mehr …",
+    "send": "Fragen",
+    "clear": "Verlauf löschen",
+    "thinking": "denkt nach und rechnet …",
+    "notConfigured": "Der Planungsdienst ist nicht eingerichtet (VITE_SCHEDULER_API). Die 3D-Ansicht funktioniert weiterhin, der Assistent nicht.",
+    "errAgent": "Der Assistent konnte diese Anfrage nicht abschließen.",
+    "errRequest": "Der Assistent ist gerade nicht erreichbar. Bitte erneut versuchen."
+  },
+  "panel": {
+    "hide": "Seitenleiste ausblenden",
+    "show": "Seitenleiste einblenden"
+  },
+  "twin": {
+    "loading": "Campus wird geladen",
+    "loadingStart": "Verbindung wird aufgebaut …",
+    "loadingStep": "Schritt {{step}} von {{of}}",
+    "loading_terrain": "Geländemodell und Umland",
+    "loading_drape": "Luftbild, 20 cm Auflösung",
+    "loading_buildings": "LoD2-Gebäude aus dem Liegenschaftskataster",
+    "loading_vegetation": "Bäume aus dem Oberflächenmodell",
+    "errScene": "Die 3D-Ansicht konnte nicht geladen werden. Bitte Seite neu laden."
+  },
+  "theme": {
+    "toLight": "Zur hellen Ansicht wechseln",
+    "toDark": "Zur dunklen Ansicht wechseln"
+  },
+  "site": {
+    "switch": "Hochschule wechseln",
+    "noPlanner": "Für diesen Standort liegt kein Stundenplan vor. Gebäude, Räume und Analysen sind vorhanden; Kalender und Assistent nicht."
+  },
+  "move": {
+    "hint": "Ziehen, um die Sitzung auf einen anderen Termin zu verschieben",
+    "frozen": "Diese Sitzung ist fixiert und kann nicht verschoben werden",
+    "target": "{{from}} → {{to}}",
+    "room": "Raum",
+    "discard": "Verwerfen",
+    "checking": "Wird geprüft …",
+    "checkFailed": "Prüfung fehlgeschlagen — diese Verschiebung wurde NICHT bewertet.",
+    "legal": "Konfliktfrei — dieser Termin ist möglich.",
+    "notSaved": "Planspiel: Die Verschiebung wird nicht gespeichert. Nur ein durchgerechneter Vorschlag lässt sich — nach Ihrer Bestätigung — in einen Entwurf übernehmen.",
+    "clashRoom": "Raum {{room}} ist zu dieser Zeit belegt",
+    "clashTeacher": "{{teacher}} unterrichtet zu dieser Zeit bereits",
+    "clashCohort": "Die Semestergruppe {{cohort}} hat zu dieser Zeit bereits Lehrveranstaltung",
+    "clashCapacity": "Zu klein: {{seats}} Plätze für {{attendees}} Teilnehmende",
+    "clashRoomType": "Falscher Raumtyp: {{is}} statt {{needs}}",
+    "clashUnavailable": "{{teacher}} ist zu dieser Zeit nicht verfügbar",
+    "clashTransfer": "Standortwechsel in der Pause nicht zu schaffen",
+    "clashOther": "Konflikt: {{type}}"
+  },
+  "backend": {
+    "mismatchTitle": "Die Plandaten gehören zu einem anderen Standort",
+    "mismatch": "Geliefert wird gerade der Stundenplan von {{serving}}. Für {{expected}} würden Kalender und Assistent deshalb fremde Daten zeigen — beides ist hier bewusst abgeschaltet, statt eine falsche Woche unter dem richtigen Namen zu zeigen. Modell, Raumauslastung, Lehrdeputat und Planqualität stammen aus den Standortdaten und bleiben gültig."
+  },
+  "resize": {
+    "calendarSplit": "Wochenplan und Wege gegeneinander größer ziehen",
+    "panel": "Breite der Seitenleiste ändern — ziehen, Pfeiltasten für feine Schritte, Doppelklick für feste Größen",
+    "calendar": "Höhe des Kalenders ändern — ziehen, Pfeiltasten für feine Schritte, Doppelklick für halb und ganz",
+    "split": "Aufteilung zwischen Assistent und Analyse ändern — ziehen oder Pfeiltasten"
+  },
+  "calendar": {
+    "heading": "Wochenplan",
+    "hide": "Kalender schließen",
+    "show": "Kalender öffnen",
+    "loading": "wird geladen …",
+    "errNoTeacher": "Keine Lehrperson mit der Kennung „{{key}}“ in diesem Stundenplan.",
+    "errNoCohort": "Keine Semestergruppe mit der Kennung „{{key}}“ in diesem Stundenplan.",
+    "errNoRoom": "Kein Raum mit der Kennung „{{key}}“ in diesem Stundenplan.",
+    "errAmbiguous": "„{{key}}“ ist nicht eindeutig — bitte genauer angeben.",
+    "errBadScope": "Unbekannte Auswahl — möglich sind Lehrperson, Semestergruppe und Raum.",
+    "errUnknown": "Der Stundenplan-Dienst konnte diese Anfrage nicht beantworten.",
+    "errRequest": "Der Stundenplan-Dienst ist gerade nicht erreichbar. Bitte erneut versuchen.",
+    "errApply": "Der Entwurf konnte nicht übernommen werden. Der Plan bleibt unverändert.",
+    "booked": "{{booked}} von {{total}} Zeitfenstern belegt",
+    "unavailable": "nicht verfügbar",
+    "scope": {
+      "teacher": "Lehrperson",
+      "cohort": "Semestergruppe",
+      "room": "Raum"
+    },
+    "tabWeek": "Woche",
+    "tabDetail": "Auswertung",
+    "paneWalks": "Wege",
+    "paneChanges": "Änderungen",
+    "noChanges": "Keine Abweichungen vom veröffentlichten Plan.",
+    "changesIntro": "Termine, die vom veröffentlichten Plan abweichen. Auswählen, was in den gültigen Plan übernommen werden soll.",
+    "pickChange": "{{session}} zur Übernahme auswählen",
+    "publishSelected": "{{count}} ausgewählte übernehmen",
+    "deleteSelected": "{{count}} löschen",
+    "deleted": "{{rows}} gespeicherte Zeile(n) zu {{sessions}} Termin(en) gelöscht. ⚠️ Bereits veröffentlichte Termine bleiben im gültigen Plan — gelöscht wurde nur der gespeicherte Verlauf.",
+    "deleteErr": {
+      "no-session": "Nicht gelöscht: dafür ist eine Anmeldung nötig.",
+      "not-configured": "Nicht gelöscht: der Plan-Speicher ist nicht eingerichtet.",
+      "failed": "Nicht gelöscht: der Plan-Speicher hat die Änderung abgelehnt."
+    },
+    "clearSelection": "Auswahl aufheben",
+    "resetAll": "Alles auf den Auslieferungsstand zurücksetzen",
+    "reset": "Zurückgesetzt: {{rows}} gespeicherte Zeile(n) gelöscht, {{drafts}} Entwurf/Entwürfe verworfen, veröffentlichter Plan wieder auf dem Auslieferungsstand.",
+    "realTimetable": "Echte Buchungen",
+    "srcCodes": "Lehrende als Untis-Kürzel",
+    "srcNoGeometry": "{{count}} Räume ohne Grundriss",
+    "srcNoCapacity": "keine Raumgrößen im Export",
+    "srcSummary": "{{count}} Hinweise zur Datenquelle",
+    "errTeacherNotPublished": "Für diesen Standort sind die Lehrveranstaltungen echt, die Lehrenden aber erfunden — eine Person kann deshalb nicht nachgeschlagen werden. Räume und Zeiten sind belastbar.",
+    "searchSubject": "Suchen",
+    "noSubjectMatch": "Kein Treffer",
+    "paneAvailability": "Verfügbarkeit"
+  },
+  "proposal": {
+    "preview": "Vorschau: {{count}} Termine würden verschoben — noch nichts übernommen",
+    "option": "Option {{n}} · {{count}} Termine",
+    "optimal": "beweisbar optimal",
+    "bestInTime": "beste Lösung in der Zeit",
+    "confirm": "{{count}} Termine in Entwurf übernehmen",
+    "applying": "wird übernommen …",
+    "discard": "Verwerfen",
+    "applied": "{{count}} Termine in „{{label}}“ übernommen",
+    "publishedUntouched": "Der veröffentlichte Plan bleibt unverändert.",
+    "campusChange": "Standortwechsel",
+    "saved": "gespeichert von {{who}}",
+    "savedLocally": "nur lokal übernommen — nicht dauerhaft gespeichert",
+    "saveNow": "dauerhaft speichern",
+    "saving": "wird gespeichert …",
+    "storeUnavailable": "Speicher nicht konfiguriert — bitte melden"
+  },
+  "draft": {
+    "restoredLabel": "Gespeicherter Stand",
+    "restored": "{{count}} gespeicherte Änderung(en) wiederhergestellt.",
+    "published": "Veröffentlicht",
+    "discard": "Entwurf verwerfen",
+    "confirmedBy": "bestätigt von {{who}}",
+    "publish": "Veröffentlichen",
+    "publishHint": "Diesen Entwurf zum gültigen Plan machen — für alle, und als Grundlage für jede weitere Umplanung.",
+    "publishedNote": "Veröffentlicht: {{count}} Termin(e) geändert, Planstand {{version}}. Dauerhaft gespeichert.",
+    "publishedNoteVolatile": "Veröffentlicht: {{count}} Termin(e) geändert, Planstand {{version}}. ⚠️ Nicht dauerhaft gespeichert — dieser Stand gilt nur, solange der Dienst läuft. Bitte anmelden und erneut veröffentlichen.",
+    "publishErr": {
+      "stale_draft": "Zwischenzeitlich wurde ein anderer Entwurf veröffentlicht. Bitte die Umplanung erneut rechnen lassen — dieser Entwurf beschreibt einen Plan, den es nicht mehr gibt.",
+      "would_add_conflicts": "Nicht veröffentlicht: dieser Entwurf würde neue harte Konflikte erzeugen.",
+      "not_confirmed": "Nicht veröffentlicht: eine Veröffentlichung ohne Namen ist keine Veröffentlichung.",
+      "unknown_draft": "Diesen Entwurf gibt es nicht mehr.",
+      "wrong_site": "Dieser Entwurf gehört zu einer anderen Hochschule.",
+      "nothing_to_publish": "Dieser Entwurf ändert nichts.",
+      "request": "Der Planungsdienst ist gerade nicht erreichbar. Bitte erneut versuchen."
+    },
+    "viewing": "Sie sehen einen Entwurf, nicht den veröffentlichten Plan."
+  },
+  "walk": {
+    "heading": "Wege zwischen den Terminen",
+    "problems": "{{n}} von {{total}} kritisch",
+    "allFine": "{{total}} Wege, alle machbar",
+    "noRoutes": "Für diesen Standort wurde noch kein Wegenetz gebaut — die Gehzeiten fehlen deshalb. tools/data/build_walk_routes.py erzeugt sie aus OpenStreetMap.",
+    "minutesOf": "{{walk}} von {{gap}} Min",
+    "unknownShort": "unbekannt",
+    "impossible": "Nicht zu schaffen — der Fußweg dauert {{short}} Min länger als die Pause.",
+    "tight": "Knapp: nur {{spare}} Min Puffer.",
+    "comfortable": "{{spare}} Min Puffer, {{metres}} m Fußweg.",
+    "unknown": "Für diese beiden Gebäude gibt es keine berechnete Route — die Gehzeit ist unbekannt, nicht unkritisch.",
+    "crossCampus": "Standortwechsel",
+    "campusLevel": "Standort-Ebene: Für mindestens einen dieser Termine ist nur der Standort bekannt, nicht das Gebäude — die Raumnummer im Untis-Export lässt sich keinem Gebäudeumriss zuordnen. Gerechnet und gezeichnet wird deshalb von Standort zu Standort, nicht von Tür zu Tür.",
+    "show": "Weg auf dem Campus zeigen",
+    "hide": "Weg ausblenden",
+    "provenance": "Weg und Länge stammen aus dem OpenStreetMap-Fußwegenetz. Angenommen sind das Gehtempo (1,35 m/s), ein Zuschlag für Treppen und der Zugang: ohne kartierte Eingänge beginnt der Weg am nächstgelegenen Punkt des Wegenetzes. Die Busfahrzeit zwischen den Standorten ist eine Annahme des Datensatzes, kein Fahrplan.",
+    "byBus": "Standortwechsel mit dem Bus — zu Fuß wären es {{walk}} Min."
+  },
+  "place": {
+    "close": "Hinweis schließen",
+    "noRooms": "Für diesen Ort sind in diesem Datensatz keine Räume hinterlegt — es ist ein Campus-Umriss oder ein Gebäude ohne Lehrräume. Das Gebäude ist echt und wird gerendert; erfundene Räume gibt es hier bewusst nicht.",
+    "source": "Quelle:",
+    "campus": "Ein Campus-Umriss, kein einzelnes Gebäude. Wählen Sie ein Gebäude auf dem Gelände, um dessen Räume zu öffnen."
+  },
+  "replan": {
+    "label": "Ausfall simulieren",
+    "hint": "{{day}} für diese Lehrperson sperren und die Woche neu berechnen lassen",
+    "working": "{{day}} wird neu geplant …",
+    "nothingOn": "Am {{day}} hat diese Lehrperson keine Termine — es gibt nichts umzuplanen.",
+    "noOption": "Am {{day}} hängen {{n}} Termine, aber es gibt keine konfliktfreie Umplanung. Alle Möglichkeiten wurden durchgerechnet — das ist kein Schätzwert."
+  },
+  "integration": {
+    "title": "Datenquelle",
+    "menu": "Datenquelle & Untis…",
+    "intro": "Woher dieser Stundenplan kommt und ob die WebUntis-API tatsächlich erreichbar ist. „Verbindung testen“ führt eine echte Anmeldung durch — ein ausgefülltes Formular gilt nicht als Verbindung.",
+    "inUse": "aktiv",
+    "sessions": "Veranstaltungen",
+    "rooms": "Räume",
+    "teachers": "Lehrende",
+    "untisNote": "Die Zugangsdaten werden nur für diese eine Anfrage verwendet und nicht gespeichert. Eine hinterlegte Anmeldung lässt sich erneut testen, ohne dass der Browser sie je erhält.",
+    "test": "Verbindung testen",
+    "testing": "teste …",
+    "noPlanner": "Für diesen Standort ist keine Planung angebunden — es gibt daher keine Datenquelle zu melden.",
+    "writeback": "Rückschreiben nach Untis",
+    "writebackNote": "Nicht umgesetzt und bewusst nicht als Schaltfläche angeboten. Der Weg existiert in Untis, aber das Schreiben in einen laufenden Stundenplan ist eine Entscheidung der Hochschule, kein Schalter. Voraussetzungen:",
+    "field": {
+      "server": "Server",
+      "school": "Schulkürzel",
+      "username": "Benutzer",
+      "password": "Passwort"
+    },
+    "state": {
+      "connected": "Verbunden",
+      "configured": "Konfiguriert, noch nicht getestet",
+      "unconfigured": "Nicht konfiguriert",
+      "blocked": "Von diesem Server abgelehnt",
+      "unreachable": "Nicht erreichbar",
+      "http-error": "Unerwartete Antwort",
+      "rejected": "Von WebUntis abgelehnt"
+    }
+  },
+  "national": {
+    "title": "Hochschulen in Deutschland",
+    "all": "Alle {{n}} Hochschulen auf der Karte…",
+    "intro": "{{n}} Hochschulen aus offenen Daten verortet. {{built}} davon haben einen gebauten Zwilling und lassen sich \u00f6ffnen; die \u00fcbrigen sind verortet, aber nicht modelliert. Vorab l\u00e4dt nur die Karte \u2014 ein Campus wird geladen, wenn Sie ihn ausw\u00e4hlen.",
+    "close": "Schlie\u00dfen",
+    "pick": "W\u00e4hlen Sie eine Hochschule auf der Karte.",
+    "cityPerRegistry": "Im amtlichen Verzeichnis steht {{city}}; der Punkt folgt dem Campus.",
+    "enter": "Diesen Zwilling \u00f6ffnen",
+    "students": "{{n}} Studierende",
+    "notBuilt": "Der Campus ist verortet, aber es wurde noch kein Zwilling daf\u00fcr gebaut. Gel\u00e4nde, Geb\u00e4ude und R\u00e4ume m\u00fcssen pro Standort erzeugt werden, bevor er sich \u00f6ffnen l\u00e4sst.",
+    "precision": {
+      "twin": "Position aus der gepr\u00fcften Box des gebauten Zwillings.",
+      "campus": "Position aus einer in OpenStreetMap ermittelten Campusgrenze.",
+      "city": "N\u00e4herungsweise \u2014 Stadtmitte. Es konnte keine Campusgrenze best\u00e4tigt werden."
+    }
+  },
+  "analysis": {
+    "title": "Raumauslastung",
+    "intro": "Der Anteil der Vorlesungswoche, in dem die R\u00e4ume eines Geb\u00e4udes belegt sind. Zeitliche Auslastung, nicht Sitzplatzbelegung \u2014 wie oft ein Raum genutzt wird, unabh\u00e4ngig davon, wie voll er ist.",
+    "meanUtilisation": "Mittlere Auslastung",
+    "overRooms": "\u00fcber {{n}} R\u00e4ume mit Kalender",
+    "buildings": "Geb\u00e4ude",
+    "rooms": "R\u00e4ume",
+    "building": "Geb\u00e4ude",
+    "utilisation": "Zeitliche Auslastung",
+    "noCalendar": "kein Kalender",
+    "note": "Geb\u00e4ude ohne Stundenplan werden aufgef\u00fchrt, aber aus dem Mittelwert ausgeschlossen und nicht als leer gez\u00e4hlt. Der Mittelwert ist nach der Zahl der R\u00e4ume gewichtet, die tats\u00e4chlich einen Kalender haben \u2014 ein Geb\u00e4ude mit zwei belegten R\u00e4umen wiegt damit nicht so schwer wie eine Fakult\u00e4t mit sechzig."
+  },
+  "rail": {
+    "heading": "Bereiche",
+    "campus": "Campus",
+    "week": "Wochenplan",
+    "analysis": "Analyse",
+    "assistant": "Assistent",
+    "changes": "Änderungen",
+    "walks": "Wege",
+    "help": "Hilfe",
+    "collapse": "Einklappen",
+    "expand": "Ausklappen",
+    "availability": "Verfügbarkeit"
+  },
+  "availability": {
+    "intro": "Wann diese Person unterrichten kann. Klicken ändert den Status.",
+    "loading": "wird geladen …",
+    "pickTeacher": "Bitte oben eine Lehrperson auswählen — Verfügbarkeit gehört zu einer Person, nicht zu einem Raum.",
+    "state": {
+      "verfuegbar": "frei",
+      "eingeschraenkt": "eingeschränkt",
+      "nicht_verfuegbar": "gesperrt"
+    },
+    "teaches": "unterrichtet hier",
+    "teachesHere": "Hier findet bereits {{session}} statt.",
+    "saved": "Gespeichert.",
+    "savedWithClash": "Gespeichert — {{count}} bereits geplante Veranstaltung(en) liegen jetzt in gesperrter Zeit.",
+    "savedNotStored": "Übernommen, aber nicht dauerhaft gespeichert — dafür ist eine Anmeldung nötig.",
+    "clashTitle": "{{count}} Veranstaltung(en) in gesperrter Zeit",
+    "clashHint": "Es wurde nichts verschoben. Fragen Sie den Assistenten nach einer Umplanung.",
+    "download": "Vorlage für diese Person",
+    "downloadAll": "Vorlage für alle",
+    "upload": "Excel hochladen",
+    "previewTitle": "{{file}}: {{read}} Lehrperson(en) gelesen, {{changed}} mit Änderungen.",
+    "previewRow": "{{count}} Änderung(en)",
+    "previewUnknown": "Nicht zugeordnet: {{names}} ({{count}} insgesamt).",
+    "previewBad": "{{count}} Zelle(n) nicht lesbar und übersprungen — {{sample}}.",
+    "previewClash": "Dadurch werden {{count}} bereits geplante Termin(e) ungültig — {{sample}}.",
+    "apply": "Für {{count}} Lehrperson(en) übernehmen",
+    "discard": "Verwerfen",
+    "imported": "Übernommen für {{teachers}} Lehrperson(en); {{clashes}} Veranstaltung(en) liegen jetzt in gesperrter Zeit.",
+    "errLoad": "Verfügbarkeit konnte nicht geladen werden.",
+    "errSave": "Änderung konnte nicht gespeichert werden.",
+    "errImport": "Die Datei konnte nicht verarbeitet werden.",
+    "downloadNoTeacher": "Keine Lehrperson geladen — für diesen Standort gibt es dieses Kürzel nicht.",
+    "importErr": {
+      "unreadable": "Die Datei ist keine lesbare Excel-Arbeitsmappe.",
+      "no_rows": "Die Tabelle enthält keine Datenzeilen.",
+      "no_slot_columns": "In der Kopfzeile stehen keine bekannten Zeitfenster (Mo-1, Mo-2 …)."
+    }
+  }
+}

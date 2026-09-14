@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "_note": "Optional curation overlay merged over LIVE model metadata at runtime. Keyed by normalized entity name. Empty by default — the app derives everything (descriptions come from the model). Add entries only to override or enrich. See EnrichmentFile / EnrichmentEntry in src/catalog/model/types.ts.",
+  "_example": {
+    "measures": {
+      "total sales": { "description": "Sum of net sales amount.", "businessTopic": "Sales" }
+    },
+    "columns": {},
+    "tables": {},
+    "synonyms": { "revenue": ["sales", "net sales"] }
+  },
+  "synonyms": {},
+  "measures": {},
+  "columns": {},
+  "tables": {}
+}

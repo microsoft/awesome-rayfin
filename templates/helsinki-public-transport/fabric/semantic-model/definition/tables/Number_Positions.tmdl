@@ -1,0 +1,35 @@
+table Number_Positions
+	lineageTag: d8b06053-fe55-45ba-ab3b-516bfd32cfb2
+
+	column total_number_positions
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: cdeca302-5297-47c0-8d98-d344c78ce23c
+		summarizeBy: sum
+		sourceColumn: total_number_positions
+
+		annotation SummarizationSetBy = Automatic
+
+	column number_positions_last_hour
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: f3756811-284b-4b6f-a09e-5349ec37ee81
+		summarizeBy: sum
+		sourceColumn: number_positions_last_hour
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Number_Positions = m
+		mode: directQuery
+		source =
+				let
+				Source = AzureDataExplorer.Contents("https://<eventhouse>.kusto.fabric.microsoft.com", "00000000-0000-0000-0000-000000000000", "vehicle_positions#(lf)| summarize  total_number_positions = count() , number_positions_last_hour = countif(timestamp > now()-1h)", [MaxRows=null, MaxSize=null, NoTruncate=null, AdditionalSetStatements=null])
+				in
+				Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

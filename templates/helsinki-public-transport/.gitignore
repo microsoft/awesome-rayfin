@@ -1,0 +1,12 @@
+node_modules/
+dist/
+public/cesium/
+*.tsbuildinfo
+.env
+.env.local
+.env*.local
+rayfin/.env
+rayfin/.deployments.json
+fabric/deploy/.state.json
+__pycache__/
+.DS_Store

@@ -1,0 +1,215 @@
+/* -------------------------------------------------------------------------
+   Semantic Directory — motion + effects layer.
+
+   Extracted from global.css to keep tokens/theme separate from animation and
+   the constellation "stage" component. All selectors here are unique and
+   unlayered, so cascade order relative to the token layers doesn't matter —
+   they reference theme vars (--color-primary, --const-*) that resolve at use.
+   ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+   Keyframes
+   ------------------------------------------------------------------------- */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-primary) 55%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in oklab, var(--color-primary) 0%, transparent);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Constellation starfield twinkle — CSS-driven (GPU opacity) so it's paused
+   automatically by the global reduced-motion contract below. Per-star opacity
+   and duration come from inline custom properties. */
+@keyframes star-twinkle {
+  0%,
+  100% {
+    opacity: var(--star-o, 0.5);
+  }
+  50% {
+    opacity: var(--star-dim, 0.15);
+  }
+}
+.const-star {
+  will-change: opacity;
+  animation: star-twinkle var(--star-dur, 3s) ease-in-out infinite;
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--color-muted) 88%, var(--color-border));
+  border-radius: var(--radius-lg);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--color-foreground) 8%, transparent),
+    transparent
+  );
+  animation: shimmer 1.5s var(--ease-standard) infinite;
+}
+
+.live-dot {
+  animation: pulse-glow 2.2s ease-in-out infinite;
+}
+
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+
+/* -------------------------------------------------------------------------
+   Constellation stage — theme-AWARE. Light mode stays LIGHT (a bright "glass
+   map": green threads + nodes on a light panel). Dark mode is the deep-emerald
+   -green galaxy. Per-theme opacity tokens drive the SVG rings/threads/stars so
+   the same markup reads correctly on both grounds (higher opacity on light,
+   luminous-low on dark). No dark panel bleeds into light mode.
+   ------------------------------------------------------------------------- */
+.constellation-stage {
+  /* LIGHT — bright glass map. */
+  --const-star-field: 0;                 /* galaxy stars are a dark-mode motif */
+  --const-ring-o-1: 0.30;
+  --const-ring-o-2: 0.38;
+  --const-ring-o-3: 0.20;
+  --const-thread-base: 0.34;
+  --const-thread-beacon: 0.55;
+  --const-thread-dim: 0.12;
+  --const-thread-active: 0.82;
+
+  background:
+    radial-gradient(92% 80% at 50% 0%, color-mix(in oklab, var(--color-primary) 10%, transparent), transparent 60%),
+    radial-gradient(70% 70% at 100% 100%, color-mix(in oklab, var(--energy-lime) 8%, transparent), transparent 62%),
+    linear-gradient(180deg, color-mix(in oklab, var(--color-primary) 6%, var(--color-card)) 0%, var(--color-card) 100%);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, #ffffff 82%, transparent),
+    inset 0 0 90px -46px color-mix(in oklab, var(--color-primary) 30%, transparent);
+}
+
+.constellation-stage--hero {
+  /* Landing hero floats in open space — no card fill, no border, no hard edge.
+     A single soft central glow fades to transparent well within the box, so the
+     stage melds seamlessly into the page (footer + sides feather naturally). */
+  border-radius: 28px;
+  background:
+    radial-gradient(54% 48% at 50% 44%, color-mix(in oklab, var(--color-primary) 8%, transparent), transparent 72%);
+  box-shadow: none;
+}
+
+.dark .constellation-stage {
+  /* DARK — the deep cobalt galaxy. */
+  --color-primary: var(--energy);              /* brighter emissive pop for stars/threads */
+  /* Lift subdued labels off the nebula: every muted label on the stage (sector
+     headers, legend, counts, breadcrumb) uses --color-muted-foreground, and the
+     green bloom behind them erodes contrast. A stage-scoped brighter sage keeps
+     them clearly readable without touching muted text elsewhere in the app. */
+  --color-muted-foreground: var(--stage-muted-fg);
+  --const-star-field: 1;
+  --const-ring-o-1: 0.10;
+  --const-ring-o-2: 0.14;
+  --const-ring-o-3: 0.07;
+  --const-thread-base: 0.16;
+  --const-thread-beacon: 0.42;
+  --const-thread-dim: 0.06;
+  --const-thread-active: 0.75;
+
+  background:
+    radial-gradient(72% 60% at 50% 42%, color-mix(in oklab, var(--energy) 9%, transparent), transparent 70%),
+    radial-gradient(78% 64% at 90% 102%, color-mix(in oklab, var(--energy-lime) 5%, transparent), transparent 64%),
+    radial-gradient(64% 60% at 6% 100%, color-mix(in oklab, var(--energy) 5%, transparent), transparent 62%);
+  box-shadow: none;
+}
+
+.dark .constellation-stage--hero {
+  /* Landing hero floats in space — only a soft central nebula glow that fades
+     fully to transparent before the box edge, so there is no hard cut to black
+     at the footer or sides. */
+  background:
+    radial-gradient(52% 48% at 50% 44%, color-mix(in oklab, var(--energy) 17%, transparent), transparent 70%);
+  box-shadow: none;
+}
+
+/* -------------------------------------------------------------------------
+   Feathered separators — soft, self-fading edges (no hard 1px cut).
+   `.divider-fade-b` is a horizontal hairline that dissolves at both ends;
+   `.demo-strip` is a top tint that fades downward into the page with a
+   faint centre-weighted underline. Both replace crisp `border-b` rules so
+   the surface transitions read as gradients, not seams.
+   ------------------------------------------------------------------------- */
+.divider-fade-b {
+  position: relative;
+}
+
+.divider-fade-b::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in oklab, var(--color-border) 92%, transparent) 16%,
+    color-mix(in oklab, var(--color-border) 92%, transparent) 84%,
+    transparent 100%
+  );
+}
+
+.demo-strip {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--color-primary) 12%, transparent) 0%,
+    color-mix(in oklab, var(--color-primary) 5%, transparent) 55%,
+    transparent 100%
+  );
+}
+
+.demo-strip::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in oklab, var(--color-primary) 22%, transparent) 20%,
+    color-mix(in oklab, var(--color-primary) 22%, transparent) 80%,
+    transparent 100%
+  );
+}
+
+/* -------------------------------------------------------------------------
+   Global reduced-motion contract — design must survive with motion removed.
+   ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
