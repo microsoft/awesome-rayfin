@@ -1,0 +1,42 @@
+{
+  "$comment": "THE WORLD — PLAN §8. One continuous terrain containing every shipped site, so the site dropdown is a camera flight rather than a page reload. This file exists because the two AOI shells MISS EACH OTHER BY 3.8 km (measured): the sites are 24.4 km apart core-to-core, and rendering both AOIs as they stand leaves a hole between them. The world shell is the union, built once, and it REPLACES both per-AOI shells at runtime.",
+  "id": "allgaeu",
+  "name": {
+    "de": "Allgäuer Alpen und Ammergauer Alpen",
+    "en": "Allgäu Alps and Ammergau Alps"
+  },
+  "sites": ["oberstdorf", "tegelberg"],
+  "$sitesComment": "Order matters only for the switcher; the first is the default camera target. Each entry is an id in config/aoi/. Adding a third site means adding it here and re-running build_shell.py --world — the shell is the only shared asset.",
+  "shell": {
+    "crs": "EPSG:4326",
+    "west": 10.1,
+    "east": 10.95,
+    "south": 47.3,
+    "north": 47.72,
+    "$comment": "UNION of the two AOI shells, 63.9 x 46.8 km. Computed from config/aoi/*.json rather than typed: Oberstdorf shell 10.100-10.500 / 47.300-47.600, Tegelberg shell 10.550-10.950 / 47.400-47.720. The 0.050 deg (3.8 km) gap between them at 47.5 N is exactly what this union closes."
+  },
+  "shellGrids": {
+    "sourceResolutionM": 30,
+    "renderResolutionM": 30,
+    "renderDecimation": 3,
+    "transitionBandM": 1200,
+    "$comment": "Identical to the per-AOI shells, deliberately. The band was tuned by looking at renders at Oberstdorf and carried unchanged to the Tegelberg; a union shell changes the EXTENT, not the physics of the seam. At 30 m over 63.9 x 46.8 km this is 2130 x 1558 samples and ~368k mesh vertices after 3x decimation — measured to hold a locked 60 fps alongside BOTH cores (PLAN §8: p99 19.0 ms, 0% of frames over 20 ms)."
+  },
+  "shellGeobasis": {
+    "authority": "ESA / DLR / Airbus Defence and Space — Copernicus DEM GLO-30",
+    "licence": "Copernicus DEM free licence (worldwide, free reuse with the prescribed notice)",
+    "licenceUrl": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+    "attribution": "produced using Copernicus WorldDEM-30 © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018 provided under COPERNICUS by the European Union and ESA; all rights reserved",
+    "$attributionComment": "The ADAPTED-DATA form, as in both AOI configs: the world shell is resampled onto a UTM grid and shifted onto the cores' vertical datum, so it is unambiguously modified.",
+    "cogUrlTemplate": "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM.tif",
+    "tiles": ["N47_E010"],
+    "$comment": "The SAME single tile that covers each site individually also covers the union: 47-48 N, 10-11 E contains 10.10-10.95 / 47.30-47.72 entirely. So the world costs ZERO new downloads — checked before building, not assumed."
+  },
+  "elevationRangeM": {
+    "min": 780,
+    "max": 2260,
+    "$comment": "Union of the two AOI ranges (Oberstdorf 790-2260, Tegelberg 780-2080), so one colour ramp and one uint16 scaling serve the whole world."
+  },
+  "workingCrs": "EPSG:25832",
+  "verticalDatum": "DHHN2016"
+}

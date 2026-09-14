@@ -1,0 +1,113 @@
+{
+  "$comment": "Area of interest definition for the Universität Münster — 7th nationally at 41 962 students (DESTATIS GENESIS, WS 2024/25), and the third twin on the Nordrhein-Westfalen adapter.",
+
+  "id": "muenster",
+
+  "site": {
+    "name": { "de": "Universität Münster", "en": "University of Münster" },
+    "region": { "de": "Münster, Nordrhein-Westfalen", "en": "Münster, North Rhine-Westphalia" },
+    "timezone": "Europe/Berlin"
+  },
+
+  "lenses": [],
+  "$lensesComment": "Empty, deliberately — a lens may only be declared where its data requirements can be met (`world.test.ts` enforces it). No timetable this project can read and no indoor survey, so occupancy, staffing and quality are impossible; `condition` would mean inventing a Sanierungsstau for a named real university.",
+
+  "bbox": {
+    "crs": "EPSG:4326",
+    "west": 7.5885,
+    "east": 7.6293,
+    "south": 51.9572,
+    "north": 51.9785,
+    "$comment": "HIGH-RESOLUTION CORE, ~2.80 x 2.37 km. From the campus cluster find_campus_areas.py resolved out of OpenStreetMap (config/campus-candidates.json, HS112: 31 areas) plus margin, widened slightly west so the Center for Soft Nanoscience at 7.59021 sits inside rather than exactly on the edge.\n\nLike Aachen this holds two halves, and like Aachen that is the point: the Schlossplatz core in the east — the Fürstbischöfliches Schloss, the Hörsaalgebäude, the Universitäts- und Landesbibliothek — and the science campus along the Coesfelder Kreuz in the west (Physik, Chemie, Nanoscience). Münster's university is threaded through the city rather than fenced off, which is why the box is a box and not an outline."
+  },
+
+  "shell": {
+    "crs": "EPSG:4326",
+    "west": 7.471,
+    "east": 7.747,
+    "south": 51.883,
+    "north": 52.053,
+    "$comment": "COARSE TERRAIN SHELL, ~18.9 x 18.9 km, over the Münsterland. ⚠️ Expect this shell to do even less work than Köln's: this is one of the flattest landscapes in Germany, so the horizon here is made of trees and buildings rather than of terrain. The shell still has to exist — without it the core would end in a cliff — but nobody will point at it."
+  },
+
+  "workingCrs": "EPSG:25832",
+  "verticalDatum": "DHHN2016",
+
+  "elevationRangeM": {
+    "min": 45,
+    "max": 85,
+    "$measured": true,
+    "$comment": "MEASURED 2026-08-10 by build_terrain.py over the core: 50.70 .. 75.25 m, from 9 Geobasis NRW DGM1 tiles at 100% coverage (grid 1425 x 1212 at 2 m). Left slightly loose so a re-run after an NRW update does not trip the plausibility gate over a decimetre.\n\n⚠️ 24.5 METRES ACROSS THE WHOLE CORE — the flattest AOI in this repo, narrowly under Köln's 25 m. The hypsometric ramp and the terrain shading have almost nothing to work with here; what makes this twin readable is the buildings, the drape and the trees. That is the Münsterland, not a broken build, and it is written down so nobody 'fixes' the terrain later. The starting guess of 40-110 was nearly three times the real spread."
+  },
+
+  "drape": {
+    "maxPx": 4096,
+    "$comment": "Long side of the DOP mosaic, via the Geobasis NRW WMS (layer nw_dop_rgb, 10 cm source). NOT larger: at 8192 px the mipmap chain is ~300 MB, which Chromium accepts and then silently samples BLACK."
+  },
+
+  "grids": {
+    "sourceResolutionM": 1,
+    "renderResolutionM": 2,
+    "renderDecimation": 2,
+    "$comment": "Geobasis NRW DGM1, resampled to a 2 m heightmap, mesh decimated 2x -> 4 m posting — the same tier as every other AOI here."
+  },
+
+  "shellGrids": {
+    "sourceResolutionM": 30,
+    "renderResolutionM": 30,
+    "renderDecimation": 3,
+    "transitionBandM": 250,
+    "$comment": "Copernicus GLO-30 -> ~90 m posting. transitionBandM is written in metres for readability but MUST be applied as a fraction of the core (CORE_FADE_FRACTION ~0.08), never absolute."
+  },
+
+  "indoorProbe": {
+    "probedOn": "2026-08-10",
+    "roomsFound": 0,
+    "$comment": "⚠️ Named `indoorProbe` and NOT `rooms` — a `rooms` block MEANS real indoor geometry exists and drives the hero-building explode. Nothing probed here, so buildings stay solid and the app says so rather than inventing interiors."
+  },
+
+  "focusPlaces": [
+    { "id": "schloss", "name": "Fürstbischöfliches Schloss", "lat": 51.96361, "lon": 7.6133 },
+    { "id": "hoersaalgebaeude", "name": "Hörsaalgebäude Schlossplatz", "lat": 51.96266, "lon": 7.61828 },
+    { "id": "ulb", "name": "Universitäts- und Landesbibliothek", "lat": 51.96283, "lon": 7.6209 },
+    { "id": "alte_ub", "name": "Alte Universitätsbibliothek", "lat": 51.96105, "lon": 7.62123 },
+    { "id": "botanicum", "name": "Botanicum", "lat": 51.96312, "lon": 7.61061 },
+    { "id": "englisches_seminar", "name": "Englisches Seminar", "lat": 51.96137, "lon": 7.62273 },
+    { "id": "it_center", "name": "Center for Information Technology", "lat": 51.96605, "lon": 7.60381 },
+    { "id": "mathematik", "name": "Bibliothek Mathematik", "lat": 51.96583, "lon": 7.60273 },
+    { "id": "physik", "name": "Angewandte Physik", "lat": 51.96563, "lon": 7.5993 },
+    { "id": "chemie", "name": "Anorganische und Analytische Chemie", "lat": 51.968, "lon": 7.59785 },
+    { "id": "nanoscience", "name": "Center for Soft Nanoscience", "lat": 51.96925, "lon": 7.59021 },
+    { "id": "sport", "name": "Institut für Sportwissenschaft", "lat": 51.97206, "lon": 7.59915 }
+  ],
+
+  "$focusPlacesComment": "Resolved 2026-08-10 from OpenStreetMap via Overpass BY TAG AND OPERATOR, not by remembered name — the discipline Tübingen's config argues for at length.\n\n⚠️ THE UNIVERSITY'S MAIN BUILDING IS A BAROQUE PALACE, AND THAT IS NOT A MISTAKE IN THE DATA. `way/13742054` is tagged `amenity=university`, `operator=Universität Münster` and named *Fürstbischöfliches Schloss* — the prince-bishops' residence, which has housed the Rektorat since 1954. A reader checking the twin against a mental model of 'university buildings' would be right to query it and wrong to change it.\n\n⚠️ Also filtered OUT deliberately: `Bereichsbibliothek Hüfferstiftung` (way/135451580) sits inside this box and carries `operator=Fachhochschule Münster` — a DIFFERENT institution sharing the city. Same trap as TU München inside the LMU core box, and the reason the query asks for the operator rather than trusting proximity.",
+
+  "geobasis": {
+    "authority": "Geobasis NRW (Bezirksregierung Köln)",
+    "licence": "Datenlizenz Deutschland – Zero – Version 2.0",
+    "licenceUrl": "https://www.govdata.de/dl-de/zero-2-0",
+    "attribution": "Datenquelle: Land NRW (Geobasis NRW), dl-de/zero-2-0",
+    "downloadBase": "https://www.opengeodata.nrw.de/produkte/geobasis/",
+    "dopWms": "https://www.wms.nrw.de/geobasis/wms_nw_dop",
+    "$comment": "pipeline.py's `in_nordrhein_westfalen` predicate keys on the string 'Geobasis NRW' here, so this field is load-bearing. The authority is named for the whole state despite sitting in Cologne's Bezirksregierung — that is how NRW publishes it."
+  },
+
+  "shellGeobasis": {
+    "authority": "ESA / DLR / Airbus Defence and Space — Copernicus DEM GLO-30",
+    "licence": "Copernicus DEM free licence (worldwide, free reuse with the prescribed notice)",
+    "licenceUrl": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+    "attribution": "produced using Copernicus WorldDEM-30 © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018 provided under COPERNICUS by the European Union and ESA; all rights reserved",
+    "$attributionComment": "The ADAPTED-DATA form of the notice, which is prescribed rather than stylistic: the pipeline resamples the tile onto a UTM grid and shifts it onto the core's vertical datum.",
+    "cogUrlTemplate": "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM.tif",
+    "tiles": ["N51_E007", "N52_E007"],
+    "$tilesComment": "TWO tiles. The shell runs 51.883-52.053 N, so it crosses the 52 N parallel; longitude stays inside E007 throughout. A missing tile does not raise an error — it renders as a flat shelf across the northern horizon."
+  },
+
+  "tour": [
+    { "placeId": "schloss", "captionKey": "tour.muenster.schloss", "rangeM": 800, "holdMs": 6500 },
+    { "placeId": "hoersaalgebaeude", "captionKey": "tour.muenster.hoersaal", "rangeM": 500, "holdMs": 6000 },
+    { "placeId": "ulb", "captionKey": "tour.muenster.bibliothek", "rangeM": 500, "holdMs": 6000 },
+    { "placeId": "nanoscience", "captionKey": "tour.muenster.naturwissenschaften", "rangeM": 900, "holdMs": 6000 }
+  ]
+}

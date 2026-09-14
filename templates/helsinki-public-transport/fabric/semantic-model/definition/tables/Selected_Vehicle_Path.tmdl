@@ -1,0 +1,196 @@
+table Selected_Vehicle_Path
+	lineageTag: 5683ba75-3293-429e-86ad-9bddcec54ce1
+
+	column timestamp
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetimeoffset
+		lineageTag: 8dc79ee9-bae3-45b2-9e8f-c9f34a14bf29
+		summarizeBy: none
+		sourceColumn: timestamp
+
+		annotation SummarizationSetBy = Automatic
+
+	column type
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 3592c465-603f-4158-a09a-efdec9fb1889
+		summarizeBy: none
+		sourceColumn: type
+
+		annotation SummarizationSetBy = Automatic
+
+	column transport_type
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: facdf9c6-6b79-4388-b5d5-59223a5ee9c3
+		summarizeBy: none
+		sourceColumn: transport_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column id
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 4c878c54-3a93-4aeb-9983-e9c5ca54a9f8
+		summarizeBy: none
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column trip_id
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 59cbfb89-b42b-41ce-88cf-7b602a90cf8e
+		summarizeBy: none
+		sourceColumn: trip_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column trip_start_time
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 10b22b9b-b064-4d26-83d9-3104c3db9882
+		summarizeBy: none
+		sourceColumn: trip_start_time
+
+		annotation SummarizationSetBy = Automatic
+
+	column trip_start_date
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: ea012242-b025-47a2-aa4c-318cc19544f6
+		summarizeBy: none
+		sourceColumn: trip_start_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column trip_schedule_relationship
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: a246c100-a049-48a3-b5ac-8cfe2a77c2ee
+		summarizeBy: none
+		sourceColumn: trip_schedule_relationship
+
+		annotation SummarizationSetBy = Automatic
+
+	column trip_route_id
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 552f533e-d3a9-4e6b-b03e-a640d9053d32
+		summarizeBy: none
+		sourceColumn: trip_route_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column position_latitude
+		dataType: double
+		sourceProviderType: decimal
+		lineageTag: 51c71ec2-b225-453d-91ab-1def8583fa81
+		summarizeBy: sum
+		sourceColumn: position_latitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column position_longitude
+		dataType: double
+		sourceProviderType: decimal
+		lineageTag: 1a21c6b6-cf85-4525-8b71-ec7f8ea76b32
+		summarizeBy: sum
+		sourceColumn: position_longitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column position_bearing
+		dataType: double
+		sourceProviderType: decimal
+		lineageTag: f9a57ec3-6a51-4697-8df0-f0dcc473e01e
+		summarizeBy: sum
+		sourceColumn: position_bearing
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column position_speed
+		dataType: double
+		sourceProviderType: decimal
+		lineageTag: 63bc2b10-a0e2-40b7-b969-bdcb813c14d9
+		summarizeBy: sum
+		sourceColumn: position_speed
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column vehicle_timestamp
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: c590e018-495a-453a-89ef-a7672139f17c
+		summarizeBy: sum
+		sourceColumn: vehicle_timestamp
+
+		annotation SummarizationSetBy = Automatic
+
+	column congestion_level
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 413170cf-8d78-4d7e-aa70-4d6d3343e0a4
+		summarizeBy: none
+		sourceColumn: congestion_level
+
+		annotation SummarizationSetBy = Automatic
+
+	column vehicle_id
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 5e0ae848-4daf-4c77-9e5c-fc9e19253de7
+		summarizeBy: none
+		sourceColumn: vehicle_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column vehicle_label
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 665572ac-6b2d-4216-b40a-ea21dfca0490
+		summarizeBy: none
+		sourceColumn: vehicle_label
+
+		annotation SummarizationSetBy = Automatic
+
+	column vehicle_license_plate
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: c0ec299b-1ef3-4151-98f3-6f0b72f3cd37
+		summarizeBy: none
+		sourceColumn: vehicle_license_plate
+
+		annotation SummarizationSetBy = Automatic
+
+	column occupancy_status
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 7b269270-44ae-46d0-b6a9-8bfb2cd24890
+		summarizeBy: none
+		sourceColumn: occupancy_status
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Selected_Vehicle_Path = m
+		mode: directQuery
+		source =
+				let
+				Source = AzureDataExplorer.Contents("https://<eventhouse>.kusto.fabric.microsoft.com", "00000000-0000-0000-0000-000000000000", "vehicle_positions#(lf)| where vehicle_id  == """& Selected_Vehicle &""" and  timestamp > now() - 2h#(lf)| top 1000 by timestamp", [MaxRows=null, MaxSize=null, NoTruncate=null, AdditionalSetStatements=null])
+				in
+				Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

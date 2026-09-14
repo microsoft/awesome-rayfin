@@ -1,0 +1,15 @@
+EVALUATE
+SELECTCOLUMNS(
+    INFO.VIEW.MEASURES(),
+    "MeasureId", [ID],
+    "Measure", [Name],
+    "Table", [Table],
+    "Description", [Description],
+    "Expression", [Expression],
+    "DisplayFolder", [DisplayFolder],
+    "FormatString", [FormatString],
+    "DataType", [DataType],
+    "IsHidden", [IsHidden],
+    "LineageTag", [LineageTag]
+)
+ORDER BY [Table], [Measure]

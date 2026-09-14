@@ -1,0 +1,125 @@
+{
+  "$comment": "Area of interest definition. Gleitschirm-Insights is a reusable vertical asset — no location is hard-coded in code. Tegelberg / Schwangau is the SECOND instance, and it exists to prove exactly that: same pipeline, same renderer, zero new fetcher work, one JSON file. See PLAN.md §4.4 and decision 23.",
+  "id": "tegelberg",
+  "site": {
+    "name": { "de": "Tegelberg / Schwangau", "en": "Tegelberg / Schwangau" },
+    "region": { "de": "Ammergauer Alpen, Bayern", "en": "Ammergau Alps, Bavaria" },
+    "timezone": "Europe/Berlin"
+  },
+  "bbox": {
+    "crs": "EPSG:4326",
+    "west": 10.705,
+    "east": 10.805,
+    "south": 47.525,
+    "north": 47.59,
+    "$comment": "HIGH-RESOLUTION CORE, ~7.5 x 7.2 km. Built around coordinates RESOLVED FROM OVERPASS on 2026-07-29 by tools/geodata/probe_site.py, never recalled — PLAN §4.2, and the reason that rule exists is the Oberstdorf box that shipped centred on a place node 4.6 km from the town. Everything the site is known for is inside with margin: Schloss Neuschwanstein (47.5575/10.7495, way/221601969), Schloss Hohenschwangau (47.5556/10.7361, way/177870937), both Tegelbergbahn terminals (Tal 47.5682/10.7562, Berg 47.5596/10.7790), the Tegelbergkopf (1567 m), the Branderschrofen (1881 m), the Säuling (2048 m, the dominant peak and the Austrian border), the villages of Hohenschwangau and Schwangau, and the official paraglider landing field beside the valley station (way/159981629). Füssen is deliberately just outside the western edge: it is a town rather than a mountain, and a core box spent on it is a core box not spent on the massif."
+  },
+  "shell": {
+    "crs": "EPSG:4326",
+    "west": 10.55,
+    "east": 10.95,
+    "south": 47.4,
+    "north": 47.72,
+    "$comment": "COARSE TERRAIN SHELL, ~30 x 36 km. Terrain only, and it does the same two jobs it does at Oberstdorf: a cross-country flight never runs off the edge of the map, and it IS the horizon — a photoreal box ending in a cliff of nothing reads as a diorama. Crosses well into Tirol to the south, which is precisely why this tier is Copernicus DEM rather than LDBV: the Bavarian survey stops at the state border and the Säuling ridge IS that border."
+  },
+  "workingCrs": "EPSG:25832",
+  "verticalDatum": "DHHN2016",
+  "elevationRangeM": {
+    "min": 780,
+    "max": 2080,
+    "$comment": "Generous bracket around the real range (Forggensee / Schwangau valley floor ~796 m, Säuling 2048 m). ~1250 m of relief, close enough to Oberstdorf's ~1400 m that the hillshade and colour-ramp constants carry over unchanged — which is itself part of what the second site is proving."
+  },
+  "grids": {
+    "sourceResolutionM": 1,
+    "renderResolutionM": 4,
+    "renderDecimation": 4,
+    "$comment": "Identical to Oberstdorf. 1 m DGM1 source resampled to a 4 m heightmap, mesh decimated 4x -> 16 m posting. This box is smaller, so it is roughly 1900 x 1800 samples and ~215k mesh vertices — comfortably under the 307k the first site measured at 59.5 fps."
+  },
+  "shellGrids": {
+    "sourceResolutionM": 30,
+    "renderResolutionM": 30,
+    "renderDecimation": 3,
+    "transitionBandM": 1200,
+    "$comment": "Identical to Oberstdorf, including the 1200 m transition band — tuned there by looking at renders, and carried over rather than re-tuned because the two sites have comparable relief. If the seam shows here, this is the number to change, and changing it is a config edit rather than a code change."
+  },
+  "$verticalScaleComment": "TRUE SCALE, and not configurable — the vertical-exaggeration lever was removed in full. 1250 m of real relief needs no help.",
+  "focusPlaces": [
+    { "id": "hohenschwangau", "name": "Hohenschwangau", "lat": 47.5551938, "lon": 10.7394834 },
+    { "id": "neuschwanstein", "name": "Schloss Neuschwanstein", "lat": 47.5575482, "lon": 10.7495224 },
+    { "id": "tegelberg_berg", "name": "Tegelbergbahn Bergstation", "lat": 47.5596223, "lon": 10.7789855 },
+    { "id": "tegelberg_tal", "name": "Tegelbergbahn Talstation", "lat": 47.5681888, "lon": 10.7562201 },
+    { "id": "saeuling", "name": "Säuling", "lat": 47.5349891, "lon": 10.7552771 }
+  ],
+  "$focusPlacesComment": "Resolved 2026-07-29 from Overpass (tools/geodata/probe_site.py). Every coordinate here is an OSM object id that was looked at: node/75901923 (Hohenschwangau), way/221601969 (Neuschwanstein), node/266995159 and node/266995158 (the two Tegelbergbahn stations), node/495075191 (Säuling, ele=2048). Ground elevations are NOT stored — they are sampled from the generated DGM1 heightmap at build time, so the app never quotes an elevation the survey did not measure.",
+  "flyingSites": [],
+  "$flyingSitesComment": "EMPTY ON PURPOSE, pending tools/geodata/resolve_places.py. The probe found paraglider infrastructure at 47.606-47.613 / 10.799-10.811 — Gleitschirmstartfeld, Flugschule Tegelberg, a landing field — but those sit 6 km NE of the Tegelbergbahn and belong to the Buching / Buchenberg site, NOT to Tegelberg. Writing them in as Tegelberg launches would have been exactly the kind of plausible, unverified assertion §4.2 forbids. The official landing field beside the valley station (way/159981629, 47.5712/10.7556) IS Tegelberg's and is inside the core; the launch proper is at the Bergstation and needs its own OSM lookup with the free-flying tags the pipeline uses.",
+  "geobasis": {
+    "authority": "Bayerische Vermessungsverwaltung (LDBV)",
+    "licence": "CC BY 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/4.0/deed.de",
+    "attribution": "Datenquelle: Bayerische Vermessungsverwaltung – www.geodaten.bayern.de [Daten bearbeitet]",
+    "downloadBase": "https://download1.bayernwolke.de",
+    "downloadMirror": "https://download2.bayernwolke.de",
+    "metalinkBase": "https://geodaten.bayern.de/odd",
+    "ags": null,
+    "$agsComment": "Not needed. The tile LIST is derived arithmetically from the bbox — Bavarian tile filenames encode UTM32 easting/northing in km — and the AGS is only required for the Metalink catalogues that carry per-tile hashes. Same situation as Oberstdorf."
+  },
+  "shellGeobasis": {
+    "authority": "ESA / DLR / Airbus Defence and Space — Copernicus DEM GLO-30",
+    "licence": "Copernicus DEM free licence (worldwide, free reuse with the prescribed notice)",
+    "licenceUrl": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+    "attribution": "produced using Copernicus WorldDEM-30 © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018 provided under COPERNICUS by the European Union and ESA; all rights reserved",
+    "$attributionComment": "The ADAPTED-DATA form of the notice, as at Oberstdorf: this app resamples the tile onto a UTM grid and shifts it onto the core's vertical datum, so the plain © form would be the wrong string.",
+    "cogUrlTemplate": "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM.tif",
+    "tiles": ["N47_E010"],
+    "$comment": "The same single N47/E010 tile that covers Oberstdorf covers this shell too (47-48 N, 10-11 E) — the shell's eastern edge at 10.95 is still inside it. Zero new download, which is a small illustration of the larger point: the second site cost no new data-source work."
+  },
+  "cableways": [
+    {
+      "id": "tegelbergbahn",
+      "name": "Tegelbergbahn",
+      "osmTags": ["aerialway=cable_car", "aerialway=station"],
+      "$comment": "way/24555306, with terminals node/266995158 (Talstation) and node/266995159 (Bergstation). Same treatment as the Nebelhornbahn and the same tooling — build_cableway.py queries Overpass by bbox and tag, so a second cable car is not a second implementation. NOTE: the height of the cable is NOT surveyed; it is interpolated between station elevations and lifted clear of the terrain."
+    }
+  ],
+  "liveTracking": {
+    "provider": "ogn",
+    "aprsHost": "aprs.glidernet.org",
+    "aprsPortFiltered": 14580,
+    "aprsPortFull": 10152,
+    "ddbUrl": "https://ddb.glidernet.org/download/?j=1",
+    "radiusKm": 25,
+    "honourNoTrack": true,
+    "honourNoIdentify": true,
+    "$privacyComment": "Identical rules to Oberstdorf, and enforced in the same relay: no-track devices are dropped server-side and never reach the browser, no-identify devices arrive under a salted hash. The relay derives its APRS filter from whichever AOI it is started with, so switching site switches the traffic."
+  },
+  "tour": [
+    { "placeId": "hohenschwangau", "captionKey": "tour.tegelberg.hohenschwangau", "rangeM": 3000, "holdMs": 6500 },
+    { "placeId": "tegelberg_tal", "captionKey": "tour.tegelberg.talstation", "rangeM": 2200, "holdMs": 6000 },
+    { "placeId": "neuschwanstein", "captionKey": "tour.tegelberg.neuschwanstein", "rangeM": 1600, "holdMs": 6500 },
+    { "placeId": "tegelberg_berg", "captionKey": "tour.tegelberg.bergstation", "rangeM": 2400, "holdMs": 6500 },
+    { "placeId": "saeuling", "captionKey": "tour.tegelberg.saeuling", "rangeM": 4200, "holdMs": 7000 }
+  ],
+  "$tourComment": "THE TOUR IS PER SITE. It used to be a constant in src/twin3d/tour.ts listing Oberstdorf place ids, and createTour() skips stops the AOI does not have — so the second site got a tour of zero stops and a button that did nothing at all, quietly, which is the failure mode this whole phase exists to find. Every elevation quoted in the captions is SAMPLED FROM THE GENERATED HEIGHTMAP, not recalled: the Sauling caption names both the modelled 2047 m and the published 2048 m, because that 1.3 m is the registration proof from tools/geodata/verify_registration.py and is worth showing rather than hiding.",
+  "webcams": [
+    {
+      "id": "tegelberghaus",
+      "name": "Tegelberghaus",
+      "lat": 47.5593678,
+      "lon": 10.7780175,
+      "eleM": 1707,
+      "bearingDeg": 290,
+      "page": "https://www.foto-webcam.eu/webcam/tegelberg/",
+      "operator": "foto-webcam.eu (Keuschnig & Radlherr)",
+      "use": "link-only",
+      "osm": "node/9569388015"
+    }
+  ],
+  "$webcamsComment": "Resolved from OpenStreetMap 2026-08-02 (tools/geodata/webcam_spike.py). Bearing is OSM's camera:direction=290, cross-checked against the operator's caption 'Blick auf Füssen, Schwangau und den Forggensee' — all of which lie WNW of the Tegelberg, so the number and the sentence agree. The camera sits ~80 m from the Tegelbergbahn Bergstation. USE IS LINK-ONLY, for the reason given in the Oberstdorf config and in PLAN §5.9: the operator forbids copying or altering the images without written consent and explicitly welcomes links.",
+  "flights": {
+    "anonymise": true,
+    "displayLabel": { "de": "Beispielflug", "en": "Sample flight" },
+    "heroFlight": null,
+    "$comment": "No bundled flight for this site. The archive inventoried in §5.4 contains none over the Tegelberg, and inventing one is not an option — so this AOI ships as Mode A and Mode C only, and the app says so rather than showing an empty scrubber. That is a more honest demonstration of AOI-as-configuration than a borrowed track would be."
+  }
+}
