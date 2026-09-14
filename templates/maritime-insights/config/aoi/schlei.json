@@ -1,0 +1,171 @@
+{
+  "$comment": "Area of interest definition — the SECOND instance of this app, which is the point of the file existing at all. PLAN §4 said no location belongs in code; this is the run that tests whether that held. Every coordinate below came out of tools/geodata/resolve_places.py on 2026-08-02 (216 elements returned for the first-pass window 54.55/9.76 → 54.71/10.07) and is an OpenStreetMap element you can look up; none is recalled.",
+  "id": "schlei",
+  "site": {
+    "name": {
+      "de": "Schlei",
+      "en": "Schlei Inlet"
+    },
+    "region": {
+      "de": "Angeln / Schwansen, Schleswig-Holstein",
+      "en": "Angeln / Schwansen, Schleswig-Holstein"
+    },
+    "timezone": "Europe/Berlin"
+  },
+  "bbox": {
+    "crs": "EPSG:4326",
+    "west": 9.8,
+    "east": 10.035,
+    "south": 54.57,
+    "north": 54.69,
+    "$comment": "HIGH-RESOLUTION CORE. 15.1 x 13.4 km = 202 km², deliberately the same payload class as the Kieler Förde's 193 km². 🔴 CHOSEN ON A MEASUREMENT, not on the look of the map: the reason this second AOI exists is that the Kieler Förde's water is too open — a 25 m mast's horizon is ~21 km and the fjord runs out first, so the coverage disc swallows the map. Measured on Copernicus DEM GLO-30, the longest unobstructed straight line from a sea cell here has a median of 2.8 km and a p90 of 4.8 km, against 5.6 km and 7.6 km on the Förde: the water itself stops the sight line about twice as soon. Four candidate boxes were measured before this one; the east edge sits at 10.035 rather than 10.05 on purpose, because reaching 1.3 km further into the open Baltic doubled the p90 reach to 9.7 km and undid the whole reason for the AOI. It still holds the mouth: Schleimünde light (54.66190/10.02839) and Hafen Olpenitz (54.66123/10.02499) are inside with room to spare.",
+    "$trafficComment": "It also carries MORE traffic than the Förde, which was not the goal and is a welcome result: 6 691 AIS positions from 36 distinct vessels in the same 90 MB archive sample that yields 2 743 positions from 34 vessels for the Kieler Förde. The Kappeln lifting bridge, the Arnis ferry and the Schleimünde entrance concentrate it into a line rather than spreading it over a bay."
+  },
+  "shell": {
+    "crs": "EPSG:4326",
+    "west": 8.9,
+    "east": 11.7,
+    "south": 53.75,
+    "north": 55.15,
+    "$comment": "IDENTICAL to the Kieler Förde's shell, and that is the design rather than a copy: both cores sit inside this one 181 x 156 km window, ~25 km apart, so the two AOIs share a single horizon tier. The browser downloads it once and switching site is a move within one continuous world instead of a page load into a different one — the same argument the sibling alpine app makes for Tegelberg and Nebelhorn. Keep the two shells identical; the moment they diverge, the shared payload and the connected world both stop being true."
+  },
+  "workingCrs": "EPSG:25832",
+  "verticalDatum": "DHHN2016",
+  "$verticalDatumComment": "Same source and datum as the Kieler Förde — LVermGeo Schleswig-Holstein DGM1, hoehenbezu=DHHN2016_NH, quasigeoid=DE_AdV_GCG2016_QGH. This is the reason a Schleswig-Holstein AOI was preferred over the hillier Danish and Norwegian candidates: the entire high-resolution pipeline (DGM1, LoD2, bDOM, DOP20) applies unchanged, so the second site is a data build rather than a second data platform.",
+  "elevationRangeM": {
+    "min": -20,
+    "max": 90,
+    "$comment": "Provisional bracket, to be replaced by the measured range once build_terrain has run. Copernicus DEM (30 m DSM, so canopy included) gives -5.2 .. 78.4 m over this window; DGM1 is bare earth and will read lower at the top and deeper in the fairway, exactly as it did on the Förde where the provisional -30..90 became a measured -11.38..60.75."
+  },
+  "sea": {
+    "meanLevelM": 0.0,
+    "$comment": "Baltic, effectively tideless. ⚠️ The Schlei is a brackish inlet with a single narrow mouth at Schleimünde, so its level is driven by wind surge in the outer Baltic rather than by tide — the same Phase 8 subject as the Förde, and the same reason a constant plane is honest for v1 and a surge model is not something to fake."
+  },
+  "grids": {
+    "sourceResolutionM": 1,
+    "renderResolutionM": 4,
+    "renderDecimation": 4,
+    "$comment": "Identical to the Kieler Förde so the two sites render at the same fidelity and the payloads stay comparable. 1 m DGM1 source, 4 m heightmap, mesh decimated 4x to 16 m posting."
+  },
+  "shellGrids": {
+    "sourceResolutionM": 30,
+    "renderResolutionM": 90,
+    "renderDecimation": 2,
+    "transitionBandM": 1200,
+    "cogUrlTemplate": "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM.tif",
+    "$comment": "Same shell window as the Kieler Förde, therefore the same tiles and the same stored product. The shell is built once and served to both sites."
+  },
+  "shellGeobasis": {
+    "tiles": [
+      "N53_E008",
+      "N53_E009",
+      "N53_E010",
+      "N53_E011",
+      "N54_E008",
+      "N54_E009",
+      "N54_E010",
+      "N54_E011",
+      "N55_E008",
+      "N55_E009",
+      "N55_E010",
+      "N55_E011"
+    ],
+    "$tilesComment": "Copernicus DEM GLO-30 one-degree tiles covering the shared shell window (8.90-11.70 E, 53.75-55.15 N). Identical list to the Kieler Förde by design — see the shell comment.",
+    "cogUrlTemplate": "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM.tif",
+    "authority": "ESA / DLR / Airbus Defence and Space — Copernicus DEM GLO-30",
+    "licence": "Copernicus DEM open licence (free reuse with attribution)",
+    "attribution": "© DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018 provided under COPERNICUS by the European Union and ESA; all rights reserved."
+  },
+  "verticalExaggeration": 1.0,
+  "$verticalExaggerationComment": "TRUE SCALE, and here the discipline bites harder than on the Förde: this site was chosen because sight lines are short, and there is even less relief (coastal p90 27 m against the Förde's 37 m). Exaggerating it would manufacture the very shadows the site is supposed to demonstrate honestly. The water does the blocking here, not the hills, and the app should say so.",
+  "focusPlaces": [
+    {
+      "id": "kappeln",
+      "name": "Kappeln",
+      "lat": 54.6641815,
+      "lon": 9.9317597,
+      "osm": "node place=town",
+      "population": 9840
+    },
+    {
+      "id": "hafen_kappeln",
+      "name": "Hafen Kappeln",
+      "lat": 54.6697422,
+      "lon": 9.9385292,
+      "osm": "node seamark:type=harbour"
+    },
+    {
+      "id": "arnis",
+      "name": "Arnis",
+      "lat": 54.6300757,
+      "lon": 9.9327507,
+      "osm": "node place=village",
+      "population": 307
+    },
+    {
+      "id": "faehre_arnis",
+      "name": "Fähre Arnis",
+      "lat": 54.6305708,
+      "lon": 9.9339721,
+      "osm": "node amenity=ferry_terminal"
+    },
+    {
+      "id": "grodersby",
+      "name": "Grödersby",
+      "lat": 54.6373329,
+      "lon": 9.9186212,
+      "osm": "node place=village",
+      "population": 271
+    },
+    {
+      "id": "brodersby",
+      "name": "Brodersby",
+      "lat": 54.6355532,
+      "lon": 9.9798164,
+      "osm": "node place=village",
+      "population": 756
+    },
+    {
+      "id": "maasholm",
+      "name": "Maasholm",
+      "lat": 54.6843309,
+      "lon": 9.9915137,
+      "osm": "node place=village",
+      "population": 681
+    },
+    {
+      "id": "olpenitz",
+      "name": "Hafen Olpenitz",
+      "lat": 54.6612275,
+      "lon": 10.0249914,
+      "osm": "node seamark:type=harbour"
+    },
+    {
+      "id": "schoenhagen",
+      "name": "Schönhagen",
+      "lat": 54.6340018,
+      "lon": 10.0260393,
+      "osm": "node place=village"
+    },
+    {
+      "id": "karby",
+      "name": "Karby",
+      "lat": 54.6239051,
+      "lon": 9.9746651,
+      "osm": "node place=village",
+      "population": 568
+    }
+  ],
+  "$focusPlacesComment": "Resolved from OpenStreetMap 2026-08-02 by tools/geodata/resolve_places.py — 216 elements returned for the first-pass window, and these ten were selected from them by hand. Ordered roughly from the inner Schlei outwards to the mouth, which is also the order the water widens in. They are camera bookmarks, nothing more; no analysis keys off them. ⚠️ The window contains 33 villages and 54 hamlets; listing all of them would make the switcher unreadable and none of them is a landmark a viewer would navigate by.",
+  "registrationChecks": {
+    "$comment": "PLAN §4.4. The build fails if these do not hold — a coverage shadow drawn over a misregistered coast is worse than no map, because it looks authoritative.",
+    "publishedLightHeights": [],
+    "$publishedLightHeightsComment": "🔴 EMPTY, and stated rather than filled. Seven seamark lights were returned for the first-pass window and exactly one falls inside the box (54.66190/10.02839, the Schleimünde entrance) — and it carries no name and no height tag in OSM, so it cannot serve as a published-elevation check. The Kieler Förde had one usable light and that was already thin. The vertical check here therefore rests entirely on the DGM1 datum and on the AIS witness below; inventing a height for the Schleimünde light to fill this array would be exactly the kind of recalled coordinate PLAN §4.4 exists to forbid.",
+    "coastlineAgreement": "The DGM 0 m contour must coincide with the surveyed coastline, and the quay edges at Kappeln must line up with the orthophoto drape.",
+    "aisWitness": "🔴 The strongest check available, and it is stronger here than on the Förde: the Schlei is narrow, so a projection error of a few hundred metres puts ships in a field rather than merely off-centre in a bay. ANY AIS track that lands on rendered land means the terrain, the coastline or the projection is wrong."
+  },
+  "sensorSites": {
+    "$comment": "PLAN §2.1 decision 3 and §3.2 rule 2. There are NO sensor sites in this file, and there never will be. The app depicts no real installation; a site is something the user places at run time, labelled 'fiktiver Standort'. This block exists solely so that the absence is explicit rather than an oversight.",
+    "policy": "user-placed-notional-only"
+  }
+}

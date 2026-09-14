@@ -1,0 +1,172 @@
+table 'Plan'
+	lineageTag: 214b8efa-f4be-433a-b0af-a5b00b79b67b
+
+	column 'plan_id'
+		dataType: string
+		isHidden
+		lineageTag: 14eaac9f-80f5-4365-aa35-d77889227ae8
+		summarizeBy: none
+		sourceColumn: plan_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Committed At'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: c18b3ee2-9d91-427e-99f9-f648c828eb41
+		summarizeBy: none
+		sourceColumn: committed_utc
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'AOI'
+		dataType: string
+		lineageTag: 41666384-ee08-451e-8d48-9d618b16756e
+		summarizeBy: none
+		sourceColumn: aoi
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Plan Name'
+		dataType: string
+		lineageTag: ade6741a-5f07-4118-b734-ea221b8c5579
+		summarizeBy: none
+		sourceColumn: plan_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Author (asserted)'
+		dataType: string
+		lineageTag: 2fa5de4c-2bfc-4151-9b5b-f6540d6e0d07
+		summarizeBy: none
+		sourceColumn: author_asserted
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Scenario'
+		dataType: string
+		lineageTag: 22a30dd5-f52e-4472-8f15-39c88f0aaf50
+		summarizeBy: none
+		sourceColumn: scenario
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Track Date'
+		dataType: string
+		lineageTag: 3fb02b66-5681-482a-a1f5-60fb4588b50a
+		summarizeBy: none
+		sourceColumn: track_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Masts'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 79804db6-6637-4d2b-8ce7-7dcacb644a01
+		summarizeBy: none
+		sourceColumn: sites
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mast Metres'
+		dataType: double
+		formatString: #,0
+		lineageTag: 0fc18bd0-0ce9-4e46-b479-039132dfa351
+		summarizeBy: none
+		sourceColumn: mast_metres
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Target Height m'
+		dataType: double
+		formatString: #,0
+		lineageTag: 8408cdd9-0e67-432e-8b9f-b4da774abfe8
+		summarizeBy: none
+		sourceColumn: target_m
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Transits'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 1e02251e-02f2-4ddb-afde-ee9d2ba6fc39
+		summarizeBy: none
+		sourceColumn: transits
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Observed Transits'
+		dataType: int64
+		formatString: #,0
+		lineageTag: e9c24fd6-1291-4d55-b5b4-bf92a9a315de
+		summarizeBy: none
+		sourceColumn: observed_transits
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Observed Share'
+		dataType: double
+		formatString: 0.0%
+		lineageTag: eeb3d99e-38f5-4376-869e-f940634653a1
+		summarizeBy: none
+		sourceColumn: observed_share
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Visible km2'
+		dataType: double
+		formatString: #,0.0
+		lineageTag: e35c2212-4525-4065-b9e0-0936dfd253a2
+		summarizeBy: none
+		sourceColumn: visible_km2
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Worst Case Loss Transits'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 7d36c6c9-638f-499e-b9fc-b47b8cd4325d
+		summarizeBy: none
+		sourceColumn: worst_case_loss_transits
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Excluded Stationary'
+		dataType: int64
+		formatString: #,0
+		lineageTag: d0fcde41-d454-4f18-8534-c41d6a2abab4
+		summarizeBy: none
+		sourceColumn: excluded_stationary
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Stationary Below km'
+		dataType: double
+		formatString: #,0.0
+		lineageTag: 067de428-f12e-41d1-8b2b-db9570bf659e
+		summarizeBy: none
+		sourceColumn: stationary_below_km
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Includes Vegetation'
+		dataType: boolean
+		lineageTag: 4e1fda3d-78c2-4476-8a2d-49c6691b36f2
+		summarizeBy: none
+		sourceColumn: includes_vegetation
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Geometry Only'
+		dataType: boolean
+		lineageTag: 9334e443-f6c3-4024-b4a3-9907a38ab8b5
+		summarizeBy: none
+		sourceColumn: geometry_only
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'sensor_plan' = entity
+		mode: directLake
+		source
+			entityName: sensor_plan
+			expressionSource: 'DirectLake - MaritimeInsightsLakehouse'

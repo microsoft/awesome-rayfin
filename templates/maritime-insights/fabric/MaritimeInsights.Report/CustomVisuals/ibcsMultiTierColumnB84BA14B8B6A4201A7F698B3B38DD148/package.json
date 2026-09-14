@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0.19",
+  "author": {
+    "name": "Alexander Korn",
+    "email": "alkorn@microsoft.com"
+  },
+  "resources": [
+    {
+      "resourceId": "rId0",
+      "sourceType": 5,
+      "file": "resources/ibcsMultiTierColumnB84BA14B8B6A4201A7F698B3B38DD148.pbiviz.json"
+    }
+  ],
+  "visual": {
+    "guid": "ibcsMultiTierColumnB84BA14B8B6A4201A7F698B3B38DD148",
+    "name": "ibcsMultiTierColumn",
+    "displayName": "IBCS Multi-Tier Column",
+    "version": "1.0.0.19",
+    "description": "IBCS-compliant integrated variance column chart (AC vs PY/PL/BU, with absolute and percent variance tiers).",
+    "supportUrl": "https://github.com/KornAlexander/PBI-IBCS-Visuals",
+    "gitHubUrl": "https://github.com/KornAlexander/PBI-IBCS-Visuals",
+    "visualClassName": "Visual"
+  },
+  "metadata": {
+    "pbivizjson": {
+      "resourceId": "rId0"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+# Two images are built from this repo: the AIS relay (server/ais/Dockerfile) and the assistant
+# backend (server/assistant/Dockerfile). Both need their own source plus a couple of small
+# fixtures, nothing else. Excluding everything by default keeps the build context at a few hundred
+# kB instead of shipping the terrain tiles, node_modules and the built bundle to the registry.
+# The re-includes are written level by level, because a `!` exception cannot
+# reach into a directory that was excluded wholesale.
+*
+
+!server
+server/*
+!server/ais
+server/ais/*.test.js
+!server/assistant
+server/assistant/*.test.js
+server/assistant/node_modules
+
+!config
+config/*
+!config/aoi
+
+!public
+public/*
+!public/terrain
+public/terrain/*
+!public/terrain/kieler-foerde
+public/terrain/kieler-foerde/*
+!public/terrain/kieler-foerde/tracks.binz
+!public/terrain/kieler-foerde/tracks.json
+!public/terrain/kieler-foerde/heightmap_4m.json
+!public/terrain/kieler-foerde/los_16m.json
+!public/terrain/schlei
+public/terrain/schlei/*
+!public/terrain/schlei/tracks.binz
+!public/terrain/schlei/tracks.json
+!public/terrain/schlei/heightmap_4m.json
+!public/terrain/schlei/los_16m.json

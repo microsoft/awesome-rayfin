@@ -1,0 +1,20 @@
+model Model
+	culture: de-DE
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: de-DE
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["DirectLake - MaritimeInsightsLakehouse"]
+
+annotation PBI_ProTooling = ["DirectLakeOnOneLakeInWeb","WebModelingEdit"]
+
+ref table Position
+ref table Passage
+ref table Hour
+ref table 'Vessel Class'
+ref table Plan
+ref table 'Plan Site'
+ref table 'Measure'

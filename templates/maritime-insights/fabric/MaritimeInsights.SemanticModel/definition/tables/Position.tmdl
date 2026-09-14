@@ -1,0 +1,141 @@
+table 'Position'
+	lineageTag: 7d6ea32c-5933-408c-9f0f-abccfc59c126
+
+	column 'Position Key'
+		dataType: int64
+		isHidden
+		lineageTag: b088bb1d-1349-496d-9ed2-34749151c628
+		summarizeBy: none
+		sourceColumn: position_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Track Key'
+		dataType: int64
+		isHidden
+		lineageTag: 9e4a0748-fb34-4350-aa2c-6aa9b93fa79f
+		summarizeBy: none
+		sourceColumn: track_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Vessel Type'
+		dataType: string
+		lineageTag: 70b7dd2d-dbd6-42a7-9a60-3f055261367d
+		summarizeBy: none
+		sourceColumn: vessel_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Observed At'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: c351eecd-c376-4cc8-be48-276085d2f935
+		summarizeBy: none
+		sourceColumn: observed_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Second Of Day'
+		dataType: int64
+		isHidden
+		lineageTag: e6a0a471-38cc-449d-9a47-1a2aaccea27c
+		summarizeBy: none
+		sourceColumn: second_of_day
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Hour Of Day'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 8771af24-2c37-404a-9a6f-99b43d5b1079
+		summarizeBy: none
+		sourceColumn: hour_of_day
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Latitude'
+		dataType: double
+		formatString: #,0.000000
+		lineageTag: d7badf51-5996-4835-9ac7-f0e3de8c7d75
+		summarizeBy: none
+		sourceColumn: latitude
+		dataCategory: Latitude
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Longitude'
+		dataType: double
+		formatString: #,0.000000
+		lineageTag: 4f147279-ee08-4f55-950e-3697077a12fa
+		summarizeBy: none
+		sourceColumn: longitude
+		dataCategory: Longitude
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Cell Latitude'
+		dataType: double
+		isHidden
+		formatString: #,0.0000
+		lineageTag: c33ab65d-cb9a-4d49-99cd-b567e7106ffc
+		summarizeBy: none
+		sourceColumn: cell_latitude
+		dataCategory: Latitude
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Cell Longitude'
+		dataType: double
+		isHidden
+		formatString: #,0.0000
+		lineageTag: d2f5a440-768e-41c2-abe6-65b6ba2fb891
+		summarizeBy: none
+		sourceColumn: cell_longitude
+		dataCategory: Longitude
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Cell Key'
+		dataType: string
+		isHidden
+		lineageTag: ce6165a2-3b7b-4bcb-a534-ffca01f6caa1
+		summarizeBy: none
+		sourceColumn: cell_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Scene X m'
+		dataType: double
+		isHidden
+		formatString: #,0
+		lineageTag: 7cb541b6-e547-4c41-9fc7-a27822b0feb3
+		summarizeBy: none
+		sourceColumn: scene_x_m
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Scene Z m'
+		dataType: double
+		isHidden
+		formatString: #,0
+		lineageTag: 55188d1e-00a4-406a-9337-7d4fcd611e5b
+		summarizeBy: none
+		sourceColumn: scene_z_m
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Speed kn'
+		dataType: double
+		formatString: #,0.0
+		lineageTag: ed136c3f-da7e-4193-a5bf-9fe37d39a43c
+		summarizeBy: none
+		sourceColumn: speed_kn
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'vessel_position' = entity
+		mode: directLake
+		source
+			entityName: vessel_position
+			expressionSource: 'DirectLake - MaritimeInsightsLakehouse'

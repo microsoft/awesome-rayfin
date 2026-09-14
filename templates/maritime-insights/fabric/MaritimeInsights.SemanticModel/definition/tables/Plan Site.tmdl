@@ -1,0 +1,118 @@
+table 'Plan Site'
+	lineageTag: 54a8b709-3a76-46f3-9d24-e2463364d836
+
+	column 'plan_id'
+		dataType: string
+		isHidden
+		lineageTag: 72e783c7-8041-49d1-8452-0e5f6368511c
+		summarizeBy: none
+		sourceColumn: plan_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Site'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 622653ae-820a-442c-a4aa-60eb5b07f7f1
+		summarizeBy: none
+		sourceColumn: site_index
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Latitude'
+		dataType: double
+		formatString: #,0.000000
+		lineageTag: 27bb8205-428f-4c5c-a54f-8b4004270bc5
+		summarizeBy: none
+		sourceColumn: lat
+		dataCategory: Latitude
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Longitude'
+		dataType: double
+		formatString: #,0.000000
+		lineageTag: e536adf2-e6ac-4fe4-8bcc-34aa070018eb
+		summarizeBy: none
+		sourceColumn: lon
+		dataCategory: Longitude
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'grid_col'
+		dataType: int64
+		isHidden
+		lineageTag: 84c81ea6-32b9-49eb-85b4-261803b8e9f6
+		summarizeBy: none
+		sourceColumn: grid_col
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'grid_row'
+		dataType: int64
+		isHidden
+		lineageTag: 1cee1e35-c5c7-4940-b4d7-3962ec1f378d
+		summarizeBy: none
+		sourceColumn: grid_row
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mast m'
+		dataType: double
+		formatString: #,0
+		lineageTag: 8e1a4b80-033e-4a51-b7e4-ea659f438053
+		summarizeBy: none
+		sourceColumn: mast_m
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ground m'
+		dataType: double
+		formatString: #,0.0
+		lineageTag: 9f8f066f-2573-4add-9c89-3be834ca58e1
+		summarizeBy: none
+		sourceColumn: ground_m
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Eye m'
+		dataType: double
+		formatString: #,0.0
+		lineageTag: 9ddd8762-18e0-4e4a-bd7b-6371d095460f
+		summarizeBy: none
+		sourceColumn: eye_m
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Horizon km'
+		dataType: double
+		formatString: #,0.0
+		lineageTag: e0bd8dd2-3d71-4ed1-b23e-ca396e45dca3
+		summarizeBy: none
+		sourceColumn: horizon_km
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Observed Passages'
+		dataType: int64
+		formatString: #,0
+		lineageTag: dc43076b-decd-44de-b3dd-60e3bcc10c4d
+		summarizeBy: none
+		sourceColumn: observed_passages
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Unique Passages'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 0a23c6a9-2546-4b1d-8602-3bcad931e376
+		summarizeBy: none
+		sourceColumn: unique_passages
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'sensor_plan_site' = entity
+		mode: directLake
+		source
+			entityName: sensor_plan_site
+			expressionSource: 'DirectLake - MaritimeInsightsLakehouse'
