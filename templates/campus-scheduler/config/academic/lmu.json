@@ -1,0 +1,138 @@
+{
+  "$comment": "The INVENTED half of the LMU München dataset. Same structure as config/academic/oth.json, and deliberately NOT the same content — a second customer that differed only in coordinates would prove nothing about whether the app is configurable. Everything here is synthetic; the buildings it hangs off are not.",
+  "$provenance": "synthetic — see data/synthetic-lmu/provenance.json. Nothing here is a claim about LMU's real faculties, staff, curriculum or room allocation.",
+  "id": "lmu",
+
+  "blockScheme": {
+    "$comment": "⚠️ THE BLOCK SCHEME IS THE FIRST THING THAT ACTUALLY DIFFERS, and it is not a decoration. OTH, as a Hochschule für angewandte Wissenschaften, runs seven 90-minute blocks starting at 08:00 sine tempore. LMU, like most German universities, teaches cum tempore — the akademisches Viertel — so a lecture announced for 8 Uhr starts at 08:15 and the day is SIX blocks, not seven. That single difference removes a whole slot from the week, which is a ~14% cut in capacity before a single room is counted, and it is exactly the kind of assumption that gets hard-coded and then silently wrong at the second customer. It lives here so the answer to 'what is your block scheme?' is a file, not a migration.",
+    "days": ["Mo", "Di", "Mi", "Do", "Fr"],
+    "blocks": [
+      ["08:15", "09:45"],
+      ["10:15", "11:45"],
+      ["12:15", "13:45"],
+      ["14:15", "15:45"],
+      ["16:15", "17:45"],
+      ["18:15", "19:45"]
+    ],
+    "desirability": [0.6, 1.0, 0.9, 1.0, 0.8, 0.45],
+    "$desirabilityComment": "Early and late blocks are the ones everybody avoids; the solver's soft objective needs something to prefer against. The dip at 12:15 is the lunch block — less avoided than 08:15, more than mid-morning."
+  },
+
+  "faculties": [
+    { "id": "MIS", "name": "Fakultät für Mathematik, Informatik und Statistik", "teachers": 44 },
+    { "id": "MED", "name": "Medizinische Fakultät", "teachers": 58 }
+  ],
+  "$facultiesComment": "TWO faculties again, for the reason in the OTH profile — with one, the interesting conflict cannot occur. But the PAIR was chosen from this AOI's geography rather than copied: MIS sits in the Stammgelände (Theresienstraße, Amalienstraße, Oettingenstraße, Ludwigstraße) and MED sits 2.4 km south at the Klinikum Campus Innenstadt, with both drawing on the shared lecture halls of the Hauptgebäude. That produces the two scenarios the product exists for — cross-faculty competition for a large hall, and a cohort that has to cross the city between blocks — out of the real map instead of out of an assumption. MIS also owns the one building whose interior is surveyed (Oettingenstraße 67, 526 mapped rooms), so the exploding-building view opens on real geometry, exactly as Gebäude K does at OTH. ⚠️ LMU has EIGHTEEN faculties. The other sixteen are real, they render, and they carry no teaching rooms — see `buildingOwnership.fallback`.",
+
+  "programmes": {
+    "MIS": ["Informatik", "Mathematik", "Statistik", "Wirtschaftsmathematik", "Medieninformatik"],
+    "MED": ["Humanmedizin", "Zahnmedizin", "Epidemiologie", "Public Health", "Medical Research"]
+  },
+  "cohortSemesters": [1, 3, 5],
+  "$cohortComment": "2 faculties x 5 programmes x 3 semesters = 30 cohorts, matching the OTH dataset's shape so the two are comparable. Cohort SIZES are not matched — LMU cohorts are larger, which is what makes the shared halls scarce.",
+
+  "subjects": {
+    "MIS": [
+      "Analysis", "Lineare Algebra", "Numerische Mathematik", "Wahrscheinlichkeitstheorie",
+      "Diskrete Strukturen", "Algorithmen und Datenstrukturen", "Datenbanksysteme",
+      "Betriebssysteme", "Rechnerarchitektur", "Softwaretechnik", "Programmierung und Modellierung",
+      "Statistische Modellierung", "Maschinelles Lernen", "Datenbanken und Informationssysteme",
+      "Mustererkennung", "Medieninformatik", "Mensch-Maschine-Interaktion", "Optimierung",
+      "Versicherungsmathematik", "Wissenschaftliches Rechnen"
+    ],
+    "MED": [
+      "Anatomie", "Physiologie", "Biochemie", "Histologie", "Medizinische Terminologie",
+      "Medizinische Psychologie", "Innere Medizin", "Chirurgie", "Pharmakologie und Toxikologie",
+      "Allgemeine Pathologie", "Medizinische Mikrobiologie", "Radiologie", "Neurologie",
+      "Psychiatrie", "Rechtsmedizin", "Hygiene und Umweltmedizin", "Epidemiologie",
+      "Biometrie", "Notfallmedizin", "Klinische Untersuchungskurse"
+    ]
+  },
+
+  "surnames": [
+    "Angermaier", "Bachhuber", "Bernreiter", "Buchner", "Dallmaier", "Eichhorn", "Feichtner",
+    "Grasegger", "Hallmeier", "Hofstetter", "Immler", "Jachmann", "Kirchgessner", "Kronseder",
+    "Lachner", "Lengfelder", "Metzeler", "Mittermeier", "Nagelschmidt", "Oberpriller",
+    "Pichlmaier", "Reithinger", "Riedmüller", "Sedlmair", "Sonnleitner", "Stettner", "Trinkl",
+    "Vollmuth", "Waldherr", "Zehetner", "Aigner", "Blomberger", "Dachauer", "Egglhuber",
+    "Fürholzer", "Grünwalder", "Haidacher", "Isarland", "Kagerer", "Lauterbacher", "Moosrainer",
+    "Neuhauser", "Pasinger", "Riedler", "Schwabinger", "Thalkirchner",
+    "Untermenzinger", "Vogelweider", "Weinzierl", "Ziegelmair", "Auerbacher", "Bogenhauser",
+    "Dietramszeller", "Eschenrieder", "Freimanner", "Giesinger", "Harlachinger", "Ismaninger",
+    "Kirchtrudering", "Laimer", "Milbertshofner", "Nymphenburger", "Obermenzinger",
+    "Pullacher", "Ramersdorfer", "Sendlinger", "Tutzinger", "Unterhachinger", "Waldperlacher",
+    "Zamdorfer", "Allacher", "Berger", "Denninger", "Englschalking", "Forstenrieder",
+    "Gerner", "Hadern", "Johanneskirchner", "Kaltenberger", "Lochhauser", "Maxhofer",
+    "Aubinger", "Baldhamer", "Deisenhofer", "Ebersberger", "Feldmochinger", "Gautinger",
+    "Grafrather", "Haimhauser", "Ickinger", "Karlsfelder", "Kreuzpointner", "Lohhofer",
+    "Martinsrieder", "Neurieder", "Ottobrunner", "Perlacher", "Riemer", "Röhrmoser",
+    "Schleißheimer", "Starnberger", "Truderinger", "Uffinger", "Vaterstettener", "Weßlinger",
+    "Zornedinger", "Aschheimer", "Bruckmühler", "Dornacher", "Garchinger", "Holzkirchner"
+  ],
+  "$surnamesComment": "A DIFFERENT pool from OTH's, and a deliberately Munich-flavoured one — many are derived from Munich district and Upper Bavarian place names. Combined with a single initial, the same way OTH's are. ⚠️ MUST BE AT LEAST AS LONG AS THE FACULTY TEACHER COUNTS AND DISJOINT FROM OTH'S: this pool held 82 names for 102 lecturers, so the generator wrapped and 20 LMU professors shared a name with a colleague in ANOTHER faculty — and both halves carried real teaching, so resolving a lecturer by surname (which the assistant and /api/calendar both do) returned one of them and reported the wrong workload with complete confidence. 'Oberländer' was also in both universities' pools; it stays in OTH's, which is the Oberpfalz-flavoured one, and left this one. Both properties are asserted by src/config/__tests__/surnames.test.ts. ⚠️ This dataset must never read as a roster of real LMU staff; provenance.json says so and the UI badges it. If a name here happens to match a real professor, that is a collision in a pool of ordinary Bavarian surnames, not a reference.",
+
+  "nonTeachingNameWords": ["mensa", "küche", "parkhaus", "bibliothek", "staatsbibliothek", "verwaltung", "verwaltungsbau", "museum", "sternwarte"],
+  "$nonTeachingComment": "The same JUDGEMENT as at OTH — buildings the ownership test correctly accepts but no timetable ever books — with two Munich-specific additions. `museum` keeps the Paläontologisches Museum out of the teaching stock (it is an LMU building AND a public museum; the collection halls are not seminar rooms), and `bibliothek`/`staatsbibliothek` keeps both the university library and the Bayerische Staatsbibliothek out. ⚠️ `klinik` is deliberately NOT on this list: clinical teaching genuinely happens in the wards and lecture theatres of the Klinikum, and excluding them would delete the Medizin half of the dataset. Their low teaching share is expressed in `teachingShare` instead, which is the honest instrument for 'mostly not a classroom'.",
+
+  "buildingOwnership": {
+    "$comment": "OWNERSHIP IS SYNTHETIC — the same load-bearing invention as at OTH, and read the same way: the Hauptgebäude and the Philologicum are SHARED, which is what makes two faculties compete for one large hall, and MED's practicals sit at the Klinikum, which is what makes a cohort cross 2.4 km between blocks. Neither is a claim about LMU's real room allocation. Rules are evaluated IN ORDER and the first match wins.",
+    "rules": [
+      {
+        "owner": "shared",
+        "campusId": "stammgelaende",
+        "nameIs": ["A", "B", "C", "D", "E", "F", "M", "N"],
+        "$comment": "⚠️ EXACT NAMES, and the first version of this rule found NOTHING. It looked for 'hauptgebäude'/'philologicum'/'geschwister-scholl' — sensible words that appear nowhere in the data. OSM names the eight Hauptgebäude wings literally 'A', 'B', … 'N' (config/lmu-building-letters.json), so a substring rule cannot pick them out without matching every name that contains an A. The consequence of getting this wrong was not subtle and was not an error either: with no shared buildings and no MIS buildings, ALL 797 placed sessions landed at the Klinikum, the cross-campus constraint disappeared from the dataset, and the generator reported success."
+      },
+      {
+        "owner": "shared",
+        "nameContains": ["hörsaal", "audimax"],
+        "$comment": "A building the university names after its lecture hall is a lecture hall wherever it stands — that is how the Walther-Straub-Hörsaal (626 m², below the Klinikum footprint threshold) gets into the teaching stock instead of falling through to `other`."
+      },
+      {
+        "owner": "MIS",
+        "osmIds": ["relation/116031"],
+        "$comment": "Oettingenstraße 67 by OSM id, because it is UNNAMED in OSM and no name rule can reach it. It is the one building on this site with a surveyed interior — 526 rooms on three levels — and it belongs to MIS. Same object and same evidence as ownership.extraIds in the AOI config."
+      },
+      {
+        "owner": "MIS",
+        "nameContains": ["mathemat", "informatik", "statistik"],
+        "$comment": "⚠️ STEMS, NOT WORDS. 'mathematik' does not appear in 'Mathematisches Institut' — the 8048 m² building that is the largest thing MIS owns — so the obvious keyword misses the obvious building. German compounds and adjectival endings make substring matching on full words unreliable in exactly the cases that matter."
+      },
+      {
+        "owner": "MED",
+        "nameContains": ["anatom", "pettenkofer", "humangenetik", "patholog", "rechtsmedizin", "pharmakologie", "klinik", "poliklinik", "kinderspital", "psychiatr", "hauner", "baur-institut", "notfallmedizin"],
+        "$comment": "Every one of these is a real building name measured in the Klinikum box, not a guess at what a hospital might be called."
+      },
+      {
+        "owner": "MED",
+        "campusId": "klinikum",
+        "minFootprintM2": 900,
+        "$comment": "The Klinikum box holds large UNNAMED university buildings that are demonstrably LMU's (the site relation lists them) and demonstrably clinical, because that is the only thing on that block. A footprint rule includes them without inventing a name. ⚠️ Below 900 m² the same buildings fall through to `other` deliberately: a small unnamed structure in a hospital quarter is a plant room or a garage far more often than it is a seminar room."
+      }
+    ],
+    "fallback": "other",
+    "$fallbackComment": "⚠️ SCOPE, not just ownership, and it matters more here than at OTH. LMU has eighteen faculties and this dataset models two, so the great majority of the buildings the twin renders — Geowissenschaften, Tiermedizin, Psychologie, Sinologie, the Nano-Institut — are `other`: REAL, rendered, and excluded from the teaching stock entirely. We cannot schedule their rooms and we cannot observe them, so counting them as free capacity would be the same error as painting a room with no calendar 0% instead of grey."
+  },
+
+  "teachingShare": {
+    "$comment": "Fraction of a building's USABLE floor that becomes schedulable teaching space. Bands are tested in order against the building name, first match wins. \u26a0\ufe0f THESE WERE CUT after the first generated run, exactly as OTH's were, and for the mirror-image reason. The first values (0.65/0.28/0.15) produced 21 lecture halls for 130 hall sessions and a 6.1% teaching-room utilisation \u2014 arithmetically correct, and a picture of a university with no room problem at all, which is not a university anyone needs a scheduler for. The error was not the utilisation; it was believing that 15% of an unnamed Klinikum block is bookable teaching space. It is a ward, a theatre suite and a plant room.",
+    "byNameWords": [
+      { "share": 0.55, "words": ["h\u00f6rsaal", "audimax"] },
+      { "share": 0.2, "words": ["informatik", "mathemat", "statistik", "anatom", "pettenkofer", "institut"] }
+    ],
+    "default": 0.05,
+    "$defaultComment": "\u26a0\ufe0f DELIBERATELY VERY LOW, and much lower than OTH's 0.18, because the buildings it applies to are different in kind. At OTH the default catches faculty buildings \u2014 labs and offices with some seminar rooms. Here it catches the unnamed blocks of a working hospital, where the honest teaching fraction is a lecture theatre and a couple of seminar rooms in a building otherwise full of beds. It also catches the eight Hauptgeb\u00e4ude wings, which is why they are given their own band above."
+  },
+
+  "$sharedWingsNote": "The Hauptgeb\u00e4ude wings are named 'A' \u2026 'N' and therefore match NO name band, falling to `default`. That is intended: their ownership is `shared` (see buildingOwnership) so they compete between faculties, but their floor is mostly institute offices and libraries rather than lecture halls, and the lecture halls they do contain are picked up by the lectureHalls rule below on footprint.",
+
+  "lectureHalls": {
+    "$comment": "Same scarcity rule as OTH, different numbers \u2014 'large' is not the same figure in Regensburg and in Maxvorstadt, where an ordinary city block is bigger than an OTH faculty building. The thresholds were RAISED with the shares above: at 3000/2400 m\u00b2 this site produced 21 halls against a demand of 130 sessions, i.e. 21% occupancy even if perfectly packed, which means two faculties never want the same hall and the central conflict of the product cannot occur in its own demo data. The name words are LMU's own; copying OTH's ['h\u00f6rsaal'] alone would have found one building.",
+    "nameWords": ["h\u00f6rsaal", "audimax"],
+    "minFootprintM2": 4500,
+    "secondHallMinFootprintM2": 7000
+  },
+
+  "cipPoolFaculties": ["MIS", "shared"],
+  "$cipPoolComment": "Which owners' buildings get computer rooms in the mix. MIS and the shared halls; a clinical building's practical rooms are not CIP-Pools."
+}

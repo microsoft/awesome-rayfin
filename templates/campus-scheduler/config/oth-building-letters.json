@@ -1,0 +1,63 @@
+{
+  "$comment": "OTH Regensburg building letters — PUBLISHED, not invented. Lifted 2026-07-30 from https://www.oth-regensburg.de/die-oth/standort-und-raumplaene and cross-checked against the letters embedded in the official campus plan PDF (2024_OTH_Campusuebersicht.pdf), whose text layer contains exactly: D G H I T U L H J S S K A B C S R V D Q D Y V W W.",
+  "$correction": "⚠️ This file exists because the generator was INVENTING building letters and badging them 'derived — OTH's real letters are not public'. They are public, on the university's own website, and one search found them. An assumption stated confidently in a provenance file is still an assumption; this replaces it with the source.",
+  "source": "https://www.oth-regensburg.de/die-oth/standort-und-raumplaene",
+  "fetchedOn": "2026-07-30",
+
+  "sites": {
+    "Galgenbergstraße 30": ["A", "B", "C", "D", "E", "G", "H", "I", "J"],
+    "Galgenbergstraße 32": ["K", "L"],
+    "Seybothstraße 2": ["Q", "R", "S", "T", "V", "W", "Y"],
+    "Universitätsstraße 31": ["U"],
+    "Prüfeninger Straße 58": ["P"]
+  },
+
+  "buildings": {
+    "A": { "use": "Fakultät Maschinenbau, RCBE, RCHST", "site": "Galgenbergstraße 30" },
+    "B": { "use": "Fakultät Maschinenbau, RCBE, RCHST", "site": "Galgenbergstraße 30" },
+    "C": { "use": "Fakultät Maschinenbau, RCBE, RCHST", "site": "Galgenbergstraße 30" },
+    "D": { "use": "Allgemeine Studienberatung, Hörsaalgebäude am Forum, International Office, Junge Hochschule", "site": "Galgenbergstraße 30" },
+    "E": { "use": "Allgemeine Studienberatung, Hörsaalgebäude am Forum, International Office, Junge Hochschule", "site": "Galgenbergstraße 30" },
+    "G": { "use": "CIP-Pools, Angewandte Natur- und Kulturwissenschaften, Bauingenieurwesen (Haus der Technik)", "site": "Galgenbergstraße 30" },
+    "H": { "use": "Angewandte Natur- und Kulturwissenschaften, Elektro- und Informationstechnik, Bauingenieurwesen", "site": "Galgenbergstraße 30" },
+    "I": { "use": "Angewandte Natur- und Kulturwissenschaften, Elektro- und Informationstechnik, Maschinenbau", "site": "Galgenbergstraße 30" },
+    "J": { "use": "Fakultät Bauingenieurwesen", "site": "Galgenbergstraße 30" },
+    "K": { "use": "Fakultät Informatik und Mathematik", "site": "Galgenbergstraße 32" },
+    "L": { "use": "Fakultät Architektur", "site": "Galgenbergstraße 32" },
+    "P": { "use": "BeDiSC, CIP-Pools, Lehre und Didaktik, RCHST, Startup-Lab, Teilbibliothek", "site": "Prüfeninger Straße 58" },
+    "Q": { "use": "Hochschulbibliothek und Mensa", "site": "Seybothstraße 2" },
+    "R": { "use": "Hochschulbibliothek und Mensa", "site": "Seybothstraße 2" },
+    "S": { "use": "Sozial- und Gesundheitswissenschaften, Business and Management, Elektro- und Informationstechnik, Gebäude und Technik, IT-Zentrum, Start-up center", "site": "Seybothstraße 2" },
+    "T": { "use": "Angewandte Natur- und Kulturwissenschaften (Laborgebäude Mikrosystemtechnik)", "site": "Seybothstraße 2" },
+    "U": { "use": "Elektro- und Informationstechnik (FENES), Informatik und Mathematik", "site": "Universitätsstraße 31" },
+    "V": { "use": "Hochschulleitung und Hochschulverwaltung", "site": "Seybothstraße 2" },
+    "W": { "use": "Haus für Innovation und Transfer — RCER, ZWW, Forschungslabore", "site": "Seybothstraße 2" },
+    "Y": { "use": "Studierendenhaus", "site": "Seybothstraße 2" }
+  },
+
+  "osmNameToLetter": {
+    "$comment": "Maps the OSM building names we fetched onto the published letters. Matches are by USE, stated one by one rather than by a fuzzy rule, so a wrong one is visible in a diff. Buildings not listed here keep a generated placeholder and are flagged in the data — an unmapped building is an admission, not a gap to paper over.",
+    "Fakultät Maschinenbau": "A",
+    "Hörsaalgebäude am Forum": "D",
+    "Gebäude G": "G",
+    "Gebäude H": "H",
+    "Gebäude I": "I",
+    "Fakultät Bauingenieurwesen": "J",
+    "Fakultät Informatik und Mathematik": "K",
+    "Fakultät Architektur": "L",
+    "Hochschulbibliothek": "Q",
+    "Mensa OTH": "R",
+    "Laborgebäude Elektrotechnik": "S",
+    "Laborgebäude Mikrosystemtechnik": "T",
+    "Mikrosystemtechnik": "T",
+    "Verwaltungsgebäude": "V",
+    "Studierendenhaus": "Y"
+  },
+  "$osmNameToLetterNote": "OSM independently carries 'Gebäude G', 'Gebäude H' and 'Gebäude I' — three letters that match the official plan exactly. That agreement between two unrelated sources is the reason to trust the rest of this mapping.",
+
+  "$indoorFinding": "⚠️ THE ONE BUILDING OSM HAS MAPPED INDOORS IS BUILDING K. The 29 `indoor=room` features found in the Seybothstraße probe carry refs K 001 … K 018 ('K 001 Großer Hörsaal', 'K 006 CIP-Pool'), and the published plan says Gebäude K is the Fakultät Informatik und Mathematik at Galgenbergstraße 32 — one of the two faculties this dataset models. So the exploding-building demo can open on REAL room geometry for K and generated plates everywhere else, with the difference badged.",
+
+  "$roomCodeFormat": "Both spellings occur in the wild: OSM has 'K 001' with a space, and an OTH event page cites 'Raum D002' without one. Normalise to the compact form and keep the pattern tolerant.",
+
+  "$floorPlans": "NO per-floor room plans are published. What OTH publishes is SITE plans: a campus overview PDF for Galgenberg and a 2D site plan PNG for Prüfeninger Straße (both cached under data/oth-plans/). The Prüfening plan is useful for a second reason — it shows Gebäude P as a large L-shaped complex with a Cafeteria and a Teilbibliothek, which confirms the suspicion recorded in the AOI config that the 134 x 230 m OSM outline of that campus is partial."
+}

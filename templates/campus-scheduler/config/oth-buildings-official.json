@@ -1,0 +1,44 @@
+{
+  "$comment": "REAL, PUBLISHED OTH building designations. Not derived, not invented. Scraped 2026-07-30 from the university's own 'Standort und Raumpläne' page, which lists every building letter and who sits in it.\n\n⚠️ THIS CORRECTS A CLAIM THIS PROJECT MADE. The timetable generator assigned building letters deterministically and badged them `derived` with the note \"OTH's real letters are not public\". That was simply false — they are published, with occupants, on the main website. The room codes OSM already carries (K 001 Großer Hörsaal, K 006 CIP-Pool) line up exactly with Gebäude K = Fakultät Informatik und Mathematik, which is the cross-check that the mapping below is right.",
+  "source": "https://www.oth-regensburg.de/die-oth/standort-und-raumplaene",
+  "fetchedOn": "2026-07-30",
+  "roomCodeFormat": {
+    "pattern": "^[A-Z]\\d{3}$",
+    "example": "D002",
+    "$comment": "Confirmed against a real OTH event listing: 'OTH Regensburg, Raum D002 (Galgenbergstr. 30)'. Letter + three digits, NO space. The earlier pattern allowed an optional space because the OSM indoor labels are written 'K 001'; the official form has none, so the ingest must tolerate both and normalise to the official one."
+  },
+  "plans": {
+    "campusGalgenbergOverview": "https://www.oth-regensburg.de/fileadmin/Bereiche/Gebaeude-Lageplan/Galgenbergstrasse_30/2024_OTH_Campusuebersicht.pdf",
+    "pruefeningerStrasse": "https://www.oth-regensburg.de/fileadmin/Bereiche/Gebaeude-Lageplan/2D_DARSTELLUNGSPLAN_Pruefeninger-Strasse_RZ_01.png",
+    "$comment": "Site plans showing building letters and outlines. They are NOT per-floor room plans — the interior layout still has to be generated and badged. Asking OTH for the CAFM floor plans remains open question §9.1."
+  },
+
+  "buildings": [
+    { "letter": "A", "address": "Galgenbergstraße 30", "occupants": ["Fakultät Maschinenbau", "Regensburg Center of Biomedical Engineering (RCBE)", "Regensburg Center of Health Sciences and Technology (RCHST)"], "osmNameHint": "Fakultät Maschinenbau" },
+    { "letter": "B", "address": "Galgenbergstraße 30", "occupants": ["Fakultät Maschinenbau", "RCBE", "RCHST"], "osmNameHint": "Fakultät Maschinenbau" },
+    { "letter": "C", "address": "Galgenbergstraße 30", "occupants": ["Fakultät Maschinenbau", "RCBE", "RCHST"], "osmNameHint": "Fakultät Maschinenbau" },
+    { "letter": "D", "address": "Galgenbergstraße 30", "occupants": ["Allgemeine Studienberatung", "Alumni & Career Service", "Gender und Diversity", "Hörsaalgebäude am Forum", "International Office", "Junge Hochschule"], "osmNameHint": "Hörsaalgebäude am Forum" },
+    { "letter": "E", "address": "Galgenbergstraße 30", "occupants": ["Hörsaalgebäude am Forum"], "osmNameHint": "Hörsaalgebäude am Forum" },
+    { "letter": "G", "address": "Galgenbergstraße 30 (Haus der Technik)", "occupants": ["CIP-Pools", "Fakultät Angewandte Natur- und Kulturwissenschaften", "Fakultät Bauingenieurwesen"], "osmNameHint": "Gebäude G" },
+    { "letter": "H", "address": "Galgenbergstraße 30 (Haus der Technik)", "occupants": ["Fakultät Angewandte Natur- und Kulturwissenschaften", "Fakultät Elektro- und Informationstechnik", "Fakultät Bauingenieurwesen"], "osmNameHint": "Gebäude H" },
+    { "letter": "I", "address": "Galgenbergstraße 30 (Haus der Technik)", "occupants": ["Fakultät Angewandte Natur- und Kulturwissenschaften", "Fakultät Elektro- und Informationstechnik", "Fakultät Maschinenbau"], "osmNameHint": "Gebäude I" },
+    { "letter": "J", "address": "Galgenbergstraße 30 (Haus der Technik)", "occupants": ["Fakultät Bauingenieurwesen"], "osmNameHint": "Fakultät Bauingenieurwesen" },
+    { "letter": "K", "address": "Galgenbergstraße 32", "occupants": ["Fakultät Informatik und Mathematik"], "osmNameHint": "Fakultät Informatik und Mathematik" },
+    { "letter": "L", "address": "Galgenbergstraße 32", "occupants": ["Fakultät Architektur"], "osmNameHint": "Fakultät Architektur" },
+    { "letter": "P", "address": "Prüfeninger Straße 58", "occupants": ["BeDiSC", "CIP-Pools", "Lehre und Didaktik", "RCHST", "Startup-Lab", "Teilbereiche der Abteilung Studium und verschiedener Fakultäten", "Teilbibliothek"], "osmNameHint": null, "$note": "The Prüfening site is a single lettered building in the official plan. OSM maps several unnamed footprints there, which is why the campus outline looked implausibly small (134 x 230 m)." },
+    { "letter": "Q", "address": "Seybothstraße 2", "occupants": ["Hochschulbibliothek"], "osmNameHint": "Hochschulbibliothek" },
+    { "letter": "R", "address": "Seybothstraße 2", "occupants": ["Mensa"], "osmNameHint": "Mensa OTH" },
+    { "letter": "S", "address": "Seybothstraße 2", "occupants": ["Fakultät Sozial- und Gesundheitswissenschaften", "Business and Management", "Fakultät Elektro- und Informationstechnik", "Gebäude und Technik", "IT-Zentrum", "start-up center"], "osmNameHint": "Laborgebäude Elektrotechnik" },
+    { "letter": "T", "address": "Seybothstraße 2", "occupants": ["Fakultät Angewandte Natur- und Kulturwissenschaften (Laborgebäude Mikrosystemtechnik)"], "osmNameHint": "Laborgebäude Mikrosystemtechnik" },
+    { "letter": "U", "address": "Universitätsstraße 31", "occupants": ["Fakultät Elektro- und Informationstechnik (FENES)", "Fakultät Informatik und Mathematik"], "osmNameHint": null, "$note": "Outside both campus boxes — the Universitätsstraße site is not modelled." },
+    { "letter": "V", "address": "Seybothstraße 2", "occupants": ["Hochschulleitung", "Hochschulverwaltung"], "osmNameHint": "Verwaltungsgebäude" },
+    { "letter": "W", "address": "Seybothstraße 2", "occupants": ["Haus für Innovation und Transfer", "Regensburg Center of Energy and Resources (RCER)", "Zentrum für Weiterbildung und Wissensmanagement (ZWW)", "Forschungslabore"], "osmNameHint": null },
+    { "letter": "Y", "address": "Seybothstraße 2", "occupants": ["Studierendenhaus"], "osmNameHint": "Studierendenhaus" }
+  ],
+
+  "$modelledFaculties": {
+    "IM": { "name": "Fakultät Informatik und Mathematik", "realBuildings": ["K", "U"], "$note": "U is at Universitätsstraße, outside the AOI — so K is the one that matters." },
+    "M": { "name": "Fakultät Maschinenbau", "realBuildings": ["A", "B", "C", "I"] },
+    "$comment": "⚠️ NOW REAL RATHER THAN INVENTED. The synthetic dataset previously assigned buildings to faculties arbitrarily so that a shared hall and a cross-campus Praktikum would exist. The published plan says where these two faculties actually sit: Informatik und Mathematik in K (Galgenbergstraße 32), Maschinenbau in A/B/C (Galgenbergstraße 30) and sharing I in the Haus der Technik. The lecture halls in D/E (Hörsaalgebäude am Forum) are central, which is exactly the shared-hall competition the product is about — and that part turns out to be true rather than staged."
+  }
+}

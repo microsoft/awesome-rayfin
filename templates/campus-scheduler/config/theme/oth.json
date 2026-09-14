@@ -1,0 +1,59 @@
+{
+  "$comment": "OTH Regensburg demo theme. PLAN §6.4: OTH branding is a THEME FILE, never hard-coded — swap this file and the same app becomes a neutral build or another university's build. Every value below was LIFTED from the live OTH stylesheet on 2026-07-30, not designed: https://www.oth-regensburg.de/typo3conf/ext/in2template/Resources/Public/Css/styles.css (probe script: temp/oth_brand_probe.py).",
+  "id": "oth",
+  "name": "OTH Regensburg",
+
+  "brand": {
+    "primary": "#000000",
+    "$primaryComment": "OTH's own `--primary-color-base` is literally #000. Their current corporate web design is monochrome black-on-white with a single accent per page, and the colour comes from the numbered theme classes below. Do NOT invent a 'brand blue' — they do not use one.",
+    "textBase": "#000000",
+    "inverted": "#ffffff"
+  },
+
+  "neutrals": {
+    "$comment": "Lifted verbatim from the OTH stylesheet custom properties.",
+    "100": "#f6f6f6",
+    "300": "#d8d8d8",
+    "600": "#9d9d9c",
+    "700": "#707070",
+    "blue100": "#f1f5f9",
+    "blue400": "#cbd5e1",
+    "blue450": "#afbfd1",
+    "blue500": "#94a3b8",
+    "blue700": "#64748b",
+    "blueBase": "#334155"
+  },
+
+  "accents": [
+    { "id": "theme1", "hex": "#d5d2c2", "note": "warm grey / sand" },
+    { "id": "theme2", "hex": "#ffed00", "note": "yellow" },
+    { "id": "theme3", "hex": "#ef7d00", "note": "orange" },
+    { "id": "theme4", "hex": "#c22e0c", "note": "red" },
+    { "id": "theme5", "hex": "#831f82", "note": "purple" },
+    { "id": "theme6", "hex": "#164194", "note": "blue" },
+    { "id": "theme7", "hex": "#009bac", "note": "teal" },
+    { "id": "theme8", "hex": "#008c49", "note": "green" },
+    { "id": "theme9", "hex": "#dedc00", "note": "lime" }
+  ],
+  "$accentsComment": "MEASURED: OTH's stylesheet defines `.theme1 { --color-theme: #d5d2c2 }` … `.theme9 { --color-theme: #dedc00 }` — a nine-colour accent palette applied per section of their site. This is a gift for the cockpit: nine distinguishable brand-native colours map straight onto faculties, which is exactly the dimension the timetable needs to colour by. ⚠️ The mapping accent -> faculty below is OURS, not OTH's — their CSS numbers the themes but does not name them. Confirm with OTH before presenting it as their scheme.",
+
+  "facultyPalette": {
+    "$comment": "PROPOSED mapping only (see above). Kept separate from `accents` so the honest boundary stays visible.",
+    "strategy": "assign accents in order to the faculties present in the data, deterministic by faculty id",
+    "reserve": ["theme1"],
+    "$reserveComment": "theme1 (#d5d2c2, a low-saturation sand) is reserved for 'no faculty / shared / central' rather than given to a faculty — it is the one accent that reads as neutral next to the other eight."
+  },
+
+  "semantic": {
+    "$comment": "Cockpit state colours. NOT from the OTH palette: conflict/warning colours must never collide with a faculty colour, or a red faculty would look permanently broken.",
+    "conflict": "#c0392b",
+    "warning": "#e08600",
+    "ok": "#1e7d4f",
+    "unknown": "#9d9d9c",
+    "$unknownComment": "Grey means 'no data', never 'zero'. Inherited rule from Campus-Insights: a room without a calendar is grey, never 0 %."
+  },
+
+  "logo": {
+    "$comment": "Not bundled. The OTH logo is trademarked and must be obtained from OTH (or their brand portal) before it goes into a customer-facing build. The app renders the wordmark 'Campus-Scheduler' until then."
+  }
+}

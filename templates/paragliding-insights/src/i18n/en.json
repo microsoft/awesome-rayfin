@@ -1,0 +1,175 @@
+{
+  "app": {
+    "title": "Gleitschirm-Insights",
+    "subtitle": "Oberstdorf / Nebelhorn, Allgäu Alps",
+    "site": "Site"
+  },
+  "disclaimer": {
+    "short": "For demonstration and training only.",
+    "full": "For demonstration and training only. Not flight preparation, not a weather briefing, and not an authoritative source of airspace information."
+  },
+  "facts": {
+    "reconstruction": "derived"
+  },
+  "source": {
+    "label": "Source",
+    "pending": "Source pending — this figure must not ship."
+  },
+  "shell": {
+    "phaseNotice": "Phase 0 — scaffolding. The terrain twin has not been built yet.",
+    "planLink": "Read the plan"
+  },
+  "twin": {
+    "canvasLabel": "Terrain view of {{site}}",
+    "places": "Places",
+    "loading": "Loading terrain",
+    "loadingStart": "Connecting …",
+    "loadingStep": "Step {{step}} of {{of}}",
+    "loading_terrain": "Terrain model and land cover",
+    "loading_drape": "Aerial imagery",
+    "loading_buildings": "Buildings from the cadastre",
+    "loading_vegetation": "Trees from the surface model",
+    "trees": "Trees",
+    "landuse": "Land cover",
+    "cableway": "Cable car",
+    "drape": "Aerial imagery",
+    "labels": "Labels",
+    "modelNotice": "Terrain model from the Bavarian survey authority (DGM1), shown at true scale with no vertical exaggeration. Trees stand where the surface model measures growth; height and crown size are measured, the shape separates needle-like from broadleaf crowns and is not a species determination. Land cover comes from OpenStreetMap, reflects how it is mapped today, and colours the surface only — no calculation reads it."
+  },
+  "flight": {
+    "label": "Sample flight",
+    "barogram": "Height trace",
+    "scrub": "Choose a moment in the flight",
+    "play": "Play",
+    "pause": "Pause",
+    "speed": "Playback speed",
+    "follow": "Follow camera",
+    "dropHere": "Drop an IGC file here — it stays on this device.",
+    "wind": "Wind, derived from the flight",
+    "windDerived": "Measured from the drift of {{turns}} complete 360° turns. No model, no forecast. Altitude bands where the pilot did not circle stay empty — nothing was measured there.",
+    "windNone": "No wind can be derived: this flight contains no complete 360° turns. Without circling there is no drift to measure wind from.",
+    "notice": "Recorded flight, anonymised — pilot and device identification were removed at import. The track colour shows climb and sink, derived from pressure altitude; the altitude shown comes from GPS. An IGC file dropped here is read entirely in the browser and is never transmitted anywhere."
+  },
+  "tour": {
+    "label": "Guided tour",
+    "oberstdorf": {
+      "town": "Oberstdorf, 813 m. The valley floor every flight ends on — and the yardstick for everything else: it is 1,400 vertical metres from here to the Nebelhorn summit.",
+      "talstation": "Nebelhornbahn valley station, 828 m. This is how you get up rather than walking. The cable car is why so many wings are in the air at once on a good day.",
+      "hoefatsblick": "Höfatsblick, 1,932 m. The mid station, and the most used launch on the mountain — close enough to the valley for a sled ride, high enough to find the first thermal.",
+      "launch": "Nebelhorn summit launch, 2,220 m. The highest take-off in the area. Everything the valley's thermals are doing is laid out in front of you.",
+      "summit": "Nebelhorn, 2,224 m. The edge that decides whether a flight stays a sled ride or carries on north over the Allgäu foothills.",
+      "landing": "Oybelehalle landing field. Back down at 830 m — where the sample flight touches down after three hours and 98 kilometres."
+    },
+    "tegelberg": {
+      "hohenschwangau": "Hohenschwangau, 815 m. The valley floor at the foot of the massif — and the yardstick for everything else: it is some 1,230 vertical metres from here to the Säuling.",
+      "talstation": "Tegelbergbahn valley station, 824 m. This is how you get up rather than walking — 1.96 km of cable to the top station.",
+      "neuschwanstein": "Neuschwanstein Castle, 965 m. Some 150 m above the valley on its rock spur. It stands here as an LoD2 building model from the Bavarian survey, not as a symbol.",
+      "bergstation": "Tegelbergbahn top station, 1,715 m. Around 890 vertical metres above the valley — where flying at the Tegelberg starts.",
+      "saeuling": "Säuling, 2,047 m. The dominant peak of the area and the border with Tyrol. The terrain model measures 2,047 m against a published 2,048 m — those 1.3 m are this site's registration proof."
+    }
+  },
+  "drone": {
+    "label": "Drone mode",
+    "hint": "Or just press W A S D.",
+    "help": "W A S D fly, Q and E go down and up, R and F circle whatever is in the middle of the view, arrow keys or drag to look, Shift for a short sprint, the mouse wheel is the throttle. The camera slows down automatically near the ground. Stop for a moment and the map takes the camera back — the wheel zooms again and dragging orbits again. No collision — this is a camera, not a flight simulator.",
+    "altitude": "Altitude AMSL",
+    "agl": "Above ground",
+    "speed": "Speed",
+    "heading": "Heading"
+  },
+  "day": {
+    "label": "The day",
+    "snapshot": "Direct Lake",
+    "cloudBase": "Cloud base",
+    "noConvection": "no cumulus",
+    "coverage": "{{pct}} % of the area, {{hour}} UTC",
+    "cape": "Thermals (CAPE)",
+    "freezing": "Freezing level",
+    "byHour": "Base through the day",
+    "flights": "Recorded flights",
+    "ceiling": "Ceiling",
+    "bestClimb": "Best climb",
+    "distance": "Distance",
+    "notice": "From the Direct Lake semantic model over the Fabric Lakehouse, ICON-D2 run {{run}} UTC. A snapshot rather than a live query: the published app runs on static hosting and cannot hold a Fabric token. Cloud base applies only where the model computes cumulus at all — which is why the area fraction is shown beside it."
+  },
+  "live": {
+    "label": "Airborne now",
+    "connecting": "Connecting to the receiver network …",
+    "live": "Live",
+    "aircraft": "{{count}} airborne",
+    "empty": "Nobody is up at the moment — at least nobody the receiver network can hear.",
+    "emptyHint": "That is a normal state: at night, in winter and in poor weather the sky above the Nebelhorn is simply empty.",
+    "unavailable": "No live feed",
+    "unavailableHint": "The published app runs on static hosting and cannot open a network connection to the Open Glider Network itself. That is the relay's job — if it is not running, the app shows the recorded flight instead.",
+    "fallback": "Recording",
+    "fallbackHint": "Showing the recorded sample flight instead of live traffic.",
+    "follow": "Follow",
+    "freeFlightOnly": "Free flight only",
+    "freeFlightOnlyHint": "Hides powered and airline traffic. There are always scheduled flights at 11 km over the Allgäu — real, but irrelevant to this map.",
+    "type_paraglider": "Paraglider",
+    "type_hangglider": "Hang glider",
+    "type_glider": "Sailplane",
+    "type_towplane": "Tow plane",
+    "type_aircraft": "Light aircraft",
+    "type_helicopter": "Helicopter",
+    "type_jet": "Airliner",
+    "type_balloon": "Balloon",
+    "type_parachute": "Parachute",
+    "type_uav": "Unmanned",
+    "type_dropplane": "Drop plane",
+    "type_airship": "Airship",
+    "type_static": "Fixed station",
+    "type_ufo": "Unidentified",
+    "type_unknown": "Unknown",
+    "anonymous": "anonymous",
+    "notice": "Live positions from the Open Glider Network (FLARM and FANET), received by volunteer-run ground stations. Anyone who has opted out is never transmitted; everyone else appears without identification unless the owner has explicitly consented to it. Reception is line of sight — this map shows what is heard, not what is flying.",
+    "wrongArea": "Different area",
+    "wrongAreaHint": "The relay that answered is watching a different area, so its traffic is not shown here. Start it for this site: npm run relay -- --aoi <site>.",
+    "close": "Close",
+    "altitude": "Altitude",
+    "climb": "Climb",
+    "groundSpeed": "Ground speed",
+    "course": "Course",
+    "lastFix": "Last fix",
+    "secondsAgo": "{{seconds}} s ago",
+    "openSource": "View on OGN",
+    "sourceNote": "Source: Open Glider Network. The link opens the OGN live map at this position — deliberately the position rather than the device, so a wing that is anonymous here cannot be identified by following it."
+  },
+  "attribution": {
+    "heading": "Data provenance",
+    "intro": "Every layer in this application comes from openly licensed data."
+  },
+  "language": {
+    "label": "Language",
+    "de": "Deutsch",
+    "en": "English"
+  },
+  "setup": {
+    "eyebrow": "Setup",
+    "heading": "Geodata not generated yet",
+    "body": "This application is built on derived geodata — terrain model, land cover, buildings and vegetation. It is not committed to the repository, because it can be reproduced from open sources at any time. One run of the pipeline generates it.",
+    "note": "The run downloads data from the Bavarian survey authority, the Copernicus programme and OpenStreetMap. All sources are openly licensed; the notices are in NOTICE.md."
+  },
+  "assistant": {
+    "label": "Ask the mountain",
+    "start": "Talk",
+    "stop": "Stop",
+    "status_idle": "ready",
+    "status_connecting": "connecting",
+    "status_microphone": "allow microphone",
+    "status_listening": "listening",
+    "status_unavailable": "unavailable",
+    "hint": "Try: “How high was cloud base?”, “Show me the launch site” or “Start the tour”.",
+    "unavailable": "The assistant could not start — the reason is in brackets. Usually the voice service is missing: the published app runs on static hosting and cannot request a session secret, which is what the service in server/voice/ is for. A microphone permission that was never granted is just as common.",
+    "notice": "Realtime assistant over Azure AI Foundry. Audio goes straight from the browser to the service; the key stays on the server and the browser only ever holds a ten-minute session secret. The assistant states only figures this app hands it — if it does not know something it says so rather than estimating."
+  },
+  "webcam": {
+    "label": "Webcam",
+    "layer": "Webcams",
+    "direction": "View direction",
+    "operator": "Operator",
+    "open": "Open image",
+    "standHere": "Camera position",
+    "note": "The image lives with the operator and opens there — this app does not fetch, store or alter it. The pictures are copyrighted; links are explicitly welcomed. Position and view direction come from OpenStreetMap and agree with the operator's own caption."
+  }
+}

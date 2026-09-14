@@ -1,0 +1,61 @@
+// KQL script
+// Use management commands in this script to configure your database items, such as tables, functions, materialized views, and more.
+
+
+.create-merge table raw_events (timestamp:string, type:string, transport_type:string, content:dynamic) 
+.create-merge table vehicle_positions (timestamp:datetime, type:string, transport_type:string, id:string, trip_id:string, trip_start_time:string, trip_start_date:string, trip_schedule_relationship:string, trip_route_id:string, position_latitude:decimal, position_longitude:decimal, position_bearing:decimal, position_speed:decimal, vehicle_timestamp:long, congestion_level:string, vehicle_id:string, vehicle_label:string, vehicle_license_plate:string, occupancy_status:string) 
+.create-merge table trip_updates (timestamp:datetime, type:string, transport_type:string, trip_id:string, trip_start_time:timespan, trip_start_date:datetime, trip_schedule_relationship:string, trip_route_id:string, trip_direction_id:string, vehicle_id:string, trip_delay:decimal, stop_time_update:dynamic) 
+.create-merge table alerts (timestamp:datetime, type:string, transport_type:string, vehicle_id:string, severity:string, alert_message:string) 
+.create-or-alter function with (folder = "UpdatePolicyFunctions", docstring = "Parses raw records for vehicle position", skipvalidation = "true") Parse_Vehicle_Position() {
+   raw_events
+| project timestamp = todatetime(timestamp)
+, type =  tostring(type)
+,transport_type = tostring(transport_type)
+, id = tostring(content.id)
+,trip_id =  tostring(content.vehicle.trip.trip_id)
+,trip_start_time =  tostring(content.vehicle.trip.trip_start_time)
+,trip_start_date =  tostring(content.vehicle.trip.start_date)
+,trip_schedule_relationship =  tostring(content.vehicle.trip.schedule_relationship)
+,trip_route_id =  tostring(content.vehicle.trip.route_id)
+,position_latitude =  todecimal(content.vehicle.position.latitude)
+,position_longitude =  todecimal(content.vehicle.position.longitude)
+,position_bearing =  todecimal(content.vehicle.position.bearing)
+,position_speed =  todecimal(content.vehicle.position.speed)
+,vehicle_timestamp =  tolong(content.vehicle.timestamp)
+,congestion_level =  tostring(content.vehicle.congestion_level)
+,vehicle_id =  tostring(content.vehicle.vehicle.id)
+,vehicle_label =  tostring(content.vehicle.vehicle.label)
+,vehicle_license_plate =  tostring(content.vehicle.vehicle.license_plate)
+,occupancy_status =  tostring(content.vehicle.occupancy_status)
+}
+.create-or-alter function with (folder = "UpdatePolicyFunctions", docstring = "Parses raw records for Time updates", skipvalidation = "true") Parse_TimeUpdates() {
+    raw_events
+| where type == "trip_update"
+| extend strlen(tostring(content))
+| project timestamp = todatetime(timestamp)
+, type = tostring(type)
+, transport_type = tostring(transport_type)
+, trip_id = tostring(content.trip_update.trip.trip_id)
+, trip_start_time = totimespan(content.trip_update.trip.start_time)
+, trip_start_date = todatetime(content.trip_update.trip.start_date)
+, trip_schedule_relationship  = tostring(content.trip_update.trip.schedule_relationship)
+, trip_route_id = tostring(content.trip_update.trip.route_id)
+, trip_direction_id = tostring(content.trip_update.trip.direction_id)
+, vehicle_id  = tostring(content.trip_update.vehicle.id)
+, trip_delay  = todecimal(content.trip_update.delay)
+, stop_time_update = content.trip_update.stop_time_update
+}
+.create-or-alter function with (folder = "UpdatePolicyFunctions", docstring = "Parses raw records for alerts", skipvalidation = "true") Parse_Alerts() {
+    raw_events
+| where type == "rti_alert"
+| project timestamp = todatetime(timestamp)
+, type =  tostring(type)
+,transport_type = tostring(transport_type)
+, vehicle_id = tostring(content.entity_id)
+,severity =  tostring(content.severity)
+,alert_message =  tostring(content.alert_message)
+}
+.create-or-alter materialized-view  last_vehicle_position on table vehicle_positions { vehicle_positions | summarize arg_max(timestamp, *) by vehicle_id }
+.alter table vehicle_positions policy update "[{\"IsEnabled\":true,\"Source\":\"raw_events\",\"Query\":\"Parse_Vehicle_Position()\",\"IsTransactional\":true,\"PropagateIngestionProperties\":false,\"ManagedIdentity\":null}]"
+.alter table trip_updates policy update "[{\"IsEnabled\":true,\"Source\":\"raw_events\",\"Query\":\"Parse_TimeUpdates()\",\"IsTransactional\":true,\"PropagateIngestionProperties\":false,\"ManagedIdentity\":null}]"
+.alter table alerts policy update "[{\"IsEnabled\":true,\"Source\":\"raw_events\",\"Query\":\"Parse_Alerts()\",\"IsTransactional\":true,\"PropagateIngestionProperties\":false,\"ManagedIdentity\":null}]"

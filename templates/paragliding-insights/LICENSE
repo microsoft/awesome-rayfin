@@ -1,0 +1,40 @@
+MIT License
+
+Copyright (c) Microsoft Corporation.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+The MIT licence above covers the source code in this repository.
+
+It does NOT cover the data the application downloads at build time, nor the flight log it ships.
+Those carry their own licences and attribution requirements, which are listed in NOTICE.md and must
+travel with any redistribution or public deployment.
+
+In particular:
+
+  * the 1 m terrain and the LoD2 buildings are Bayerische Vermessungsverwaltung open data under
+    CC BY 4.0 — free to reuse, on condition that the prescribed notice is shown;
+  * the coarse terrain shell is Copernicus DEM, under the Copernicus DEM open licence;
+  * land cover, the transport network and the cableway come from OpenStreetMap under the ODbL;
+
+none of which are ours to relicense. The attribution block in NOTICE.md is rendered in the
+application footer, and an end-to-end test asserts it is present — dropping it from a deployment is
+a licence breach rather than a cosmetic regression.

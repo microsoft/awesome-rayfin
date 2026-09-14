@@ -1,0 +1,17 @@
+# Build context for the OGN relay image — PLAN §5.3.
+#
+# ⚠️ Everything here is excluded because `az acr build` TARS AND UPLOADS the context before it reads
+# the Dockerfile. Without this file that means shipping `data/` to the cloud on every build, and
+# `data/` holds the source tiles — including a 568 MB canopy geopackage and gigabytes of DGM1 and
+# LoD2 tiles. The image itself needs `server/` and `config/` and nothing else, so the exclusions
+# are broad on purpose: this is about what crosses the wire, not only what lands in the layer.
+*
+
+# ...and then only what the relay actually reads.
+!server/
+!config/
+
+# Belt and braces: nothing generated or downloaded, even under the two folders above.
+**/node_modules
+**/__pycache__
+**/*.log
