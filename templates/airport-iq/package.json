@@ -1,0 +1,23 @@
+{
+  "name": "airport-iq",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Airport IQ — a Fabric static-hosting Rayfin app with two 3D airport views (Live Approach on a CesiumJS globe + Live-Ops gate operations in Three.js). Ships fully synthetic, self-contained data; a pluggable data adapter lets you swap in live ADS-B or your own Fabric warehouse.",
+  "template": {
+    "name": "airport-iq",
+    "displayName": "Airport IQ",
+    "description": "Two 3D airport views — Live Approach (CesiumJS globe, aircraft on approach/taxi/park) and Live-Ops (Three.js gate operations with delays and cascading conflicts) — over real OpenStreetMap geometry. Runs on baked synthetic data out of the box; swap in live ADS-B or your own Fabric warehouse via a single data adapter."
+  },
+  "scripts": {
+    "build": "node tools/build-fabric.mjs",
+    "build:fabric": "node tools/build-fabric.mjs",
+    "lint": "node --check data-adapter.js && node --check tools/build-fabric.mjs",
+    "test": "node --test test/smoke.test.mjs",
+    "serve": "npx --yes serve -l 8096",
+    "rayfin:up": "rayfin up"
+  },
+  "devDependencies": {
+    "@microsoft/rayfin-cli": "^1.33.0"
+  }
+}

@@ -4,6 +4,9 @@ metadata:
   displayName: Awesome Rayfin Templates
   description: Community-curated template gallery for Project Rayfin
 entries:
+  - path: templates/airport-iq
+    name: Airport IQ
+    description: Two 3D airport views — Live Approach (CesiumJS globe, aircraft on approach/taxi/park) and Live-Ops (Three.js gate operations with delays and cascading conflicts) — over real OpenStreetMap geometry. Runs on baked synthetic data out of the box; swap in live ADS-B or your own Fabric warehouse via a single data adapter.
   - path: templates/angular-blankapp
     name: Angular Blank App
     description: Bare-bones Fabric-authenticated Angular + Material app — sign-in, routing, and a placeholder home page, with no data layer to remove

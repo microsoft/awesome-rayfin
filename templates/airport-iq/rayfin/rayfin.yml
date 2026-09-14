@@ -1,0 +1,23 @@
+id: airport-iq
+name: Airport IQ
+version: 1.0.0
+services:
+  auth:
+    enabled: true
+    fabric:
+      enabled: true
+    password:
+      enabled: false
+    allowedRedirectUris:
+      - http://localhost:8096
+  functions:
+    enabled: false
+  staticHosting:
+    enabled: true
+    folder: fabric-dist
+    buildCommand: npm run build:fabric
+    indexDocument: index.html
+  data:
+    enabled: false
+  storage:
+    enabled: false
