@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: doom
+  displayName: Doom
+  description: Shareware DOOM (Episode 1) running in the browser via DOSBox/js-dos, embedded in a Fabric-authenticated Rayfin app — with per-level stats read straight off the game's FINISHED screen, a shared leaderboard, and save games persisted through typed data entities
+entries:
+  - path: .
+    name: Doom

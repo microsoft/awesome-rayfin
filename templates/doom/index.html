@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Play DOOM via JS-DOS in your browser." />
+    <title>Play DOOM via JS-DOS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      // Master-volume hook for DOOM (DOSBox/js-dos has no built-in mute).
+      // Route every Web Audio connection to the speakers through ONE shared
+      // master gain per context, so we can mute without suspending the context
+      // (which can freeze the emulator) and without leaking nodes.
+      // window.__doomSetMuted(bool) toggles it.
+      (function () {
+        if (typeof AudioNode === 'undefined') return;
+        window.__doomMuted = false;
+        window.__doomGains = [];
+        var origConnect = AudioNode.prototype.connect;
+        AudioNode.prototype.connect = function (dest) {
+          try {
+            if (typeof AudioDestinationNode !== 'undefined' && dest instanceof AudioDestinationNode) {
+              var ctx = dest.context;
+              if (!ctx.__doomMaster) {
+                var master = ctx.createGain();
+                master.gain.value = window.__doomMuted ? 0 : 1;
+                origConnect.call(master, dest);
+                ctx.__doomMaster = master;
+                window.__doomGains.push(master);
+              }
+              return origConnect.call(this, ctx.__doomMaster);
+            }
+          } catch (e) { /* fall through to default */ }
+          return origConnect.apply(this, arguments);
+        };
+        window.__doomSetMuted = function (muted) {
+          window.__doomMuted = !!muted;
+          window.__doomGains.forEach(function (g) {
+            try { g.gain.value = muted ? 0 : 1; } catch (e) {}
+          });
+        };
+        // Browsers start the AudioContext suspended when the game is
+        // auto-launched (a programmatic click is not a user gesture), so DOOM
+        // would be silent. Resume it on the first real interaction.
+        function __doomResumeAudio() {
+          window.__doomGains.forEach(function (g) {
+            try { if (g.context && g.context.state === 'suspended') g.context.resume(); } catch (e) {}
+          });
+        }
+        ['pointerdown', 'keydown', 'touchstart'].forEach(function (ev) {
+          window.addEventListener(ev, __doomResumeAudio, true);
+        });
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
