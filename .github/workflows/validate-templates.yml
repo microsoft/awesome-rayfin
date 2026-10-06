@@ -21,6 +21,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes libsecret-1-dev
 
+      - name: Validate gallery application
+        run: |
+          npm ci
+          npm run lint
+          npm test
+          npm run build
+
       - name: Validate template metadata
         run: |
           errors=0

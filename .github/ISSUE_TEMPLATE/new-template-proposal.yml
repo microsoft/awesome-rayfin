@@ -1,6 +1,6 @@
 name: New Template Proposal
 description: Propose a new template for the Awesome Rayfin gallery
-labels: ["new-template", "proposal"]
+labels: ["template", "new-template", "proposal"]
 body:
   - type: markdown
     attributes:

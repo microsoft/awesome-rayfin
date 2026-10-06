@@ -40,6 +40,42 @@ npm create @microsoft/rayfin -- --template ./awesome-rayfin
 
 The CLI reads `rayfin-template.yml` at the repo root and presents an interactive picker when multiple templates are available.
 
+## Gallery Website
+
+The repository includes a responsive gallery application generated from
+`rayfin-template.yml` and the metadata in each template directory. It does not
+maintain a separate hand-authored template catalog. The interface uses Microsoft
+Fluent UI and supports persisted light and dark themes, defaulting to the
+visitor's system preference. Each template includes a detail view with its
+manifest-derived architecture and copyable Bash and PowerShell deployment flows
+for provisioning a Fabric workspace and deploying with Rayfin.
+
+```bash
+npm install
+npm run dev
+```
+
+Use `npm run build` for a production build and `npm run preview` to inspect it
+locally. The gallery is configured for Rayfin static hosting in
+`rayfin/rayfin.yml`; deploy it with:
+
+```bash
+npm run rayfin:up
+```
+
+`npm run generate:gallery` refreshes the generated card data. The command also
+runs automatically before development and production builds.
+
+### GitHub Pages
+
+The gallery deploys to
+[mksuni.github.io/awesome-rayfin](https://mksuni.github.io/awesome-rayfin/)
+through `.github/workflows/deploy-pages.yml`. GitHub Pages must use **GitHub
+Actions** as its build and deployment source under **Settings > Pages**. After
+that one-time setting is enabled, every push to `main` builds the gallery with
+the `/awesome-rayfin/` base path and publishes it automatically. The workflow
+can also be started manually from the repository's **Actions** tab.
+
 ---
 
 ## 📦 Templates

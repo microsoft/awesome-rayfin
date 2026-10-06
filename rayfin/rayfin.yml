@@ -1,0 +1,9 @@
+id: awesome-rayfin-gallery
+name: Awesome Rayfin Gallery
+version: 1.0.0
+services:
+  staticHosting:
+    enabled: true
+    folder: dist
+    buildCommand: npm run build:fabric
+    indexDocument: index.html
