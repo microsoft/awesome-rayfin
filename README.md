@@ -6,6 +6,7 @@
   <p>A curated gallery of templates and community resources for Project Rayfin — the Backend-as-a-Service platform built for the agentic era.</p>
 
   <a href="#-templates">Templates</a> •
+  <a href="#-community-samples">Community samples</a> •
   <a href="#-resources">Resources</a> •
   <a href="CONTRIBUTING.md">Contribute</a>
 </div>
@@ -63,6 +64,14 @@ The CLI reads `rayfin-template.yml` at the repo root and presents an interactive
 | **[Universal App](./templates/universal-app)** | A lean React + Vite starter that grows into anything. A built-in capability router reads what you ask for, then enables the right Rayfin services, installs the right modules, and activates the right skills, from sign-in and CRUD data models to Graphein charts and Fabric analytics dashboards. | ✅ | ✅ | React, Vite, Tailwind |
 
 > **Adding a template?** See the [Contributing Guide](CONTRIBUTING.md).
+
+---
+
+## 🧩 Community samples
+
+| Sample | Description | Rayfin features | Stack |
+|--------|-------------|-----------------|-------|
+| **[Ray\|Works](https://github.com/sinedied/rayworks)** | A collection of complete enterprise apps for forms, live audience engagement, travel reporting, and data-driven presentations. | Auth, Data, Functions, Static Hosting | React, TypeScript, Vite, Tailwind |
 
 ---
 
