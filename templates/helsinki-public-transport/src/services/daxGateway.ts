@@ -16,7 +16,7 @@ import { executeDaxViaHost, hasFabricHost } from '@/services/fabricHostBridge';
  *    and so needs **no sign-in at all**. This is what the shipped reference app in MSIT uses.
  *
  * 2. **connector** - the Rayfin `fabric-semanticmodel` connector. Ids stay server-side and there
- *    is no second sign-in either, but it is an unreleased experimental API and currently returns
+ *    is no second sign-in either, but this workspace currently returns
  *    "ConnectorFunction invocation is not enabled for this workspace".
  *
  * 3. **powerbi** - a delegated Power BI token acquired with MSAL, calling `executeQueries`
@@ -74,10 +74,12 @@ function isConnectorUnavailable(error: unknown): boolean {
 }
 
 async function runViaConnector(query: string): Promise<DaxRow[]> {
-  const response = await getRayfinClient().connectors.transitModel.executeQuery({ query });
-  const failure = response.output?.queryError ?? response.output?.responseError;
-  if (failure) throw new Error(failure.message);
-  return response.output?.tables?.[0]?.rows ?? [];
+  const result = await getRayfinClient().connectors.transitModel.executeQuery({ query });
+  if (result.status === 'error') throw new Error(result.error.message);
+  const { columns, rows } = result.table;
+  return rows.map((row) =>
+    Object.fromEntries(columns.map((column, index) => [column.name, row[index]]))
+  );
 }
 
 async function runViaHost(query: string): Promise<DaxRow[]> {
