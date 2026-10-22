@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: airport-iq
+  displayName: Airport IQ
+  description: Two 3D airport views — Live Approach (CesiumJS globe, aircraft on approach/taxi/park) and Live-Ops (Three.js gate operations with delays and cascading conflicts) — over real OpenStreetMap geometry. Runs on baked synthetic data out of the box; swap in live ADS-B or your own Fabric warehouse via a single data adapter.
+entries:
+  - path: .
+    name: Airport IQ

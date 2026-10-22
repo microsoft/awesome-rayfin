@@ -1,0 +1,4 @@
+# Exclude development-only files when scaffolding this template
+fabric-dist/
+rayfin/.deployments.json
+rayfin/.env

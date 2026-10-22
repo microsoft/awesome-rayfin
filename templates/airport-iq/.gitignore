@@ -1,0 +1,19 @@
+# dependencies
+node_modules/
+
+# build output
+fabric-dist/
+
+# rayfin deploy state / secrets
+rayfin/.deployments.json
+rayfin/.env
+.env
+.env.local
+
+# logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
