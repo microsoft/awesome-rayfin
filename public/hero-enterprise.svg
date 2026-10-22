@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 560" role="img" aria-labelledby="title desc">
+  <title id="title">Rayfin enterprise application platform</title>
+  <desc id="desc">A polished application dashboard connected to authentication, data, storage, and Microsoft Fabric services.</desc>
+  <defs>
+    <linearGradient id="canvas" x1="70" y1="30" x2="690" y2="530" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EAF5FF"/>
+      <stop offset="1" stop-color="#E9E7FF"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="140" y1="120" x2="590" y2="440" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0078D4"/>
+      <stop offset=".55" stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#6D4AFF"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#152A46" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="22" y="18" width="716" height="524" rx="42" fill="url(#canvas)"/>
+  <circle cx="660" cy="82" r="108" fill="#6D4AFF" opacity=".09"/>
+  <circle cx="92" cy="472" r="132" fill="#00B7C3" opacity=".09"/>
+  <path d="M90 82h580M90 478h580" stroke="#0078D4" stroke-opacity=".12" stroke-dasharray="6 10"/>
+  <g filter="url(#shadow)">
+    <rect x="96" y="78" width="568" height="394" rx="22" fill="#FFFFFF"/>
+    <rect x="96" y="78" width="568" height="54" rx="22" fill="#102A43"/>
+    <path d="M96 110h568v22H96z" fill="#102A43"/>
+    <circle cx="126" cy="105" r="6" fill="#6EE7F9"/>
+    <circle cx="146" cy="105" r="6" fill="#60A5FA"/>
+    <circle cx="166" cy="105" r="6" fill="#A78BFA"/>
+    <rect x="566" y="96" width="70" height="18" rx="9" fill="#244765"/>
+    <rect x="118" y="154" width="118" height="294" rx="14" fill="#F4F8FC"/>
+    <rect x="138" y="178" width="60" height="10" rx="5" fill="#0078D4"/>
+    <rect x="138" y="216" width="76" height="8" rx="4" fill="#B7C9DB"/>
+    <rect x="138" y="246" width="62" height="8" rx="4" fill="#B7C9DB"/>
+    <rect x="138" y="276" width="70" height="8" rx="4" fill="#B7C9DB"/>
+    <rect x="138" y="306" width="54" height="8" rx="4" fill="#B7C9DB"/>
+    <rect x="260" y="154" width="174" height="88" rx="14" fill="#EFF6FF"/>
+    <rect x="282" y="178" width="76" height="9" rx="4.5" fill="#6B7F93"/>
+    <rect x="282" y="202" width="116" height="18" rx="7" fill="#0F6CBD"/>
+    <rect x="452" y="154" width="188" height="88" rx="14" fill="#F3F0FF"/>
+    <circle cx="484" cy="198" r="18" fill="#6D4AFF" opacity=".2"/>
+    <path d="M475 199l7 7 13-17" fill="none" stroke="#5B3FD0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="514" y="180" width="94" height="8" rx="4" fill="#6B7F93"/>
+    <rect x="514" y="202" width="70" height="8" rx="4" fill="#9BAFC2"/>
+    <rect x="260" y="262" width="380" height="186" rx="14" fill="#FAFCFE" stroke="#E4ECF3"/>
+    <rect x="282" y="284" width="94" height="9" rx="4.5" fill="#567086"/>
+    <path d="M286 402c34-30 52-25 83-63 34-41 62 20 94-13 34-35 54 16 87-35 20-31 43-28 68-3" fill="none" stroke="url(#brand)" stroke-width="7" stroke-linecap="round"/>
+    <path d="M286 414h332" stroke="#DCE6EF" stroke-width="2"/>
+    <circle cx="369" cy="339" r="7" fill="#0078D4"/>
+    <circle cx="463" cy="326" r="7" fill="#2563EB"/>
+    <circle cx="550" cy="291" r="7" fill="#6D4AFF"/>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="42" y="330" width="164" height="76" rx="18" fill="#102A43"/>
+    <circle cx="76" cy="368" r="18" fill="#00B7C3" opacity=".25"/>
+    <path d="M68 368h16M76 360v16" stroke="#6EE7F9" stroke-width="3" stroke-linecap="round"/>
+    <text x="104" y="362" fill="#AFC6DA" font-family="Segoe UI, sans-serif" font-size="11">RAYFIN DATA</text>
+    <text x="104" y="381" fill="#FFFFFF" font-family="Segoe UI, sans-serif" font-size="14" font-weight="600">Connected</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="558" y="390" width="160" height="84" rx="18" fill="url(#brand)"/>
+    <path d="M584 420l13-8 13 8v16l-13 8-13-8z" fill="#FFFFFF" fill-opacity=".2"/>
+    <path d="M590 422l7-4 7 4v9l-7 4-7-4z" fill="#FFFFFF"/>
+    <text x="622" y="420" fill="#DBEDFF" font-family="Segoe UI, sans-serif" font-size="10">MICROSOFT</text>
+    <text x="622" y="440" fill="#FFFFFF" font-family="Segoe UI, sans-serif" font-size="15" font-weight="600">Fabric ready</text>
+  </g>
+</svg>

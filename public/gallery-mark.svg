@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Awesome Rayfin gallery">
+  <defs>
+    <linearGradient id="wave" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6EE7F9"/>
+      <stop offset=".5" stop-color="#39A7FF"/>
+      <stop offset="1" stop-color="#8B7CFF"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#081B35"/>
+  <path d="M10 36c7-12 16-18 27-18 7 0 13 2 18 7-7 0-12 3-15 8 5 2 9 6 11 12-6-4-12-5-18-3-9 3-17 1-23-6Z" fill="url(#wave)"/>
+  <circle cx="37" cy="26" r="2.5" fill="#081B35"/>
+</svg>
