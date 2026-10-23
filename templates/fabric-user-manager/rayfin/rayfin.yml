@@ -1,0 +1,36 @@
+id: fabric-user-manager
+name: Fabric User Manager
+version: 0.1.0
+services:
+  auth:
+    enabled: true
+    fabric:
+      enabled: true
+    # Off on purpose: with password sign-up a person could
+    # register an account with any e-mail address. Only Fabric sign-in remains.
+    # Local development against the bundled backend needs it switched on locally.
+    password:
+      enabled: false
+    # ⚠️ `rayfin up` rewrites this file and will re-add whatever host it just deployed to.
+    # That host is tenant- and item-specific, so it must not travel into a public repo — check
+    # this list before publishing. Whoever deploys adds their own `https://<their-app-host>`
+    # AND `https://<their-app-host>/auth/callback`, then runs a full `rayfin up`
+    # (a `staticapp deploy` alone does not re-register them).
+    allowedRedirectUris:
+      - http://localhost:5173
+  data:
+    enabled: true
+    dialect: mssql
+  staticHosting:
+    enabled: true
+    folder: dist
+    buildCommand: npm run build:fabric
+    indexDocument: index.html
+    # Required by the platform since autumn 2026. `public` serves the app files to
+    # anyone with the link; data and every action still need sign-in. `protected` would
+    # require Fabric sign-in for the files as well.
+    assetAccess: public
+  storage:
+    enabled: false
+  functions:
+    enabled: false

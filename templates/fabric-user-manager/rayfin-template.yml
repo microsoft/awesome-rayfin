@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: fabric-user-manager
+  displayName: Fabric User Manager
+  description: 'Delegated access management for Fabric: owners manage the Entra groups behind workspace roles, app audiences and RLS/OLS, colleagues request access with a reason that the owner approves, and the Power BI Guidelines live in the same app. Runs as the signed-in user, with an offline demo.'
+entries:
+  - path: .
+    name: Fabric User Manager

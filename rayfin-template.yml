@@ -16,6 +16,9 @@ entries:
   - path: templates/fabric-atlas
     name: Fabric Atlas
     description: Multi-workspace Fabric catalog, lineage, governance and access review backed by validated Rayfin snapshots.
+  - path: templates/fabric-user-manager
+    name: Fabric User Manager
+    description: 'Delegated access management for Fabric: owners manage the Entra groups behind workspace roles, app audiences and RLS/OLS, colleagues request access with a reason that the owner approves, and the Power BI Guidelines live in the same app. Runs as the signed-in user, with an offline demo.'
   - path: templates/field-technician
     name: Field Technician App
     description: Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric)
