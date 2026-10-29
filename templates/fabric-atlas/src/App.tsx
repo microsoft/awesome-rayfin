@@ -22,27 +22,32 @@ import {
   Boxes,
   Compass,
   FolderTree,
+  Globe,
   Info,
   KeyRound,
   Menu,
   Moon,
+  Plug,
   RefreshCw,
   Rows3,
   Search,
   Settings2,
   ShieldCheck,
   Sun,
+  UserRound,
   Waypoints,
   X,
 } from "lucide-react";
 
 import { useThemeContext } from "@/hooks/theme.context";
 import { useAtlas } from "./atlas/store";
+import { ExternalLineageProvider } from "./atlas/external-lineage-store";
 import { CommandPalette } from "./atlas/components/CommandPalette";
 import { SyncRunCompact, SyncRunProgressLine } from "./atlas/components/SyncRunStatus";
 import {
   navigationForSearch,
   type AtlasFocusRequest,
+  navigationForSavedView,
   type AtlasNavigation,
   type Tab,
   type WorkspaceSection,
@@ -70,6 +75,8 @@ import {
   type WorkspaceFocusCapture,
 } from "./atlas/workspace-switch";
 import { WorkspaceSelector } from "./atlas/components/WorkspaceSelector";
+import { DomainFilter } from "./atlas/components/DomainFilterPopover";
+import { SnapshotExportPopover } from "./atlas/components/SnapshotExportPopover";
 import {
   isDisplayDensity,
   useDisplayPreference,
@@ -81,12 +88,14 @@ export type { Tab } from "./atlas/navigation";
 
 const overviewLoader = () => import("./atlas/views/Overview");
 const mapLoader = () => import("./atlas/views/Map");
+const externalLoader = () => import("./atlas/views/ExternalLineage");
 const catalogLoader = () => import("./atlas/views/Catalog");
 const assetCatalogLoader = () => import("./atlas/views/AssetCatalog");
 const accessLoader = () => import("./atlas/views/Access");
 const governanceLoader = () => import("./atlas/views/GovernanceCenter");
 const jobsLoader = () => import("./atlas/views/Jobs");
 const workspaceLoader = () => import("./atlas/views/WorkspaceHub");
+const mcpLoader = () => import("./atlas/views/Mcp");
 const aboutLoader = () => import("./atlas/views/About");
 
 const OverviewView = lazy(() =>
@@ -94,6 +103,9 @@ const OverviewView = lazy(() =>
 );
 const MapView = lazy(() =>
   mapLoader().then((module) => ({ default: module.MapView })),
+);
+const ExternalLineageView = lazy(() =>
+  externalLoader().then((module) => ({ default: module.ExternalLineageView })),
 );
 const CatalogView = lazy(() =>
   catalogLoader().then((module) => ({ default: module.CatalogView })),
@@ -119,6 +131,9 @@ const WorkspaceHubView = lazy(() =>
     default: module.WorkspaceHubView,
   })),
 );
+const McpView = lazy(() =>
+  mcpLoader().then((module) => ({ default: module.McpView })),
+);
 const AboutView = lazy(() =>
   aboutLoader().then((module) => ({ default: module.AboutView })),
 );
@@ -126,24 +141,27 @@ const AboutView = lazy(() =>
 const VIEW_LOADERS: Partial<Record<Tab, () => Promise<unknown>>> = {
   overview: overviewLoader,
   map: mapLoader,
+  external: externalLoader,
   catalog: catalogLoader,
   assets: assetCatalogLoader,
   access: accessLoader,
   governance: governanceLoader,
   jobs: jobsLoader,
   workspace: workspaceLoader,
+  mcp: mcpLoader,
   about: aboutLoader,
 };
 
 const NAV_GROUPS: {
   label: string;
-  items: { id: Tab; label: string; icon: typeof Compass }[];
+  items: { id: Tab; label: string; icon: typeof Compass; badge?: string }[];
 }[] = [
   {
     label: "Explore",
     items: [
       { id: "overview", label: "Overview", icon: BarChart3 },
       { id: "map", label: "Map & lineage", icon: Waypoints },
+      { id: "external", label: "External lineage", icon: Globe },
       { id: "catalog", label: "Catalog", icon: FolderTree },
       { id: "assets", label: "Asset Catalog", icon: Boxes },
     ],
@@ -164,10 +182,22 @@ const NAV_GROUPS: {
   },
   {
     label: "System",
-    items: [{ id: "about", label: "About", icon: Info }],
+    items: [
+      { id: "mcp", label: "MCP", icon: Plug },
+      { id: "about", label: "About", icon: Info },
+    ],
   },
 ];
 const NAV = NAV_GROUPS.flatMap((group) => group.items);
+
+// Sidebar shortcut that opens Governance findings scoped to the user's items.
+const MY_ITEMS_SHORTCUT = {
+  group: "Govern",
+  label: "My items",
+  icon: UserRound,
+  navigation: () =>
+    navigationForSavedView("governance", { section: "findings", mine: true }),
+};
 
 function SidebarContent({
   tab,
@@ -178,7 +208,7 @@ function SidebarContent({
   tab: Tab;
   data: AtlasData;
   mobile?: boolean;
-  onNavigate: (tab: Tab) => void;
+  onNavigate: (target: Tab | AtlasNavigation) => void;
 }) {
   const workspaceDetail = workspaceDetailLabel(data.workspace);
   const { workspaceScopes } = useAtlas();
@@ -218,7 +248,7 @@ function SidebarContent({
               {group.label}
             </div>
             <div className="flex flex-col gap-[2px]">
-              {group.items.map(({ id, label, icon: Icon }) => (
+              {group.items.map(({ id, label, icon: Icon, badge }) => (
                 <button
                   key={id}
                   type="button"
@@ -235,8 +265,25 @@ function SidebarContent({
                 >
                   <Icon size={17} />
                   {label}
+                  {badge && (
+                    <span className="ml-auto rounded-sm bg-primary/10 px-[5px] text-[10px] font-semibold text-brand-foreground">
+                      {badge}
+                    </span>
+                  )}
                 </button>
               ))}
+              {group.label === MY_ITEMS_SHORTCUT.group && (
+                <button
+                  type="button"
+                  onClick={() => onNavigate(MY_ITEMS_SHORTCUT.navigation())}
+                  onMouseEnter={() => void VIEW_LOADERS.governance?.()}
+                  title="Governance findings, radar and coverage scoped to items you own"
+                  className="relative flex items-center gap-[10px] rounded-md px-[10px] py-[7px] text-left text-[13px] font-medium text-foreground/75 transition-colors hover:bg-accent hover:text-foreground"
+                >
+                  <MY_ITEMS_SHORTCUT.icon size={17} />
+                  {MY_ITEMS_SHORTCUT.label}
+                </button>
+              )}
             </div>
           </div>
         ))}
@@ -510,7 +557,7 @@ function App() {
     return () => window.cancelAnimationFrame(frame);
   }, [activeSnapshotLoaded, activeWorkspaceId]);
 
-  const nav = (t: Tab) => navigate(t);
+  const nav = (target: Tab | AtlasNavigation) => navigate(target);
 
   if (!isPreview && hydrating) return <AtlasBootView />;
   if (!isPreview && (!hasData || requiresDeploymentSync)) {
@@ -522,6 +569,7 @@ function App() {
   }
 
   return (
+    <ExternalLineageProvider>
     <WorkspaceSwitchContext.Provider value={switchWorkspace}>
     <Dialog.Root open={navOpen} onOpenChange={setNavOpen}>
     <div className="atlas-shell-canvas relative flex h-screen overflow-hidden text-foreground">
@@ -566,14 +614,15 @@ function App() {
                   id={HEADER_WORKSPACE_SELECT_ID}
                   compact
                   hideWhenSingle
-                  className="hidden max-w-[16rem] md:flex"
+                  className="hidden max-w-[36rem] md:flex"
                 />
                 <span className="hidden shrink-0 xl:inline">
                   · {NAV.find((n) => n.id === tab)?.label}
                 </span>
               </div>
             ) : (
-              <div className="truncate text-[12px] text-muted-foreground sm:text-[13px]">
+              <div className="flex min-w-0 items-center gap-xs truncate text-[12px] text-muted-foreground sm:text-[13px]">
+                <DomainFilter className="hidden md:inline-flex" />
                 <span className="hidden sm:inline">Fabric · </span>
                 <b className="text-foreground">{data.workspace.displayName}</b>
                 <span className="hidden sm:inline">
@@ -603,6 +652,7 @@ function App() {
             >
               <Search className="icon-size-200" />
             </button>
+            {hasData && <SnapshotExportPopover data={data} />}
             <SyncRunCompact
               onOpenDetails={() =>
                 navigate({
@@ -703,6 +753,7 @@ function App() {
               >
               {tab === "overview" && <OverviewView onOpen={navigate} />}
               {tab === "map" && <MapView />}
+              {tab === "external" && <ExternalLineageView />}
               {tab === "catalog" && (
                 <CatalogView
                   focus={focus}
@@ -748,6 +799,7 @@ function App() {
                   onStateChange={replaceViewState}
                 />
               )}
+              {tab === "mcp" && <McpView />}
               {tab === "about" && <AboutView />}
               </Suspense>
             </motion.div>
@@ -808,6 +860,7 @@ function App() {
       )}
     </Dialog.Root>
     </WorkspaceSwitchContext.Provider>
+    </ExternalLineageProvider>
   );
 }
 

@@ -42,27 +42,48 @@ jobs, configuration and team notes. It never stores workspace business data.
   selection changes.
 - Add focused tests for new state or graph logic.
 - Validate with `npm test`, `npm run lint` and `npm run build`.
-- Deploy with `npx rayfin up --tenant <tenant-id> --workspace <workspace-name>`.
+- Deploy with `npx rayfin up --tenant <tenant-id> --workspace-id <workspace-id>`.
 
 ## Repository layout
 
 ```text
 src/
+  App.tsx           application shell and hash navigation
+  ErrorFallback.tsx top-level error boundary fallback
   atlas/
     views/          UI pages
+    components/     shared Atlas UI components
     mcp/            read-only Atlas MCP contract and evidence tools
     backend.ts      Rayfin persistence
+    browser-collector-sync.ts  in-browser metadata collection
+    catalog-objects.ts         Asset Catalog object model
+    catalog-search.ts          catalog search
+    domain-governance.ts       Fabric domains and per-domain posture
+    governance.ts   findings and governance rules
+    history.ts      snapshot history and comparison
+    item-metadata.ts           item metadata projection
     live-sync.ts    Fabric UDF client
     lineage.ts      lineage normalization and layout
     model.ts        shared types and preview data
+    radar.ts        Governance Radar scoring
+    release.ts      app version and in-app release notes
+    routing.ts      hash routes
     store.tsx       application state
   components/       authentication shell components
   hooks/            auth and theme hooks
   lib/              Rayfin client
   mcp/              local stdio entry point for Atlas MCP
   services/         authentication services
-rayfin/              Rayfin app and entity configuration
-fabric/              Fabric User Data Function source
-docs/                architecture and deployment documentation
+  test/             shared test setup
+rayfin/
+  data/             persisted entity model
+  functions/src/    Rayfin Functions: metadata collectors and sync/
+fabric/udf/atlas_sync_functions/  Fabric User Data Function and its pytest suite
+docs/                architecture, deployment and whitepaper documentation
+  fabric-atlas-whitepaper/  whitepaper assets and LaTeX header
+  screenshots/      README screenshots
+  archive/          superseded design spikes
+prez/                developer architecture deck (PPTX and PDF)
 scripts/             local Fabric portal tooling
+.agents/             agent skills used to work on this repository
 ```

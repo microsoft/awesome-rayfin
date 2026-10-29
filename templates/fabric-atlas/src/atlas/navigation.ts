@@ -5,12 +5,14 @@ import type { AssetObjectKind } from "./catalog-objects";
 export type Tab =
   | "overview"
   | "map"
+  | "external"
   | "catalog"
   | "assets"
   | "governance"
   | "access"
   | "jobs"
   | "workspace"
+  | "mcp"
   | "about";
 
 export type GovernanceSection =
@@ -19,7 +21,8 @@ export type GovernanceSection =
   | "history"
   | "coverage"
   | "posture"
-  | "policies-ai";
+  | "policies-ai"
+  | "tenant-settings";
 
 export type WorkspaceSection =
   | "workspace"
