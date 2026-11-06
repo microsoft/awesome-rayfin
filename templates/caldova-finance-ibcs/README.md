@@ -15,6 +15,14 @@ It ships with Caldova GmbH, a fictional pharma wholesaler with generated data, a
 > (MIT; the original app is in [`caldova-reorder`](../caldova-reorder/)). This template is an extension by
 > **Alexander Korn**; see [Credits](#credits) for who did what.
 
+## The Caldova templates
+
+| Template | What it is |
+| --- | --- |
+| [`caldova-cologne-digital-twin`](../caldova-cologne-digital-twin/) | **The combined app.** One app with three tabs: a photoreal 3D twin of Caldova's logistics centre in Cologne and its delivery fleet, the original Reorder screens on Cologne pharmacies, and an IBCS Finance Cockpit with P&L. |
+| [`caldova-reorder`](../caldova-reorder/) | The original Caldova app by Yohan Lasorsa, on its own. Runs inside the Fabric portal against the live semantic model. |
+| [`caldova-finance-ibcs`](../caldova-finance-ibcs/) (this template) | A standalone finance app: income statement, balance sheet and cash flow in IBCS notation, with forecast adjustments, comments and sign-off. It shares Michael Tenner's IBCS building blocks with the twin's Finance tab but is a separate app. |
+
 ## The scenario
 
 Month-end in a controlling team: the actuals of the month are in. The team reviews income statement, balance sheet and cash flow against budget and prior year. It adjusts the forecast of the open months and explains the large variances, then signs the month off and hands an Excel or PowerPoint pack to the board. Today that runs through a report plus Excel files sent around plus e-mail approvals, with nothing on record in one place.

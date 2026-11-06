@@ -22,8 +22,13 @@ The app has three tabs:
 | **Reorder** | Low-stock queue, sales rates and reorders per pharmacy and district, adapted from the original Caldova app. Reorders are written to the app's own Fabric SQL database |
 | **Finance** | An IBCS-style Finance Cockpit and P&L statement over a semantic model derived from the twin's own sales and tours |
 
-Related templates: [caldova-reorder](../caldova-reorder/) (the original Caldova app this tab is
-adapted from) and [caldova-finance-ibcs](../caldova-finance-ibcs/) (the Finance Cockpit on its own).
+## The Caldova templates
+
+| Template | What it is |
+| --- | --- |
+| [`caldova-cologne-digital-twin`](../caldova-cologne-digital-twin/) (this template) | **The combined app.** One app with the three tabs above. |
+| [`caldova-reorder`](../caldova-reorder/) | The original Caldova app by Yohan Lasorsa, on its own; the Reorder tab is adapted from it. Runs inside the Fabric portal against the live semantic model. |
+| [`caldova-finance-ibcs`](../caldova-finance-ibcs/) | A standalone finance app: income statement, balance sheet and cash flow in IBCS notation, with forecast adjustments, comments and sign-off. It shares Michael Tenner's IBCS building blocks with this app's Finance tab but is a separate app, not this tab on its own. |
 
 ## Credits
 

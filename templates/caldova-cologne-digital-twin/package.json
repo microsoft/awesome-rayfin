@@ -7,7 +7,7 @@
     "name": "caldova-cologne-digital-twin",
     "displayName": "Caldova Cologne Digital Twin",
     "category": "digital-twins",
-    "description": "A photoreal 3D digital twin of the fictional pharmaceutical wholesaler Caldova, with its logistics centre in the real Confex building at Koelnmesse, delivery vans on real Cologne roads to real pharmacy locations, and Reorder and IBCS Finance tabs over Fabric semantic models."
+    "description": "The combined Caldova app: a photoreal 3D digital twin of the fictional pharmaceutical wholesaler Caldova, with its logistics centre in the real Confex building at Koelnmesse, delivery vans on real Cologne roads to real pharmacy locations, and Reorder and IBCS Finance tabs over Fabric semantic models."
   },
   "scripts": {
     "predev": "rayfin env --framework vite",

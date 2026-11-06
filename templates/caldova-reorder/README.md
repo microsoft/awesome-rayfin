@@ -36,9 +36,15 @@ The application code, the model, the data generator and the deploy logic are the
 - this header, the screenshot and the note on the data API in
   [Where row-level security lives](#where-row-level-security-lives).
 
-Two extended Caldova templates by Alexander Korn build on it:
-[`caldova-finance-ibcs`](../caldova-finance-ibcs/) and
-[`caldova-cologne-digital-twin`](../caldova-cologne-digital-twin/).
+## The Caldova templates
+
+| Template | What it is |
+| --- | --- |
+| [`caldova-cologne-digital-twin`](../caldova-cologne-digital-twin/) | **The combined app.** One app with three tabs: a photoreal 3D twin of Caldova's logistics centre in Cologne and its delivery fleet, these Reorder screens on Cologne pharmacies, and an IBCS Finance Cockpit with P&L. |
+| [`caldova-reorder`](../caldova-reorder/) (this template) | The original Caldova app by Yohan Lasorsa, on its own. Runs inside the Fabric portal against the live semantic model. |
+| [`caldova-finance-ibcs`](../caldova-finance-ibcs/) | A standalone finance app: income statement, balance sheet and cash flow in IBCS notation, with forecast adjustments, comments and sign-off. It shares Michael Tenner's IBCS building blocks with the twin's Finance tab but is a separate app. |
+
+The two extensions are by Alexander Korn.
 
 All Caldova stores, products, stock, sales and reorders are synthetic, generated
 by [`data/generate.js`](data/generate.js) from a fixed seed. There is no patient or
