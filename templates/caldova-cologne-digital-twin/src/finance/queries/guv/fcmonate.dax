@@ -1,0 +1,26 @@
+// Forecast of the open months per account of one P&L block (L1), template for the Excel round-trip.
+// Posting accounts only; open months = after the last actual month of the year.
+DEFINE
+    VAR _yr = {{YEAR}}
+    VAR _last =
+        CALCULATE (
+            MAX ( 'fact-pnl'[Month] ),
+            NOT ISBLANK ( 'fact-pnl'[AC Value] ),
+            Calender[Year] = _yr
+        )
+EVALUATE
+CALCULATETABLE (
+    SUMMARIZECOLUMNS (
+        'dim-account'[AccountID],
+        'dim-account'[Name],
+        'dim-account'[L2],
+        'dim-account'[L3],
+        'fact-pnl'[Month],
+        "FC", [P&L FC]
+    ),
+    TREATAS ( { _yr }, Calender[Year] ),
+    'dim-account'[L1] = "{{L1}}",
+    'dim-account'[RowType] = "Account",
+    'fact-pnl'[Month] > _last
+)
+ORDER BY 'dim-account'[AccountID], 'fact-pnl'[Month]

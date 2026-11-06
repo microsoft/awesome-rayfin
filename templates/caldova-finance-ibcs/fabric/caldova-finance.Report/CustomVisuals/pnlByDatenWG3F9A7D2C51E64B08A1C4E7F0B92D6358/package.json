@@ -1,0 +1,17 @@
+{
+		"version": "1.7.0.0",
+		"author": {"name":"PowerBI Kitchen","email":"michael.tenner84@gmail.com"},
+		"resources": [
+			{
+				"resourceId": "rId0",
+				"sourceType": 5,
+				"file": "resources/pnlByDatenWG3F9A7D2C51E64B08A1C4E7F0B92D6358.pbiviz.json"
+			}
+		],
+		"visual": {"name":"pnlByDatenWG","displayName":"P&L Statement byDatenWG","guid":"pnlByDatenWG3F9A7D2C51E64B08A1C4E7F0B92D6358","visualClassName":"Visual","version":"1.7.0.0","description":"IBCS-inspired P&L / GuV statement: unbalanced parent-child account hierarchy or level columns, subtotal and formula rows (EBITDA, margins), sign conventions with variance-invert for cost rows, scenarios AC/PY/PL/FC with delta bars and delta-percent pins, k/m scaling and a 3-line IBCS title block. Views: table with the IBCS mega table (templates T01–T04, 12A, 12G and 12H: value and variance columns, bars, pins, integrated variance waterfalls, value cascades incl. YTD + rest-of-year stacks, plan statements with tinted variances, month | YTD | FY blocks, thresholds, headline slot, scale sync across visuals, virtualized long statements), structure bars, row waterfall and a value driver tree (DuPont or dimension hierarchy) with card zoom, re-root and breadcrumb. Selection, cross-filtering, drillthrough and the native context menu. Finance conventions from ChartKitchen: tooltips, sum-safe rounding, parentheses for negatives, house terms for the scenarios, materiality, highlight rows, blue / orange variance preset. Ease of use: value columns as free scenario switches (AC, PY, PL, FC, Δ), a template picker in the toolbar while editing, an optional column category that repeats the column set per segment or quarter, overlapping scenario bars with triangle marks in the bars view. a Start hub while no fields are bound (guided get-started checklist, feature tour, template gallery grouped by purpose with live mini previews, demo statement, field guide for every role, a font size bar HD / Full HD / UHD and a link to the documentation; also as an overlay from the toolbar while editing), light / dark appearance that follows the report theme, and a localized UI in German, English, Spanish and Japanese.","supportUrl":"https://github.com/losveratos/powerbi-kitchen-/issues","gitHubUrl":"https://github.com/losveratos/powerbi-kitchen-"},
+		"metadata": {
+			"pbivizjson": {
+				"resourceId": "rId0"
+			}
+		}
+	}

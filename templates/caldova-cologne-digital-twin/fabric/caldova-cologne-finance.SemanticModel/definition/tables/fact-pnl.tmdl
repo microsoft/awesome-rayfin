@@ -1,0 +1,74 @@
+/// Monthly P&L values per account, stored positive; dim-account[SignConvention] gives the sign. AC is blank in the open month (October 2026).
+table 'fact-pnl'
+
+	measure 'P&L AC' = SUM ( 'fact-pnl'[AC Value] )
+		formatString: #,##0
+
+	measure 'P&L PY' = SUM ( 'fact-pnl'[PY Value] )
+		formatString: #,##0
+
+	measure 'P&L PL' = SUM ( 'fact-pnl'[PL Value] )
+		formatString: #,##0
+
+	measure 'P&L FC' = SUM ( 'fact-pnl'[FC Value] )
+		formatString: #,##0
+
+	measure 'P&L FC FY' = MAX ( 'fact-pnl'[FC_FY] )
+		formatString: #,##0
+
+	measure 'P&L PL FY' = MAX ( 'fact-pnl'[PL_FY] )
+		formatString: #,##0
+
+	measure 'P&L Last Actual Month' = CALCULATE ( MAX ( 'fact-pnl'[Month] ), NOT ISBLANK ( 'fact-pnl'[AC Value] ) )
+
+	column AccountID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: AccountID
+
+	column Month
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Month
+
+	column Date
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: Date
+
+	column 'AC Value'
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: AC
+
+	column 'PY Value'
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: PY
+
+	column 'PL Value'
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: PL
+
+	column 'FC Value'
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: FC
+
+	column FC_FY
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: FC_FY
+
+	column PL_FY
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: PL_FY
+
+	partition 'fact-pnl' = entity
+		mode: directLake
+		source
+			entityName: fin_fact_pnl
+			expressionSource: DatabaseQuery

@@ -1,0 +1,13 @@
+// How many products have been running low on each of the last seven days.
+//
+// The count comes from [Estimated Products Running Low] in the semantic model —
+// the same threshold as the tile it sits under, applied to stock worked back
+// from today's snapshot. The last point equals the tile's own number.
+EVALUATE
+VAR Anchor = [Latest Sales Date]
+RETURN
+ADDCOLUMNS(
+    FILTER(VALUES(Sales[date]), Sales[date] > Anchor - 7),
+    "RunningLow", [Estimated Products Running Low]
+)
+ORDER BY Sales[date] ASC

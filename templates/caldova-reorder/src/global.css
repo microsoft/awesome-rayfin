@@ -1,0 +1,175 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Bridged tokens — kept in `@theme static` so the CSS vars are always
+   emitted, not tree-shaken when no Tailwind utility consumes them.
+   Required because <VegaVisual> and <DataGrid> read these at runtime via
+   `useCssTheme()` and project them into a JS theme object (Vega's SVG output
+   cannot resolve `var()` references). */
+@theme static {
+  --color-brand:            #1B3658;  /* bar/area fills, button-like brand surfaces */
+  --color-brand-foreground: #1B3658;  /* line/point marks, branded text & emphasis */
+  --color-hover:            #F1F5F9;  /* row/cell hover surface in DataGrid + visuals */
+}
+
+@theme {
+  /* Caldova palette. Every foreground below clears 7:1 on the page background —
+     the room is bright and the projector washes colour out, so AA is not enough.
+     Urgency uses its own ramp so it never competes with the brand navy. */
+
+  --color-background: #F6F8FB;                                       /* page background */
+  --color-foreground: #0F1F33;                                       /* default text */
+
+  --color-card: #ffffff;                                             /* card surfaces */
+  --color-card-foreground: #0F1F33;
+
+  --color-popover: #ffffff;                                          /* popover/dropdown surfaces */
+  --color-popover-foreground: #0F1F33;
+
+  --color-primary: #1B3658;                                          /* Caldova navy */
+  --color-primary-foreground: #ffffff;
+  --color-primary-hover: #2A4E7E;
+  --color-primary-surface: #EAF0F7;                                  /* tinted navy surface */
+
+  --color-secondary: #F1F5F9;                                        /* secondary actions */
+  --color-secondary-foreground: #1B3658;
+
+  --color-muted: #EDF1F6;                                            /* subtle backgrounds */
+  --color-muted-foreground: #475569;                                 /* subdued text — 7.58:1 */
+
+  --color-accent: #EAF0F7;                                           /* accent highlights */
+  --color-accent-foreground: #1B3658;
+
+  /* Urgency ramp — amber through red, each paired with a tinted surface. */
+  --color-critical: #A11B14;                                         /* 7.83:1 */
+  --color-critical-foreground: #ffffff;
+  --color-critical-surface: #FBEAE8;
+
+  --color-warning: #7A4F00;                                          /* 7.13:1 */
+  --color-warning-foreground: #ffffff;
+  --color-warning-surface: #FDF2DC;
+
+  --color-destructive: #A11B14;                                      /* errors & destructive actions */
+  --color-destructive-foreground: #ffffff;
+  --color-destructive-surface: #FBEAE8;
+
+  --color-success: #166534;                                          /* 7.13:1 */
+  --color-success-foreground: #ffffff;
+  --color-success-surface: #E4F1E8;
+
+  --color-border: #DBE3ED;                                           /* default border */
+  --color-border-strong: #C3D0E0;                                    /* header rules, dividers */
+  --color-input: #C3D0E0;                                            /* input field borders */
+  --color-ring: #2A4E7E;                                             /* focus rings */
+
+  /* Elevation — restrained. Enterprise tools use depth to separate, not decorate. */
+  --shadow-card: 0 1px 2px rgba(15, 31, 51, 0.06), 0 1px 3px rgba(15, 31, 51, 0.05);
+  --shadow-raised: 0 2px 4px rgba(15, 31, 51, 0.06), 0 4px 12px rgba(15, 31, 51, 0.07);
+
+  --radius-none: 0;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-2xl: 12px;
+  --radius-3xl: 16px;
+  --radius-4xl: 24px;
+  --radius-5xl: 32px;
+  --radius-6xl: 40px;
+  --radius-full: 9999px;
+  --radius: 6px;
+
+  /* Spacing — 4px grid; use only these tokens, no interpolation. *-nudge = base − 2px.
+     Usage: p-*, m-*, gap-* (e.g. p-400 gap-300) */
+  --spacing-none: 0;
+  --spacing-100-nudge: 2px;
+  --spacing-100: 4px;
+  --spacing-200-nudge: 6px;
+  --spacing-200: 8px;
+  --spacing-300-nudge: 10px;
+  --spacing-300: 12px;
+  --spacing-400: 16px;
+  --spacing-500: 20px;
+  --spacing-600: 24px;
+  --spacing-700: 28px;
+  --spacing-800: 32px;
+
+  /* Font Sizes — 100-based scale 
+     Usage: text-* (e.g. text-300, text-hero-900) */
+  --text-100: 10px;
+  --text-200: 12px;
+  --text-300: 14px;
+  --text-400: 16px;
+  --text-500: 20px;
+  --text-600: 24px;
+  --text-hero-700: 28px;
+  --text-hero-800: 32px;
+  --text-hero-900: 40px;
+  --text-hero-1000: 68px;
+
+  /* Line Heights — paired with font sizes
+     Usage: leading-* (e.g. leading-300) */
+  --leading-100: 14px;
+  --leading-200: 16px;
+  --leading-300: 20px;
+  --leading-400: 22px;
+  --leading-500: 28px;
+  --leading-600: 32px;
+  --leading-hero-700: 36px;
+  --leading-hero-800: 40px;
+  --leading-hero-900: 52px;
+  --leading-hero-1000: 92px;
+
+  /* Font Weights
+     Usage: font-* (e.g. font-semibold) */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Font Families
+     Usage: font-* (e.g. font-heading, font-base) */
+  --font-heading: 'Segoe UI', 'Segoe UI Web (West European)',       /* headings, titles, display text */
+    -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', sans-serif;
+  --font-base: 'Segoe UI', 'Segoe UI Web (West European)',          /* body text, labels, UI controls */
+    -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', sans-serif;
+  --font-monospace: Consolas, 'Courier New', Courier, monospace;     /* code, pre-formatted text */
+  --font-numeric: Bahnschrift, 'Segoe UI',                          /* KPI values, numeric displays */
+    'Segoe UI Web (West European)', -apple-system, BlinkMacSystemFont, Roboto,
+    'Helvetica Neue', sans-serif;
+
+  /* Icon Sizes — 100-based scale
+     Usage: icon-size-* custom utility (e.g. icon-size-200) */
+  --icon-size-100: 12px;
+  --icon-size-200: 16px;
+  --icon-size-300: 20px;
+  --icon-size-400: 24px;
+  --icon-size-500: 28px;
+  --icon-size-600: 32px;
+  --icon-size-700: 48px;
+}
+
+@utility icon-size-* {
+  width: --value(--icon-size-*);
+  height: --value(--icon-size-*);
+}
+
+/* No dark theme. The room is bright and the projector washes dark surfaces out,
+   so the app is pinned to light regardless of the host's appearance setting. */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}

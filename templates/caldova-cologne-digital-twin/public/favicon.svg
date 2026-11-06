@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="4" fill="#f5f5f4" />
+  <!-- Valley cross-section: terrain profile with a water line across it. Muted, no alarm colour. -->
+  <path d="M2 24 L9 13 L14 18 L19 9 L24 17 L30 12 V30 H2 Z" fill="#d6d3d1" />
+  <path d="M2 20 H30" stroke="#78716c" stroke-width="1.5" />
+  <path d="M2 20 L9 20 L14 20 L19 20 L24 20 L30 20 V30 H2 Z" fill="#a8a29e" fill-opacity="0.55" />
+</svg>

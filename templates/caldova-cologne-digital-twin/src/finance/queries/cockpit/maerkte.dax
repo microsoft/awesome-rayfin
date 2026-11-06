@@ -1,0 +1,8 @@
+EVALUATE
+SELECTCOLUMNS (
+    'dim-market',
+    "market", 'dim-market'[Country],
+    "region", 'dim-market'[Region],
+    "maturity", 'dim-market'[MarketMaturity]
+)
+ORDER BY [region], [market]

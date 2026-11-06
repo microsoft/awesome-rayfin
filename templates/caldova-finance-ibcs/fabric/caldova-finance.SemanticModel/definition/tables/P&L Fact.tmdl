@@ -1,0 +1,69 @@
+/// dwg contract: P&L per account and month, values positive (sign in P&L Account).
+table 'P&L Fact'
+
+	measure 'P&L AC' = SUM ( 'P&L Fact'[AC] )
+		formatString: #,##0
+		displayFolder: P&L
+
+	measure 'P&L PY' = SUM ( 'P&L Fact'[PY] )
+		formatString: #,##0
+		displayFolder: P&L
+
+	measure 'P&L PL' = SUM ( 'P&L Fact'[PL] )
+		formatString: #,##0
+		displayFolder: P&L
+
+	measure 'P&L FC' = SUM ( 'P&L Fact'[FC] )
+		formatString: #,##0
+		displayFolder: P&L
+
+	measure 'P&L PL to date' = CALCULATE ( [P&L PL], 'Calendar'[Closed] = TRUE () )
+		formatString: #,##0
+		displayFolder: P&L
+
+	measure 'P&L PY to date' = CALCULATE ( [P&L PY], 'Calendar'[Closed] = TRUE () )
+		formatString: #,##0
+		displayFolder: P&L
+
+	column Date
+		dataType: dateTime
+		formatString: General Date
+		isHidden
+		summarizeBy: none
+		sourceColumn: Date
+
+	column AccountID
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: AccountID
+
+	column AC
+		dataType: double
+		isHidden
+		summarizeBy: sum
+		sourceColumn: AC
+
+	column PY
+		dataType: double
+		isHidden
+		summarizeBy: sum
+		sourceColumn: PY
+
+	column PL
+		dataType: double
+		isHidden
+		summarizeBy: sum
+		sourceColumn: PL
+
+	column FC
+		dataType: double
+		isHidden
+		summarizeBy: sum
+		sourceColumn: FC
+
+	partition 'P&L Fact' = entity
+		mode: directLake
+		source
+			entityName: fin_pl_fact
+			expressionSource: DatabaseQuery

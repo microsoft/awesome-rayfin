@@ -1,0 +1,82 @@
+/// Synthetic (generate_operations.py, seeded) — badged in the app.
+table Zones
+
+	column id
+		dataType: string
+		isKey
+		summarizeBy: none
+		sourceColumn: id
+
+	column name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: name
+
+	column kind
+		dataType: string
+		summarizeBy: none
+		sourceColumn: kind
+
+	column sequence
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: sequence
+
+	column colour
+		dataType: string
+		summarizeBy: none
+		sourceColumn: colour
+
+	column note
+		dataType: string
+		summarizeBy: none
+		sourceColumn: note
+
+	column areaM2
+		dataType: double
+		formatString: #,0
+		summarizeBy: sum
+		sourceColumn: areaM2
+
+	column spanM
+		dataType: double
+		summarizeBy: none
+		sourceColumn: spanM
+
+	column widthM
+		dataType: double
+		summarizeBy: none
+		sourceColumn: widthM
+
+	column centreAlongM
+		dataType: double
+		summarizeBy: none
+		sourceColumn: centreAlongM
+
+	column rackRows
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: rackRows
+
+	column tempC
+		dataType: double
+		summarizeBy: none
+		sourceColumn: tempC
+
+	column lineShare
+		dataType: double
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: lineShare
+
+	column peakFte
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: peakFte
+
+
+	partition Zones = entity
+		mode: directLake
+		source
+			entityName: dc_zone
+			expressionSource: DatabaseQuery

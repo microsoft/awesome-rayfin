@@ -1,0 +1,58 @@
+model Model
+	culture: en-US
+	defaultMode: directLake
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["DatabaseQuery"]
+
+/// Caldova Cologne finance (Finance tab): the table contract of Michael Tenner's Finance
+/// Cockpit on the lakehouse caldova_cologne. Bound at publish time by tools/fabric/publish_model.py --model finanzen.
+expression DatabaseQuery =
+		let
+			Source = {{DATABASE_QUERY_SOURCE}}
+		in
+			Source
+
+ref table 'Sales Demo'
+ref table 'dim-kpi'
+ref table 'dim-market'
+ref table 'dim-product'
+ref table 'dim-scenario'
+ref table Calender
+ref table 'dim-account'
+ref table 'fact-pnl'
+
+relationship SalesToCalender
+	fromColumn: 'Sales Demo'.Date
+	toColumn: Calender.Date
+
+relationship SalesToProduct
+	fromColumn: 'Sales Demo'.Product
+	toColumn: 'dim-product'.Product
+
+relationship SalesToMarket
+	fromColumn: 'Sales Demo'.Country
+	toColumn: 'dim-market'.Country
+
+relationship SalesToScenario
+	fromColumn: 'Sales Demo'.Scenario
+	toColumn: 'dim-scenario'.Scenario
+
+relationship SalesToKpi
+	fromColumn: 'Sales Demo'.KPI
+	toColumn: 'dim-kpi'.KPI
+
+relationship PnlToCalender
+	fromColumn: 'fact-pnl'.Date
+	toColumn: Calender.Date
+
+relationship PnlToAccount
+	fromColumn: 'fact-pnl'.AccountID
+	toColumn: 'dim-account'.AccountID

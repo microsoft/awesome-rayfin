@@ -1,0 +1,16 @@
+// What is already on order, so the queue never invites a second reorder for a
+// product a manager has already actioned.
+//
+// "Open" is the model's own definition — sent to purchasing, not yet fulfilled —
+// not a rule this app invented, so it stays true if purchasing changes what
+// counts as outstanding.
+EVALUATE
+FILTER(
+    SUMMARIZECOLUMNS(
+        RestockRequests[store_id],
+        RestockRequests[sku],
+        "OpenRequests", [Open Restock Requests],
+        "UnitsOnOrder", [Units Requested]
+    ),
+    [OpenRequests] > 0
+)

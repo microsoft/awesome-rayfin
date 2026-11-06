@@ -1,0 +1,94 @@
+table RestockRequests
+
+	column request_id
+		dataType: string
+		isKey
+		summarizeBy: none
+		sourceColumn: id
+
+	column store_id
+		dataType: string
+		summarizeBy: none
+		sourceColumn: store_id
+
+	column sku
+		dataType: string
+		summarizeBy: none
+		sourceColumn: sku
+
+	column qty
+		dataType: int64
+		formatString: #,0
+		summarizeBy: sum
+		sourceColumn: qty
+
+	/// Who asked for the restock, as the signed-in user.
+	column requested_by
+		dataType: string
+		summarizeBy: none
+		sourceColumn: requested_by
+
+	/// The requester's directory object id, recorded so the request is traceable to an identity and not just a display name.
+	column requested_by_id
+		dataType: string
+		summarizeBy: none
+		sourceColumn: requested_by_id
+
+	/// When the request was made, in UTC.
+	column requested_at
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: requested_at
+
+	column status
+		dataType: string
+		summarizeBy: none
+		sourceColumn: status
+
+	column note
+		dataType: string
+		summarizeBy: none
+		sourceColumn: note
+
+	/// How many restock requests exist in the current filter context.
+	measure 'Restock Requests' =
+			COUNTROWS(RestockRequests)
+		formatString: #,0
+
+	/// Total units asked for.
+	measure 'Units Requested' =
+			SUM(RestockRequests[qty])
+		formatString: #,0
+
+	/// Requests that have been sent to purchasing but not yet fulfilled.
+	measure 'Open Restock Requests' =
+			COALESCE(
+			    CALCULATE(
+			        COUNTROWS(RestockRequests),
+			        RestockRequests[status] = "submitted"
+			    ),
+			    0
+			)
+		formatString: #,0
+
+	/// Requests made today, in UTC. Reads zero before the first reorder of the day and moves the moment one lands.
+	measure 'Reorders Sent Today' =
+			VAR DayStart = UTCTODAY()
+			RETURN
+			    COALESCE(
+			        CALCULATE(
+			            COUNTROWS(RestockRequests),
+			            RestockRequests[requested_at] >= DayStart,
+			            RestockRequests[requested_at] < DayStart + 1
+			        ),
+			        0
+			    )
+		formatString: #,0
+
+	partition RestockRequests = entity
+		mode: directLake
+		source
+			entityName: RestockRequests
+			schemaName: dbo
+			expressionSource: RayfinDatabase

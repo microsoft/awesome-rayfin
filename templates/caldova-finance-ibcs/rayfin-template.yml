@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: caldova-finance-ibcs
+  displayName: Caldova Finance IBCS
+  description: Income statement, balance sheet and cash flow in strict IBCS notation, one screen each, articulated month by month. Controllers adjust the forecast and see all three statements follow, comment on variances and sign months off, all on record in Rayfin data. Runs offline on a fictional wholesaler.
+entries:
+  - path: .
+    name: Caldova Finance IBCS

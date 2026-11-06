@@ -1,0 +1,23 @@
+// What this product actually sells, at the store being looked at and across the
+// region, over both windows — the numbers behind "how many should I order?".
+EVALUATE
+VAR Anchor = [Latest Sales Date]
+VAR WeekWindow = FILTER(ALL(Sales[date]), Sales[date] > Anchor - 7)
+VAR MonthWindow = FILTER(ALL(Sales[date]), Sales[date] > Anchor - 28)
+RETURN
+ROW(
+    "StoreWeek",
+        CALCULATE([Avg Daily Sales], Products[sku] = {{sku}}, Stores[store_id] = {{storeId}}, WeekWindow),
+    "StoreMonth",
+        CALCULATE([Avg Daily Sales], Products[sku] = {{sku}}, Stores[store_id] = {{storeId}}, MonthWindow),
+    "RegionWeek",
+        CALCULATE([Avg Daily Sales], Products[sku] = {{sku}}, WeekWindow),
+    "RegionMonth",
+        CALCULATE([Avg Daily Sales], Products[sku] = {{sku}}, MonthWindow),
+    "SuggestedUnits",
+        CALCULATE([Suggested Reorder Units], Products[sku] = {{sku}}, Stores[store_id] = {{storeId}}),
+    "DaysOfStock",
+        CALCULATE([Days of Stock], Products[sku] = {{sku}}, Stores[store_id] = {{storeId}}),
+    "TargetCoverDays", [Target Cover Days],
+    "ThresholdDays", [Low Stock Threshold Days]
+)

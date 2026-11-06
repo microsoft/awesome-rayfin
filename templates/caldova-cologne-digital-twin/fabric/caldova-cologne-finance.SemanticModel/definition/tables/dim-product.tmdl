@@ -1,0 +1,49 @@
+table 'dim-product'
+
+	column Product
+		dataType: string
+		isKey
+		summarizeBy: none
+		sourceColumn: Product
+
+	column ProductID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ProductID
+
+	column Category
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Category
+
+	column ProductLine
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ProductLine
+
+	column LaunchDate
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: LaunchDate
+
+	column TargetMargin_pct
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: TargetMargin_pct
+
+	column Lifecycle
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Lifecycle
+
+	column Color
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Color
+
+	partition 'dim-product' = entity
+		mode: directLake
+		source
+			entityName: fin_dim_product
+			expressionSource: DatabaseQuery

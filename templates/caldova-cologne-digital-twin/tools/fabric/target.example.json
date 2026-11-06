@@ -1,0 +1,11 @@
+{
+  "workspaceId": "<your-fabric-workspace-id>",
+  "tenantId": "",
+  "lakehouseName": "caldova_cologne",
+  "lakehouseId": "",
+  "semanticModelName": "caldova-cologne-operations",
+  "semanticModelId": "",
+  "financeModelName": "caldova-cologne-finance",
+  "financeModelId": "",
+  "appSqlDatabaseId": ""
+}

@@ -1,0 +1,42 @@
+id: caldova-reorder
+name: caldova-reorder
+version: 1.0.0
+services:
+  auth:
+    enabled: true
+    fabric:
+      enabled: true
+    allowedRedirectUris:
+      - http://localhost:5173
+      - http://127.0.0.1:5173
+  data:
+    enabled: true
+    dialect: mssql
+  storage:
+    enabled: false
+  staticHosting:
+    enabled: true
+    # `protected` and `embedded.only` are the platform's paired posture for an
+    # app that only runs inside the portal, and the gate is what identifies the
+    # Fabric user to the sign-in handoff. The app declares `fabricEmbedded: true`
+    # rather than relying on the query parameter, which the gate's redirect drops.
+    assetAccess: protected
+    folder: dist
+    buildCommand: npm run build:fabric
+    indexDocument: index.html
+    embedded:
+      only: true
+  functions:
+    enabled: true
+    buildCommand: npm run build
+connectors:
+  - name: caldovaModel
+    type: fabric-semanticmodel
+    config:
+      workspaceId: <fabric-workspace-id>
+      itemId: <semantic-model-item-id>
+    auth:
+      type: delegated
+    version: "1"
+    operations:
+      - name: executeQuery

@@ -1,0 +1,33 @@
+table Stores
+
+	column store_id
+		dataType: string
+		isKey
+		summarizeBy: none
+		sourceColumn: store_id
+
+	column name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: name
+
+	column city
+		dataType: string
+		summarizeBy: none
+		sourceColumn: city
+
+	column region
+		dataType: string
+		summarizeBy: none
+		sourceColumn: region
+
+	column manager_upn
+		dataType: string
+		summarizeBy: none
+		sourceColumn: manager_upn
+
+	partition Stores = entity
+		mode: directLake
+		source
+			entityName: stores
+			expressionSource: DatabaseQuery

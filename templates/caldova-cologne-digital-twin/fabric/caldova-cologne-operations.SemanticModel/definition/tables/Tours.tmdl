@@ -1,0 +1,135 @@
+/// Synthetic (generate_operations.py, seeded) — badged in the app.
+table Tours
+
+	column tourId
+		dataType: string
+		isKey
+		summarizeBy: none
+		sourceColumn: tourId
+
+	column wave
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: wave
+
+	column waveTime
+		dataType: string
+		summarizeBy: none
+		sourceColumn: waveTime
+
+	column departSlot
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: departSlot
+
+	column returnSlot
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: returnSlot
+
+	column drops
+		dataType: int64
+		formatString: #,0
+		summarizeBy: sum
+		sourceColumn: drops
+
+	column lines
+		dataType: int64
+		formatString: #,0
+		summarizeBy: sum
+		sourceColumn: lines
+
+	column distanceKm
+		dataType: double
+		formatString: #,0.0
+		summarizeBy: sum
+		sourceColumn: distanceKm
+
+	column kmPerDrop
+		dataType: double
+		formatString: #,0.00
+		summarizeBy: none
+		sourceColumn: kmPerDrop
+
+	column onTimeDrops
+		dataType: int64
+		formatString: #,0
+		summarizeBy: sum
+		sourceColumn: onTimeDrops
+
+	column vehicleId
+		dataType: string
+		summarizeBy: none
+		sourceColumn: vehicleId
+
+	column vehicleType
+		dataType: string
+		summarizeBy: none
+		sourceColumn: vehicleType
+
+	/// truck (7.5 t) or van (Sprinter-size).
+	column vehicleClass
+		dataType: string
+		summarizeBy: none
+		sourceColumn: vehicleClass
+
+	column gCo2
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: gCo2
+
+	column withinEvRange
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: withinEvRange
+
+	column routed
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: routed
+
+	/// How many delivery tours are in the filter context.
+	measure 'Tours' = COUNTROWS ( Tours )
+		formatString: #,0
+	/// Driven kilometres, routed on the real OSM road network.
+	measure 'Tour km' = SUM ( Tours[distanceKm] )
+		formatString: #,0.0
+	/// Average pharmacy stops per tour (KPI).
+	measure 'Drops per Tour' = DIVIDE ( [Drops], [Tours] )
+		formatString: #,0.0
+	/// Route efficiency: driven kilometres per pharmacy stop (KPI).
+	measure 'km per Drop' = DIVIDE ( [Tour km], [Drops] )
+		formatString: #,0.00
+	/// Share of tours run by a 7.5 t truck (top third by order lines).
+	measure 'Truck Share of Tours' = DIVIDE ( CALCULATE ( [Tours], Tours[vehicleClass] = "truck" ), CALCULATE ( [Tours], REMOVEFILTERS ( Tours[vehicleClass] ) ) )
+		formatString: 0.0%
+	/// Share of pharmacy stops served by trucks.
+	measure 'Truck Share of Drops' = DIVIDE ( CALCULATE ( [Drops], Tours[vehicleClass] = "truck" ), CALCULATE ( [Drops], REMOVEFILTERS ( Tours[vehicleClass] ) ) )
+		formatString: 0.0%
+	/// Share of driven kilometres by trucks.
+	measure 'Truck Share of km' = DIVIDE ( CALCULATE ( [Tour km], Tours[vehicleClass] = "truck" ), CALCULATE ( [Tour km], REMOVEFILTERS ( Tours[vehicleClass] ) ) )
+		formatString: 0.0%
+	/// Tours on the road in the selected quarter-hour (TimeSlots[slotId]); blank without a selection.
+	/// Same rule as the app's tourProgress(): on the road while (slot - depart) mod 96 <= the tour's span.
+	measure 'Tours on the Road' =
+			VAR s = SELECTEDVALUE ( TimeSlots[slotId] )
+			RETURN
+			    IF (
+			        ISBLANK ( s ),
+			        BLANK (),
+			        COUNTROWS (
+			            FILTER (
+			                Tours,
+			                VAR span = MOD ( Tours[returnSlot] - Tours[departSlot] + 96, 96 )
+			                VAR since = MOD ( s - Tours[departSlot] + 96, 96 )
+			                RETURN span > 0 && since <= span
+			            )
+			        ) + 0
+			    )
+		formatString: #,0
+
+	partition Tours = entity
+		mode: directLake
+		source
+			entityName: tour
+			expressionSource: DatabaseQuery

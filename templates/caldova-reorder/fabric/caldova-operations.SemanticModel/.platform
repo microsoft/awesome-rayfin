@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "caldova-operations"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "0c13c840-dbde-4920-a7ca-16489dc796dc"
+  }
+}

@@ -1,0 +1,26 @@
+id: caldova-cologne-digital-twin
+name: caldova-cologne-digital-twin
+version: 0.1.0
+services:
+  auth:
+    enabled: true
+    fabric:
+      enabled: true
+    password:
+      enabled: false
+    allowedRedirectUris:
+      - http://localhost:5173
+      - http://127.0.0.1:5173
+  data:
+    enabled: true
+    dialect: mssql
+  storage:
+    enabled: false
+  staticHosting:
+    enabled: true
+    assetAccess: protected
+    folder: dist
+    buildCommand: npm run build:fabric
+    indexDocument: index.html
+  functions:
+    enabled: false

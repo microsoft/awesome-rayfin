@@ -1,0 +1,48 @@
+// Abfragen der Seite „Cash flow“ ohne Querfilter, zum Prüfen in der DAX-Abfrageansicht.
+// erzeugt von `dwg app page`, nicht von Hand ändern.
+
+// Kachel t05b (pnl)
+EVALUATE
+    ADDMISSINGITEMS(
+        'CF Account'[AccountID],
+        'CF Account'[Account],
+        'CF Account'[L1],
+        'CF Account'[L2],
+        'CF Account'[SortOrder],
+        'CF Account'[RowType],
+        'CF Account'[FormulaDef],
+        'CF Account'[SignConvention],
+        'CF Account'[DisplayInvert],
+        'CF Account'[VarianceInvert],
+        'Calendar'[Period],
+        'CF Account'[Comment],
+    SUMMARIZECOLUMNS(
+        'CF Account'[AccountID],
+        'CF Account'[Account],
+        'CF Account'[L1],
+        'CF Account'[L2],
+        'CF Account'[SortOrder],
+        'CF Account'[RowType],
+        'CF Account'[FormulaDef],
+        'CF Account'[SignConvention],
+        'CF Account'[DisplayInvert],
+        'CF Account'[VarianceInvert],
+        'Calendar'[Period],
+        'CF Account'[Comment],
+        "ac", 'CF Fact'[CF AC],
+        "py", 'CF Fact'[CF PY]
+    ),
+        'CF Account'[AccountID],
+        'CF Account'[Account],
+        'CF Account'[L1],
+        'CF Account'[L2],
+        'CF Account'[SortOrder],
+        'CF Account'[RowType],
+        'CF Account'[FormulaDef],
+        'CF Account'[SignConvention],
+        'CF Account'[DisplayInvert],
+        'CF Account'[VarianceInvert],
+        'Calendar'[Period],
+        'CF Account'[Comment]
+    )
+ORDER BY 'CF Account'[AccountID], 'CF Account'[Account], 'CF Account'[L1], 'CF Account'[L2], 'CF Account'[SortOrder], 'CF Account'[RowType], 'CF Account'[FormulaDef], 'CF Account'[SignConvention], 'CF Account'[DisplayInvert], 'CF Account'[VarianceInvert], 'Calendar'[Period], 'CF Account'[Comment]

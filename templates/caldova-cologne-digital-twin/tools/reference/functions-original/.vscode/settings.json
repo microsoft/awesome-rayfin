@@ -1,0 +1,8 @@
+{
+  "files.exclude": {
+    "host.json": true,
+    "deploymetadata.json": true,
+    "bin": true,
+    "obj": true
+  }
+}

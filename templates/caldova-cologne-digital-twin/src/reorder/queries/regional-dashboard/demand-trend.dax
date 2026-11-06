@@ -1,0 +1,14 @@
+// Region demand over the fortnight leading to the model's anchor date.
+// Anchored on [Latest Sales Date], like every other measure, so the window
+// stays meaningful however long after the data was generated this is run.
+EVALUATE
+VAR Anchor = [Latest Sales Date]
+RETURN
+FILTER(
+    SUMMARIZECOLUMNS(
+        Sales[date],
+        "UnitsSold", [Units Sold]
+    ),
+    Sales[date] > Anchor - 14
+)
+ORDER BY Sales[date] ASC

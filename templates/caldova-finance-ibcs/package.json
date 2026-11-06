@@ -1,0 +1,61 @@
+{
+  "name": "caldova-finance-ibcs",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "template": {
+    "name": "caldova-finance-ibcs",
+    "displayName": "Caldova Finance IBCS",
+    "category": "finance",
+    "description": "Income statement, balance sheet and cash flow in strict IBCS notation, one screen each, articulated month by month. Controllers adjust the forecast and see all three statements follow, comment on variances and sign months off, all on record in Rayfin data. Runs offline on a fictional wholesaler."
+  },
+  "scripts": {
+    "predev": "rayfin env --framework vite",
+    "dev": "rayfin up --exclude-services staticHosting && vite",
+    "dev:offline": "vite --mode offline",
+    "build": "tsc -b && vite build",
+    "build:fabric": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "rayfin:up": "rayfin up",
+    "bake": "node tools/bake-snapshot.mjs",
+    "bake:check": "node tools/bake-snapshot.mjs --check",
+    "probe": "node tools/probe.mjs",
+    "live:enable": "node tools/live-mode.mjs enable",
+    "live:disable": "node tools/live-mode.mjs disable"
+  },
+  "dependencies": {
+    "@microsoft/rayfin-auth-provider-fabric": "^1.36.2",
+    "@microsoft/rayfin-client": "^1.36.2",
+    "@microsoft/rayfin-core": "^1.36.2",
+    "@tailwindcss/vite": "^4.1.11",
+    "exceljs": "^4.4.0",
+    "pptxgenjs": "^3.12.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@microsoft/rayfin-connector-fabric-semanticmodel": "1.36.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@microsoft/rayfin-cli": "^1.36.2",
+    "@playwright/test": "^1.56.1",
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react-swc": "^4.2.2",
+    "eslint": "^9.28.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^16.0.0",
+    "jsdom": "^24.1.0",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.38.0",
+    "vite": "^7.3.2",
+    "vitest": "^3.2.4"
+  }
+}

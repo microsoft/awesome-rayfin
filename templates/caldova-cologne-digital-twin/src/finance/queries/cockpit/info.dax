@@ -1,0 +1,5 @@
+// Last month with actuals (AC) and its fiscal year.
+EVALUATE
+VAR _lastAC = CALCULATE ( MAX ( 'Sales Demo'[Date] ), 'Sales Demo'[Scenario] = "AC" )
+RETURN
+    ROW ( "lastAC", _lastAC, "year", YEAR ( _lastAC ), "month", MONTH ( _lastAC ) )

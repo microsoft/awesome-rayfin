@@ -1,0 +1,60 @@
+{
+  "name": "caldova-cologne-digital-twin",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "template": {
+    "name": "caldova-cologne-digital-twin",
+    "displayName": "Caldova Cologne Digital Twin",
+    "category": "digital-twins",
+    "description": "A photoreal 3D digital twin of the fictional pharmaceutical wholesaler Caldova, with its logistics centre in the real Confex building at Koelnmesse, delivery vans on real Cologne roads to real pharmacy locations, and Reorder and IBCS Finance tabs over Fabric semantic models."
+  },
+  "scripts": {
+    "predev": "rayfin env --framework vite",
+    "prebuild": "rayfin env --framework vite",
+    "dev": "vite",
+    "dev:fabric": "rayfin up --exclude-services staticHosting && vite",
+    "build": "tsc -b && vite build",
+    "build:fabric": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "data:build": "npm run data:geo && npm run data:ops",
+    "data:geo": "python tools/geodata/pipeline.py --aoi koeln-messe",
+    "data:ops": "python tools/data/fetch_pharmacies.py && python tools/data/build_road_graph.py && python tools/data/assign_districts.py && python tools/data/generate_operations.py && python tools/verify_bridge_decks.py && node tools/data/generate_stock.cjs && python tools/data/generate_finance.py",
+    "offline": "pwsh -NoProfile -File tools/stage-offline.ps1"
+  },
+  "dependencies": {
+    "@microsoft/rayfin-auth-provider-fabric": "1.36.2",
+    "@microsoft/rayfin-client": "1.36.2",
+    "@microsoft/rayfin-core": "1.36.2",
+    "@tailwindcss/vite": "^4.1.11",
+    "clsx": "2.1.1",
+    "exceljs": "4.4.0",
+    "framer-motion": "12.40.0",
+    "lucide-react": "1.52.0",
+    "pptxgenjs": "3.12.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "3.6.0",
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@microsoft/rayfin-cli": "1.36.2",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@types/three": "^0.185.1",
+    "@vitejs/plugin-react-swc": "^4.2.2",
+    "eslint": "^9.28.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^16.0.0",
+    "jsdom": "^24.1.0",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.38.0",
+    "vite": "^7.3.2",
+    "vitest": "^3.2.4"
+  }
+}

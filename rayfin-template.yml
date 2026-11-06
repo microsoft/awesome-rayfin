@@ -10,6 +10,15 @@ entries:
   - path: templates/angular-dashboard
     name: Angular Dashboard App
     description: Responsive Angular Material dashboard — top navbar + collapsible side menu, Project/Task data model, and optional one-click GitHub Issues/PRs sync for a public repo.
+  - path: templates/caldova-cologne-digital-twin
+    name: Caldova Cologne Digital Twin
+    description: A photoreal 3D digital twin of the fictional pharmaceutical wholesaler Caldova, with its logistics centre in the real Confex building at Koelnmesse, delivery vans on real Cologne roads to real pharmacy locations, and Reorder and IBCS Finance tabs over Fabric semantic models.
+  - path: templates/caldova-finance-ibcs
+    name: Caldova Finance IBCS
+    description: Income statement, balance sheet and cash flow in strict IBCS notation, one screen each, articulated month by month. Controllers adjust the forecast and see all three statements follow, comment on variances and sign months off, all on record in Rayfin data. Runs offline on a fictional wholesaler.
+  - path: templates/caldova-reorder
+    name: Caldova Reorder
+    description: 'The original Caldova pharmacy-operations app from Microsoft''s LTG291 Rayfin session: a regional manager''s low-stock queue over a Direct Lake semantic model with row-level security, read through the Rayfin semantic-model connector, and reorders sent through a Rayfin function into the app''s own SQL database, mirrored back into the model. Ships the model, a deterministic synthetic data generator and the deploy scripts.'
   - path: templates/campus-scheduler
     name: Campus Scheduler
     description: A timetable planner's cockpit over a photoreal 3D campus twin, built entirely from open geodata — state 1 m terrain under a 20 cm orthophoto, LoD2 buildings that open into their own floors, and eight German universities in one build — with hard-constraint conflict detection, cascade what-if, and an OR-Tools CP-SAT solver proposing the smallest set of moves that repairs the week.

@@ -1,0 +1,12 @@
+// Prior year (PY) = actuals of the previous year, same grain as the data cube.
+DEFINE
+    VAR _yr = YEAR ( CALCULATE ( MAX ( 'Sales Demo'[Date] ), 'Sales Demo'[Scenario] = "AC" ) )
+EVALUATE
+SUMMARIZECOLUMNS (
+    'dim-market'[Country],
+    'dim-product'[Product],
+    Calender[Month],
+    'dim-kpi'[KPI],
+    TREATAS ( { _yr - 1 }, Calender[Year] ),
+    "PY", ROUND ( CALCULATE ( SUM ( 'Sales Demo'[Value] ), 'Sales Demo'[Scenario] = "AC" ), 1 )
+)

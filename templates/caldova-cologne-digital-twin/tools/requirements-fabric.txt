@@ -1,0 +1,15 @@
+# Only for the optional Fabric setup (tools/fabric/* and tools/verify_no_owner_lock.py): they write
+# Delta tables into OneLake, seed the app's SQL database and read rayfin.yml. `npm run data:build`
+# does not need any of this.
+#
+#   pip install -r tools/requirements.txt -r tools/requirements-fabric.txt
+#
+# Kept apart from requirements.txt because deltalake and pyodbc publish no wheels for every platform
+# (Windows on ARM64, for one), and a missing wheel there means a long source build or a failure,
+# which would block the data build for no reason.
+
+deltalake>=0.15
+pyarrow>=15.0
+pyyaml>=6.0
+# seed_reorders.py also needs the Microsoft ODBC Driver 18 for SQL Server installed on the machine.
+pyodbc>=5.0

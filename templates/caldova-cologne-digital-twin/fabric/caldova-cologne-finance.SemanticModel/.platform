@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "caldova-cologne-finance"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "14db3757-58a3-4e61-81cc-6fcbe48dda20"
+  }
+}

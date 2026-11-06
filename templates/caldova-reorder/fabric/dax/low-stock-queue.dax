@@ -1,0 +1,20 @@
+// The low-stock queue: what a regional manager acts on first.
+EVALUATE
+TOPN(
+    10,
+    FILTER(
+        SUMMARIZECOLUMNS(
+            Stores[name],
+            Stores[region],
+            Products[sku],
+            Products[name],
+            "DaysOfStock", [Days of Stock],
+            "StockStatus", [Stock Status],
+            "OnHandUnits", [On Hand Units],
+            "SuggestedReorderUnits", [Suggested Reorder Units]
+        ),
+        NOT ISBLANK([DaysOfStock])
+    ),
+    [DaysOfStock], ASC
+)
+ORDER BY [DaysOfStock] ASC

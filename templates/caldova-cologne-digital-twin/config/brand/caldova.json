@@ -1,0 +1,8 @@
+{
+  "$comment": "CALDOVA — the fictional wholesaler of the Microsoft AI Tour LTG291 scenario, here as a pharma wholesaler in Cologne. Display names only. The Confex is a real building whose use is fictional; that is badged in the UI, never implied away.",
+  "id": "caldova",
+  "operator": { "en": "Caldova pharmaceutical wholesale" },
+  "site": { "en": "Caldova Logistics Centre Cologne" },
+  "tagline": { "en": "Digital twin: real building, fictional use" },
+  "placeNames": {}
+}

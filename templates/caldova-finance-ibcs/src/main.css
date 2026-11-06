@@ -1,0 +1,91 @@
+@import 'tailwindcss';
+
+/*
+ * IBCS only: ink and greys carry every message; green and red appear only on variances, coloured by impact
+ * (favourable green, unfavourable red). No theme switch, no decorative colour.
+ */
+:root {
+  --ink: #2b2b2b;
+  --ac: #404040;
+  --py: #a8a8a8;
+  --paper: #ffffff;
+  --good: #5dbb2c;
+  --bad: #ff0000;
+  --hair: #d4d4d4;
+  --muted: #6b6b6b;
+  --soft: #f4f4f4;
+  --select: #ececec;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ac: var(--ac);
+  --color-py: var(--py);
+  --color-paper: var(--paper);
+  --color-good: var(--good);
+  --color-bad: var(--bad);
+  --color-hair: var(--hair);
+  --color-muted: var(--muted);
+  --color-soft: var(--soft);
+  --color-select: var(--select);
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  /* The generated dwg layer (src/dwg) speaks the Rayfin theme's tokens; map them onto ours, or Tailwind reads
+     gap-300 as 75rem. */
+  --spacing-100: 0.25rem;
+  --spacing-200: 0.5rem;
+  --spacing-300: 0.75rem;
+  --spacing-400: 1rem;
+  --text-100: 11px;
+  --text-200: 12px;
+  --color-card: var(--paper);
+  --color-border: var(--hair);
+  --color-primary: var(--ink);
+  --color-accent: var(--soft);
+  --color-accent-foreground: var(--ink);
+  --color-foreground: var(--ink);
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before {
+    border-color: var(--hair);
+  }
+  /* The document never scrolls; every page fits the viewport. */
+  html,
+  body,
+  #root {
+    height: 100dvh;
+    overflow: hidden;
+  }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: tabular-nums;
+  }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: default;
+  }
+}
+
+.hatch {
+  background-image: repeating-linear-gradient(135deg, var(--ac) 0 1.5px, transparent 1.5px 4px);
+}
+
+.num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.panel {
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
