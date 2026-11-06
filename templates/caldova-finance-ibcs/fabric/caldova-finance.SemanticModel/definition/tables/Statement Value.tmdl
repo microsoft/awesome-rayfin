@@ -1,0 +1,46 @@
+/// Leaves and balances per account, month and scenario. P&L and cash flow lines are monthly flows; balance
+/// sheet lines and the cash balances of the cash flow are month-end values. Subtotals are not stored.
+table 'Statement Value'
+
+	measure Value = SUM ( 'Statement Value'[Amount] )
+		formatString: #,##0
+
+	measure AC = CALCULATE ( [Value], Scenario[Scenario] = "AC" )
+		formatString: #,##0
+
+	measure PL = CALCULATE ( [Value], Scenario[Scenario] = "PL" )
+		formatString: #,##0
+
+	measure PY = CALCULATE ( [Value], Scenario[Scenario] = "PY" )
+		formatString: #,##0
+
+	measure FC = CALCULATE ( [Value], Scenario[Scenario] = "FC" )
+		formatString: #,##0
+
+	measure 'Last Closed Month' = CALCULATE ( MAX ( 'Month'[Month] ), 'Month'[Closed] = TRUE () )
+
+	column AccountID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: AccountID
+
+	column Month
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Month
+
+	column Scenario
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Scenario
+
+	column Amount
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: Value
+
+	partition 'Statement Value' = entity
+		mode: directLake
+		source
+			entityName: fin_fact_statement
+			expressionSource: DatabaseQuery

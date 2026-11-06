@@ -1,0 +1,24 @@
+table Scenario
+
+	column Scenario
+		dataType: string
+		isKey
+		summarizeBy: none
+		sourceColumn: Scenario
+		sortByColumn: Sort
+
+	column Name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Name
+
+	column Sort
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: Sort
+
+	partition Scenario = entity
+		mode: directLake
+		source
+			entityName: fin_dim_scenario
+			expressionSource: DatabaseQuery

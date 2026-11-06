@@ -1,0 +1,12 @@
+# Exclude development-only and generated files when bundling this template
+node_modules/
+dist/
+rayfin/.temp/
+rayfin/.deployments.json
+.env
+.env.local
+*.tsbuildinfo
+tools/fabric/target.json
+/logs/
+/data/
+PLAN.md

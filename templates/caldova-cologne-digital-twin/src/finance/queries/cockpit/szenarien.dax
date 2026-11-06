@@ -1,0 +1,9 @@
+EVALUATE
+SELECTCOLUMNS (
+    'dim-scenario',
+    "scenario", 'dim-scenario'[Scenario],
+    "name", 'dim-scenario'[Scenario_Name],
+    "ibcs", 'dim-scenario'[IBCS],
+    "sort", 'dim-scenario'[SortOrder]
+)
+ORDER BY [sort]

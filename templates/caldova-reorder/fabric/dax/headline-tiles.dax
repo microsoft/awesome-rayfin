@@ -1,0 +1,8 @@
+// The header tiles, plus the anchor date and threshold the model derives them from.
+EVALUATE
+ROW(
+    "LatestSalesDate", [Latest Sales Date],
+    "LowStockThresholdDays", [Low Stock Threshold Days],
+    "ProductsRunningLow", [Products Running Low],
+    "StoresUnderPressure", [Stores Under Pressure]
+)

@@ -1,0 +1,8 @@
+{
+  "name": "caldova-data-generator",
+  "private": true,
+  "scripts": {
+    "generate": "node generate.js",
+    "test": "node --test"
+  }
+}

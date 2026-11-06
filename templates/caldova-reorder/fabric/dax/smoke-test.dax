@@ -1,0 +1,14 @@
+// Deployment smoke test. Every measure family must return a value before the demo is trusted.
+EVALUATE
+ROW(
+    "StoreRows", COUNTROWS(Stores),
+    "ProductRows", COUNTROWS(Products),
+    "InventoryRows", COUNTROWS(Inventory),
+    "SalesRows", COUNTROWS(Sales),
+    "RestockRows", [Restock Requests],
+    "LatestSalesDate", [Latest Sales Date],
+    "ProductsRunningLow", [Products Running Low],
+    "StoresUnderPressure", [Stores Under Pressure],
+    "OpenRestockRequests", [Open Restock Requests],
+    "ReordersSentToday", [Reorders Sent Today]
+)

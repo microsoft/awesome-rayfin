@@ -1,0 +1,112 @@
+{
+  "name": "Caldova P&L",
+  "about": "Income statement and P&L tree of the Caldova logistics centre Cologne with the P&L Statement byDatenWG (Michael Tenner, DatenWG), on the model caldova-cologne-finance. Actuals run to September 2026 (October is the open month), so both pages cover January to September 2026: actual, prior year and plan over the same months. Values derived from the twin, otherwise synthetic. Generated with dwg app page (showcase state, ChartKitchen 1.52.2, P&L 1.5.2, resolution mode Full HD); the generated layer is made English by tools/finance/dwg-english.mjs.",
+  "resolution": "fullhd",
+  "visualHeaders": true,
+  "footer": "Values derived from the twin, otherwise synthetic. Notation based on IBCS; IBCS® is a registered trademark of the IBCS Institute. Visuals: Michael Tenner, DatenWG.",
+  "pages": [
+    {
+      "name": "Income statement",
+      "id": "statement",
+      "template": "T03A",
+      "description": "How does this year's P&L compare with the prior year and the plan, line by line down to net income?",
+      "width": 1920,
+      "height": 1080,
+      "background": "#F4F4F1",
+      "filters": [
+        { "column": "'Calender'[Year]", "values": [2026] },
+        { "column": "'Calender'[Month]", "values": [1, 2, 3, 4, 5, 6, 7, 8, 9] }
+      ],
+      "tiles": [
+        {
+          "id": "statement",
+          "visual": "pnl",
+          "rect": [27, 123, 1866, 894],
+          "bindings": {
+            "levels": ["'dim-account'[L1]", "'dim-account'[L2]", "'dim-account'[L3]"],
+            "account": "'dim-account'[AccountID]",
+            "accountName": "'dim-account'[Name]",
+            "sortOrder": "'dim-account'[SortOrder]",
+            "rowType": "'dim-account'[RowType]",
+            "formulaDef": "'dim-account'[FormulaDef]",
+            "signConvention": "'dim-account'[SignConvention]",
+            "displayInvert": "'dim-account'[DisplayInvert]",
+            "varianceInvert": "'dim-account'[VarianceInvert]",
+            "comment": "'dim-account'[Comment]",
+            "ac": "'fact-pnl'[P&L AC]",
+            "py": "'fact-pnl'[P&L PY]",
+            "pl": "'fact-pnl'[P&L PL]"
+          },
+          "objects": {
+            "titleBlock": {
+              "unitLine": "Caldova logistics centre Cologne",
+              "measureLine": "Income statement in kEUR",
+              "periodLine": "Jan..Sep 2026 (YTD), AC vs PY and PL"
+            },
+            "columns": {
+              "template": "T03A", "templateApplied": "T03A", "minuend": "ac", "showPY": true, "showPL": true, "showMinuend": true,
+              "valueCascade": false, "dPyAbs": true, "dPyBar": false, "dPyWaterfall": false, "dPyPct": true, "dPyPin": false,
+              "dPlAbs": true, "dPlBar": false, "dPlWaterfall": false, "dPlPct": true, "dPlPin": false, "secondBlock": false,
+              "structureSubtotals": true, "showPctRows": true, "thresholds": false, "scenarioMarks": true, "chartLabels": true,
+              "capBars": false, "sort": "cat", "sortBlock": "ytd", "blockKind": "ytd", "leftBlockKind": "month", "pctRevenue": false
+            },
+            "numbers": { "scaling": "k", "decimals": 0, "pctDecimals": 1, "unitText": "EUR" },
+            "hierarchy": { "defaultLevel": 2 },
+            "toolbar": { "show": true, "showLegend": true, "foldable": true, "startFolded": false },
+            "style": { "fontPreset": "fullhd", "density": "compact" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "P&L tree",
+      "id": "baum",
+      "description": "How does net income build up from revenue and costs, and which branches deviate from the plan?",
+      "width": 1920,
+      "height": 1080,
+      "background": "#F4F4F1",
+      "filters": [
+        { "column": "'Calender'[Year]", "values": [2026] },
+        { "column": "'Calender'[Month]", "values": [1, 2, 3, 4, 5, 6, 7, 8, 9] }
+      ],
+      "tiles": [
+        {
+          "id": "baum",
+          "visual": "pnl",
+          "rect": [27, 123, 1866, 894],
+          "bindings": {
+            "levels": ["'dim-account'[L1]", "'dim-account'[L2]", "'dim-account'[L3]"],
+            "account": "'dim-account'[AccountID]",
+            "accountName": "'dim-account'[Name]",
+            "sortOrder": "'dim-account'[SortOrder]",
+            "rowType": "'dim-account'[RowType]",
+            "formulaDef": "'dim-account'[FormulaDef]",
+            "signConvention": "'dim-account'[SignConvention]",
+            "displayInvert": "'dim-account'[DisplayInvert]",
+            "varianceInvert": "'dim-account'[VarianceInvert]",
+            "comment": "'dim-account'[Comment]",
+            "ac": "'fact-pnl'[P&L AC]",
+            "py": "'fact-pnl'[P&L PY]",
+            "pl": "'fact-pnl'[P&L PL]",
+            "fc": "'fact-pnl'[P&L FC]",
+            "fcFy": "'fact-pnl'[P&L FC FY]",
+            "plFy": "'fact-pnl'[P&L PL FY]"
+          },
+          "objects": {
+            "titleBlock": {
+              "unitLine": "Caldova logistics centre Cologne",
+              "measureLine": "P&L as a value driver tree in kEUR",
+              "periodLine": "Jan..Sep 2026 (YTD), AC vs PL"
+            },
+            "numbers": { "scaling": "k", "decimals": 0, "pctDecimals": 1, "unitText": "EUR" },
+            "state": {
+              "uiState": "{\"view\":\"tree\",\"preset\":\"acref\",\"ref\":\"pl\",\"unit\":\"k\",\"density\":\"compact\",\"pctRev\":false,\"hideZero\":true,\"fit\":false,\"collapsed\":[],\"spark\":[],\"treeRoot\":\"\",\"treeCollapsed\":[\"L:Cost of goods sold\",\"L:Other operating result\",\"L:Depreciation\",\"L:Financial result\",\"L:Income taxes\",\"L:Operating expenses¦Premises\",\"L:Operating expenses¦Other expenses\"],\"treeStatus\":true,\"treeV\":2}"
+            },
+            "toolbar": { "show": true, "showLegend": true, "showLevels": true },
+            "style": { "fontPreset": "fullhd" }
+          }
+        }
+      ]
+    }
+  ]
+}

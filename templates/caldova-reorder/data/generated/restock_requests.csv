@@ -1,0 +1,9 @@
+request_id,store_id,sku,qty,requested_by,requested_by_id,requested_at,status,note
+e26741b5-fe8c-42cc-973f-0ccb742b6032,STO-NW-002,COLD-003,120,owen.rivera@caldova.demo,b953eaf8-d289-4693-881c-8b42de2a8a2d,2026-06-07T08:12:00Z,fulfilled,Weekly top-up ahead of the holiday weekend
+a92c5593-aece-4040-b1cc-92617d0aec56,STO-MW-002,VIT-001,90,noah.sanders@caldova.demo,72eb1afc-f63e-4afd-ba65-a5ea5eb3166b,2026-06-08T09:41:00Z,fulfilled,Shelf gap flagged during the morning count
+05152bb5-27aa-4a90-ba76-83f7800fbc0a,STO-SE-002,DIGEST-003,60,zoe.morgan@caldova.demo,8a6dc67e-6115-4747-b2f2-3d7cca17ee15,2026-06-09T14:05:00Z,fulfilled,Promotion pulled forward two weeks of demand
+572c278c-7c51-4907-ae6d-f79acead3e5d,STO-SW-002,ALLERGY-003,150,sofia.reed@caldova.demo,337a9e02-957e-4387-a56f-0920cff4d82d,2026-06-11T07:58:00Z,submitted,Pollen season running hot across the region
+fb33225b-03ec-45fe-a2fc-0bf94665c36c,STO-NE-002,PAIN-005,75,mason.bennett@caldova.demo,f3398968-8d4e-47d3-960b-d752fc64c6a5,2026-06-12T11:23:00Z,submitted,Covering a delayed delivery from the primary supplier
+37051b20-f31c-40cf-ae4b-00d67ff60795,STO-NW-003,FIRST-001,40,hazel.hughes@caldova.demo,a18b7c5a-6123-45ff-ab43-376c7af0cca9,2026-06-13T16:30:00Z,submitted,Restocking after the school sports season rush
+66f5ab46-b688-4ac3-8f92-12401b67884d,STO-MW-003,COLD-005,110,ella.price@caldova.demo,7ef2ffe1-9688-41c0-8724-457fd6f965ce,2026-06-14T10:07:00Z,submitted,Late cold snap driving lozenge sales
+96773a57-a58b-4fe0-a2a0-915d09820cb6,STO-SE-003,VIT-005,85,ethan.foster@caldova.demo,e7b74d19-8a73-4384-add9-c6dbd20ab64e,2026-06-14T15:44:00Z,submitted,Immunity range under-stocked since last cycle count

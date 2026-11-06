@@ -1,0 +1,150 @@
+{
+  "$comment": "Caldova Logistikzentrum — the fictional wholesaler in the REAL Confex building at Koelnmesse (opened 2024). Geobasis NRW, so the Campus-Scheduler NRW adapters (fetch_nrw.py, fetch_dop20_nrw.py) apply. The use of the building is fictional and badged; the building, terrain, imagery and roads are measured.",
+  "id": "koeln-messe",
+  "site": {
+    "name": {
+      "en": "Caldova Logistics Centre Cologne"
+    },
+    "region": {
+      "en": "Cologne-Deutz, North Rhine-Westphalia"
+    },
+    "timezone": "Europe/Berlin"
+  },
+  "lenses": [],
+  "$lensesComment": "Empty until the generators behind a lens exist (engine lesson: never declare a lens before its data).",
+  "bbox": {
+    "crs": "EPSG:4326",
+    "west": 6.945,
+    "east": 6.99,
+    "south": 50.928,
+    "north": 50.955,
+    "$comment": "HIGH-RESOLUTION CORE, ~3.16 x 3.00 km: Koelnmesse with the Confex (OSM way/888175931, centre 50.94413 / 6.97471), Deutz, the Rhine with Hohenzollern- and Deutzer Brücke, and the Altstadt with the Dom. Phase 1 replaces the LoD2 + DOP core by the NRW 3D-Mesh over this same box."
+  },
+  "shell": {
+    "crs": "EPSG:4326",
+    "west": 6.88,
+    "east": 7.07,
+    "south": 50.89,
+    "north": 50.995,
+    "$comment": "COARSE TERRAIN SHELL, ~13.3 x 11.7 km, about 6 km around the Confex. Kept south of 51 N so only two Copernicus tiles are needed. The LoD2 + DOP10 delivery ring inside this shell arrives with the tours in Phase 3."
+  },
+  "workingCrs": "EPSG:25832",
+  "verticalDatum": "DHHN2016",
+  "elevationRangeM": {
+    "min": 30,
+    "max": 80,
+    "$comment": "PROVISIONAL. The Uni-Köln AOI measured 40.42-65.21 m on DGM1; the Rhine bank at Deutz sits lower (~36-45 m). Replace with the measured min/max after build_terrain.py runs."
+  },
+  "drape": {
+    "maxPx": 4096,
+    "$comment": "DOP via the Geobasis NRW WMS (layer nw_dop_rgb, 10 cm source). 4096 px over 3.16 km = ~0.77 m/px. NOT larger: at 8192 px Chromium silently samples black (Campus-Scheduler lesson)."
+  },
+  "grids": {
+    "sourceResolutionM": 1,
+    "renderResolutionM": 2,
+    "renderDecimation": 2
+  },
+  "shellGrids": {
+    "sourceResolutionM": 30,
+    "renderResolutionM": 30,
+    "renderDecimation": 3,
+    "transitionBandM": 250,
+    "$comment": "Copernicus GLO-30. transitionBandM is applied as a fraction of the core (CORE_FADE_FRACTION), never absolute — inherited from the Köln campus AOI."
+  },
+  "focusPlaces": [
+    {
+      "id": "logistikzentrum",
+      "name": "Caldova Logistics Centre (Confex)",
+      "lat": 50.9441324,
+      "lon": 6.9747092,
+      "kind": "hero",
+      "source": "OSM way/888175931 \"Halle Confex\"",
+      "osm": "way/888175931"
+    },
+    {
+      "id": "halle-1",
+      "name": "Hall 1",
+      "lat": 50.945927,
+      "lon": 6.9765042,
+      "source": "OSM way/797243361",
+      "osm": "way/797243361"
+    },
+    {
+      "id": "messehochhaus",
+      "name": "Messehochhaus (trade fair tower)",
+      "lat": 50.946772,
+      "lon": 6.9832296,
+      "source": "OSM way/23105840",
+      "osm": "way/23105840"
+    }
+  ],
+  "$focusPlacesComment": "Every coordinate was resolved from OSM on 2026-10-17. The Dom, Hohenzollernbrücke and Deutzer Brücke are added once resolved, never typed from memory.",
+  "geobasis": {
+    "authority": "Geobasis NRW (Bezirksregierung Köln)",
+    "licence": "Datenlizenz Deutschland – Zero – Version 2.0",
+    "licenceUrl": "https://www.govdata.de/dl-de/zero-2-0",
+    "attribution": "Datenquelle: Land NRW (Geobasis NRW), dl-de/zero-2-0",
+    "downloadBase": "https://www.opengeodata.nrw.de/produkte/geobasis/",
+    "dopWms": "https://www.wms.nrw.de/geobasis/wms_nw_dop",
+    "$comment": "pipeline.py's in_nordrhein_westfalen keys on 'Geobasis NRW' in `authority` — load-bearing. The 3D-Mesh licence is verified separately in Phase 0."
+  },
+  "shellGeobasis": {
+    "authority": "ESA / DLR / Airbus Defence and Space — Copernicus DEM GLO-30",
+    "licence": "Copernicus DEM free licence (worldwide, free reuse with the prescribed notice)",
+    "licenceUrl": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+    "attribution": "produced using Copernicus WorldDEM-30 © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018 provided under COPERNICUS by the European Union and ESA; all rights reserved",
+    "cogUrlTemplate": "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM/Copernicus_DSM_COG_10_{NS}{lat:02d}_00_{EW}{lon:03d}_00_DEM.tif",
+    "tiles": [
+      "N50_E006",
+      "N50_E007"
+    ]
+  },
+  "tour": [
+    {
+      "placeId": "logistikzentrum",
+      "captionKey": "tour.site.logistikzentrum",
+      "rangeM": 420,
+      "holdMs": 7000
+    }
+  ],
+  "site3d": {
+    "$comment": "⚠️ THE INTERIOR IS SYNTHETIC AND BADGED. Caldova is fictional; the Confex is a real congress and exhibition building of Koelnmesse (opened 2024). Its footprint is measured (OSM way/888175931) and its height comes from the NRW nDOM50 / 3D-Mesh; the zone layout, machines, volumes and tours are a seeded model of a pharma wholesaler, not a statement about the building or its owner.",
+    "seed": 20261017,
+    "heroBuilding": "way/888175931",
+    "zoneChain": [
+      "goods_in",
+      "bulk_storage",
+      "a_frame",
+      "manual_pick",
+      "cold_room",
+      "btm_safe",
+      "consolidation",
+      "staging",
+      "docks"
+    ],
+    "coldChainRangeC": [
+      2,
+      8
+    ],
+    "shiftPattern": {
+      "nightPickStart": "21:00",
+      "nightPickEnd": "04:00",
+      "tourWaves": [
+        "05:30",
+        "11:30",
+        "16:30"
+      ],
+      "$comment": "Industry shape (2-3 deliveries per pharmacy per day, the first before opening). Times invented. v1 has no night scene, so the first wave leaves at 05:30 and the app opens at 09:00 in daylight."
+    },
+    "pharmacies": {
+      "count": 120,
+      "radiusKm": 6.0,
+      "$comment": "~120 fictional pharmacies at real OSM pharmacy coordinates within ~6 km. Only coordinates are taken; names are fictional."
+    },
+    "dropsPerTour": 22,
+    "vehicles": {
+      "truckShare": 0.34,
+      "$comment": "The tours with the most order lines (top third) run a 7.5 t truck, the rest a Sprinter-size van."
+    }
+  }
+}

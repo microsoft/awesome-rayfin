@@ -1,0 +1,70 @@
+model Model
+	culture: en-GB
+	defaultMode: directLake
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: en-GB
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["DatabaseQuery"]
+
+/// Caldova Finance: income statement, balance sheet and cash flow of a fictional company, one fact table for
+/// all three statements. Bound to the app's lakehouse at publish time by tools/fabric/publish_model.py.
+expression DatabaseQuery =
+		let
+			Source = {{DATABASE_QUERY_SOURCE}}
+		in
+			Source
+
+ref table Account
+ref table Month
+ref table Scenario
+ref table 'Statement Value'
+
+relationship ValueToAccount
+	fromColumn: 'Statement Value'.AccountID
+	toColumn: Account.AccountID
+
+relationship ValueToMonth
+	fromColumn: 'Statement Value'.Month
+	toColumn: Month.Month
+
+relationship ValueToScenario
+	fromColumn: 'Statement Value'.Scenario
+	toColumn: Scenario.Scenario
+
+ref table Calendar
+ref table 'P&L Account'
+ref table 'P&L Fact'
+ref table 'BS Account'
+ref table 'BS Fact'
+ref table 'CF Account'
+ref table 'CF Fact'
+
+relationship PLFactToCalendar
+	fromColumn: 'P&L Fact'.Date
+	toColumn: Calendar.Date
+
+relationship PLFactToAccount
+	fromColumn: 'P&L Fact'.AccountID
+	toColumn: 'P&L Account'.AccountID
+
+relationship BSFactToCalendar
+	fromColumn: 'BS Fact'.Date
+	toColumn: Calendar.Date
+
+relationship BSFactToAccount
+	fromColumn: 'BS Fact'.AccountID
+	toColumn: 'BS Account'.AccountID
+
+relationship CFFactToCalendar
+	fromColumn: 'CF Fact'.Date
+	toColumn: Calendar.Date
+
+relationship CFFactToAccount
+	fromColumn: 'CF Fact'.AccountID
+	toColumn: 'CF Account'.AccountID

@@ -1,0 +1,48 @@
+table 'dim-market'
+
+	column Country
+		dataType: string
+		isKey
+		summarizeBy: none
+		sourceColumn: Country
+
+	column Region
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Region
+
+	column ISO2
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ISO2
+
+	column Currency
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Currency
+
+	column Latitude
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: Latitude
+
+	column Longitude
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: Longitude
+
+	column ClimateLocation
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ClimateLocation
+
+	column MarketMaturity
+		dataType: string
+		summarizeBy: none
+		sourceColumn: MarketMaturity
+
+	partition 'dim-market' = entity
+		mode: directLake
+		source
+			entityName: fin_dim_market
+			expressionSource: DatabaseQuery

@@ -1,0 +1,94 @@
+model Model
+	culture: en-US
+	defaultMode: directLake
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["DatabaseQuery", "RayfinDatabase"]
+
+/// Caldova Cologne operations: a port of the AI Tour caldova-operations model onto the lakehouse
+/// caldova_cologne, plus the twin's tour tables. Bound at publish time by
+/// tools/fabric/publish_model.py (never by the AI Tour deploy scripts).
+expression DatabaseQuery =
+		let
+			Source = {{DATABASE_QUERY_SOURCE}}
+		in
+			Source
+
+/// The Rayfin app's own SQL database (caldova-cologne-digital-twin), mirrored into OneLake as Delta.
+/// Reorders written by the app land here, so the model reads them from the same
+/// place the app writes them. Bound at deploy time, like DatabaseQuery above.
+expression RayfinDatabase =
+		let
+			Source = {{RESTOCK_QUERY_SOURCE}}
+		in
+			Source
+
+ref table Stores
+ref table Products
+ref table Inventory
+ref table Sales
+ref table RestockRequests
+ref table Tours
+ref table Drops
+ref table Vehicles
+ref table Zones
+ref table TimeSlots
+
+relationship SalesToStores
+	fromColumn: Sales.store_id
+	toColumn: Stores.store_id
+
+relationship SalesToProducts
+	fromColumn: Sales.sku
+	toColumn: Products.sku
+
+relationship InventoryToStores
+	fromColumn: Inventory.store_id
+	toColumn: Stores.store_id
+
+relationship InventoryToProducts
+	fromColumn: Inventory.sku
+	toColumn: Products.sku
+
+relationship RestockRequestsToStores
+	fromColumn: RestockRequests.store_id
+	toColumn: Stores.store_id
+
+relationship RestockRequestsToProducts
+	fromColumn: RestockRequests.sku
+	toColumn: Products.sku
+
+relationship DropsToTours
+	fromColumn: Drops.tourId
+	toColumn: Tours.tourId
+
+relationship DropsToStores
+	fromColumn: Drops.pharmacyId
+	toColumn: Stores.store_id
+
+relationship ToursToVehicles
+	fromColumn: Tours.vehicleId
+	toColumn: Vehicles.vehicleId
+
+/// Scopes a regional manager to the regions they are responsible for, using the signed-in
+/// identity. In Cologne the regions are the real city districts (Stadtbezirke). Defined but UNASSIGNED: it
+/// changes nothing until a member is added to the role.
+role RegionalManager
+	modelPermission: read
+
+	tablePermission Stores =
+			VAR ManagedRegions =
+			    CALCULATETABLE(
+			        VALUES(Stores[region]),
+			        ALL(Stores),
+			        Stores[manager_upn] = USERPRINCIPALNAME()
+			    )
+			RETURN
+			    Stores[region] IN ManagedRegions

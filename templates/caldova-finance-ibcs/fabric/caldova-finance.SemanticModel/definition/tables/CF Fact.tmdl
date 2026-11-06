@@ -1,0 +1,65 @@
+/// dwg contract: monthly flows; the opening row holds the cash at the start of the month.
+table 'CF Fact'
+
+	measure 'CF AC' = SUM ( 'CF Fact'[AC] )
+		formatString: #,##0
+		displayFolder: Cash flow
+
+	measure 'CF PY' = SUM ( 'CF Fact'[PY] )
+		formatString: #,##0
+		displayFolder: Cash flow
+
+	measure 'CF PL' = SUM ( 'CF Fact'[PL] )
+		formatString: #,##0
+		displayFolder: Cash flow
+
+	measure 'CF FC' = SUM ( 'CF Fact'[FC] )
+		formatString: #,##0
+		displayFolder: Cash flow
+
+	measure 'CF PY to date' = CALCULATE ( [CF PY], 'Calendar'[Closed] = TRUE () )
+		formatString: #,##0
+		displayFolder: Cash flow
+
+	column Date
+		dataType: dateTime
+		formatString: General Date
+		isHidden
+		summarizeBy: none
+		sourceColumn: Date
+
+	column AccountID
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: AccountID
+
+	column AC
+		dataType: double
+		isHidden
+		summarizeBy: sum
+		sourceColumn: AC
+
+	column PY
+		dataType: double
+		isHidden
+		summarizeBy: sum
+		sourceColumn: PY
+
+	column PL
+		dataType: double
+		isHidden
+		summarizeBy: sum
+		sourceColumn: PL
+
+	column FC
+		dataType: double
+		isHidden
+		summarizeBy: sum
+		sourceColumn: FC
+
+	partition 'CF Fact' = entity
+		mode: directLake
+		source
+			entityName: fin_cf_fact
+			expressionSource: DatabaseQuery

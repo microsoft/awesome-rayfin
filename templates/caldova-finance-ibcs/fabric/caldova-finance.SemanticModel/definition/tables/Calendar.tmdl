@@ -1,0 +1,47 @@
+/// dwg contract: one row per month; Period drives the P&L visual's stock logic.
+table Calendar
+
+	column Date
+		dataType: dateTime
+		formatString: General Date
+		isKey
+		summarizeBy: none
+		sourceColumn: Date
+
+	column Year
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: Year
+
+	column Month
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: Month
+
+	column MonthName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: MonthName
+		sortByColumn: Month
+
+	column Period
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Period
+
+	column Quarter
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Quarter
+
+	column Closed
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: Closed
+
+	partition Calendar = entity
+		mode: directLake
+		source
+			entityName: fin_calendar
+			expressionSource: DatabaseQuery

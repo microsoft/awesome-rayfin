@@ -1,0 +1,18 @@
+// Data cube of the current fiscal year: market x product x month x KPI with every scenario.
+// One fact row per leaf and scenario, so SUM is the value itself here (Customer Satisfaction too).
+DEFINE
+    VAR _yr = YEAR ( CALCULATE ( MAX ( 'Sales Demo'[Date] ), 'Sales Demo'[Scenario] = "AC" ) )
+EVALUATE
+SUMMARIZECOLUMNS (
+    'dim-market'[Country],
+    'dim-product'[Product],
+    Calender[Month],
+    'dim-kpi'[KPI],
+    TREATAS ( { _yr }, Calender[Year] ),
+    "AC", ROUND ( CALCULATE ( SUM ( 'Sales Demo'[Value] ), 'Sales Demo'[Scenario] = "AC" ), 1 ),
+    "PL1", ROUND ( CALCULATE ( SUM ( 'Sales Demo'[Value] ), 'Sales Demo'[Scenario] = "PL1" ), 1 ),
+    "PL2", ROUND ( CALCULATE ( SUM ( 'Sales Demo'[Value] ), 'Sales Demo'[Scenario] = "PL2" ), 1 ),
+    "FC1", ROUND ( CALCULATE ( SUM ( 'Sales Demo'[Value] ), 'Sales Demo'[Scenario] = "FC1" ), 1 ),
+    "FC2", ROUND ( CALCULATE ( SUM ( 'Sales Demo'[Value] ), 'Sales Demo'[Scenario] = "FC2" ), 1 ),
+    "FC3", ROUND ( CALCULATE ( SUM ( 'Sales Demo'[Value] ), 'Sales Demo'[Scenario] = "FC3" ), 1 )
+)

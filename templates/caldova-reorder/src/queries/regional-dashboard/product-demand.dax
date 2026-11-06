@@ -1,0 +1,27 @@
+// Daily demand per product-store for everything currently running low, in one
+// query rather than one per row. Feeds the sparkline on each queue row: the
+// demand that is draining the shelf, next to the days of stock it leaves.
+EVALUATE
+VAR Anchor = [Latest Sales Date]
+VAR LowPairs =
+    FILTER(
+        SUMMARIZECOLUMNS(
+            Stores[store_id],
+            Products[sku],
+            "DoS", [Days of Stock],
+            "Low", [Is Low Stock]
+        ),
+        NOT ISBLANK([DoS]) && [Low]
+    )
+RETURN
+FILTER(
+    SUMMARIZECOLUMNS(
+        Stores[store_id],
+        Products[sku],
+        Sales[date],
+        "Units", [Units Sold]
+    ),
+    Sales[date] > Anchor - 14
+        && CONTAINS(LowPairs, [store_id], Stores[store_id], [sku], Products[sku])
+)
+ORDER BY Stores[store_id], Products[sku], Sales[date]

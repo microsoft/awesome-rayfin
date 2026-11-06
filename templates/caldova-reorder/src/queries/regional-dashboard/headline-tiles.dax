@@ -1,0 +1,12 @@
+// The three header tiles, plus the context the top bar states.
+// Every number is the model's, not the app's. Row-level security scopes Stores
+// to the signed-in manager's region, so "stores in region" is simply the stores
+// this manager can see, and Region is the region they manage.
+EVALUATE
+ROW(
+    "StoresInRegion", COUNTROWS(Stores),
+    "ProductsRunningLow", [Products Running Low],
+    "ReordersSentToday", [Reorders Sent Today],
+    "Region", CONCATENATEX(VALUES(Stores[region]), Stores[region], ", "),
+    "LatestSalesDate", [Latest Sales Date]
+)

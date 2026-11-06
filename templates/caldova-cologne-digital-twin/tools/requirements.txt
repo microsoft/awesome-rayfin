@@ -1,0 +1,18 @@
+# Everything `npm run data:build` needs (Python 3.12): the geodata pipeline, the photoreal 3D-Mesh
+# and the operations data. The downloads use urllib from the standard library.
+#
+#   python -m venv .venv
+#   .venv/Scripts/activate      # or: source .venv/bin/activate
+#   pip install -r tools/requirements.txt
+#
+# The optional Fabric setup (tools/fabric/*) needs tools/requirements-fabric.txt on top.
+
+numpy>=1.26
+pillow>=10.0
+scipy>=1.11
+
+# The photoreal 3D-Mesh (tools/geodata/fetch_nrw_mesh.py, tools/verify_bridge_decks.py) and the
+# operations data (tools/data/assign_districts.py, tools/data/generate_operations.py).
+pyproj>=3.6
+shapely>=2.0
+matplotlib>=3.8

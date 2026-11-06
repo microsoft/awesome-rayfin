@@ -1,0 +1,8 @@
+// Frame data: available years and the last actual month per year.
+EVALUATE
+ADDCOLUMNS (
+    SUMMARIZECOLUMNS ( Calender[Year], "rows", COUNTROWS ( 'fact-pnl' ) ),
+    "lastActual",
+        CALCULATE ( MAX ( 'fact-pnl'[Month] ), 'fact-pnl'[AC Value] <> 0 )
+)
+ORDER BY Calender[Year]

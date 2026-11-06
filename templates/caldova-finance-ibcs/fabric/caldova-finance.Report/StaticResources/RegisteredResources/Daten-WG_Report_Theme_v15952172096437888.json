@@ -1,0 +1,115 @@
+{
+  "name": "Daten-WG Report Theme v1",
+  "dataColors": [
+    "#2F6F85",
+    "#8C8C8C",
+    "#3D3D3D",
+    "#6B6B6B",
+    "#7FA3B3",
+    "#A6A6A6",
+    "#262626",
+    "#595959"
+  ],
+  "foreground": "#0F1E2E",
+  "background": "#F4F4F1",
+  "tableAccent": "#C25A2D",
+  "textClasses": {
+    "title": {
+      "fontFace": "Segoe UI Semibold",
+      "fontSize": 10,
+      "color": "#0F1E2E"
+    },
+    "header": {
+      "fontFace": "Segoe UI",
+      "fontSize": 12,
+      "color": "#1A1A1A"
+    },
+    "label": {
+      "fontFace": "Segoe UI",
+      "fontSize": 10,
+      "color": "#4A4A4A"
+    },
+    "callout": {
+      "fontFace": "Segoe UI Semibold",
+      "fontSize": 32,
+      "color": "#1A1A1A"
+    },
+    "largeTitle": {
+      "fontSize": 14,
+      "color": "#0F1E2E"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            },
+            "transparency": 0
+          }
+        ],
+        "border": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#E5E2D8"
+              }
+            },
+            "radius": 8
+          }
+        ],
+        "dropShadow": [
+          {
+            "show": false
+          }
+        ],
+        "title": [
+          {
+            "show": true,
+            "fontColor": {
+              "solid": {
+                "color": "#1A1A1A"
+              }
+            },
+            "alignment": "left",
+            "fontSize": 14,
+            "fontFamily": "Segoe UI Semibold"
+          }
+        ]
+      }
+    },
+    "page": {
+      "*": {
+        "background": [
+          {
+            "color": {
+              "solid": {
+                "color": "#F4F4F1"
+              }
+            },
+            "transparency": 0
+          }
+        ],
+        "outspace": [
+          {
+            "color": {
+              "solid": {
+                "color": "#EAE8E1"
+              }
+            },
+            "transparency": 0
+          }
+        ]
+      }
+    }
+  },
+  "good": "#1E8F9E",
+  "neutral": "#6B7280",
+  "bad": "#D64541"
+}

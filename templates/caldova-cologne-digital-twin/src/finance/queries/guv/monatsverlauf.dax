@@ -1,0 +1,13 @@
+// Monthly values per top-level P&L line and sign, for the trend in the header.
+EVALUATE
+SUMMARIZECOLUMNS (
+    'fact-pnl'[Month],
+    'dim-account'[L1],
+    'dim-account'[SignConvention],
+    TREATAS ( { {{YEAR}} }, Calender[Year] ),
+    "AC", [P&L AC],
+    "FC", [P&L FC],
+    "PL", [P&L PL],
+    "PY", [P&L PY]
+)
+ORDER BY 'fact-pnl'[Month]

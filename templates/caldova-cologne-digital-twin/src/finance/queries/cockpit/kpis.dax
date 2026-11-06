@@ -1,0 +1,10 @@
+EVALUATE
+SELECTCOLUMNS (
+    'dim-kpi',
+    "kpi", 'dim-kpi'[KPI],
+    "group", 'dim-kpi'[KPI_Group],
+    "unit", 'dim-kpi'[Unit],
+    "higherIsBetter", 'dim-kpi'[HigherIsBetter],
+    "sort", 'dim-kpi'[SortOrder]
+)
+ORDER BY [sort]

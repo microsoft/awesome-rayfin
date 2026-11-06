@@ -1,0 +1,48 @@
+// Abfragen der Seite „Balance sheet“ ohne Querfilter, zum Prüfen in der DAX-Abfrageansicht.
+// erzeugt von `dwg app page`, nicht von Hand ändern.
+
+// Kachel t05a (pnl)
+EVALUATE
+    ADDMISSINGITEMS(
+        'BS Account'[AccountID],
+        'BS Account'[Account],
+        'BS Account'[L1],
+        'BS Account'[L2],
+        'BS Account'[SortOrder],
+        'BS Account'[RowType],
+        'BS Account'[FormulaDef],
+        'BS Account'[SignConvention],
+        'BS Account'[DisplayInvert],
+        'BS Account'[VarianceInvert],
+        'Calendar'[Period],
+        'BS Account'[Comment],
+    SUMMARIZECOLUMNS(
+        'BS Account'[AccountID],
+        'BS Account'[Account],
+        'BS Account'[L1],
+        'BS Account'[L2],
+        'BS Account'[SortOrder],
+        'BS Account'[RowType],
+        'BS Account'[FormulaDef],
+        'BS Account'[SignConvention],
+        'BS Account'[DisplayInvert],
+        'BS Account'[VarianceInvert],
+        'Calendar'[Period],
+        'BS Account'[Comment],
+        "ac", 'BS Fact'[BS AC],
+        "py", 'BS Fact'[BS PY]
+    ),
+        'BS Account'[AccountID],
+        'BS Account'[Account],
+        'BS Account'[L1],
+        'BS Account'[L2],
+        'BS Account'[SortOrder],
+        'BS Account'[RowType],
+        'BS Account'[FormulaDef],
+        'BS Account'[SignConvention],
+        'BS Account'[DisplayInvert],
+        'BS Account'[VarianceInvert],
+        'Calendar'[Period],
+        'BS Account'[Comment]
+    )
+ORDER BY 'BS Account'[AccountID], 'BS Account'[Account], 'BS Account'[L1], 'BS Account'[L2], 'BS Account'[SortOrder], 'BS Account'[RowType], 'BS Account'[FormulaDef], 'BS Account'[SignConvention], 'BS Account'[DisplayInvert], 'BS Account'[VarianceInvert], 'Calendar'[Period], 'BS Account'[Comment]

@@ -1,0 +1,7 @@
+// Wertelisten der Slicer im Filter-Panel, zum Prüfen in der DAX-Abfrageansicht.
+// erzeugt von `dwg app page`, nicht von Hand ändern.
+
+// Slicer Year
+EVALUATE
+SUMMARIZECOLUMNS('Calendar'[Year])
+ORDER BY 'Calendar'[Year]

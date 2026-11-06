@@ -1,0 +1,22 @@
+// The low-stock queue: what a regional manager acts on first, worst first.
+// "Running low" and the suggested quantity are both the model's definitions —
+// change them there and this list changes with no code edit here.
+EVALUATE
+TOPN(
+    12,
+    FILTER(
+        SUMMARIZECOLUMNS(
+            Stores[store_id],
+            Stores[name],
+            Products[sku],
+            Products[name],
+            "DaysOfStock", [Days of Stock],
+            "StockStatus", [Stock Status],
+            "OnHandUnits", [On Hand Units],
+            "SuggestedReorderUnits", [Suggested Reorder Units]
+        ),
+        NOT ISBLANK([DaysOfStock]) && [Is Low Stock]
+    ),
+    [DaysOfStock], ASC
+)
+ORDER BY [DaysOfStock] ASC

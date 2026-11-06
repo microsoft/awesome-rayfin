@@ -1,0 +1,16 @@
+store_id,name,city,region,manager_upn
+STO-NW-001,Emerald Pharmacy,Seattle,Northwest,maya.brooks@caldova.demo
+STO-NW-002,Riverfront Pharmacy,Portland,Northwest,owen.rivera@caldova.demo
+STO-NW-003,Summit Pharmacy,Boise,Northwest,hazel.hughes@caldova.demo
+STO-SW-001,Desert Bloom Pharmacy,Phoenix,Southwest,lucas.ward@caldova.demo
+STO-SW-002,Mission Valley Pharmacy,San Diego,Southwest,sofia.reed@caldova.demo
+STO-SW-003,Lone Star Pharmacy,Austin,Southwest,elijah.bailey@caldova.demo
+STO-MW-001,Lakeside Pharmacy,Chicago,Midwest,ava.murphy@caldova.demo
+STO-MW-002,Mill District Pharmacy,Minneapolis,Midwest,noah.sanders@caldova.demo
+STO-MW-003,Union Station Pharmacy,Kansas City,Midwest,ella.price@caldova.demo
+STO-SE-001,Peachtree Pharmacy,Atlanta,Southeast,liam.cook@caldova.demo
+STO-SE-002,Gulfbay Pharmacy,Tampa,Southeast,zoe.morgan@caldova.demo
+STO-SE-003,Biscayne Pharmacy,Miami,Southeast,ethan.foster@caldova.demo
+STO-NE-001,Harborline Pharmacy,Boston,Northeast,ivy.howard@caldova.demo
+STO-NE-002,Liberty Square Pharmacy,Philadelphia,Northeast,mason.bennett@caldova.demo
+STO-NE-003,Hudson Market Pharmacy,Newark,Northeast,chloe.bryant@caldova.demo

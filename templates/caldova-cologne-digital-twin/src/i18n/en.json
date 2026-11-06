@@ -1,0 +1,221 @@
+{
+  "dc": {
+    "tagline": "Digital twin: real building, fictional use",
+    "places": "Places",
+    "flyTo": "Fly there",
+    "siteFacts": "The site",
+    "factFootprint": "Confex footprint",
+    "factBuildings": "LoD2 buildings in view",
+    "factAddress": "Location",
+    "provenance": "Where the data comes from",
+    "provMeasured": "Measured",
+    "provMeasuredBody": "The 3D mesh (2025 aerial survey), terrain, orthophoto and building geometry come from official survey data (Geobasis NRW). Roads and pharmacy locations come from OpenStreetMap. The Confex building at Koelnmesse is real.",
+    "provSynthetic": "Synthetic",
+    "provSyntheticBody": "Caldova is a fictional company. Using the Confex as a logistics centre, the interior layout, the pharmacy names, tours, stock and reorders are a traceable generated model — no statement about Koelnmesse or about real pharmacies.",
+    "provNote": "What is measured is labelled measured. What is invented is labelled invented. No figure quietly changes sides.",
+    "attribution": "Data sources",
+    "dayHeading": "The operating day",
+    "dayPlay": "Play",
+    "dayPause": "Pause",
+    "dayNight": "Night",
+    "dayTours": "{{count}} tours on the road",
+    "dayAtStop": "{{count}} standing at a pharmacy",
+    "daySpeed": "Speed",
+    "dayRealTime": "real time",
+    "dayFollow": "Ride along with a delivery",
+    "dayFollowStop": "Stop riding along",
+    "eventPlanned": "Planned",
+    "eventDerived": "Modelled",
+    "events": {
+      "nightPick": "Night picking begins",
+      "wave1": "First wave departs",
+      "wave2": "Second wave departs",
+      "wave3": "Third wave departs",
+      "firstDrop": "First pharmacy of the day",
+      "cityDrop": "Delivery in the modelled city",
+      "peakOnRoad": "Most vans on the road",
+      "peakStops": "Most deliveries at once",
+      "allIn": "Nothing on the road"
+    },
+    "dayNote": "One clock drives everything: the machinery in the logistics centre, the vehicles on the road and the time of day. The first wave rolls before the pharmacies open. Trucks (7.5 t) and vans are true to scale, 1:1 — from a distance only the ground glow and the markers help you find them. Positions and timings are to the model, within about 6 km of the trade fair.",
+    "toursHeading": "Last mile",
+    "toursShow": "Show the delivery region",
+    "toursHide": "Hide the delivery region",
+    "toursNote": "Drop points sit at real pharmacy locations from OpenStreetMap but carry fictional names. Vehicles follow the real road network. Tours and customer relationships are a model.",
+    "toursDrops": "Drop points",
+    "toursRoutes": "Tours (model)",
+    "hall": "Caldova Logistics Centre",
+    "hallOpen": "Open the logistics centre",
+    "hallClose": "Close the logistics centre",
+    "hallHint": "The logistics centre is pulled apart above the roof along the process chain, from goods-in to the docks. The layout is synthetic, fitted to scale into the measured footprint.",
+    "zoneArea": "Area",
+    "zoneTemp": "Temperature",
+    "zoneNone": "No zone selected. Click one in the 3D model — or click beside it to clear.",
+    "chainHeading": "Process chain"
+  },
+  "twin": {
+    "loading": "Loading the site",
+    "loadingStart": "Connecting …",
+    "loadingStep": "Step {{step}} of {{of}}",
+    "loading_terrain": "Terrain model and surroundings",
+    "loading_drape": "Aerial photograph, 50 cm resolution",
+    "loading_buildings": "LoD2 buildings from the cadastre",
+    "loading_vegetation": "Trees from the surface model",
+    "errScene": "The 3D view could not be loaded. Please reload the page."
+  },
+  "theme": {
+    "toLight": "Switch to the light view",
+    "toDark": "Switch to the dark view"
+  },
+  "drone": {
+    "idle": "Press W A S D to fly",
+    "hint": "W A S D to fly · R / F altitude · drag or arrow keys to look · wheel for cruise speed · Shift to boost · Esc to leave",
+    "altitude": "Altitude AMSL",
+    "agl": "Above ground",
+    "speed": "Speed",
+    "heading": "Heading",
+    "cruise": "Cruise",
+    "offMap": "off the map"
+  },
+  "place": {
+    "close": "Close note",
+    "source": "Source:",
+    "site": "A site outline, not a single building.",
+    "noInterior": "This dataset models no interior for this building. The building is real and is rendered; no interior is invented for it — only the central warehouse is modelled."
+  },
+  "source": {
+    "label": "Source",
+    "pending": "source missing"
+  },
+  "facts": {
+    "reconstruction": "reconstruction"
+  },
+  "tour": {
+    "site": {
+      "logistikzentrum": "The Confex at Koelnmesse, opened 2024, here as the Caldova Logistics Centre. The building is real and comes from the official aerial survey; Caldova's use of it is invented."
+    }
+  },
+  "mesh": {
+    "heading": "City model",
+    "showMesh": "Show the photoreal 3D mesh",
+    "showLod2": "Switch to the LoD2 model",
+    "tiles": "Mesh tiles loaded",
+    "vertices": "Vertices",
+    "texels": "Texture resolution",
+    "megatexel": "million texels",
+    "note": "Photogrammetric NRW 3D mesh from the aerial survey of 11 May 2025: the trade fair, Deutz, the Rhine and the old town as they look from the air. Finest resolution at the Confex and the cathedral.",
+    "attribution": "3D mesh: data source Land NRW (Geobasis NRW), 2025 aerial survey"
+  },
+  "offline": {
+    "ready": "Offline ready",
+    "caching": "Saving for offline {{percent}} %",
+    "failed": "Offline unavailable",
+    "hint": "The twin is stored on this device and then opens without a network. Sign-in, figures from Fabric and reorders still need a connection.",
+    "updated": "New version ready – reload"
+  },
+  "tabs": {
+    "twin": "Twin",
+    "reorder": "Reorder",
+    "label": "View",
+    "finance": "Finance",
+    "loading": "Loading finance …"
+  },
+  "reorder": {
+    "signingIn": "Signing in to Fabric …",
+    "readOnly": {
+      "not-embedded": "Read-only: reordering works only signed in inside Fabric.",
+      "offline": "Read-only: offline, reordering needs a connection.",
+      "not-deployed": "Read-only: this build is not connected to a Fabric app.",
+      "failed": "Read-only: signing in to Fabric failed."
+    },
+    "noData": "No data",
+    "days": "days",
+    "units": "units",
+    "sending": "Sending …",
+    "notSent": "Not sent. {{detail}}",
+    "provenance": "Stock, sales and suggestions are the answers of the Fabric model “caldova-cologne-operations” as of {{date}}, checked against the model at deploy. Reorders are live. All pharmacies and quantities are fictional.",
+    "header": {
+      "title": "Restock",
+      "region": "{{region}} district",
+      "allDistricts": "All Cologne districts",
+      "asOf": "Data as of"
+    },
+    "tiles": {
+      "error": "Could not load the headline numbers. {{detail}}",
+      "stores": "Partner pharmacies",
+      "storesCaption": "Across all districts",
+      "low": "Running low",
+      "lowCaption": "Pharmacy × product, under a week of stock",
+      "lowTrend": "Pharmacy and product pairs running low on each of the last seven days",
+      "today": "Reorders sent today",
+      "todayReadOnly": "signed in inside Fabric only",
+      "todayJustSent": "Just sent by you",
+      "todayCaption": "Since midnight, UTC"
+    },
+    "queue": {
+      "title": "Running low",
+      "note": "Worst first. “Running low” is defined in the semantic model.",
+      "daysHeading": "Days of stock",
+      "error": "Could not load the low-stock queue. {{detail}}",
+      "empty": "Nothing is running low in any pharmacy right now.",
+      "openDetail": "Show detail for {{product}} at {{store}}",
+      "demandLabel": "Daily demand for {{product}} at {{store}}",
+      "onHand": "on hand",
+      "onOrder": "On order · {{units}} units",
+      "unitsLabel": "Units to reorder for {{product}} at {{store}}",
+      "send": "Reorder"
+    },
+    "status": {
+      "critical": "Critical",
+      "low": "Low",
+      "healthy": "Healthy"
+    },
+    "detail": {
+      "label": "{{product}} at {{store}}",
+      "close": "Close",
+      "source": "Rates from the semantic model.",
+      "rateError": "Could not load the sales rates. {{detail}}",
+      "soldHere": "Sold here",
+      "soldRegion": "Sold across Cologne",
+      "perDay": "per day",
+      "coverHere": "Cover left here",
+      "suggested": "Suggested order",
+      "toReach": "to reach {{days}} days",
+      "stockTitle": "Stock across the pharmacies, last 7 days",
+      "stockNote": "Worst cover first · this pharmacy highlighted",
+      "stockError": "Could not load stock history. {{detail}}",
+      "stockChart": "Estimated stock of {{product}} in each pharmacy over the last seven days",
+      "coverShort": "{{days}} d",
+      "estimated": "Stock history is estimated: worked back from today's count using sales since, so it assumes no deliveries arrived in the window.",
+      "alreadyOnOrder": "{{units}} units already on order for this pharmacy.",
+      "unitsToOrder": "Units to order",
+      "send": "Send reorder",
+      "last7": "Last 7 days",
+      "last28": "Last 28 days"
+    },
+    "recent": {
+      "title": "Recent reorders",
+      "note": "Recorded in Fabric, with who asked and when.",
+      "error": "Could not load recent reorders. {{detail}}",
+      "loading": "Loading …",
+      "empty": "No reorders sent yet.",
+      "justNow": "just now"
+    },
+    "reset": {
+      "done": "Demo reset: {{count}} reorders removed.",
+      "label": "Reset the demo",
+      "question": "Reset the demo?",
+      "body": "Removes the reorders you sent. The earlier history, raised by other people, is left alone.",
+      "failed": "Could not reset. {{detail}}",
+      "cancel": "Cancel",
+      "running": "Resetting …",
+      "confirm": "Reset"
+    },
+    "demand": {
+      "title": "Sales across Cologne",
+      "note": "Units sold per day, last fortnight.",
+      "label": "Units sold per day across all partner pharmacies over the last fortnight"
+    },
+    "invalidUnits": "Enter a whole number of units, 1 or more."
+  }
+}
