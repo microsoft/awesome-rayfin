@@ -16,7 +16,7 @@ export const REPOSITORY_URL =
 
 export const APP_VERSION =
   (import.meta.env.VITE_APP_VERSION as string | undefined) ??
-  "2.1.3";
+  "2.7.12";
 
 export const BUILD_COMMIT =
   (import.meta.env.VITE_APP_BUILD_COMMIT as string | undefined) ?? "development";
@@ -56,6 +56,384 @@ export function sameDeploymentGeneration(
 }
 
 export const RELEASES: AtlasRelease[] = [
+  {
+    version: "2.7.12",
+    date: "2026-11-07",
+    title: "Scout waits longer",
+    sections: [
+      {
+        title: "Fixed",
+        items: [
+          "Atlas Scout waits up to 5 minutes for an answer instead of 3, so item questions (owner, health, impact, access, findings) no longer time out.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.7.11",
+    date: "2026-11-07",
+    title: "Ask Scout and identity sheet",
+    sections: [
+      {
+        title: "Added",
+        items: [
+          "Catalog item drawer: Ask Scout opens the Scout bubble with a question about that item (owner, health, upstream and downstream impact, access, findings).",
+          "Catalog item drawer: Export identity sheet downloads a Markdown one-pager with identity, ownership, trust, lineage, access, findings and recent jobs. Missing evidence shows as Not collected, never as zero.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.7.10",
+    date: "2026-11-07",
+    title: "Sync Brief",
+    sections: [
+      {
+        title: "Added",
+        items: [
+          "Governance Center > Changes opens with a Sync Brief: items added or removed, new external or elevated access, lineage edges, failed or recovered jobs, changed measures and schema objects, new high-priority findings and the largest downstream impact. Copy it as Markdown or download it. Missing metadata shows as Unavailable, not zero.",
+        ],
+      },
+      {
+        title: "Security",
+        items: [
+          "A non-synchronizer calling a synchronizer-only Function gets an explicit 403 NOT_AUTHORIZED error. A test checks that every Function reading the application token checks the synchronizer first.",
+        ],
+      },
+      {
+        title: "Changed",
+        items: [
+          "Local development docs cover Local Network Access, approved origins and the Edge profile. The installation guide explains how to rotate the synchronizer.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.7.9",
+    date: "2026-11-07",
+    title: "External dataset deletes restricted",
+    sections: [
+      {
+        title: "Security",
+        items: [
+          "Only the person who first imported an external dataset (or the synchronizer) can delete it. Deleting an import leaves datasets created by others in place instead of failing.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.7.8",
+    date: "2026-11-06",
+    title: "Every Scout starter answers",
+    sections: [
+      {
+        title: "Fixed",
+        items: [
+          "\"Used most but not endorsed\" ranks semantic models and reports by reach (downstream items and principals with access), since Fabric has no view counts in Atlas.",
+          "\"Shared with external users or guests\" runs instead of failing on a reserved SQL keyword.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.7.7",
+    date: "2026-11-06",
+    title: "Atlas Scout reliability",
+    sections: [
+      {
+        title: "Fixed",
+        items: [
+          "Object-level lineage of a table always shows its columns and flows instead of answering that nothing was found.",
+          "Scout continues in a fresh conversation when the previous thread expired, and asks once more when Fabric loses its own tool call.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.7.6",
+    date: "2026-11-06",
+    title: "Atlas Scout queries everything",
+    sections: [
+      {
+        title: "Added",
+        items: [
+          "Atlas Scout queries the whole object inventory: tables, columns, measures with DAX dependencies, relationships, ontology bindings, object-level lineage, domains, OneLake roles and tenant settings, and draws dependencies as graphs.",
+        ],
+      },
+      {
+        title: "Fixed",
+        items: [
+          "Object-level lineage answers name each object with its item, so tables, notebooks and ontologies no longer collapse into a loop.",
+          "The first question of a new conversation no longer fails with 'run is active': Scout cancels the stale run and retries in a fresh thread.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.7.5",
+    date: "2026-11-06",
+    title: "Atlas Scout fixes",
+    sections: [
+      {
+        title: "Fixed",
+        items: [
+          "Lineage answers draw as a graph even when the agent writes the table without outer pipes.",
+          "Asking a new question after Stop no longer fails: the stopped run is cancelled and Scout continues in a fresh thread if needed.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.7.4",
+    date: "2026-11-06",
+    title: "Atlas Scout bubble window",
+    sections: [
+      {
+        title: "Improved",
+        items: ["The floating Atlas Scout window has a teal header, a white body and a clearer prompt field."],
+      },
+    ],
+  },
+  {
+    version: "2.7.3",
+    date: "2026-11-06",
+    title: "Atlas Scout lineage graph",
+    sections: [
+      {
+        title: "New",
+        items: [
+          "Atlas Scout draws lineage answers as an animated graph (broken links dashed in red, failing items highlighted), with the edge table one click away.",
+        ],
+      },
+      {
+        title: "Fixed",
+        items: [
+          "Lineage questions no longer fail on recursive SQL: the agent walks up to four hops with chained queries.",
+          "The Atlas Scout prompt keeps a light background when focused; the floating bubble is slightly darker.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.7.2",
+    date: "2026-11-06",
+    title: "Atlas Scout polish",
+    sections: [
+      {
+        title: "New",
+        items: [
+          "A floating Atlas Scout bubble in the bottom-right corner opens a compact chat from any tab; it shares the conversation with the Atlas Scout tab.",
+        ],
+      },
+      {
+        title: "Improved",
+        items: [
+          "Softer Atlas Scout colors in light and dark themes.",
+          "Answers render nested and correctly numbered lists, with labels in bold and statuses as pills.",
+          "Score columns render as gauges; internal step names such as Audit are no longer shown.",
+          "Removed the animated orb next to each answer; the header animation stays.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.7.1",
+    date: "2026-11-06",
+    title: "Atlas Scout",
+    sections: [
+      {
+        title: "New",
+        items: [
+          "Atlas Scout: ask governance questions in plain language. A Fabric Data Agent reads the Atlas store and answers with tables, health gauges and status pills.",
+          "Every answer shows its evidence: the SQL the agent ran and the raw results, with copy.",
+          "Live progress, Stop and follow-up questions in the same conversation.",
+          "The agent definition and its provisioning script are versioned in fabric/data-agent/atlas-scout.",
+        ],
+      },
+      {
+        title: "Security",
+        items: [
+          "Scout v1 is read-only and sees every synchronized workspace in the Atlas store. First use asks for consent to DataAgent.Execute.All.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.7.0",
+    date: "2026-10-29",
+    title: "External lineage (OpenLineage)",
+    sections: [
+      {
+        title: "New",
+        items: [
+          "External lineage page: import OpenLineage files (.json or .ndjson) produced outside Fabric, with per-file status, counts and reject reasons.",
+          "Link to Fabric: datasets on a OneLake path of the workspace link automatically; administrators link the others to a Fabric item or mark them External.",
+          "Map & lineage: External lineage switch shows external datasets and jobs next to the Fabric graph, and impact follows edges across the boundary.",
+          "Download OpenLineage: export the workspace or the map selection as NDJSON, optionally with linked external datasets. Importing it back links every item by exact path.",
+          "Typed export: each Fabric item carries a fabricAtlas_item facet, Eventstreams are STREAMING jobs and user data functions SERVICE jobs.",
+          "Impact report lists the external datasets upstream and downstream of the item; the Map details panel can be collapsed completely.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.6.4",
+    date: "2026-10-28",
+    title: "Reliable incremental sync",
+    sections: [
+      {
+        title: "Improvements",
+        items: [
+          "Workspace Hub: scan mode and synchronization start only from Selected workspaces; the validated snapshot banner keeps the last run summary.",
+          "Governance Center shows the tenant settings baseline captured by the snapshot.",
+        ],
+      },
+      {
+        title: "Fixes",
+        items: [
+          "Incremental runs keep object-level lineage of reused items, so Changes no longer reports false added and removed KQL tables and columns.",
+          "Browser snapshots saved by earlier releases are ignored; the next run is a full scan.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.6.3",
+    date: "2026-10-28",
+    title: "Sync mode, MCP page and layout fixes",
+    sections: [
+      {
+        title: "Improvements",
+        items: [
+          "System → MCP page explains how to build and configure the read-only Atlas MCP server and copies a ready mcp.json.",
+          "Full or Incremental is one shared choice for Synchronize now and Sync selected; a notice names the workspaces that must run a full scan and why.",
+          "Collection status uses plain section names and explains each missing section, including schema-enabled Lakehouses.",
+        ],
+      },
+      {
+        title: "Fixes",
+        items: [
+          "Run duration covers the whole synchronization instead of the first stage.",
+          "Workspace Hub: Selected workspaces full width, Recent runs before Schedule, equal-height cards below.",
+          "Header domain chip, sidebar My items alignment and rounded coverage percentages.",
+          "Fabric policies explain why enforcement is unknown without a Fabric administrator sign-in.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.6.2",
+    date: "2026-10-28",
+    title: "Domain posture and mockup alignment",
+    sections: [
+      {
+        title: "Improvements",
+        items: [
+          "Domain posture: Governance Center coverage by domain, domain directory with parent/child rollups and a domain filter showing domain names.",
+          "Workspace domain banner, incremental/full scan mode control and snapshot JSON export.",
+          "My items view, findings explanations, Fabric policies card, network protection card and OneLake role filters aligned with the v2.5/v2.6 mockups.",
+          "Command palette matches descriptions; suggested object descriptions are drafted for findings on undocumented objects.",
+          "Posture radar maps Microsoft Health, Protect and Trust pillars to Fabric signal names.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.6.1",
+    date: "2026-10-28",
+    title: "Governance evidence fixes",
+    sections: [
+      {
+        title: "Fixes",
+        items: [
+          "Admin-only sections (domains, tags, tenant settings) now use the signed-in Fabric administrator's token, so domain names, domain posture and tenant drift are collected.",
+          "Synchronization offers an Incremental or Full mode; incremental runs re-enrich only modified items and keep domain names from the previous snapshot.",
+          "The Fabric domain filter appears as soon as a workspace belongs to a domain, and unnamed domains no longer show a full GUID.",
+          "The posture radar shows the Microsoft Health, Protect and Trust pillars and the Fabric signals behind them.",
+          "Catalog search matches item, table, column and measure descriptions and shows the object path.",
+          "MCP governance findings return the domain name, path and parent.",
+          "Security: UDF URLs are validated, governance tokens are acquired separately and webhook payloads are bounded.",
+        ],
+      },
+      {
+        title: "Upgrade",
+        items: [
+          "Run one synchronization as a Fabric administrator to collect domain names and admin-only sections.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.6.0",
+    date: "2026-10-28",
+    title: "Unified governance gaps",
+    sections: [
+      {
+        title: "Domains and catalog",
+        items: [
+          "Fabric domain names appear in the overview, catalog and MCP, with per-domain posture, coverage and a global domain filter.",
+          "The catalog adds facets, tag scope chips, description snippets in search and a Request access link.",
+          "My items scopes the app to items you own; snapshot export downloads the current inventory and findings.",
+        ],
+      },
+      {
+        title: "New governance signals",
+        items: [
+          "New rules: workspace without Admin, unlabeled against the domain default label, inactive items of any type, public workspace network access and sensitive external shares.",
+          "Each finding has a Why panel and a deterministic priority score.",
+          "Changes shows tenant settings drift; access review filters by principal type and role and lists OneLake data access roles with RLS/CLS.",
+          "Policies & AI shows Fabric policies (preview) with enforcement Unknown and lists cataloged policy items.",
+        ],
+      },
+      {
+        title: "Operations",
+        items: [
+          "Incremental sync plans only changed workspaces and reports run mode counters.",
+          "Optional Teams webhook (ATLAS_TEAMS_WEBHOOK_URL secret) posts new critical findings.",
+          "Optional AI description suggestions (ATLAS_AI_* secrets, off by default) send names and schema only, never data values.",
+          "Open in Fabric cards link to Govern and Admin monitoring; the MCP server exposes governance findings.",
+        ],
+      },
+      {
+        title: "Upgrade",
+        items: [
+          "Run one guided synchronization per workspace to collect the new evidence and start a new radar baseline.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "2.2.0",
+    date: "2026-10-28",
+    title: "OneLake catalog alignment",
+    sections: [
+      {
+        title: "Findings to action",
+        items: [
+          "Every finding opens the affected item or workspace in Fabric with Fix in Fabric.",
+          "My items narrows the action queue to items whose recorded owner email matches your account.",
+          "Each finding group shows its OneLake catalog pillar: Health, Protect or Trust.",
+          "Export JSON downloads the filtered action queue with severity, pillar, owner and Fabric link.",
+          "Teams card downloads an Adaptive Card with the posture and the top findings. Atlas stores no webhook.",
+        ],
+      },
+      {
+        title: "New governance rules",
+        items: [
+          "Certified items without a description or a sensitivity label are reported.",
+          "Endorsed items without a run for 90 days and endorsed semantic models with undocumented tables, columns or measures are reported.",
+          "Workspaces confirmed without a Fabric domain are reported; the workspace page shows the domain ID, no domain or not collected.",
+        ],
+      },
+      {
+        title: "Upgrade",
+        items: [
+          "Run one guided synchronization per workspace to collect domains and start a new radar baseline.",
+          "Certified items without a label now use the certified-missing-sensitivity rule instead of missing-sensitivity.",
+        ],
+      },
+    ],
+  },
   {
     version: "2.1.3",
     date: "2026-10-17",

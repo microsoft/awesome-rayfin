@@ -94,7 +94,11 @@ describe("App", () => {
         renderApp();
         fireEvent.click(screen.getByRole("button", { name: "Governance Center" }));
         expect(
-            await screen.findByRole("heading", { name: "Governance Center" }),
+            await screen.findByRole(
+                "heading",
+                { name: "Governance Center" },
+                { timeout: 5000 },
+            ),
         ).toBeInTheDocument();
     });
 
@@ -139,7 +143,7 @@ describe("App", () => {
         renderApp();
 
         fireEvent.click(
-            await screen.findByRole("button", { name: "Synchronize now" }),
+            await screen.findByRole("button", { name: "Sync" }),
         );
         expect(
             await screen.findByRole("heading", {

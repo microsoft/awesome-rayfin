@@ -1,6 +1,6 @@
 # Installation and deployment
 
-Fabric Atlas 2.1 is a Rayfin Data App deployed inside Microsoft Fabric.
+Fabric Atlas is a Rayfin Data App deployed inside Microsoft Fabric.
 `rayfin up` publishes the app, applies the MSSQL schema and deploys typed Rayfin
 Functions. A small Python User Data Function remains for documented
 compatibility gaps.
@@ -78,6 +78,38 @@ visible contact and historical writer label. The break-glass identity can
 publish and maintain snapshot rows, but the primary synchronizer remains the
 visible contact and workspace-scope administrator.
 
+### How synchronizer authorization works
+
+Snapshot policies are compiled from these variables at `rayfin up`. Every
+synchronizer-only Function (collectors, Catalog Search, graph sync) first reads
+the policy-protected `SynchronizerAuthority` sentinel. Any other caller cannot
+see or create it, so the Function stops with a `NOT_AUTHORIZED` (403-style)
+error **before** it uses the application identity to call Fabric. A unit test
+fails the build if a Function reads `ctx.Tokens` without that gate.
+
+### Rotate the synchronizer
+
+The policy is fixed at deployment time, so a rotation always needs a redeploy:
+
+1. Set the new `..._SYNC_ADMIN_SUBJECT` and `..._SYNC_ADMIN_EMAIL` values (and
+   the break-glass pair if you change it) in the deployment shell and in
+   `rayfin/.env`.
+2. Rebuild and redeploy with `npx rayfin up` (see step 12).
+3. Sign in as the new synchronizer and run a synchronization. The previous
+   identity now receives the authorization error.
+
+To revoke a compromised synchronizer immediately, redeploy with the
+break-glass identity as the primary one, then rotate again once a new primary
+account exists.
+
+### Negative check (manual)
+
+After each deployment or rotation, sign in with an account that is **not** the
+configured synchronizer and start a synchronization. Atlas must show the
+"requires the configured Atlas administrator/synchronizer" message and no
+Fabric collection must run. This check needs a second account, so it is not
+automated.
+
 ## 5. Deploy Fabric Atlas
 
 ```powershell
@@ -137,7 +169,7 @@ permissions used by the published UDF:
 - `Tenant.Read.All`
 
 Kusto live metadata requires the delegated Azure Data Explorer audience.
-Rayfin Functions now own SQL catalog collection, so the normal 2.0 path does
+Rayfin Functions now own SQL catalog collection, so the normal path does
 not forward a browser SQL token.
 
 Grant admin consent where required. Keep optional audiences separate so a
@@ -167,6 +199,35 @@ RAYFIN_PUBLIC_ATLAS_PREVIOUS_SYNC_WRITERS=<former-user@example.com>
 RAYFIN_PUBLIC_ATLAS_SENSITIVITY_RANKS='{"<label-id>":3}'
 ```
 
+Optional Atlas Scout chat (Fabric Data Agent, see
+[`fabric/data-agent/atlas-scout`](../fabric/data-agent/atlas-scout/README.md)):
+
+```dotenv
+RAYFIN_PUBLIC_ATLAS_SCOUT_AGENT_ID=<data-agent-id>
+RAYFIN_PUBLIC_ATLAS_SCOUT_WORKSPACE_ID=<optional-agent-workspace-id>
+```
+
+Build-time option (default 90 days) for the `item-inactive` rule:
+
+```dotenv
+VITE_ATLAS_INACTIVE_DAYS=90
+```
+
+Optional server secrets, stored with `npx rayfin secret set <NAME>` and never
+exposed to the browser. Both features stay disabled until configured:
+
+| Secret | Purpose |
+|---|---|
+| `ATLAS_TEAMS_WEBHOOK_URL` | Teams Workflow webhook that receives new critical findings after a sync |
+| `ATLAS_AI_ENABLED` | Set to `true` to enable AI description suggestions |
+| `ATLAS_AI_ENDPOINT` | Azure OpenAI / Foundry chat completions endpoint |
+| `ATLAS_AI_TENANT_ID`, `ATLAS_AI_CLIENT_ID`, `ATLAS_AI_CLIENT_SECRET` | Entra application used to call the endpoint |
+| `ATLAS_AI_API_KEY` | Alternative to the Entra application when key auth is allowed |
+
+AI suggestions send only item, table, column and measure names, schema and
+DAX expressions, never data values. Prompts are capped at 24,000 characters
+and 50 targets per request; suggestions are reviewed before use.
+
 The configured URL is the published `sync_all` endpoint. Atlas derives the
 `sync_compatibility` and rollback endpoints from the same trusted UDF origin.
 
@@ -195,7 +256,17 @@ The deployed definition currently contains `definition.json`,
 `function_app.py` and `.platform`. It does not contain a separate
 `requirements.txt` part.
 
-The active 2.0 flow calls `sync_compatibility` only for:
+Python dependencies are pinned in
+`fabric/udf/atlas_sync_functions/requirements.txt` for local tests only. In
+Fabric, the same packages are declared in the User Data Function **Library
+management** pane. To update a dependency:
+
+1. Change the pinned version in `requirements.txt`.
+2. Run the UDF tests locally (`python -m pytest fabric/udf/atlas_sync_functions`).
+3. Apply the same version in the Fabric Library management pane, then publish.
+4. Run a synchronization and check the Monitoring view.
+
+The active flow calls `sync_compatibility` only for:
 
 - Power BI admin scanner evidence;
 - PBIR-Legacy report pages;

@@ -87,6 +87,14 @@ export const ATLAS_CONFIG = {
   sensitivityRanks: numberMap(
     import.meta.env.VITE_RAYFIN_ATLAS_SENSITIVITY_RANKS,
   ),
+  // Atlas Scout Fabric Data Agent (fabric/data-agent/atlas-scout). Empty agent
+  // id hides the chat behind a "not configured" state.
+  scoutAgentId:
+    (import.meta.env.VITE_RAYFIN_ATLAS_SCOUT_AGENT_ID as string) || "",
+  scoutWorkspaceId:
+    (import.meta.env.VITE_RAYFIN_ATLAS_SCOUT_WORKSPACE_ID as string) ||
+    (import.meta.env.VITE_FABRIC_WORKSPACE_ID as string) ||
+    "",
   // A Power BI-audience token both invokes the UDF (UserDataFunction.Execute.All)
   // and is forwarded to Fabric REST inside the function.
   scope: "https://analysis.windows.net/powerbi/api/.default",
@@ -117,10 +125,9 @@ export function getUdfUrl(): string | null {
   );
 }
 
-export function validateUdfUrl(value: string, targetWorkspaceId: string): string {
+export function validateUdfUrl(value: string): string {
   // The trusted UDF is hosted once in the deployment workspace and receives
   // the selected workspace separately in the validated request body.
-  void targetWorkspaceId;
   let url: URL;
   try {
     url = new URL(value);
@@ -169,7 +176,7 @@ export function hasValidSyncConfiguration(
     return false;
   }
   try {
-    validateUdfUrl(udfUrl, config.workspaceId);
+    validateUdfUrl(udfUrl);
     return true;
   } catch {
     return false;
