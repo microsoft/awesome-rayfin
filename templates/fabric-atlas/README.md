@@ -14,18 +14,18 @@ the last validated snapshot in Fabric so everyone sees the same state.
 
 [Install](docs/installation.md) ·
 [Architecture](docs/architecture.md) ·
-[Whitepaper](https://github.com/fredgis/FabricAtlas/blob/8720008/docs/fabric-atlas-whitepaper.pdf) ·
-[Technical presentation](https://github.com/fredgis/FabricAtlas/blob/8720008/prez/Fabric-Atlas-Dev-Architecture.pdf) ·
+[Whitepaper](https://github.com/fredgis/FabricAtlas/blob/f274f9a/docs/fabric-atlas-whitepaper.pdf) ·
+[Technical presentation](https://github.com/fredgis/FabricAtlas/blob/f274f9a/prez/Fabric-Atlas-Dev-Architecture.pdf) ·
 [Capabilities](#capabilities) ·
 [Status legend](#status-legend) ·
 [Roadmap](#current-limits-and-roadmap) ·
 [Changelog](CHANGELOG.md) ·
-[Contribute](https://github.com/fredgis/FabricAtlas/blob/8720008/.github/CONTRIBUTING.md)
+[Contribute](https://github.com/fredgis/FabricAtlas/blob/f274f9a/.github/CONTRIBUTING.md)
 
 </div>
 
 This Awesome Rayfin template vendors
-[`fredgis/FabricAtlas@8720008`](https://github.com/fredgis/FabricAtlas/commit/8720008).
+[`fredgis/FabricAtlas@f274f9a`](https://github.com/fredgis/FabricAtlas/commit/f274f9a).
 Gallery metadata and template-specific setup stay in this repository.
 
 ## Fabric Atlas demo
@@ -34,7 +34,7 @@ https://github.com/user-attachments/assets/ba0162fb-70fc-40f1-9374-fccd87a324f9
 
 ## Whitepaper
 
-The [Fabric Atlas whitepaper](https://github.com/fredgis/FabricAtlas/blob/8720008/docs/fabric-atlas-whitepaper.pdf) explains how
+The [Fabric Atlas whitepaper](https://github.com/fredgis/FabricAtlas/blob/f274f9a/docs/fabric-atlas-whitepaper.pdf) explains how
 the product collects and validates metadata, publishes immutable snapshots,
 traces item and DAX dependencies, reviews effective access, and builds
 principal-centred departure packs. It also covers governance, operations,
@@ -43,12 +43,12 @@ security boundaries, deployment and known API limits.
 The screenshots use FGI-MAIN as one example deployment. Its counts and findings
 are not product defaults or a reference architecture.
 
-<a href="https://github.com/fredgis/FabricAtlas/blob/8720008/docs/fabric-atlas-whitepaper.pdf">
-  <img src="https://raw.githubusercontent.com/fredgis/FabricAtlas/8720008/docs/assets/fabric-atlas-whitepaper-hero.png" alt="Fabric Atlas whitepaper preview with the cover, Lineage Evidence, X-Ray, coverage and multi-workspace pages" width="100%">
+<a href="https://github.com/fredgis/FabricAtlas/blob/f274f9a/docs/fabric-atlas-whitepaper.pdf">
+  <img src="https://raw.githubusercontent.com/fredgis/FabricAtlas/f274f9a/docs/assets/fabric-atlas-whitepaper-hero.png" alt="Fabric Atlas whitepaper preview with the cover, Lineage Evidence, X-Ray, coverage and multi-workspace pages" width="100%">
 </a>
 
-[Read the PDF](https://github.com/fredgis/FabricAtlas/blob/8720008/docs/fabric-atlas-whitepaper.pdf) ·
-[Read the Markdown version](https://github.com/fredgis/FabricAtlas/blob/8720008/docs/fabric-atlas-whitepaper.md)
+[Read the PDF](https://github.com/fredgis/FabricAtlas/blob/f274f9a/docs/fabric-atlas-whitepaper.pdf) ·
+[Read the Markdown version](https://github.com/fredgis/FabricAtlas/blob/f274f9a/docs/fabric-atlas-whitepaper.md)
 
 ## Read-only Atlas MCP
 
@@ -99,6 +99,8 @@ Atlas Scout lets anyone ask governance questions in plain language. It is a
 chat client for a published Fabric Data Agent that reads the Atlas SQL
 database, so every answer comes from the same validated snapshots as the rest
 of the app.
+
+https://github.com/user-attachments/assets/672017c7-7d79-4788-9083-77eac489a853
 
 <img src="docs/screenshots/atlas-scout-home-v2.png" alt="Atlas Scout home with the animated header and six starter questions grouped by Health, Protect, Trust and Ownership" width="100%">
 
@@ -156,7 +158,7 @@ it tenant-wide.
 
 ## Technical presentation
 
-The [Fabric Atlas development and architecture presentation](https://github.com/fredgis/FabricAtlas/blob/8720008/prez/Fabric-Atlas-Dev-Architecture.pdf)
+The [Fabric Atlas development and architecture presentation](https://github.com/fredgis/FabricAtlas/blob/f274f9a/prez/Fabric-Atlas-Dev-Architecture.pdf)
 documents the Rayfin-first collector path, manifest-last publication, current
 entity groups, local MCP and the exact Rayfin platform gaps that keep Python
 compatibility and browser-driven synchronization in place. The editable deck,
@@ -211,7 +213,7 @@ Fabric Atlas collects that metadata without copying business data.
 | Extensibility | Typed Rayfin Functions, minimal Python compatibility and an optional read-only local Atlas MCP |
 
 Detailed feature and coverage notes are in the
-[whitepaper](https://github.com/fredgis/FabricAtlas/blob/8720008/docs/fabric-atlas-whitepaper.pdf),
+[whitepaper](https://github.com/fredgis/FabricAtlas/blob/f274f9a/docs/fabric-atlas-whitepaper.pdf),
 [architecture](docs/architecture.md) and
 [item-family coverage](docs/item-families.md).
 
@@ -727,7 +729,7 @@ Found a bug, a missing Fabric object type or a useful governance workflow?
 [Open an issue](https://github.com/fredgis/FabricAtlas/issues/new/choose).
 
 Pull requests are welcome. Read
-[the contribution guide](https://github.com/fredgis/FabricAtlas/blob/8720008/.github/CONTRIBUTING.md) before starting.
+[the contribution guide](https://github.com/fredgis/FabricAtlas/blob/f274f9a/.github/CONTRIBUTING.md) before starting.
 
 The application shell (`src/App.tsx`, `src/main.tsx`, the auth and theme hooks,
 `src/lib/rayfin-client.ts`, `src/services/rayfin-auth.service.ts` and a few
@@ -751,8 +753,8 @@ original Microsoft copyright headers. See [NOTICE](NOTICE).
 - [Local development](docs/local-development.md)
 - [Power BI metadata replacement and blocker](docs/powerbi-scanner-replacement.md)
 - [Optional Power BI scanner Secret Store setup](docs/powerbi-scanner-secret-store.md)
-- [Security policy](https://github.com/fredgis/FabricAtlas/blob/8720008/.github/SECURITY.md)
-- [Code of conduct](https://github.com/fredgis/FabricAtlas/blob/8720008/.github/CODE_OF_CONDUCT.md)
+- [Security policy](https://github.com/fredgis/FabricAtlas/blob/f274f9a/.github/SECURITY.md)
+- [Code of conduct](https://github.com/fredgis/FabricAtlas/blob/f274f9a/.github/CODE_OF_CONDUCT.md)
 
 ## Coverage
 
