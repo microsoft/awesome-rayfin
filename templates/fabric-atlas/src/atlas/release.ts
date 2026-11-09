@@ -16,7 +16,7 @@ export const REPOSITORY_URL =
 
 export const APP_VERSION =
   (import.meta.env.VITE_APP_VERSION as string | undefined) ??
-  "2.9.1";
+  "2.9.2";
 
 export const BUILD_COMMIT =
   (import.meta.env.VITE_APP_BUILD_COMMIT as string | undefined) ?? "development";
@@ -56,6 +56,25 @@ export function sameDeploymentGeneration(
 }
 
 export const RELEASES: AtlasRelease[] = [
+  {
+    version: "2.9.2",
+    date: "2026-11-09",
+    title: "Scout answers departure questions",
+    sections: [
+      {
+        title: "Added",
+        items: [
+          "Atlas Scout example query for the departure profile of a person.",
+        ],
+      },
+      {
+        title: "Fixed",
+        items: [
+          "Atlas Scout no longer answers \"query failed\" to departure questions: it asks one query covering the person's workspace roles, items, the failed runs of those items and the connections they own, instead of one query per aspect.",
+        ],
+      },
+    ],
+  },
   {
     version: "2.9.1",
     date: "2026-11-09",

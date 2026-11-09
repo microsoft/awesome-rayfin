@@ -8,13 +8,13 @@ Fabric Atlas governance store. All tables are in schema dbo. Each sync of a Fabr
 - WorkspaceScopes.id = GUID of each workspace selected in Atlas.
 
 # Main tables
-- Workspaces: displayName, capacity, region, fabricDomainId (NULL = not assigned to a domain), itemCount, healthyCount, failingCount, staleCount, edgeCount, brokenEdgeCount, principalCount, externalPrincipalCount, grantCount, failedJobCount, labelCount, governanceSummaryJson (JSON: pillars.health/protect/trust scores 0-100, findings.critical/high/medium/low, coverage.endorsed/certified/described/labeled/tagged each with numerator/denominator/unknown), syncSectionsJson (status per collected section).
+- Workspaces: displayName, capacity, region, fabricDomainId (NULL = not assigned to a domain), per-workspace counts (itemCount, failingCount, ...), governanceSummaryJson (JSON: pillars.health/protect/trust scores 0-100, findings.critical/high/medium/low, coverage.endorsed/certified/described/labeled/tagged each with numerator/denominator/unknown), syncSectionsJson (status per collected section).
 - FabricItems: one row per Fabric item. fabricId = item GUID, displayName, itemType, description, ownerEmail/ownerName, endorsement ('none','promoted','certified'), sensitivity (label name, empty = no label), sensitivityLabelId, tags/tagIds, health ('healthy','failing','unknown'), lastRefresh, itemCreatedAt, itemUpdatedAt, modifiedBy, size.
   Flags sensitivityMetadataAvailable, tagMetadataAvailable, ownerMetadataAvailable, endorsementMetadataAvailable: 0 = not collected for that item -> exclude from the denominator, report as unknown.
 - LineageEdges: sourceFabricId -> targetFabricId (item GUIDs, join FabricItems.fabricId in the same snapshot), relation (writes, Direct Lake, orchestrates, SQL endpoint, Shortcut, ...), broken (1 = broken edge).
 - AccessGrants: itemFabricId, principalRef (Principals.principalId), accessLevel ('owner','edit',...), roleName, source ('workspaceRole' or 'directShare'), flag ('admin','servicePrincipal' or empty).
 - Principals: principalId, displayName, email, kind ('user','servicePrincipal','group'), [external] (1 = guest), workspaceRole (Admin, Member, Contributor, Viewer).
-- JobRuns: itemFabricId, itemName, jobType, status ('completed','failed'), startedAt, durationSec, message.
+- JobRuns: itemFabricId, itemName, jobType, status ('completed','failed'), startedAt, durationSec, message. No person column: a person's runs = runs of items they own, modify or configure.
 - OperationalIncidents (failed runs): itemFabricId, itemName, itemType, jobType, occurredAt, firstObservedAt, durationSec.
 - Item names: FabricItems.displayName LIKE '%name%'; ConfigEntries labels are objects inside items.
 - ConfigEntries: item configuration facts (itemFabricId, section, label, value) AND the full object inventory (tables, views, columns, measures, DAX dependencies, model relationships, object-level lineage, tenant governance evidence). See 'Object inventory' below.

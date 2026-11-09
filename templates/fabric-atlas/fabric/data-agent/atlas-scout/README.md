@@ -29,6 +29,10 @@ Every table of the Atlas SQL database is attached to the agent:
   use a connection through the `Source provenance` rows of `ConfigEntries`.
   Fabric returns owners as Entra object IDs without names, so the agent finds
   the connections of a person by joining `principalId` to `Principals`.
+- **Departures:** a question about a person leaving is asked as one query that
+  returns their workspace roles, the items they own, modify or configure, the
+  failed runs of those items and the connections they own. Job runs have no
+  person column, so a person's runs are the runs of their items.
 - **Object inventory:** the JSON documents synchronized in `ConfigEntries`
   (tables, columns, semantic model measures and their DAX dependencies,
   relationships, ontology bindings and object-level lineage edges).
@@ -46,6 +50,7 @@ in the app, for items and for objects. Example questions:
 - *Which tables do notebooks read and write?*
 - *Which OneLake roles exist and who is in them?*
 - *Which Fabric connections have a single user owner or no active owner?*
+- *Tom Berg is leaving the company. What is the impact of his departure?*
 
 The Data Agent runtime did not retrieve the few-shot examples in our tests, so
 the business rules and the SQL recipes the agent relies on live in

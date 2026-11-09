@@ -8,6 +8,20 @@ release tag was published.
 
 ## [Unreleased]
 
+## [2.9.2] - 2026-11-09
+
+### Added
+
+- Atlas Scout example query for the departure profile of a person: workspace roles, owned and modified items, failed runs of those items and owned connections in one query (38 examples).
+
+### Fixed
+
+- Atlas Scout no longer answers "query failed" to departure questions. It split the question into one query per aspect, and the job-run and connection queries failed: job runs have no person column and connection owners are IDs. Scout now asks one query covering roles, items, the failed runs of those items and the connections the person owns.
+
+### Upgrade notes
+
+- Run `npx rayfin up`, then run the Atlas Scout provisioning script again to publish the new instructions and example.
+
 ## [2.9.1] - 2026-11-09
 
 ### Added
@@ -1062,7 +1076,8 @@ release tag was published.
 - Centralized lineage, object and status colors in the shared theme.
 - Improved keyboard focus, semantic control states, scrollbars and reduced-motion behavior.
 
-[Unreleased]: https://github.com/fredgis/FabricAtlas/compare/v2.9.1...HEAD
+[Unreleased]: https://github.com/fredgis/FabricAtlas/compare/v2.9.2...HEAD
+[2.9.2]: https://github.com/fredgis/FabricAtlas/releases/tag/v2.9.2
 [2.9.1]: https://github.com/fredgis/FabricAtlas/releases/tag/v2.9.1
 [2.9.0]: https://github.com/fredgis/FabricAtlas/releases/tag/v2.9.0
 [2.8.2]: https://github.com/fredgis/FabricAtlas/releases/tag/v2.8.2
