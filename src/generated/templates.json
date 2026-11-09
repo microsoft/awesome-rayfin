@@ -1,0 +1,264 @@
+[
+  {
+    "id": "angular-blankapp",
+    "displayName": "Angular Blank App",
+    "description": "Bare-bones Fabric-authenticated Angular + Material app — sign-in, routing, and a placeholder home page, with no data layer to remove",
+    "path": "templates/angular-blankapp",
+    "sourceUrl": "https://github.com/mksuni/awesome-rayfin/tree/main/templates/angular-blankapp",
+    "scaffoldCommand": "rayfin init my-app -t https://github.com/mksuni/awesome-rayfin --template-name \"Angular Blank App\"",
+    "stacks": [
+      "Angular",
+      "Material"
+    ],
+    "capabilities": [
+      "Authentication",
+      "Data API",
+      "Static hosting",
+      "Microsoft Fabric"
+    ],
+    "services": {
+      "auth": true,
+      "data": true,
+      "storage": false,
+      "staticHosting": true
+    },
+    "experimental": false
+  },
+  {
+    "id": "angular-dashboard",
+    "displayName": "Angular Dashboard App",
+    "description": "Responsive Angular Material dashboard — top navbar + collapsible side menu, Project/Task data model, and optional one-click GitHub Issues/PRs sync for a public repo.",
+    "path": "templates/angular-dashboard",
+    "sourceUrl": "https://github.com/mksuni/awesome-rayfin/tree/main/templates/angular-dashboard",
+    "scaffoldCommand": "rayfin init my-app -t https://github.com/mksuni/awesome-rayfin --template-name \"Angular Dashboard App\"",
+    "stacks": [
+      "Angular",
+      "Material"
+    ],
+    "capabilities": [
+      "Authentication",
+      "Data API",
+      "Static hosting",
+      "Microsoft Fabric",
+      "DAB schema"
+    ],
+    "services": {
+      "auth": true,
+      "data": true,
+      "storage": false,
+      "staticHosting": true
+    },
+    "experimental": false
+  },
+  {
+    "id": "field-technician",
+    "displayName": "Field Technician App",
+    "description": "Field service management app with role-based dashboards for dispatchers and technicians, job tracking, customer lookup, and dual-mode auth (local password + Fabric)",
+    "path": "templates/field-technician",
+    "sourceUrl": "https://github.com/mksuni/awesome-rayfin/tree/main/templates/field-technician",
+    "scaffoldCommand": "rayfin init my-app -t https://github.com/mksuni/awesome-rayfin --template-name \"Field Technician App\"",
+    "stacks": [
+      "React",
+      "Vite",
+      "Tailwind"
+    ],
+    "capabilities": [
+      "Authentication",
+      "Data API",
+      "Storage",
+      "Static hosting",
+      "Microsoft Fabric",
+      "DAB schema"
+    ],
+    "services": {
+      "auth": true,
+      "data": true,
+      "storage": true,
+      "staticHosting": true
+    },
+    "experimental": false
+  },
+  {
+    "id": "helsinki-public-transport",
+    "displayName": "Helsinki Public Transport",
+    "description": "Live public transport over a Fabric Real-Time Intelligence Eventhouse - a DirectQuery semantic model queried straight from the browser, drawn on a 2D map and on a token-free 3D city twin built from open geodata",
+    "path": "templates/helsinki-public-transport",
+    "sourceUrl": "https://github.com/mksuni/awesome-rayfin/tree/main/templates/helsinki-public-transport",
+    "scaffoldCommand": "rayfin init my-app -t https://github.com/mksuni/awesome-rayfin --template-name \"Helsinki Public Transport\"",
+    "stacks": [
+      "React",
+      "Vite",
+      "Tailwind"
+    ],
+    "capabilities": [
+      "Authentication",
+      "Static hosting",
+      "Microsoft Fabric"
+    ],
+    "services": {
+      "auth": true,
+      "data": false,
+      "storage": false,
+      "staticHosting": true
+    },
+    "experimental": false
+  },
+  {
+    "id": "ibcs-trainer",
+    "displayName": "IBCS Trainer",
+    "description": "HTML5 Canvas platformer that teaches IBCS chart rules level by level, embedded in a Fabric-authenticated Rayfin app; each play-through is persisted to a typed GameStats entity",
+    "path": "templates/ibcs-trainer",
+    "sourceUrl": "https://github.com/mksuni/awesome-rayfin/tree/main/templates/ibcs-trainer",
+    "scaffoldCommand": "rayfin init my-app -t https://github.com/mksuni/awesome-rayfin --template-name \"IBCS Trainer\"",
+    "stacks": [
+      "React",
+      "Vite",
+      "Tailwind"
+    ],
+    "capabilities": [
+      "Authentication",
+      "Data API",
+      "Static hosting",
+      "Microsoft Fabric",
+      "DAB schema"
+    ],
+    "services": {
+      "auth": true,
+      "data": true,
+      "storage": false,
+      "staticHosting": true
+    },
+    "experimental": false
+  },
+  {
+    "id": "pbi-fixer",
+    "displayName": "Power BI Fixer",
+    "description": "Fabric-authenticated workspace that inspects, documents, and fixes Power BI semantic models and reports — a best-practice analyzer with one-click and batch fixes, a report explorer with PBIR diffs, AI-assisted metadata cleanup, and a free IBCS visual, all powered server-side by Fabric User Data Functions",
+    "path": "templates/pbi-fixer",
+    "sourceUrl": "https://github.com/mksuni/awesome-rayfin/tree/main/templates/pbi-fixer",
+    "scaffoldCommand": "rayfin init my-app -t https://github.com/mksuni/awesome-rayfin --template-name \"Power BI Fixer\"",
+    "stacks": [
+      "React",
+      "Vite",
+      "Tailwind"
+    ],
+    "capabilities": [
+      "Authentication",
+      "Static hosting",
+      "Microsoft Fabric",
+      "Power BI"
+    ],
+    "services": {
+      "auth": true,
+      "data": false,
+      "storage": false,
+      "staticHosting": true
+    },
+    "experimental": false
+  },
+  {
+    "id": "slide-deck",
+    "displayName": "Slide Deck",
+    "description": "Interactive slide deck presenter with sessions, live slide tracking, and audience chat",
+    "path": "templates/slide-deck",
+    "sourceUrl": "https://github.com/mksuni/awesome-rayfin/tree/main/templates/slide-deck",
+    "scaffoldCommand": "rayfin init my-app -t https://github.com/mksuni/awesome-rayfin --template-name \"Slide Deck\"",
+    "stacks": [
+      "React",
+      "Vite",
+      "Tailwind"
+    ],
+    "capabilities": [
+      "Authentication",
+      "Data API",
+      "Static hosting",
+      "Microsoft Fabric"
+    ],
+    "services": {
+      "auth": true,
+      "data": true,
+      "storage": false,
+      "staticHosting": true
+    },
+    "experimental": false
+  },
+  {
+    "id": "static-blankapp",
+    "displayName": "Blank App",
+    "description": "Bare-bones Rayfin app with authentication, but without any JS or CSS framework and a tiny TypeScript entry point",
+    "path": "templates/static-blankapp",
+    "sourceUrl": "https://github.com/mksuni/awesome-rayfin/tree/main/templates/static-blankapp",
+    "scaffoldCommand": "rayfin init my-app -t https://github.com/mksuni/awesome-rayfin --template-name \"Blank App\"",
+    "stacks": [
+      "TypeScript",
+      "Vite"
+    ],
+    "capabilities": [
+      "Authentication",
+      "Data API",
+      "Static hosting",
+      "Microsoft Fabric"
+    ],
+    "services": {
+      "auth": true,
+      "data": true,
+      "storage": false,
+      "staticHosting": true
+    },
+    "experimental": false
+  },
+  {
+    "id": "todoapp",
+    "displayName": "[Experimental] Todo app with full local dev",
+    "description": "End-to-end todo CRUD with username/password auth, a Rayfin data model, and Docker local development — a working starter that exercises the full data path without Fabric",
+    "path": "templates/todo-local-experimental",
+    "sourceUrl": "https://github.com/mksuni/awesome-rayfin/tree/main/templates/todo-local-experimental",
+    "scaffoldCommand": "rayfin init my-app -t https://github.com/mksuni/awesome-rayfin --template-name \"[Experimental] Todo app with full local dev\"",
+    "stacks": [
+      "React",
+      "Vite",
+      "Tailwind"
+    ],
+    "capabilities": [
+      "Authentication",
+      "Data API",
+      "Static hosting",
+      "Microsoft Fabric",
+      "DAB schema"
+    ],
+    "services": {
+      "auth": true,
+      "data": true,
+      "storage": false,
+      "staticHosting": true
+    },
+    "experimental": true
+  },
+  {
+    "id": "universal-app",
+    "displayName": "Universal App",
+    "description": "A lean React + Vite starter that grows into anything. A built-in capability router reads what you ask for, then enables the right Rayfin services, installs the right modules, and activates the right skills, from sign-in and CRUD data models to Graphein charts and Fabric analytics dashboards.",
+    "path": "templates/universal-app",
+    "sourceUrl": "https://github.com/mksuni/awesome-rayfin/tree/main/templates/universal-app",
+    "scaffoldCommand": "rayfin init my-app -t https://github.com/mksuni/awesome-rayfin --template-name \"Universal App\"",
+    "stacks": [
+      "React",
+      "Vite",
+      "Tailwind",
+      "Graphein"
+    ],
+    "capabilities": [
+      "Authentication",
+      "Data API",
+      "Static hosting",
+      "Microsoft Fabric"
+    ],
+    "services": {
+      "auth": true,
+      "data": true,
+      "storage": false,
+      "staticHosting": true
+    },
+    "experimental": false
+  }
+]

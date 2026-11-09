@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Discover community-built Rayfin and Microsoft Fabric application templates."
+    />
+    <meta name="theme-color" content="#07172d" />
+    <meta property="og:title" content="Awesome Rayfin — Template Gallery" />
+    <meta
+      property="og:description"
+      content="Start faster with production-ready Rayfin and Microsoft Fabric templates."
+    />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/gallery-mark.svg" type="image/svg+xml" />
+    <script>
+      (() => {
+        let stored = null;
+        try {
+          stored = localStorage.getItem('awesome-rayfin-theme');
+        } catch (error) {
+          console.warn('Unable to read the saved theme preference.', error);
+        }
+        const theme =
+          stored === 'light' || stored === 'dark'
+            ? stored
+            : matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      })();
+    </script>
+    <title>Awesome Rayfin — Template Gallery</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
