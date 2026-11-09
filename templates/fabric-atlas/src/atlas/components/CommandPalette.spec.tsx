@@ -320,7 +320,9 @@ describe("CommandPalette OneLake Catalog Search", () => {
     const { input } = renderWithCatalog({ availability: "available", search });
     fireEvent.change(input, { target: { value: "report" } });
     fireEvent.click(await screen.findByRole("button", { name: "Search catalog" }));
-    expect(await screen.findByRole("status", { name: "OneLake catalog status" })).toHaveTextContent("more available");
+    await waitFor(() =>
+      expect(screen.getByRole("status", { name: "OneLake catalog status" })).toHaveTextContent("more available"),
+    );
 
     fireEvent.click(await screen.findByRole("button", { name: "Load more" }));
 
