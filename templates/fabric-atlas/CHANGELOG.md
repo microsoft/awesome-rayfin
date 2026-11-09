@@ -8,6 +8,20 @@ release tag was published.
 
 ## [Unreleased]
 
+## [2.9.1] - 2026-11-09
+
+### Added
+
+- Atlas Scout example query for the Fabric connections a person owns and the synchronized items that use them (37 examples).
+
+### Fixed
+
+- Atlas Scout no longer answers that a person owns no connection. Fabric returns connection owners as Entra object IDs without names, so Scout searched the name in the connection columns, including the synchronizer's `writerEmail`. It now resolves owners through `Principals`, as the Connections page and the departure pack do.
+
+### Upgrade notes
+
+- Run `npx rayfin up`, then run the Atlas Scout provisioning script again to publish the new instructions and example.
+
 ## [2.9.0] - 2026-11-09
 
 ### Added
@@ -1048,7 +1062,8 @@ release tag was published.
 - Centralized lineage, object and status colors in the shared theme.
 - Improved keyboard focus, semantic control states, scrollbars and reduced-motion behavior.
 
-[Unreleased]: https://github.com/fredgis/FabricAtlas/compare/v2.9.0...HEAD
+[Unreleased]: https://github.com/fredgis/FabricAtlas/compare/v2.9.1...HEAD
+[2.9.1]: https://github.com/fredgis/FabricAtlas/releases/tag/v2.9.1
 [2.9.0]: https://github.com/fredgis/FabricAtlas/releases/tag/v2.9.0
 [2.8.2]: https://github.com/fredgis/FabricAtlas/releases/tag/v2.8.2
 [2.8.1]: https://github.com/fredgis/FabricAtlas/releases/tag/v2.8.1

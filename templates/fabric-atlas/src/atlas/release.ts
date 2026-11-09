@@ -16,7 +16,7 @@ export const REPOSITORY_URL =
 
 export const APP_VERSION =
   (import.meta.env.VITE_APP_VERSION as string | undefined) ??
-  "2.9.0";
+  "2.9.1";
 
 export const BUILD_COMMIT =
   (import.meta.env.VITE_APP_BUILD_COMMIT as string | undefined) ?? "development";
@@ -56,6 +56,25 @@ export function sameDeploymentGeneration(
 }
 
 export const RELEASES: AtlasRelease[] = [
+  {
+    version: "2.9.1",
+    date: "2026-11-09",
+    title: "Scout knows connection owners",
+    sections: [
+      {
+        title: "Added",
+        items: [
+          "Atlas Scout example query for the Fabric connections a person owns and the synchronized items that use them.",
+        ],
+      },
+      {
+        title: "Fixed",
+        items: [
+          "Atlas Scout no longer answers that a person owns no connection: it resolves connection owners, which Fabric returns as IDs, through the principals of the synchronized workspaces, like the Connections page and the departure pack.",
+        ],
+      },
+    ],
+  },
   {
     version: "2.9.0",
     date: "2026-11-09",

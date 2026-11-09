@@ -16,12 +16,12 @@ Fabric Atlas governance store. All tables are in schema dbo. Each sync of a Fabr
 - Principals: principalId, displayName, email, kind ('user','servicePrincipal','group'), [external] (1 = guest), workspaceRole (Admin, Member, Contributor, Viewer).
 - JobRuns: itemFabricId, itemName, jobType, status ('completed','failed'), startedAt, durationSec, message.
 - OperationalIncidents (failed runs): itemFabricId, itemName, itemType, jobType, occurredAt, firstObservedAt, durationSec.
-- Item names are FabricItems.displayName (resolve with LIKE '%name%'); ConfigEntries labels are objects inside items.
+- Item names: FabricItems.displayName LIKE '%name%'; ConfigEntries labels are objects inside items.
 - ConfigEntries: item configuration facts (itemFabricId, section, label, value) AND the full object inventory (tables, views, columns, measures, DAX dependencies, model relationships, object-level lineage, tenant governance evidence). See 'Object inventory' below.
 - SyncRuns: status, startedAt, finishedAt, itemsSynced, failureMessage per sync.
 - ExternalDatasets (state 'linked' via fabricItemId or 'to_link') / ExternalLineageEdges (sourceDatasetId -> targetDatasetId, jobName, lastRunState): OpenLineage imports, not snapshot based.
 - GovernancePolicies, GovernanceExceptions (expiresAt), FindingAcks, AccessReviews / AccessReviewEvents, Comments: user decisions, not snapshot based.
-- Tenant connections, no snapshot (current = latest ConnectionInventories with status 'complete'; join inventoryId): ConnectionEntries (connectionId, displayName, connectorType, connectivityType, path, credentialType, rolesStatus, ownerCount, pendingOwnerCount, lastCredentialUsedAt), ConnectionRoleAssignments (connectionId, principalId, principalType, role 'Owner','PendingOwner','User'). Owner checks: rolesStatus = 'complete' only ('personal' = no roles by design).
+- Tenant connections, no snapshot (current = latest ConnectionInventories with status 'complete'; join inventoryId): ConnectionEntries (connectionId, displayName, connectorType, connectivityType, path, credentialType, rolesStatus, ownerCount, pendingOwnerCount, lastCredentialUsedAt), ConnectionRoleAssignments (connectionId, principalId, principalType, role 'Owner','PendingOwner','User'). Owner checks: rolesStatus = 'complete' only ('personal' = no roles by design). principalName is mostly NULL: match people via principalId = Principals.principalId (LIKE displayName/email). writerEmail = synchronizer.
 
 # Object inventory (ConfigEntries)
 Readable sections (plain text, one fact per row): 'General', 'Tables' (label = object name, value = object type), 'Report pages' (label = page name), 'Data agent sources' (label = 'published:<source>' or 'draft:<source>', value = 'type | item GUID'), 'Data agent selected elements', 'Notebook dependencies' (label 'Default lakehouse' etc.), 'Source provenance' (shortcuts, mirroring; value 'connection=<connectionId>; consumer=<item GUID>'), 'SQL Primary keys', 'SQL Foreign keys' (value 'table(col) -> table(col)'), 'Model' (storage mode, provider), 'OneLake', 'SQL endpoint', 'KQL database', 'Ontology entity types', 'Graph node types', 'KQL stored functions', and similar.
@@ -59,7 +59,7 @@ SELECT TOP 20 l.displayName AS [Workspace], i.displayName AS [Item], i.itemType 
 FROM dbo.FabricItems i JOIN l ON i.workspace_id=l.fabricId AND i.snapshotId=l.snapshotId AND l.rn=1
 WHERE i.itemType IN ('SemanticModel','Report') AND i.endorsementMetadataAvailable=1 AND COALESCE(i.endorsement,'none') NOT IN ('promoted','certified')
 ORDER BY 5 DESC, 6 DESC
-Drop the endorsement or itemType filter when not asked.
+Drop the filters that were not asked.
 
 # Item profile SQL template (one item: one query)
 WITH l AS (SELECT fabricId, displayName, snapshotId, ROW_NUMBER() OVER (PARTITION BY fabricId ORDER BY syncedAt DESC) rn FROM dbo.Workspaces),
@@ -74,14 +74,14 @@ NULL owner/label = not set. Access = item grants.
 
 # Conventions
 - "Stale" = item with itemUpdatedAt and lastRefresh older than 90 days.
-- "External user / guest" = Principals.[external] = 1 (external is a reserved word: ALWAYS bracket it). Items shared externally: AccessGrants g JOIN Principals p ON p.workspace_id=g.workspace_id AND p.snapshotId=g.snapshotId AND p.principalId=g.principalRef LEFT JOIN FabricItems i ON i.fabricId=g.itemFabricId (same snapshot), latest snapshots, WHERE p.[external]=1; also read $.externalShares in '__governance_evidence__'. No rows = no external access found: say so with the number of principals checked.
+- "External user / guest" = Principals.[external] = 1 (external is a reserved word: ALWAYS bracket it). Items shared externally: AccessGrants g JOIN Principals p ON p.workspace_id=g.workspace_id AND p.snapshotId=g.snapshotId AND p.principalId=g.principalRef LEFT JOIN FabricItems i ON i.fabricId=g.itemFabricId (same snapshot), latest snapshots, WHERE p.[external]=1; also read $.externalShares in '__governance_evidence__'.
 - Domain names: join Workspaces.fabricDomainId to $.domains.entries[].id of '__governance_evidence__'.
 
 # SQL dialect rules
 - Synapse SQL: recursive CTEs are NOT supported.
 - Multi-hop lineage: chain non recursive CTEs hop1..hop4 (hop2 = edges whose sourceFabricId IN (SELECT targetFabricId FROM hop1)), then UNION ALL; swap source and target for upstream.
-- Lineage can have cycles: deduplicate edges with GROUP BY.
+- Lineage can have cycles: GROUP BY edges.
 - LineageEdges.broken is a bit: use MAX(CAST(broken AS int)).
 - Never use reserved words (edge, node, table, object, key) as aliases.
-- Display names can repeat (Lakehouse / SQLEndpoint): return the item type too.
+- Display names repeat (Lakehouse / SQLEndpoint): return the item type.
 - OPENJSON, JSON_VALUE, JSON_QUERY, ISJSON and STRING_AGG ... WITHIN GROUP are supported. JSON_VALUE on a non-object value fails: only apply '$.status.status' to object blocks.

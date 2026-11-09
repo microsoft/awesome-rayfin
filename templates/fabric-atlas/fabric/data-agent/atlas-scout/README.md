@@ -27,6 +27,8 @@ Every table of the Atlas SQL database is attached to the agent:
 - **Connections:** the tenant connection inventory (`ConnectionInventories`,
   `ConnectionEntries`, `ConnectionRoleAssignments`), joined to the items that
   use a connection through the `Source provenance` rows of `ConfigEntries`.
+  Fabric returns owners as Entra object IDs without names, so the agent finds
+  the connections of a person by joining `principalId` to `Principals`.
 - **Object inventory:** the JSON documents synchronized in `ConfigEntries`
   (tables, columns, semantic model measures and their DAX dependencies,
   relationships, ontology bindings and object-level lineage edges).
