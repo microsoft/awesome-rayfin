@@ -1,0 +1,79 @@
+/// dwg contract: balance sheet accounts (row type tokens 'Account stock', 'Formula stock').
+table 'BS Account'
+
+	column AccountID
+		dataType: string
+		isKey
+		summarizeBy: none
+		sourceColumn: AccountID
+
+	column ParentID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ParentID
+
+	column Account
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Account
+		sortByColumn: SortOrder
+
+	column L1
+		dataType: string
+		summarizeBy: none
+		sourceColumn: L1
+		sortByColumn: 'L1 Sort'
+
+	column 'L1 Sort'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: L1_Sort
+
+	column L2
+		dataType: string
+		summarizeBy: none
+		sourceColumn: L2
+		sortByColumn: SortOrder
+
+	column SortOrder
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: SortOrder
+
+	column RowType
+		dataType: string
+		summarizeBy: none
+		sourceColumn: RowType
+
+	column FormulaDef
+		dataType: string
+		summarizeBy: none
+		sourceColumn: FormulaDef
+
+	column SignConvention
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: SignConvention
+
+	column DisplayInvert
+		dataType: string
+		summarizeBy: none
+		sourceColumn: DisplayInvert
+
+	column VarianceInvert
+		dataType: string
+		summarizeBy: none
+		sourceColumn: VarianceInvert
+
+	column Comment
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Comment
+
+	partition 'BS Account' = entity
+		mode: directLake
+		source
+			entityName: fin_bs_account
+			expressionSource: DatabaseQuery

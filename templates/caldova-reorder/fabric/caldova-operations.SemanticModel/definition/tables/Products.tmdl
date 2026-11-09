@@ -1,0 +1,34 @@
+table Products
+
+	column sku
+		dataType: string
+		isKey
+		summarizeBy: none
+		sourceColumn: sku
+
+	column name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: name
+
+	column category
+		dataType: string
+		summarizeBy: none
+		sourceColumn: category
+
+	column unit_price
+		dataType: double
+		formatString: "$#,0.00"
+		summarizeBy: none
+		sourceColumn: unit_price
+
+	column pack_size
+		dataType: string
+		summarizeBy: none
+		sourceColumn: pack_size
+
+	partition Products = entity
+		mode: directLake
+		source
+			entityName: products
+			expressionSource: DatabaseQuery

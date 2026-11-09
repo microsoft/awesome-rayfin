@@ -1,0 +1,36 @@
+/// Synthetic (generate_operations.py, seeded) — badged in the app.
+table Vehicles
+
+	column vehicleId
+		dataType: string
+		isKey
+		summarizeBy: none
+		sourceColumn: vehicleId
+
+	column type
+		dataType: string
+		summarizeBy: none
+		sourceColumn: type
+
+	column vehicleClass
+		dataType: string
+		summarizeBy: none
+		sourceColumn: vehicleClass
+
+	column rangeKm
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: rangeKm
+
+	/// ⚠️ van figures for both classes; CO2 is out of v1.
+	column gCo2PerKm
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: gCo2PerKm
+
+
+	partition Vehicles = entity
+		mode: directLake
+		source
+			entityName: vehicle
+			expressionSource: DatabaseQuery

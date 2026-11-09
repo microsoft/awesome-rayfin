@@ -1,0 +1,34 @@
+# What does NOT go into the gallery template.
+
+# ---------------------------------------------------------------------------------------------
+# Downloaded and derived geodata.
+#
+# Rebuilt by `npm run data:build` from the open sources listed in NOTICE.md. Hundreds of MB of
+# survey tiles and mesh nodes, far too large to ship inside a template.
+# ---------------------------------------------------------------------------------------------
+data/
+cache/
+public/terrain/
+logs/
+
+# ---------------------------------------------------------------------------------------------
+# One tenant's deployment state. A template that carries these points every clone at one item.
+# ---------------------------------------------------------------------------------------------
+rayfin/.deployments.json
+rayfin/.env
+rayfin/.env*
+rayfin/.temp/
+.env
+.env.local*
+tools/fabric/target.json
+
+# ---------------------------------------------------------------------------------------------
+# Build and test output
+# ---------------------------------------------------------------------------------------------
+dist/
+fabric-dist/
+test-results/
+playwright-report/
+node_modules/
+__pycache__/
+*.tsbuildinfo

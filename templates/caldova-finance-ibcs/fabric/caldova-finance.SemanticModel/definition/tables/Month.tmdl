@@ -1,0 +1,35 @@
+table Month
+
+	column Month
+		dataType: string
+		isKey
+		summarizeBy: none
+		sourceColumn: Month
+
+	column Year
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: Year
+
+	column MonthNo
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: MonthNo
+
+	column MonthName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: MonthName
+		sortByColumn: MonthNo
+
+	/// True for months with actuals (up to the last closed month).
+	column Closed
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: Closed
+
+	partition Month = entity
+		mode: directLake
+		source
+			entityName: fin_dim_month
+			expressionSource: DatabaseQuery

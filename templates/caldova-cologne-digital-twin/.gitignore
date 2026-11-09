@@ -1,0 +1,40 @@
+# Node / build
+node_modules/
+dist/
+fabric-dist/
+*.tsbuildinfo
+
+# Rayfin / Fabric
+rayfin/.env
+rayfin/.env*
+rayfin/.deployments.json
+# Build scratch from `rayfin up`: the compiled entity classes and the generated Data API Builder
+# config. Regenerated on every deploy from rayfin/data/, so committing it would just go stale.
+rayfin/.temp/
+.env
+.env.local*
+
+# Your own Fabric target (workspace and item ids), never committed. Start from target.example.json.
+tools/fabric/target.json
+
+# Geodata caches and generated datasets: large, regenerable, never committed.
+# ANCHORED with a leading slash on purpose. Plain `data/` matches a directory called `data` at ANY
+# depth and would swallow `tools/data/` and `public/data/`.
+/data/
+/public/terrain/
+# Mesh caches (SLPK directory, raw nodes): large, regenerable
+/cache/
+logs/
+
+# NOTE: /public/data/ is deliberately NOT ignored. The two baked snapshots in it
+# (public/data/reorder/snapshot.json, public/data/finanzen/snapshot.json) ship with the template and
+# are the default data source of the Reorder and Finance tabs.
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Test output
+test-results/
+playwright-report/

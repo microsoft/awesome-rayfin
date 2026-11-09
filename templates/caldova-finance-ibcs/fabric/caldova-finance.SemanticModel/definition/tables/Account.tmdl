@@ -1,0 +1,56 @@
+/// One tree for all three statements. P&L values are signed (revenue +, cost -); balance sheet and cash flow
+/// subtotals add their children with Sign. GoodDirection drives the IBCS variance colour (up, down, none).
+table Account
+
+	column AccountID
+		dataType: string
+		isKey
+		summarizeBy: none
+		sourceColumn: AccountID
+
+	column Statement
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Statement
+
+	column ParentID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ParentID
+
+	column Name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Name
+		sortByColumn: Sort
+
+	column RowType
+		dataType: string
+		summarizeBy: none
+		sourceColumn: RowType
+
+	column Sign
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: Sign
+
+	column Formula
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Formula
+
+	column GoodDirection
+		dataType: string
+		summarizeBy: none
+		sourceColumn: GoodDirection
+
+	column Sort
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: Sort
+
+	partition Account = entity
+		mode: directLake
+		source
+			entityName: fin_dim_account
+			expressionSource: DatabaseQuery

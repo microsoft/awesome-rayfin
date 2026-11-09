@@ -1,0 +1,8 @@
+EVALUATE
+SELECTCOLUMNS (
+    'dim-product',
+    "product", 'dim-product'[Product],
+    "category", 'dim-product'[Category],
+    "line", 'dim-product'[ProductLine]
+)
+ORDER BY [category], [product]

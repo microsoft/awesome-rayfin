@@ -1,0 +1,39 @@
+table Calender
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: Date
+
+	column Year
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: Year
+
+	column Month
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: Month
+
+	column Quarter
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: Quarter
+
+	column 'Month Name'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Month_Name
+
+	column 'Year Month Number'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: Year_Month_Number
+
+	partition Calender = entity
+		mode: directLake
+		source
+			entityName: fin_calender
+			expressionSource: DatabaseQuery

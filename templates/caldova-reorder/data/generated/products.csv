@@ -1,0 +1,61 @@
+sku,name,category,unit_price,pack_size
+PAIN-001,RapidRelief Ibuprofen 200 mg,Pain relief,8.49,24 ct
+PAIN-002,RapidRelief Ibuprofen 200 mg,Pain relief,13.99,50 ct
+PAIN-003,CaldoPain Acetaminophen 500 mg,Pain relief,7.99,24 ct
+PAIN-004,CaldoPain Acetaminophen 500 mg,Pain relief,12.49,50 ct
+PAIN-005,JointEase Naproxen Sodium,Pain relief,10.99,40 ct
+PAIN-006,HeadClear Migraine Relief Caplets,Pain relief,11.49,20 ct
+PAIN-007,FlexiMuscle Pain Relief Gel,Pain relief,9.79,100 ml
+PAIN-008,WarmPatch Heat Therapy,Pain relief,6.99,6 ct
+PAIN-009,RapidRelief Child Pain Suspension,Pain relief,7.49,120 ml
+PAIN-010,MuscleReset Epsom Soak,Pain relief,5.99,1 kg
+COLD-001,ClearBreathe Daytime Cold and Flu,Cold & flu,9.49,24 ct
+COLD-002,ClearBreathe Nighttime Cold and Flu,Cold & flu,9.99,24 ct
+COLD-003,ClearBreathe Cough Syrup,Cold & flu,8.79,180 ml
+COLD-004,SinusReset Decongestant,Cold & flu,10.49,18 ct
+COLD-005,ThroatCalm Lozenges Honey Lemon,Cold & flu,4.99,20 ct
+COLD-006,VapourEase Chest Rub,Cold & flu,6.49,100 g
+COLD-007,ThermoCare Digital Thermometer,Cold & flu,12.99,1 ct
+COLD-008,Kids Cough and Fever Relief,Cold & flu,8.99,120 ml
+COLD-009,ZincBoost Cold Defense,Cold & flu,7.99,30 ct
+COLD-010,SalineMist Nasal Spray,Cold & flu,5.49,90 ml
+VIT-001,DailyCore Multivitamin Adults,Vitamins,12.99,60 ct
+VIT-002,DailyCore Multivitamin Women,Vitamins,13.49,60 ct
+VIT-003,DailyCore Multivitamin Men,Vitamins,13.49,60 ct
+VIT-004,SunnyD3 Vitamin D Gummies,Vitamins,11.99,90 ct
+VIT-005,ImmunoC Vitamin C 1000 mg,Vitamins,9.99,100 ct
+VIT-006,Magnesium Restore Tablets,Vitamins,10.49,80 ct
+VIT-007,Kids Multivitamin Gummies,Vitamins,10.99,60 ct
+VIT-008,Iron Balance Capsules,Vitamins,9.49,45 ct
+VIT-009,OmegaPlus Fish Oil,Vitamins,14.99,90 ct
+VIT-010,B12 Energy Melt Tabs,Vitamins,8.99,60 ct
+ALLERGY-001,AllerEase 24h Tablets,Allergy,14.49,30 ct
+ALLERGY-002,AllerEase Fast Melt,Allergy,13.99,24 ct
+ALLERGY-003,SinusShield Nasal Spray,Allergy,12.49,120 sprays
+ALLERGY-004,EyeCalm Allergy Drops,Allergy,9.79,15 ml
+ALLERGY-005,Kids AllerEase Syrup,Allergy,10.49,120 ml
+ALLERGY-006,AirPure Non Drowsy Caps,Allergy,11.99,20 ct
+ALLERGY-007,AllerEase Extra Strength,Allergy,15.49,30 ct
+ALLERGY-008,Saline Rinse Kit,Allergy,16.99,1 ct
+ALLERGY-009,ItchCalm Anti Itch Cream,Allergy,7.99,45 g
+ALLERGY-010,HiveGuard Antihistamine,Allergy,10.99,24 ct
+DIGEST-001,DigestWell Antacid Chews,Digestive,6.49,72 ct
+DIGEST-002,DigestWell Acid Relief,Digestive,8.99,28 ct
+DIGEST-003,ProBio Balance Capsules,Digestive,15.99,30 ct
+DIGEST-004,GentleFiber Gummies,Digestive,11.49,60 ct
+DIGEST-005,StomachSettle Ginger Chews,Digestive,5.99,40 ct
+DIGEST-006,DigestWell Laxative Tablets,Digestive,7.49,24 ct
+DIGEST-007,HydratePlus Electrolyte Mix,Digestive,9.99,10 ct
+DIGEST-008,GasRelief Softgels,Digestive,8.49,30 ct
+DIGEST-009,Kids Tummy Relief,Digestive,7.99,120 ml
+DIGEST-010,NauseaCalm Motion Bands,Digestive,10.99,2 ct
+FIRST-001,CleanSeal Bandages Assorted,First aid,5.49,80 ct
+FIRST-002,FlexGuard Waterproof Bandages,First aid,5.99,60 ct
+FIRST-003,QuickHeal Gauze Pads,First aid,4.99,25 ct
+FIRST-004,SkinSafe Antiseptic Spray,First aid,6.99,150 ml
+FIRST-005,BurnCool Gel,First aid,7.49,50 g
+FIRST-006,FirstResponse Antibiotic Ointment,First aid,6.79,30 g
+FIRST-007,FlexWrap Elastic Bandage,First aid,4.49,1 ct
+FIRST-008,BlisterShield Cushions,First aid,5.29,12 ct
+FIRST-009,SteriClean Wipes,First aid,4.79,40 ct
+FIRST-010,RescueTape Medical Tape,First aid,3.99,1 ct

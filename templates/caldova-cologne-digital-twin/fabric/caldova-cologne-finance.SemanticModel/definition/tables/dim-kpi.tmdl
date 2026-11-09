@@ -1,0 +1,38 @@
+table 'dim-kpi'
+
+	column KPI
+		dataType: string
+		isKey
+		summarizeBy: none
+		sourceColumn: KPI
+
+	column KPI_Group
+		dataType: string
+		summarizeBy: none
+		sourceColumn: KPI_Group
+
+	column Unit
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Unit
+
+	column Format
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Format
+
+	column HigherIsBetter
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: HigherIsBetter
+
+	column SortOrder
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: SortOrder
+
+	partition 'dim-kpi' = entity
+		mode: directLake
+		source
+			entityName: fin_dim_kpi
+			expressionSource: DatabaseQuery

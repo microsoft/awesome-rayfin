@@ -1,0 +1,12 @@
+{
+  "$comment": "Copy to target.json (git-ignored) and fill in. The ids are written by the tools as they create the items.",
+  "tenantId": "",
+  "workspaceId": "",
+  "lakehouseName": "caldova_finance",
+  "lakehouseId": "",
+  "modelName": "caldova-finance",
+  "modelId": "",
+  "reportName": "Caldova Finance (Power BI)",
+  "reportId": "",
+  "appItemId": ""
+}

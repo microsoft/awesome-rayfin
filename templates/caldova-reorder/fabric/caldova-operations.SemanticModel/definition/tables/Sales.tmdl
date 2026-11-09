@@ -1,0 +1,35 @@
+table Sales
+
+	column date
+		dataType: dateTime
+		formatString: Short Date
+		summarizeBy: none
+		sourceColumn: date
+
+	column store_id
+		dataType: string
+		summarizeBy: none
+		sourceColumn: store_id
+
+	column sku
+		dataType: string
+		summarizeBy: none
+		sourceColumn: sku
+
+	column units_sold
+		dataType: int64
+		formatString: #,0
+		summarizeBy: sum
+		sourceColumn: units_sold
+
+	column revenue
+		dataType: double
+		formatString: "$#,0.00"
+		summarizeBy: sum
+		sourceColumn: revenue
+
+	partition Sales = entity
+		mode: directLake
+		source
+			entityName: sales
+			expressionSource: DatabaseQuery

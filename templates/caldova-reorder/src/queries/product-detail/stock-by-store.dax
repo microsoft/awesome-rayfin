@@ -1,0 +1,16 @@
+// Stock for one product across every store the manager can see, over the last
+// week, so a reorder quantity can be judged against the whole region rather
+// than one shelf.
+//
+// [Estimated Stock] is a reconstruction, not a ledger — see the measure's own
+// description in the model.
+EVALUATE
+VAR Anchor = [Latest Sales Date]
+VAR Days = FILTER(VALUES(Sales[date]), Sales[date] > Anchor - 7)
+RETURN
+ADDCOLUMNS(
+    CROSSJOIN(SUMMARIZE(Inventory, Stores[store_id], Stores[name]), Days),
+    "Stock", CALCULATE([Estimated Stock], Products[sku] = {{sku}}),
+    "Cover", CALCULATE([Estimated Days of Stock], Products[sku] = {{sku}})
+)
+ORDER BY Stores[name] ASC, Sales[date] ASC

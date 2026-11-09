@@ -1,0 +1,45 @@
+// Abfragen der Seite „Income statement“ ohne Querfilter, zum Prüfen in der DAX-Abfrageansicht.
+// erzeugt von `dwg app page`, nicht von Hand ändern.
+
+// Kachel t04b (pnl)
+EVALUATE
+    ADDMISSINGITEMS(
+        'P&L Account'[AccountID],
+        'P&L Account'[Account],
+        'P&L Account'[L1],
+        'P&L Account'[L2],
+        'P&L Account'[SortOrder],
+        'P&L Account'[RowType],
+        'P&L Account'[FormulaDef],
+        'P&L Account'[SignConvention],
+        'P&L Account'[DisplayInvert],
+        'P&L Account'[VarianceInvert],
+        'P&L Account'[Comment],
+    SUMMARIZECOLUMNS(
+        'P&L Account'[AccountID],
+        'P&L Account'[Account],
+        'P&L Account'[L1],
+        'P&L Account'[L2],
+        'P&L Account'[SortOrder],
+        'P&L Account'[RowType],
+        'P&L Account'[FormulaDef],
+        'P&L Account'[SignConvention],
+        'P&L Account'[DisplayInvert],
+        'P&L Account'[VarianceInvert],
+        'P&L Account'[Comment],
+        "ac", 'P&L Fact'[P&L AC],
+        "pl", 'P&L Fact'[P&L PL to date]
+    ),
+        'P&L Account'[AccountID],
+        'P&L Account'[Account],
+        'P&L Account'[L1],
+        'P&L Account'[L2],
+        'P&L Account'[SortOrder],
+        'P&L Account'[RowType],
+        'P&L Account'[FormulaDef],
+        'P&L Account'[SignConvention],
+        'P&L Account'[DisplayInvert],
+        'P&L Account'[VarianceInvert],
+        'P&L Account'[Comment]
+    )
+ORDER BY 'P&L Account'[AccountID], 'P&L Account'[Account], 'P&L Account'[L1], 'P&L Account'[L2], 'P&L Account'[SortOrder], 'P&L Account'[RowType], 'P&L Account'[FormulaDef], 'P&L Account'[SignConvention], 'P&L Account'[DisplayInvert], 'P&L Account'[VarianceInvert], 'P&L Account'[Comment]

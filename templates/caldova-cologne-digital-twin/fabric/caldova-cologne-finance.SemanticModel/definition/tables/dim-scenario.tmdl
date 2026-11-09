@@ -1,0 +1,38 @@
+table 'dim-scenario'
+
+	column Scenario
+		dataType: string
+		isKey
+		summarizeBy: none
+		sourceColumn: Scenario
+
+	column Scenario_Name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Scenario_Name
+
+	column Scenario_Short
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Scenario_Short
+
+	column IBCS
+		dataType: string
+		summarizeBy: none
+		sourceColumn: IBCS
+
+	column Type
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Type
+
+	column SortOrder
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: SortOrder
+
+	partition 'dim-scenario' = entity
+		mode: directLake
+		source
+			entityName: fin_dim_scenario
+			expressionSource: DatabaseQuery

@@ -1,0 +1,54 @@
+/// Synthetic (generate_operations.py, seeded) — badged in the app.
+table Drops
+
+	column dropId
+		dataType: string
+		isKey
+		summarizeBy: none
+		sourceColumn: dropId
+
+	column tourId
+		dataType: string
+		summarizeBy: none
+		sourceColumn: tourId
+
+	column pharmacyId
+		dataType: string
+		summarizeBy: none
+		sourceColumn: pharmacyId
+
+	column wave
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: wave
+
+	column sequence
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: sequence
+
+	column plannedSlot
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: plannedSlot
+
+	column lines
+		dataType: int64
+		formatString: #,0
+		summarizeBy: sum
+		sourceColumn: lines
+
+	column onTimeInFull
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: onTimeInFull
+
+	/// Pharmacy stops (one per delivery).
+	measure 'Drops' = COUNTROWS ( Drops )
+		formatString: #,0
+
+	partition Drops = entity
+		mode: directLake
+		source
+			entityName: drop
+			expressionSource: DatabaseQuery

@@ -1,0 +1,17 @@
+// The governed record of every reorder, newest first.
+EVALUATE
+TOPN(
+    10,
+    SELECTCOLUMNS(
+        RestockRequests,
+        "RequestId", RestockRequests[request_id],
+        "Store", RELATED(Stores[name]),
+        "Product", RELATED(Products[name]),
+        "Units", RestockRequests[qty],
+        "RequestedBy", RestockRequests[requested_by],
+        "RequestedAt", RestockRequests[requested_at],
+        "Status", RestockRequests[status]
+    ),
+    [RequestedAt], DESC
+)
+ORDER BY [RequestedAt] DESC

@@ -1,0 +1,49 @@
+/// KPI cube of Caldova Cologne: district (Country) × category (Product) × month × KPI × scenario. Derived from the twin; synthetic where the twin has no data (tools/data/generate_finance.py).
+table 'Sales Demo'
+
+	column Date
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: Date
+
+	column Scenario
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Scenario
+
+	column Product
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Product
+
+	column Category
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Category
+
+	column Country
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Country
+
+	column Region
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Region
+
+	column KPI
+		dataType: string
+		summarizeBy: none
+		sourceColumn: KPI
+
+	column Value
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: Value
+
+	partition 'Sales Demo' = entity
+		mode: directLake
+		source
+			entityName: fin_sales
+			expressionSource: DatabaseQuery

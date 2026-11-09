@@ -1,0 +1,41 @@
+/// Synthetic (generate_operations.py, seeded) — badged in the app.
+table TimeSlots
+
+	column slotId
+		dataType: int64
+		isKey
+		summarizeBy: none
+		sourceColumn: slotId
+
+	column minute
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: minute
+
+	column label
+		dataType: string
+		summarizeBy: none
+		sourceColumn: label
+
+	column hour
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: hour
+
+	column shift
+		dataType: string
+		summarizeBy: none
+		sourceColumn: shift
+
+	column lines
+		dataType: int64
+		formatString: #,0
+		summarizeBy: sum
+		sourceColumn: lines
+
+
+	partition TimeSlots = entity
+		mode: directLake
+		source
+			entityName: time_slot
+			expressionSource: DatabaseQuery

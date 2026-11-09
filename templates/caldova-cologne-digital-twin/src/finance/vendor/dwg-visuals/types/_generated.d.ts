@@ -1,0 +1,98 @@
+export declare const ROLES: {
+    readonly chartkitchen: {
+        readonly kind: {
+            readonly category: "Grouping";
+            readonly actual: "Measure";
+            readonly previousYear: "Measure";
+            readonly plan: "Measure";
+            readonly forecast: "Measure";
+            readonly benchmark: "Measure";
+            readonly prevForecast: "Measure";
+            readonly lineMeasure: "Measure";
+            readonly xValue: "Measure";
+            readonly xPrevious: "Measure";
+            readonly bubbleSize: "Measure";
+            readonly series: "Grouping";
+            readonly colgroup: "Grouping";
+            readonly filterInfo: "Measure";
+            readonly comments: "Measure";
+            readonly multiples: "Grouping";
+            readonly rowType: "Grouping";
+            readonly trend: "Grouping";
+            readonly fcFlag: "Grouping";
+        };
+        readonly order: readonly ["category", "multiples", "series", "rowType", "fcFlag", "colgroup", "trend", "actual", "previousYear", "plan", "forecast", "prevForecast", "benchmark", "lineMeasure", "xValue", "xPrevious", "bubbleSize", "comments", "filterInfo"];
+        readonly max: {
+            readonly category: 1;
+            readonly multiples: 1;
+            readonly series: 1;
+            readonly lineMeasure: 1;
+            readonly xValue: 1;
+            readonly xPrevious: 1;
+            readonly bubbleSize: 1;
+            readonly rowType: 1;
+            readonly fcFlag: 1;
+            readonly trend: 1;
+            readonly actual: 1;
+            readonly previousYear: 1;
+            readonly plan: 1;
+            readonly forecast: 1;
+            readonly prevForecast: 1;
+            readonly benchmark: 1;
+            readonly comments: 1;
+            readonly filterInfo: 1;
+            readonly colgroup: 2;
+        };
+    };
+    readonly pnl: {
+        readonly kind: {
+            readonly levels: "Grouping";
+            readonly account: "Grouping";
+            readonly accountName: "Grouping";
+            readonly parent: "Grouping";
+            readonly ac: "Measure";
+            readonly py: "Measure";
+            readonly pl: "Measure";
+            readonly fc: "Measure";
+            readonly period: "Grouping";
+            readonly colCategory: "Grouping";
+            readonly rowType: "Grouping";
+            readonly formulaDef: "Grouping";
+            readonly signConvention: "Grouping";
+            readonly displayInvert: "Grouping";
+            readonly varianceInvert: "Grouping";
+            readonly sortOrder: "Grouping";
+            readonly comment: "Grouping";
+            readonly filterInfo: "Measure";
+            readonly fcFy: "Measure";
+            readonly plFy: "Measure";
+        };
+        readonly order: readonly ["account", "accountName", "levels", "parent", "sortOrder", "rowType", "formulaDef", "signConvention", "displayInvert", "varianceInvert", "period", "comment", "colCategory", "ac", "py", "pl", "fc", "fcFy", "plFy", "filterInfo"];
+        readonly max: {
+            readonly account: 1;
+            readonly accountName: 1;
+            readonly levels: 8;
+            readonly parent: 1;
+            readonly sortOrder: 1;
+            readonly rowType: 1;
+            readonly formulaDef: 1;
+            readonly signConvention: 1;
+            readonly displayInvert: 1;
+            readonly varianceInvert: 1;
+            readonly ac: 1;
+            readonly py: 1;
+            readonly pl: 1;
+            readonly fc: 1;
+            readonly period: 1;
+            readonly comment: 1;
+            readonly colCategory: 1;
+            readonly fcFy: 1;
+            readonly plFy: 1;
+            readonly filterInfo: 1;
+        };
+    };
+};
+export declare const VERSIONS: {
+    readonly chartkitchen: "1.52.2.0";
+    readonly pnl: "1.5.2.0";
+};

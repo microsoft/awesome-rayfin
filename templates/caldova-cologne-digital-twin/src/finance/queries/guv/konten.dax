@@ -1,0 +1,18 @@
+// Account tree of the P&L including formula, KPI and separator lines.
+EVALUATE
+SELECTCOLUMNS (
+    'dim-account',
+    "id", 'dim-account'[AccountID],
+    "parent", 'dim-account'[ParentAccountID],
+    "name", 'dim-account'[Name],
+    "l1", 'dim-account'[L1],
+    "l2", 'dim-account'[L2],
+    "l3", 'dim-account'[L3],
+    "rowType", 'dim-account'[RowType],
+    "formula", 'dim-account'[FormulaDef],
+    "sign", 'dim-account'[SignConvention],
+    "displayInvert", 'dim-account'[DisplayInvert],
+    "varianceInvert", 'dim-account'[VarianceInvert],
+    "sort", 'dim-account'[SortOrder]
+)
+ORDER BY [sort]

@@ -1,0 +1,155 @@
+/*
+  The Finance Cockpit's design (Michael Tenner, DatenWG), scoped to the Finance tab (SOURCE.md).
+
+  ⚠️ ONE TOKEN NAME SET, TWO VALUE SETS (review finding 1). Tailwind v4 emits every @theme on :root, and the
+  cockpit's global.css used the same names as the reorder tab's tokens (primary, card, border, muted, ring,
+  font-base, radius …) with other values. So:
+    · names both systems share stay declared ONCE (src/reorder/reorder.css); the cockpit's VALUES are a plain
+      override under [data-tab='finance'] below (utilities compile to var(--color-…), resolved at run time),
+    · names only the cockpit uses (good, bad, ac, py, pl, fc, sim, warm) are declared here in @theme, so their
+      utilities exist; they collide with nothing,
+    · the cockpit's global rules (* border colour, svg text font, .tile, .hatch …) apply inside the tab only,
+    · no dark mode (decision 2026-10-20), palette fixed to IBCS green/red (data-palette on the tab root).
+  Spacing, text and leading scales are identical in both systems and need no override.
+*/
+
+@theme {
+  --color-warm: #c25a2d;
+  --color-warm-foreground: #ffffff;
+  --color-good: #117865;
+  --color-bad: #c0392b;
+  --color-ac: #404040;
+  --color-py: #a8a8a8;
+  --color-pl: #404040;
+  --color-fc: #404040;
+  --color-sim: #c25a2d;
+}
+
+[data-tab='finance'] {
+  color-scheme: light;
+  /* MockupKitchen page and tile design (the cockpit's global.css values) */
+  --color-background: #f4f4f1;
+  --color-foreground: #0f1e2e;
+  --color-card: #ffffff;
+  --color-card-foreground: #0f1e2e;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0f1e2e;
+  --color-primary: #2b2b2b;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #ecebe5;
+  --color-secondary-foreground: #0f1e2e;
+  --color-muted: #ecebe5;
+  --color-muted-foreground: #6b7280;
+  --color-accent: #ececec;
+  --color-accent-foreground: #2b2b2b;
+  --color-destructive: #c0392b;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #e1dfd6;
+  --color-input: #d9d6cc;
+  --color-ring: #2b2b2b;
+  --color-brand: #2b2b2b; /* neutral ink accent: green and red only for variances (cockpit 6ad0648) */
+  --color-brand-foreground: #2b2b2b;
+  --color-hover: #f4f4f1;
+
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 9px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius: 12px;
+
+  --font-heading: 'Geist', 'Segoe UI', system-ui, sans-serif;
+  --font-base: 'Geist', 'Segoe UI', system-ui, sans-serif;
+  --font-monospace: 'JetBrains Mono', Consolas, monospace;
+  --font-numeric: 'Geist', 'Segoe UI', system-ui, sans-serif;
+
+  /* IBCS notation, read via var() by the charts and the PowerPoint export */
+  --ibcs-ac: #404040;
+  --ibcs-py: #a8a8a8;
+  --ibcs-paper: #ffffff;
+  --ibcs-good: #117865;
+  --ibcs-bad: #c0392b;
+  --ibcs-cat: #555555;
+  --ibcs-sub: #9a9a9a;
+  --ibcs-hair: #b4b4b4;
+  --ibcs-conn: #c2c2c2;
+  --ibcs-fcink: #6f6f6f;
+  --ibcs-hilite: #1a6fb5;
+  --ibcs-track: #efeeea;
+
+  font-family: var(--font-base);
+}
+
+/* Variance palette: fixed IBCS green/red (no switch in the tab). */
+[data-tab='finance'][data-palette='ibcs'] {
+  --ibcs-good: #5dbb2c; /* grass green, as the cockpit */
+  --color-good: #5dbb2c;
+}
+
+[data-tab='finance'],
+[data-tab='finance'] * {
+  border-color: var(--color-border);
+}
+[data-tab='finance'] select,
+[data-tab='finance'] input,
+[data-tab='finance'] textarea,
+[data-tab='finance'] button {
+  font-family: inherit;
+}
+
+/* MockupKitchen tile */
+[data-tab='finance'] .tile {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* IBCS FC hatch for HTML elements (45°, 5 px pitch) */
+[data-tab='finance'] .hatch {
+  background-image: repeating-linear-gradient(-45deg, var(--ibcs-ac) 0 1.7px, var(--ibcs-paper) 1.7px 3.5px);
+}
+[data-tab='finance'] .tabular {
+  font-variant-numeric: tabular-nums;
+}
+/* SVG text in charts uses the base font, numbers tabular */
+[data-tab='finance'] svg text {
+  font-family: var(--font-base);
+  font-variant-numeric: tabular-nums;
+}
+/* Simulation hatch of the GuV page */
+[data-tab='finance'] .hatch-sim {
+  background-image: repeating-linear-gradient(-45deg, var(--color-sim) 0 1.5px, transparent 1.5px 4px);
+}
+[data-tab='finance'] .hatch-soft {
+  background-image: repeating-linear-gradient(-45deg, var(--ibcs-hair) 0 1px, transparent 1px 5px);
+}
+
+/* One-click PDF: browser print of the current Finance view without chrome (the twin's own header too). */
+/* Only while the tab is shown: it stays mounted (hidden) after the first open, and a twin print must stay
+   as it was. Landscape via a NAMED page, so the twin keeps the default page. */
+@page finance {
+  size: A4 landscape;
+  margin: 10mm;
+}
+@media print {
+  [data-finance-shown] {
+    page: finance;
+  }
+  body:has([data-finance-shown]) [data-testid='dc-shell-header'],
+  [data-tab='finance'] header[role='banner'] nav,
+  [data-tab='finance'] nav[aria-label='Aktuelle Sicht'] button,
+  [data-tab='finance'] aside[aria-label='Steuerung'],
+  [data-tab='finance'] footer {
+    display: none !important;
+  }
+  [data-tab='finance'] header[role='banner'],
+  [data-tab='finance'] nav[aria-label='Aktuelle Sicht'] {
+    position: static !important;
+  }
+  [data-tab='finance'] .tile {
+    break-inside: avoid;
+  }
+}

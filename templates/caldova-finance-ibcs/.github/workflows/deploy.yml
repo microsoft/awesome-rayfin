@@ -1,0 +1,102 @@
+# Dev and prod deployments of Caldova Finance.
+#
+# Two Rayfin items of the same project, one per GitHub environment:
+#   dev   -> item "Caldova Finance (dev)", deployed on every push to main
+#   prod  -> item "Caldova Finance", deployed only from a GitHub release or a manual run with environment
+#            "prod" (protect that environment with required reviewers)
+# Use a separate workspace per environment (FABRIC_WORKSPACE_ID per GitHub environment): the CLI keys its local
+# deployment registry (rayfin/.deployments.json) by workspace, and refuses a second item name in one workspace
+# from the same checkout. In CI there is no registry: `rayfin up --yes` finds the item by name or creates it.
+#
+# The service principal must be a Contributor of the workspace, and the tenant settings "Service principals can
+# use Fabric APIs" and "Dataset Execute Queries REST API" must allow it. Verify once with
+# `rayfin up --dry-run` as that principal before trusting this workflow.
+#
+# Secrets (per GitHub environment): FABRIC_TENANT_ID, FABRIC_CLIENT_ID, FABRIC_CLIENT_SECRET (a service
+# principal that is a Contributor of the workspace and allowed to use Fabric APIs), FABRIC_WORKSPACE_ID,
+# FABRIC_MODEL_ID, CONTROLLER_EMAILS. Nothing tenant-specific is committed.
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: dev or prod
+        required: true
+        default: dev
+        type: choice
+        options: [dev, prod]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.event_name == 'release' && 'prod' || inputs.environment || 'dev' }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc -b
+      - run: npm test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: ${{ github.event_name == 'release' && 'prod' || inputs.environment || 'dev' }}
+    env:
+      RAYFIN_TELEMETRY_OPTOUT: '1'
+      DEPLOY_ENV: ${{ github.event_name == 'release' && 'prod' || inputs.environment || 'dev' }}
+      FABRIC_TENANT_ID: ${{ secrets.FABRIC_TENANT_ID }}
+      FABRIC_WORKSPACE_ID: ${{ secrets.FABRIC_WORKSPACE_ID }}
+      FABRIC_MODEL_ID: ${{ secrets.FABRIC_MODEL_ID }}
+      CONTROLLER_EMAILS: ${{ secrets.CONTROLLER_EMAILS }}
+      VITE_CONTROLLER_EMAILS: ${{ secrets.CONTROLLER_EMAILS }}
+      VITE_FABRIC_TENANT_ID: ${{ secrets.FABRIC_TENANT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Power BI token for the drift gate
+        run: |
+          token=$(curl -sS -X POST "https://login.microsoftonline.com/$FABRIC_TENANT_ID/oauth2/v2.0/token" \
+            -d grant_type=client_credentials \
+            -d client_id="${{ secrets.FABRIC_CLIENT_ID }}" \
+            --data-urlencode client_secret="${{ secrets.FABRIC_CLIENT_SECRET }}" \
+            -d scope=https://analysis.windows.net/powerbi/api/.default | jq -r .access_token)
+          echo "::add-mask::$token"
+          echo "FABRIC_PBI_TOKEN=$token" >> "$GITHUB_ENV"
+
+      # The app ships the statements baked from the model; refuse to deploy when they drifted.
+      - name: Drift gate (model vs shipped snapshot)
+        run: node tools/bake-snapshot.mjs --check
+
+      - name: Sign in to Fabric as the service principal
+        run: >
+          npx rayfin login --service-principal
+          --client-id "${{ secrets.FABRIC_CLIENT_ID }}"
+          --client-secret "${{ secrets.FABRIC_CLIENT_SECRET }}"
+          --tenant "$FABRIC_TENANT_ID"
+
+      - name: Deploy
+        run: >
+          npx rayfin up --yes --json
+          --tenant "$FABRIC_TENANT_ID"
+          --workspace-id "$FABRIC_WORKSPACE_ID"
+          --item-name "${{ env.DEPLOY_ENV == 'prod' && 'Caldova Finance' || 'Caldova Finance (dev)' }}"

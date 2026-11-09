@@ -1,0 +1,8 @@
+apiVersion: v1
+metadata:
+  name: caldova-reorder
+  displayName: Caldova Reorder
+  description: 'The original Caldova pharmacy-operations app from Microsoft''s LTG291 Rayfin session: a regional manager''s low-stock queue over a Direct Lake semantic model with row-level security, read through the Rayfin semantic-model connector, and reorders sent through a Rayfin function into the app''s own SQL database, mirrored back into the model. Ships the model, a deterministic synthetic data generator and the deploy scripts. The combined Caldova app is caldova-cologne-digital-twin.'
+entries:
+  - path: .
+    name: Caldova Reorder

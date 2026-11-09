@@ -1,0 +1,202 @@
+table Inventory
+
+	column store_id
+		dataType: string
+		summarizeBy: none
+		sourceColumn: store_id
+
+	column sku
+		dataType: string
+		summarizeBy: none
+		sourceColumn: sku
+
+	column on_hand_qty
+		dataType: int64
+		formatString: #,0
+		summarizeBy: sum
+		sourceColumn: on_hand_qty
+
+	column reorder_point
+		dataType: int64
+		formatString: #,0
+		summarizeBy: sum
+		sourceColumn: reorder_point
+
+	column safety_stock
+		dataType: int64
+		formatString: #,0
+		summarizeBy: sum
+		sourceColumn: safety_stock
+
+	/// Units currently on the shelf.
+	measure 'On Hand Units' =
+			SUM(Inventory[on_hand_qty])
+		formatString: #,0
+
+	/// Units sold in the current filter context.
+	measure 'Units Sold' =
+			SUM(Sales[units_sold])
+		formatString: #,0
+
+	/// Sales value in the current filter context.
+	measure Revenue =
+			SUM(Sales[revenue])
+		formatString: "#,0.00 €"
+
+	/// The most recent day covered by the sales data. The model's own notion of "now", so days of stock stays correct no matter when it is queried.
+	measure 'Latest Sales Date' =
+			CALCULATE(MAX(Sales[date]), REMOVEFILTERS())
+		formatString: Short Date
+
+	/// How many trailing days of sales define current demand.
+	measure 'Demand Window Days' =
+			28
+		formatString: 0
+
+	/// Average units sold per day over the trailing demand window, for this product in this store.
+	measure 'Avg Daily Demand' =
+			VAR AnchorDate = [Latest Sales Date]
+			VAR WindowStart = AnchorDate - [Demand Window Days] + 1
+			VAR WindowUnits =
+			    CALCULATE(
+			        SUM(Sales[units_sold]),
+			        REMOVEFILTERS(Sales[date]),
+			        Sales[date] >= WindowStart,
+			        Sales[date] <= AnchorDate
+			    )
+			RETURN
+			    DIVIDE(WindowUnits, [Demand Window Days])
+		formatString: #,0.0
+
+	/// How many days the shelf lasts at current demand. The number every low-stock decision is ranked by.
+	measure 'Days of Stock' =
+			DIVIDE([On Hand Units], [Avg Daily Demand])
+		formatString: 0.0
+
+	/// Caldova's definition of "running low": less than a week of stock. Change it here and every app, report and query changes with it.
+	measure 'Low Stock Threshold Days' =
+			7
+		formatString: 0
+
+	/// 1 when this product in this store is running low, 0 when it is not, blank when there is nothing to judge.
+	measure 'Is Low Stock' =
+			VAR DaysOfStock = [Days of Stock]
+			RETURN
+			    IF(
+			        ISBLANK(DaysOfStock),
+			        BLANK(),
+			        IF(DaysOfStock < [Low Stock Threshold Days], 1, 0)
+			    )
+		formatString: 0
+
+	/// Urgency as a word, so it survives a projector and does not depend on colour alone.
+	measure 'Stock Status' =
+			VAR DaysOfStock = [Days of Stock]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(DaysOfStock), BLANK(),
+			        DaysOfStock < 2, "Critical",
+			        DaysOfStock < [Low Stock Threshold Days], "Low",
+			        "Healthy"
+			    )
+
+	/// How many product-store combinations are running low. Grouped by the shared
+	/// dimensions so demand resolves per store and product, not across the whole chain.
+	measure 'Products Running Low' =
+			COALESCE(
+			    COUNTROWS(
+			        FILTER(
+			            SUMMARIZE(Inventory, Stores[store_id], Products[sku]),
+			            [Is Low Stock] = 1
+			        )
+			    ),
+			    0
+			)
+		formatString: #,0
+
+	/// How many stores have at least one product running low.
+	measure 'Stores Under Pressure' =
+			COALESCE(
+			    COUNTROWS(
+			        FILTER(
+			            VALUES(Stores[store_id]),
+			            [Products Running Low] > 0
+			        )
+			    ),
+			    0
+			)
+		formatString: #,0
+
+	/// How many days of cover a reorder should restore.
+	measure 'Target Cover Days' =
+			21
+		formatString: 0
+
+	/// The reorder quantity to suggest: enough to reach the target cover plus safety stock.
+	measure 'Suggested Reorder Units' =
+			VAR Demand = [Avg Daily Demand]
+			VAR TargetUnits = Demand * [Target Cover Days] + SUM(Inventory[safety_stock])
+			VAR Shortfall = TargetUnits - [On Hand Units]
+			RETURN
+			    IF(ISBLANK(Demand), BLANK(), MAX(ROUND(Shortfall, 0), 0))
+		formatString: #,0
+
+	/// Units sold per day over whatever date window the caller has filtered to. One measure
+	/// serves a week view and a month view; over the model's own 28-day window it agrees with
+	/// [Avg Daily Demand] exactly.
+	measure 'Avg Daily Sales' =
+			DIVIDE([Units Sold], COUNTROWS(VALUES(Sales[date])))
+		formatString: 0.0
+
+	/// Stock as it stood at the end of the date in filter context, worked backwards from today's
+	/// count by adding back everything sold since.
+	///
+	/// An ESTIMATE, not a record. Inventory is a snapshot with no history, so this assumes no
+	/// deliveries arrived during the window. Over a week, for products that are running low,
+	/// that holds well enough to judge a trend; it is not a stock ledger.
+	measure 'Estimated Stock' =
+			VAR OnDay = MAX(Sales[date])
+			RETURN
+			    [On Hand Units]
+			        + CALCULATE(SUM(Sales[units_sold]), ALL(Sales[date]), Sales[date] > OnDay)
+		formatString: #,0
+
+	/// Days of cover as they stood on the date in filter context, using [Estimated Stock].
+	/// Carries the same estimate caveat.
+	measure 'Estimated Days of Stock' =
+			DIVIDE([Estimated Stock], [Avg Daily Demand])
+		formatString: 0.0
+
+	/// How many product-store combinations were running low on the date in filter context.
+	///
+	/// The same rule as [Products Running Low] — below [Low Stock Threshold Days] of cover —
+	/// applied to [Estimated Stock], so a trend can be drawn from a snapshot. Demand is held at
+	/// the model's current rate rather than recomputed per day, which keeps the comparison about
+	/// stock moving rather than the demand window sliding.
+	measure 'Estimated Products Running Low' =
+			VAR OnDay = MAX(Sales[date])
+			VAR Threshold = [Low Stock Threshold Days]
+			VAR Pairs =
+			    ADDCOLUMNS(
+			        SUMMARIZE(Inventory, Stores[store_id], Products[sku]),
+			        "@OnHand", [On Hand Units],
+			        "@Demand", [Avg Daily Demand],
+			        "@SoldSince",
+			            CALCULATE(SUM(Sales[units_sold]), ALL(Sales[date]), Sales[date] > OnDay)
+			    )
+			RETURN
+			    COUNTROWS(
+			        FILTER(
+			            Pairs,
+			            [@Demand] > 0
+			                && DIVIDE([@OnHand] + [@SoldSince], [@Demand]) < Threshold
+			        )
+			    )
+		formatString: #,0
+
+	partition Inventory = entity
+		mode: directLake
+		source
+			entityName: inventory
+			expressionSource: DatabaseQuery

@@ -1,0 +1,75 @@
+/// dwg contract: month-end balances; ReportingDate marks the last closed month of each year.
+table 'BS Fact'
+
+	measure 'BS AC' = SUM ( 'BS Fact'[AC] )
+		formatString: #,##0
+		displayFolder: Balance sheet
+
+	measure 'BS PY' = SUM ( 'BS Fact'[PY] )
+		formatString: #,##0
+		displayFolder: Balance sheet
+
+	measure 'BS PL' = SUM ( 'BS Fact'[PL] )
+		formatString: #,##0
+		displayFolder: Balance sheet
+
+	measure 'BS FC' = SUM ( 'BS Fact'[FC] )
+		formatString: #,##0
+		displayFolder: Balance sheet
+
+	measure 'BS reporting date AC' = CALCULATE ( [BS AC], 'BS Fact'[ReportingDate] = TRUE () )
+		formatString: #,##0
+		displayFolder: Balance sheet
+
+	measure 'BS reporting date PY' = CALCULATE ( [BS PY], 'BS Fact'[ReportingDate] = TRUE () )
+		formatString: #,##0
+		displayFolder: Balance sheet
+
+	column Date
+		dataType: dateTime
+		formatString: General Date
+		isHidden
+		summarizeBy: none
+		sourceColumn: Date
+
+	column AccountID
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: AccountID
+
+	column AC
+		dataType: double
+		isHidden
+		summarizeBy: sum
+		sourceColumn: AC
+
+	column PY
+		dataType: double
+		isHidden
+		summarizeBy: sum
+		sourceColumn: PY
+
+	column PL
+		dataType: double
+		isHidden
+		summarizeBy: sum
+		sourceColumn: PL
+
+	column FC
+		dataType: double
+		isHidden
+		summarizeBy: sum
+		sourceColumn: FC
+
+	column ReportingDate
+		dataType: boolean
+		isHidden
+		summarizeBy: none
+		sourceColumn: ReportingDate
+
+	partition 'BS Fact' = entity
+		mode: directLake
+		source
+			entityName: fin_bs_fact
+			expressionSource: DatabaseQuery

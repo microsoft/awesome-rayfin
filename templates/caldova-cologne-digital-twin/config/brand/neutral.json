@@ -1,0 +1,8 @@
+{
+  "$comment": "NEUTRAL BRAND — the fallback the brand module needs. Display names only.",
+  "id": "neutral",
+  "operator": { "en": "Pharmaceutical wholesaler" },
+  "site": { "en": "Cologne-Deutz Logistics Centre" },
+  "tagline": { "en": "A digital twin of pharmaceutical wholesale" },
+  "placeNames": {}
+}

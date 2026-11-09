@@ -1,0 +1,21 @@
+// Account values of one fiscal year. AC = actuals (closed months only),
+// FC = actuals + forecast (rolling forecast), PL/PY full year and YTD up to the last actual month.
+DEFINE
+    VAR _yr = {{YEAR}}
+    VAR _last =
+        CALCULATE (
+            MAX ( 'fact-pnl'[Date] ),
+            'fact-pnl'[AC Value] <> 0,
+            Calender[Year] = _yr
+        )
+EVALUATE
+SUMMARIZECOLUMNS (
+    'fact-pnl'[AccountID],
+    TREATAS ( { _yr }, Calender[Year] ),
+    "AC", [P&L AC],
+    "FC", [P&L FC],
+    "PL", [P&L PL],
+    "PY", [P&L PY],
+    "PLYTD", CALCULATE ( [P&L PL], 'fact-pnl'[Date] <= _last ),
+    "PYYTD", CALCULATE ( [P&L PY], 'fact-pnl'[Date] <= _last )
+)
