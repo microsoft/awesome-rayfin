@@ -63,7 +63,9 @@ explicit as `projection-truncated`.
 - **Nodes.** Fabric items use `fabric-item:{workspaceId}:{itemId}` and record
   whether they are in the current snapshot. External sources use the
   namespaced `fabric-connection:{connectionId}` with the verbatim provider type
-  (`AdlsGen2`, `Snowflake`, `Oracle`, ...). No URL is stored.
+  (`AdlsGen2`, `Snowflake`, `Oracle`, ...). No URL is stored here. Since 2.8
+  the tenant connection inventory resolves the ID to a name, connector,
+  endpoint and owners (see [Data model](data-model.md#connectioninventory)).
 - **Edges** go from the upstream provider to the consuming item:
   `onelake-shortcut`, `external-shortcut`, `mirroring-source`,
   `mirroring-external-storage`, `mirroring-landing-zone` and

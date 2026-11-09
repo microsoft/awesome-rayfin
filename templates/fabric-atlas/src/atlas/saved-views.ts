@@ -6,7 +6,8 @@ export type SavedViewSection =
   | "catalog"
   | "assets"
   | "jobs"
-  | "map";
+  | "map"
+  | "connections";
 
 export type SavedFilterValue =
   | string
@@ -71,6 +72,7 @@ const SECTIONS = new Set<SavedViewSection>([
   "assets",
   "jobs",
   "map",
+  "connections",
 ]);
 
 function api(): SavedViewApi {

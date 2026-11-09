@@ -210,6 +210,33 @@ describe("AccessView", () => {
     ).toBeInTheDocument();
   });
 
+  it("checks the departing person against the owners of every connection", async () => {
+    render(
+      <AtlasProvider isPreview>
+        <AccessView initialPrincipalId="u-tom" />
+      </AtlasProvider>,
+    );
+
+    const dialog = await screen.findByRole("dialog");
+    const ownedTile = within(dialog).getByText("Owned connections").parentElement!;
+    expect(ownedTile).toHaveTextContent("3");
+    const urgent = within(dialog).getByText("Urgent orphan risks").closest("div")!.parentElement!;
+    expect(urgent).toHaveTextContent("sql-booking-prod");
+    expect(urgent).toHaveTextContent("Connection without another owner · used by booking_mirror");
+
+    const section = within(dialog).getByRole("heading", { name: "Connections · 3" }).closest("div")!.parentElement!;
+    const rows = within(section).getAllByText(/^(adls-partner-landing|sql-booking-prod|salesforce-crm)$/);
+    expect(rows.map((row) => row.textContent)).toEqual([
+      "adls-partner-landing",
+      "sql-booking-prod",
+      "salesforce-crm",
+    ]);
+    expect(within(section).getAllByText("Urgent")).toHaveLength(2);
+    expect(within(section).getByText("Co-owner")).toBeInTheDocument();
+    expect(within(section).getAllByText("Add another owner before the departure")).toHaveLength(2);
+    expect(within(section).getByText("Remove this owner role after the departure")).toBeInTheDocument();
+  });
+
   it("opens and closes row detail from the matrix", () => {
     renderAccess();
 

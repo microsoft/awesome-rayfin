@@ -29,7 +29,7 @@ flowchart LR
 
 | Component | Responsibility |
 |---|---|
-| React application | Navigation, workspace switching, synchronization, catalog, lineage, governance and access review |
+| React application | Navigation, workspace switching, synchronization, catalog, lineage, governance, access review and connections |
 | Fabric brokered authentication | Signs the user into the app inside the Fabric portal |
 | Rayfin Functions | Collect core Fabric metadata with application identity and bounded contracts |
 | Python compatibility UDF | Collect only the remaining Power BI, PBIR-Legacy and Kusto gaps |
@@ -64,19 +64,25 @@ The configured synchronizer is the only identity allowed to:
 Synchronization is serialized in the synchronizer's browser tab.
 
 1. Discover the selected workspace scope.
-2. Create a correlated `SyncRun`.
-3. Invoke bounded Rayfin collectors.
-4. Build the exact Python compatibility plan.
-5. Validate every collector envelope and item identity.
-6. Merge required and optional evidence.
-7. Write snapshot child rows.
-8. Read the rows back through production pagination.
-9. Publish the workspace manifest last.
-10. Apply retention after publication.
+2. Collect the tenant connection inventory once for the whole batch (2.8).
+3. Create a correlated `SyncRun` for each workspace.
+4. Invoke bounded Rayfin collectors.
+5. Build the exact Python compatibility plan.
+6. Validate every collector envelope and item identity.
+7. Merge required and optional evidence.
+8. Write snapshot child rows.
+9. Read the rows back through production pagination.
+10. Publish the workspace manifest last.
+11. Apply retention after publication.
 
 A failed or cancelled run preserves the previous validated snapshot.
 A failed workspace does not stop another selected workspace from
-synchronizing.
+synchronizing. The tenant stage never fails the batch: when the admin
+connections API refuses the synchronizer or the call fails, Atlas records the
+attempt and its error code without connections, the last complete inventory
+stays visible and the workspaces still synchronize. The synchronizer can also
+run the tenant stage alone with **Collect connections** on the Connections
+page.
 
 ### Collector ownership
 
@@ -90,6 +96,8 @@ synchronizing.
 | SQL Database, Warehouse, Lakehouse and Mirrored Database catalogs | `workspaceCollectSqlMetadata` | None |
 | Shortcuts, mirroring and materialized lake view provenance | `workspaceCollectSourceProvenance` | None |
 | Fabric Policies context | `workspaceCollectAccessPolicyEvidence` | Portal-only evidence stays unavailable |
+| Domains, tags, tenant settings, network policy, external shares, OneLake data access roles (2.6) | `workspaceCollectGovernance` | None; each section is optional and degrades to Unknown |
+| Tenant connection inventory and role assignments (2.8) | `tenantCollectConnections`, once per batch | None; the admin connections API is Preview and needs a Fabric administrator |
 | Power BI admin scanner and scanner lineage | Python `sync_compatibility` | Retained until Rayfin exposes a documented Power BI audience |
 | PBIR-Legacy pages | Python `sync_compatibility` | Retained until the supported definition path covers legacy reports |
 | Kusto live metadata | Python `sync_compatibility` | Retained until Rayfin exposes a documented Kusto audience |
@@ -115,8 +123,13 @@ snapshot only after the complete required contract passes validation.
 ## Rayfin Function contracts
 
 Functions are synchronizer-gated and accept strict workspace, item and
-correlation identifiers. They do not accept browser tokens, arbitrary URLs or
-arbitrary queries.
+correlation identifiers. They do not accept arbitrary URLs or arbitrary
+queries. Two Functions call Fabric admin APIs, which require a Fabric
+administrator: `workspaceCollectGovernance` (2.6) and
+`tenantCollectConnections` (2.8). They accept the synchronizer's delegated
+Fabric token as an optional argument, checked as a bounded JWT, try it first
+and fall back to the application identity. The token is used for that call
+only and is never stored.
 
 Shared protections include:
 
@@ -128,6 +141,12 @@ Shared protections include:
 - execution deadlines and cancellation;
 - fixed error codes without upstream response bodies;
 - metadata-only allowlists.
+
+Two optional server-side Functions read secrets that never reach the browser:
+`teamsNotify` posts new critical findings to `ATLAS_TEAMS_WEBHOOK_URL`, and
+`suggestDescriptions` sends names, schema and DAX (never data values) to the
+endpoint configured by the `ATLAS_AI_*` secrets. Both stay disabled
+until an administrator sets the secrets.
 
 The generated Function schema and runtime metadata live in
 `rayfin/functions/src/types.ts` and
@@ -142,7 +161,7 @@ The Python UDF exposes:
 - `sync_all` and `sync_items` for explicit rollback;
 - `ping` for basic validation.
 
-The normal 2.0 path uses `sync_compatibility`. It cannot rediscover the
+The normal path uses `sync_compatibility`. It cannot rediscover the
 workspace or run an unrequested collector.
 
 The UDF keeps its existing execution deadline, retry bounds, payload limits and
@@ -196,8 +215,19 @@ the newly published snapshot.
 | `FindingAck` | User-scoped acknowledgement or mute |
 | `GovernancePolicy` | Shared posture targets |
 | `GovernanceException` | Shared time-bounded exception |
+| `AccessPolicyEvidence` | Optional immutable workspace-policy context, separate from grant truth |
+| `SynchronizerAuthority` | Global sentinel proving the caller satisfies the synchronizer policy |
+| `OpenLineageImport` | One imported OpenLineage file: name, counts and result, never the raw file |
+| `ExternalDataset` | External dataset keyed by namespace and name, optionally linked to a Fabric item |
+| `ExternalLineageEdge` | External input-to-output edge through a job, merged with snapshot lineage at read time |
+| `ConnectionInventory` | Manifest of one tenant connection inventory, written last, outside workspace snapshots |
+| `ConnectionEntry` | One Fabric connection of an inventory: connector, endpoint without query string, authentication, recency, owner counts |
+| `ConnectionRoleAssignment` | One role (Owner, PendingOwner, User, UserWithReshare) of a principal on a connection |
+| `SyncRootRun`, `SyncJob`, `SyncTask` and `SyncCommand` | Fail-closed durable-execution probe; never publishes a snapshot |
+| `SyncPayloadManifest` and `SyncPayloadChunk` | Hashed, chunked payloads for the durable-execution probe |
 
-The complete entity definitions and policies are in `rayfin/data/`.
+The complete entity definitions and policies are in `rayfin/data/`, and every
+field is documented in [Data model](data-model.md).
 
 ## Read scopes
 
@@ -208,7 +238,7 @@ The following state is user-scoped:
 
 - saved views;
 - access-review decisions;
-- Radar acknowledgements and mutes;
+- Governance Radar acknowledgements and mutes;
 - browser-local display preferences.
 
 The Fabric App audience is therefore the catalog disclosure boundary.
@@ -254,6 +284,16 @@ The Preview switch replaces the trusted graph while active. It preserves raw
 and cross-workspace evidence.
 
 Preview evidence never becomes trusted lineage automatically.
+
+### External lineage (OpenLineage)
+
+Imported OpenLineage files are stored outside the immutable snapshot as
+`OpenLineageImport`, `ExternalDataset` and `ExternalLineageEdge` rows. Datasets
+whose namespace and name match a Fabric item are linked automatically; others
+can be linked manually. The Map adds an optional *External* lane, and impact
+analysis crosses the link points at read time. Atlas can also export a
+workspace's lineage as static OpenLineage `JobEvent` and `DatasetEvent` records
+with the `fabricAtlas_item` facet. See [External lineage](external-lineage.md).
 
 ### Object lineage and X-Ray
 
@@ -318,12 +358,31 @@ The optional local stdio MCP server reads the same validated snapshots as the
 app. It runs on the MCP client machine, not inside a Rayfin Function.
 
 The MCP is read-only and limited to the selected workspace scope. It exposes
-catalog, impact, lineage, access, incident and snapshot evidence without
-personal review state.
+catalog, impact, lineage, access, connection, incident and snapshot evidence
+without personal review state.
 
 Activation remains gated by a dedicated public client, delegated
 `Item.Execute.All`, reviewed external Entra exchange and live Conditional
 Access validation.
+
+## Atlas Scout
+
+Atlas Scout is an optional chat over a published Fabric Data Agent whose only
+data source is the Atlas SQL database. The browser calls the agent's
+OpenAI-compatible endpoint with a delegated `DataAgent.Execute.All` token. It
+creates a thread, posts the question, polls the run and reads the answer, the
+SQL steps and the result rows. Stop cancels the active run. If posting a
+question reports a run that is still active, on a reused or a brand new thread,
+the client cancels that run and retries once in a fresh thread.
+
+The client (`src/atlas/scout.ts`) never writes to Atlas. Answer Markdown is
+parsed by `src/atlas/scout-markdown.ts`, which also detects lineage tables
+(item or object level) and lays them out as a graph. The agent can query every
+Atlas table, including the object inventory stored as JSON in `ConfigEntries`. The agent definition lives in
+`fabric/data-agent/atlas-scout/`. v1 has no row-level scope: every agent user
+sees every synchronized workspace. The Scout page, the floating bubble and the
+Catalog drawer's **Ask Scout** button share one conversation
+(`src/atlas/scout-chat.tsx`).
 
 ## Security boundary
 
@@ -372,9 +431,14 @@ See [Installation and deployment](installation.md) for the complete workflow.
 | `src/atlas/backend.ts` | Persistence and trusted snapshot loading |
 | `src/atlas/lineage.ts` | Lineage normalization, traversal and layout |
 | `src/atlas/item-relations-evidence.ts` | Beta relation contract and semantics |
+| `src/atlas/openlineage.ts`, `src/atlas/external-lineage*.ts` | OpenLineage import, export and external-lineage linking |
+| `src/atlas/sync-brief.ts` | Latest-sync summary and Markdown export |
+| `src/atlas/item-passport.ts` | Item identity sheet export and the Ask Scout item question |
 | `src/atlas/source-provenance-snapshot.ts` | Shortcut, mirroring and materialized lake view projection |
 | `src/atlas/views/` | Product screens |
 | `src/mcp/` and `src/atlas/mcp/` | Local read-only MCP |
+| `src/atlas/scout.ts`, `src/atlas/views/Scout.tsx` | Atlas Scout Data Agent client and chat UI |
+| `fabric/data-agent/atlas-scout/` | Atlas Scout agent instructions, examples and provisioning |
 | `rayfin/data/` | Entities and row policies |
 | `rayfin/functions/` | Typed Rayfin Functions |
 | `fabric/udf/atlas_sync_functions/` | Python compatibility collector |
@@ -385,6 +449,7 @@ See [Installation and deployment](installation.md) for the complete workflow.
 - [Item-family coverage](item-families.md)
 - [Lineage depth](lineage-depth.md)
 - [Item Relations evidence](item-relations-evidence.md)
+- [External lineage (OpenLineage)](external-lineage.md)
 - [Source provenance](source-provenance.md)
 - [Access policy evidence](access-policy-evidence.md)
 - [Observability](observability.md)

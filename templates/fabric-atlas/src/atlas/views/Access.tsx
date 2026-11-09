@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { SavedViewsMenu } from "../components/SavedViewsMenu";
 import { OffboardingDialog } from "../components/OffboardingDialog";
+import { useConnectionUsages } from "../connection-usage-state";
 import { AccessEvidenceInspector } from "../components/AccessEvidenceInspector";
 import { AccessWhatIf } from "../components/AccessWhatIf";
 import { useDesktopEvidence } from "../use-desktop-evidence";
@@ -46,6 +47,18 @@ import {
   serializeAccessReviewEvidence,
 } from "../access-review-evidence";
 import { accessRowsToCsv } from "../access-export";
+import {
+  PRINCIPAL_TYPE_FILTERS,
+  PRINCIPAL_TYPE_LABELS,
+  ROLE_FILTERS,
+  ROLE_LABELS,
+  countPrincipalTypes,
+  matchesAccessFilters,
+  parsePrincipalTypeFilter,
+  parseRoleFilter,
+  type PrincipalTypeFilter,
+  type RoleFilter,
+} from "../access-filters";
 import {
   ACCESS_EVIDENCE_LABEL,
   ACCESS_LAYER_LABEL,
@@ -75,6 +88,9 @@ import type { AtlasNavigation } from "../navigation";
 import type { SavedViewFilters } from "../saved-views";
 import { derivedFromSnapshot } from "../derived";
 import { useAtlas } from "../store";
+import { itemOneLakeRoles, type ItemOneLakeRoles } from "../governance-evidence";
+import { OneLakeRolesList } from "../components/OneLakeRolesList";
+import { ExternalSharesCard } from "../components/ExternalSharesCard";
 import { PageHeader } from "../components/PageHeader";
 import { Card, PrincipalAvatar, SectionLabel, TypeGlyph, cn } from "../ui";
 
@@ -790,6 +806,8 @@ export function AccessReviewDetailPanel({
   readOnly = false,
   noteOverride,
   onNoteChange,
+  oneLakeRoles,
+  principals,
 }: {
   row: AccessReviewRow;
   review?: AccessReviewHistory;
@@ -806,6 +824,8 @@ export function AccessReviewDetailPanel({
   readOnly?: boolean;
   noteOverride?: string;
   onNoteChange?: (note: string) => void;
+  oneLakeRoles?: ItemOneLakeRoles;
+  principals?: readonly import("../model").Principal[];
 }) {
   const decision = review?.decision;
   const [copied, setCopied] = useState(false);
@@ -966,6 +986,13 @@ export function AccessReviewDetailPanel({
             </button>
           )}
         </section>
+
+        {oneLakeRoles && (
+          <section aria-labelledby="onelake-roles-heading">
+            <h3 id="onelake-roles-heading" className="mb-s text-300 font-semibold">OneLake data access roles</h3>
+            <OneLakeRolesList value={oneLakeRoles} principals={principals} />
+          </section>
+        )}
 
         {row.coverage.policyEvidence?.length ? (
           <section aria-labelledby="stored-policy-context-heading">
@@ -1287,6 +1314,8 @@ export function AccessView({
     addSavedView,
     removeSavedView,
     canSync,
+    workspaceScopes,
+    workspaceSyncStatuses,
   } = useAtlas();
   const policyEnabled = isFeatureEnabled("fabric-policies");
   const [policyRefresh, setPolicyRefresh] = useState(0);
@@ -1355,6 +1384,11 @@ export function AccessView({
   const [coverageFilter, setCoverageFilter] = useState<AccessCoverageFilter>(
     () => parseAccessCoverageFilter(initialFilters?.coverage),
   );
+  const [principalType, setPrincipalType] = useState<PrincipalTypeFilter>(() =>
+    parsePrincipalTypeFilter(initialFilters?.principalType),
+  );
+  const [role, setRole] = useState<RoleFilter>(() => parseRoleFilter(initialFilters?.role));
+  const principalTypeCounts = useMemo(() => countPrincipalTypes(rows), [rows]);
   const reviewTriggerRef = useRef<HTMLElement | null>(null);
   const [selectedId, setSelectedId] = useState<string | null | undefined>(
     undefined,
@@ -1379,6 +1413,28 @@ export function AccessView({
   const [reviewNoteDraft, setReviewNoteDraft] = useState<{ key: string; note: string } | null>(null);
   const [offboardingPrincipalId, setOffboardingPrincipalId] = useState(
     initialFilters?.mode !== "what-if" && initialPrincipalId && !initialItemId ? initialPrincipalId : "",
+  );
+  // Other workspaces' snapshots are read only while a departure pack is open.
+  const offboardingWorkspaces = useMemo(
+    () =>
+      offboardingPrincipalId
+        ? workspaceScopes.map((workspace) => ({
+            id: workspace.id,
+            snapshotId: workspaceSyncStatuses[workspace.id]?.snapshotId,
+          }))
+        : [],
+    [offboardingPrincipalId, workspaceScopes, workspaceSyncStatuses],
+  );
+  const offboardingUsages = useConnectionUsages(
+    isPreview,
+    {
+      workspaceId: data.workspace.fabricId,
+      workspaceName: data.workspace.displayName,
+      config: data.config,
+      items: data.items,
+      principals: data.principals,
+    },
+    offboardingWorkspaces,
   );
 
   useEffect(() => {
@@ -1445,9 +1501,10 @@ export function AccessView({
           (accessLevel === "all" || row.effectiveAccess === accessLevel) &&
           (origin === "all" || row.origin === origin) &&
           matchesRisk(row, risk) &&
+          matchesAccessFilters(row, principalType, role) &&
           matchesAccessCoverage(row.coverage, coverageFilter),
       ),
-    [accessLevel, coverageFilter, normalizedSearch, origin, risk, rows],
+    [accessLevel, coverageFilter, normalizedSearch, origin, principalType, risk, role, rows],
   );
   const effectiveExpandedPrincipals = useMemo(
     () =>
@@ -1517,10 +1574,14 @@ export function AccessView({
           origin,
           risk,
           coverage: coverageFilter,
+          ...(principalType !== "all" ? { principalType } : {}),
+          ...(role !== "all" ? { role } : {}),
         },
       },
     });
   }, [
+    principalType,
+    role,
     accessLevel,
     coverageFilter,
     mode,
@@ -1536,6 +1597,8 @@ export function AccessView({
     accessLevel !== "all" ||
     origin !== "all" ||
     risk !== "all" ||
+    principalType !== "all" ||
+    role !== "all" ||
     coverageFilter !== "all";
   const flaggedCount = rows.filter(hasRisk).length;
   const reviewsByRowKey = useMemo(
@@ -1636,6 +1699,8 @@ export function AccessView({
     setAccessLevel("all");
     setOrigin("all");
     setRisk("all");
+    setPrincipalType("all");
+    setRole("all");
     setCoverageFilter("all");
   };
 
@@ -1675,8 +1740,14 @@ export function AccessView({
     },
   ];
 
+  const externalShareCount =
+    data.governanceEvidence?.externalShares.status.status === "complete"
+      ? data.governanceEvidence.externalShares.entries.length
+      : 0;
+
   return (
     <div className="atlas-content-frame flex flex-col gap-l p-l sm:p-xxl">
+      <ExternalSharesCard evidence={data.governanceEvidence} items={data.items} />
       <Card className="overflow-hidden border-primary/25">
         <PageHeader title="Access Review" purpose="Review recorded grants or try a local removal scenario."
           className="border-b border-border"
@@ -1726,6 +1797,19 @@ export function AccessView({
             >
               What-if
             </button>
+            {externalShareCount > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  const card = document.getElementById("external-shares");
+                  card?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  card?.focus({ preventScroll: true });
+                }}
+                className="atlas-control rounded-md px-l text-300 font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+              >
+                External shares ({externalShareCount})
+              </button>
+            )}
           </div>}
         />
         {/* The What-if limits stay as its accessible description; the What-if panel shows them visibly. */}
@@ -1742,6 +1826,14 @@ export function AccessView({
               </div>
             );
           })}
+        </dl>
+        <dl aria-label="Principals by type" className="flex flex-wrap gap-x-l gap-y-xs border-t border-border px-l py-s">
+          {PRINCIPAL_TYPE_FILTERS.map((type) => (
+            <div key={type} className="flex items-baseline gap-xs">
+              <dt className="text-200 text-muted-foreground">{PRINCIPAL_TYPE_LABELS[type]}</dt>
+              <dd className="font-numeric text-200 font-semibold">{principalTypeCounts[type]}</dd>
+            </div>
+          ))}
         </dl>
       </Card>
 
@@ -1806,6 +1898,43 @@ export function AccessView({
 
             <label className="min-w-0">
               <span className="mb-xs block text-200 font-semibold text-muted-foreground">
+                User type
+              </span>
+              <select
+                value={principalType}
+                onChange={(event) => setPrincipalType(parsePrincipalTypeFilter(event.target.value))}
+                title="Guest detection is a heuristic based on the Entra guest type, external flags and #EXT# UPNs."
+                className="atlas-control w-full rounded-lg border border-input bg-card px-m text-300 text-foreground xl:w-auto"
+              >
+                <option value="all">All types</option>
+                {PRINCIPAL_TYPE_FILTERS.map((type) => (
+                  <option key={type} value={type}>
+                    {PRINCIPAL_TYPE_LABELS[type]} ({principalTypeCounts[type]})
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="min-w-0">
+              <span className="mb-xs block text-200 font-semibold text-muted-foreground">
+                Workspace role
+              </span>
+              <select
+                value={role}
+                onChange={(event) => setRole(parseRoleFilter(event.target.value))}
+                className="atlas-control w-full rounded-lg border border-input bg-card px-m text-300 text-foreground xl:w-auto"
+              >
+                <option value="all">All roles</option>
+                {ROLE_FILTERS.map((entry) => (
+                  <option key={entry} value={entry}>
+                    {ROLE_LABELS[entry]}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="min-w-0">
+              <span className="mb-xs block text-200 font-semibold text-muted-foreground">
                 Risk flag
               </span>
               <select
@@ -1857,6 +1986,8 @@ export function AccessView({
                   origin,
                   risk,
                   coverage: coverageFilter,
+                  ...(principalType !== "all" ? { principalType } : {}),
+                  ...(role !== "all" ? { role } : {}),
                 }}
                 onCreate={addSavedView}
                 onApply={(view) => {
@@ -1887,6 +2018,8 @@ export function AccessView({
                       : "all",
                   );
                   setCoverageFilter(parseAccessCoverageFilter(view.filters.coverage));
+                  setPrincipalType(parsePrincipalTypeFilter(view.filters.principalType));
+                  setRole(parseRoleFilter(view.filters.role));
                 }}
                 onDelete={removeSavedView}
               />}
@@ -2027,6 +2160,12 @@ export function AccessView({
             key={`${selectedRow.id}:${reviewsByRowKey.get(selectedRow.id)?.history[0]?.id ?? "none"}`}
             row={selectedRow}
             review={reviewsByRowKey.get(selectedRow.id)}
+            principals={data.principals}
+            oneLakeRoles={
+              selectedRow.item.itemType === "Lakehouse"
+                ? itemOneLakeRoles(data.governanceEvidence, selectedRow.itemId)
+                : undefined
+            }
             reviewsLoading={reviewsLoading}
             saving={reviewOperationId === selectedRow.id}
             reviewError={reviewError}
@@ -2048,6 +2187,8 @@ export function AccessView({
         principalId={offboardingPrincipalId}
         open={Boolean(offboardingPrincipalId)}
         onClose={() => setOffboardingPrincipalId("")}
+        connectionUsages={offboardingUsages.usages}
+        connectionUsagesLoading={offboardingUsages.loading}
       />
     </div>
   );

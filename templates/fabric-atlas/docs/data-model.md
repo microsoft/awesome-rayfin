@@ -57,7 +57,7 @@ The manifest for a complete synchronized snapshot.
 
 `snapshotId`, `writerEmail?`, `deploymentId?`, `fabricId`, `displayName`, `capacity?`, `region?`, `itemCount?`,
 `edgeCount?`, `principalCount?`, `grantCount?`, `jobCount?`, `configCount?`,
-`schemaEntryCount?`, `syncSectionsJson?`, `summaryVersion?`, `healthyCount?`,
+`schemaEntryCount?`, `syncSectionsJson?`, `governanceSummaryJson?`, `summaryVersion?`, `healthyCount?`,
 `staleCount?`, `failingCount?`, `labelCount?`, `externalPrincipalCount?`,
 `failedJobCount?`, `brokenEdgeCount?`, `tableCount?`, `columnCount?`,
 `measureCount?`, `syncedAt?`
@@ -65,6 +65,10 @@ The manifest for a complete synchronized snapshot.
 `syncSectionsJson` persists the versioned UDF section and metadata-capability
 status used by Governance Center. It contains collection state, not business
 data.
+
+`governanceSummaryJson` (2.6) is a versioned per-workspace rollup of finding
+counts, posture and Fabric domain used by the domain posture and coverage
+views without loading every workspace snapshot.
 
 Summary version 1 reproduces the Governance history metrics without loading
 child rows. Older manifests remain compatible and fall back to full validated
@@ -163,6 +167,13 @@ edge stores source and target item, object kind, stable ID, readable name,
 optional parent/table context, relation and `confidence: verified`. The parser
 rejects inferred, malformed or self-referential edges without imposing a
 relation-count cap on the verified set.
+
+Since 2.6, optional governance evidence from `workspaceCollectGovernance` uses
+the private `__governance_evidence__` section, chunked as `v1:part:total:json`.
+It holds Fabric domains, tags, tenant settings, the workspace network policy,
+external data shares, OneLake data access roles and Fabric Policy items, each
+with its own `complete`, `unsupported` or `failed` status. A missing section
+is shown as Unknown, never as healthy.
 
 No extra Rayfin entity is required, so this metadata follows the same immutable
 snapshot publication and retention boundary as the catalog.
@@ -303,7 +314,7 @@ synchronizer subject.
 These rows store no browser token, arbitrary endpoint, request body or business data. There is no
 separate workspace-state row. Uniqueness and persisted read-back support retries under serialized
 invocations; they do not establish distributed atomic task claims. See
-[architecture.md](architecture.md#phase-2-persistence-probe-no-cutover) for the concurrency boundary.
+[architecture.md](architecture.md#scheduling-boundary) for the concurrency boundary.
 
 ### Version 2 additive graph fields
 
@@ -353,7 +364,7 @@ No additive orchestration field stores tokens, request bodies, arbitrary URLs,
 raw definitions, business rows or large collector payloads. These schemas and
 local tests do not prove distributed durability. Public v2 mutations are blocked
 until the serialization, immutable store and adapter deployment seams described
-in [architecture.md](architecture.md#phase-2-v2-server-cutover-framework-disabled)
+in [rayfin-platform-gaps.md](rayfin-platform-gaps.md#to-run-synchronization-without-an-open-browser)
 are resolved.
 
 ### Immutable SQL payload storage
@@ -456,6 +467,102 @@ A personal Governance Radar decision for one stable finding or risky change.
 
 The status is `acked` for one occurrence or `muted` until the record is
 removed.
+
+## OpenLineageImport
+
+One imported OpenLineage file. See [External lineage](external-lineage.md).
+
+`workspace_id`, `fileName`, `fileHash`, `namespace?`, `platform?`,
+`importedById`, `importedByEmail`, `importedAt`, `eventCount`, `datasetCount`,
+`edgeCount`, `toLinkCount`, `status`, `rejectReason?`
+
+The id is stable per workspace and file name, so re-importing the same file
+name replaces the import. Rejected files are kept with zero counts.
+
+## ExternalDataset
+
+A dataset seen in at least one import, with its link to Fabric.
+
+`workspace_id`, `namespace`, `name`, `platform`, `fabricItemId?`,
+`fabricObjectName?`, `state`, `linkedBy?`, `linkedAt?`, `createdById`,
+`createdByEmail`, `lastSeenAt`
+
+`state` is `linked`, `to_link` or `external`; `linkedBy` is `exact_path` for
+automatic links, otherwise the administrator. Manual decisions are kept across
+re-imports. A dataset that no import uses any more is deleted.
+
+## ExternalLineageEdge
+
+One input → output edge through an external job.
+
+`workspace_id`, `importId`, `sourceDatasetId`, `targetDatasetId`,
+`jobNamespace`, `jobName`, `lastRunState?`, `lastRunTime?`, `runId?`,
+`columnLineage?`, `columnTruncated`, `importedById`, `importedByEmail`
+
+External edges are not part of the snapshot; they are merged with snapshot
+edges when the map is read.
+
+## ConnectionInventory
+
+One tenant connection inventory, collected once per synchronization batch, or
+on demand with **Collect connections**, by the `tenantCollectConnections`
+Function from the Fabric admin connections API (Preview). It is tenant-wide and
+stored outside workspace snapshots.
+
+`writerEmail`, `collectedAt`, `status`, `code?`, `connectionCount`,
+`roleLookupCount`, `roleLookupSkippedCount`, `roleLookupFailedCount`,
+`truncated`, `contractVersion`
+
+`status` is `complete`, `unsupported` (the admin API refused the synchronizer)
+or `failed`. Only a `complete` inventory has rows. The manifest is written
+after its rows; a reader rejects a manifest whose `connectionCount` does not
+match its rows and falls back to the previous complete inventory. An
+`unsupported` or `failed` manifest records a collection that stored nothing,
+with its `code` (for example `authorization-failed`, `invoke-failed` or
+`store-failed`): the page explains it while the last complete inventory stays
+visible. Only the newest attempt is kept, and the next complete inventory
+removes it. Inventories beyond the snapshot retention count are pruned, rows
+first. Every authenticated Atlas user can read the inventory; only the
+synchronizer can write or delete it. Restricting reads to administrators is
+tracked in [#98](https://github.com/fredgis/FabricAtlas/issues/98).
+
+## ConnectionEntry
+
+One connection of an inventory, in the `ConnectionEntries` table. Fabric never
+returns secrets. The entity was named `FabricConnection` in 2.8.0 and 2.8.1;
+Data API Builder reads a GraphQL type whose name ends in `Connection` as a
+pagination type, so no row could be written. An entity name must not end in
+`Connection`.
+
+`inventoryId`, `writerEmail`, `connectionId`, `displayName`,
+`connectivityType`, `connectorType?`, `path?`, `gatewayId?`, `privacyLevel?`,
+`credentialType?`, `singleSignOnType?`, `connectionEncryption?`,
+`skipTestConnection?`, `connectionCreatedAt?`, `lastBoundAt?`,
+`lastCredentialUsedAt?`, `rolesStatus`, `ownerCount`, `pendingOwnerCount`
+
+`path` keeps the endpoint without user info, query string or fragment, because
+a Web connection URL can carry a key. Personal connections that Fabric returns
+without a name are stored as `Unnamed connection (<connector>)`. `rolesStatus`
+is `complete`, `skipped` (lookup budget exhausted), `failed` or `personal`
+(only its creator can use it, so no lookup is made).
+
+## ConnectionRoleAssignment
+
+One role of a principal on a connection.
+
+`inventoryId`, `writerEmail`, `connectionId`, `principalId`, `principalType`,
+`principalName?`, `role`
+
+`role` is `Owner`, `PendingOwner`, `User` or `UserWithReshare`. The admin API
+returns principal IDs and types; Atlas names them from the principals of the
+synchronized workspaces, the signed-in user and the configured synchronizers.
+The departure pack matches a principal to these roles on the Entra object ID,
+or on the user principal name when Fabric returns it, never on a display name.
+
+The items that use a connection are not stored here: they come from the
+`Source provenance` rows of `ConfigEntry` in each workspace snapshot
+(`connection=<connectionId>; consumer=<item GUID>`), written for OneLake
+shortcuts and mirrored databases.
 
 ## Snapshot history
 

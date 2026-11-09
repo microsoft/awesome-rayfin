@@ -2,7 +2,7 @@
 
 Assessment: **3 October 2026, Rayfin 1.36.2**.
 
-Fabric Atlas 2.1 is Rayfin-first. Typed Rayfin Functions collect the catalog,
+Fabric Atlas is Rayfin-first since 2.1. Typed Rayfin Functions collect the catalog,
 definitions, SQL and KQL structure, Item Relations, source provenance and
 policy evidence. Python remains only where Rayfin does not expose the required
 runtime contract.
@@ -36,12 +36,18 @@ these gaps.
 
 | Missing public contract | Current Atlas state |
 |---|---|
-| OneLake security role membership and data scope | Unsupported, portal review required |
+| OneLake security role membership and data scope | Partial since 2.6: data access roles, direct members and RLS/CLS presence; group expansion and constraint text are not collected |
 | Purview DLP restriction state | Unsupported, Purview review required |
 | Fabric Policies evaluation operation | Unavailable unless a verified tenant contract is supplied |
 
 These policy gaps do not require Python and do not block catalog publication.
 They remain explicit coverage states.
+
+### Entity naming (found 9 November 2026)
+
+| Constraint | Atlas mitigation |
+|---|---|
+| Data API Builder reads a GraphQL type whose name ends in `Connection` as a pagination type, and the Rayfin reserved-name check does not reject such names. Every create and read of the entity then fails with an internal server error and the mutation rolls back. | The connection entity is named `ConnectionEntry` since 2.8.2, and a schema test rejects any entity name ending in `Connection` |
 
 ## Active Rayfin collection
 
@@ -53,6 +59,8 @@ They remain explicit coverage states.
 - `workspaceCollectSqlMetadata`
 - `workspaceCollectSourceProvenance`
 - `workspaceCollectAccessPolicyEvidence`
+- `workspaceCollectGovernance` (2.6)
+- `tenantCollectConnections` (2.8), once per synchronization batch
 
 The browser validates and merges these bounded envelopes, requests only the
 exact compatibility plan, then publishes through the manifest-last writer.

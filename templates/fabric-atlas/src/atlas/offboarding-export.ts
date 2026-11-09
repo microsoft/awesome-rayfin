@@ -3,10 +3,15 @@ import {
   ACCESS_EVIDENCE_LABEL,
   GRANT_ONLY_NOTICE,
 } from "./access-coverage";
+import { connectivityLabel, roleLabel } from "./connections";
 import { markdownText } from "./markdown";
-import type {
-  OffboardingReport,
-  OffboardingReviewEvidence,
+import {
+  CONNECTION_STATUS_LABEL,
+  connectionAction,
+  connectionUsageNames,
+  type OffboardingConnection,
+  type OffboardingReport,
+  type OffboardingReviewEvidence,
 } from "./offboarding";
 
 const EVIDENCE_LABEL: Record<OffboardingReviewEvidence, string> = {
@@ -267,6 +272,26 @@ function coverageSummary(report: OffboardingReport): string {
   return `${workspace.documented}/${workspace.total} workspace items documented; ${workspace.unknown} not evaluated; ${applicableText}`;
 }
 
+function connectionLine(entry: OffboardingConnection): string {
+  const kind = entry.connection.connectorType ?? connectivityLabel(entry.connection.connectivityType);
+  const usage = connectionUsageNames(entry.usages);
+  const others = entry.otherOwners.length
+    ? `; other owners: ${entry.otherOwners.length}`
+    : "";
+  return `- ${line(entry.connection.displayName)} (${line(kind)}): ${entry.roles.map(roleLabel).join(", ")}; ${CONNECTION_STATUS_LABEL[entry.status]}${others}; used by: ${usage.length ? usage.map(line).join(", ") : "no synchronized item"}${entry.urgent ? "; urgent" : ""} -> ${connectionAction(entry)}`;
+}
+
+function connectionSection(report: OffboardingReport): string[] {
+  const coverage = report.connectionCoverage;
+  if (!coverage.available) return ["- No connection inventory collected yet."];
+  return [
+    ...(report.connections.length
+      ? report.connections.map(connectionLine)
+      : ["- No role on a connection"]),
+    `- Checked: ${coverage.checked} connections with known roles (inventory of ${coverage.collectedAt}); ${coverage.unknown} with unknown owners and ${coverage.personal} personal connections not checked.`,
+  ];
+}
+
 export function offboardingReportToMarkdown(
   report: OffboardingReport,
   context: { workspaceName: string; generatedAt: string },
@@ -294,17 +319,24 @@ export function offboardingReportToMarkdown(
     `- Privileged items requiring review: ${report.privilegedReview.length}`,
     `- Observed identity dependencies: ${report.identityDependencies.length}`,
     `- Ownership unknown: ${report.ownershipUnknown.length}`,
-    `- Urgent orphan risks: ${report.orphanRisk.length}`,
+    `- Urgent orphan risks: ${report.orphanRisk.length + report.connectionRisk.length}`,
     `- Downstream blast radius: ${report.blastRadius.length}`,
+    `- Owned connections: ${report.connections.filter((entry) => entry.status !== "user").length} (sole owner: ${report.connections.filter((entry) => entry.status === "sole-owner").length})`,
     "",
     "## Urgent orphan risks",
-    ...(report.orphanRisk.length
-      ? report.orphanRisk.map(
-          (risk) =>
-            `- ${line(risk.item.displayName)}: ${risk.consumers
-              .map((consumer) => line(consumer.item?.displayName ?? consumer.id))
-              .join(", ")}`,
-        )
+    ...(report.orphanRisk.length || report.connectionRisk.length
+      ? [
+          ...report.orphanRisk.map(
+            (risk) =>
+              `- ${line(risk.item.displayName)}: ${risk.consumers
+                .map((consumer) => line(consumer.item?.displayName ?? consumer.id))
+                .join(", ")}`,
+          ),
+          ...report.connectionRisk.map(
+            (entry) =>
+              `- Connection ${line(entry.connection.displayName)}: no other owner; used by ${connectionUsageNames(entry.usages).map(line).join(", ")}`,
+          ),
+        ]
       : ["- None"]),
     "",
     "## Reassignment plan",
@@ -314,6 +346,9 @@ export function offboardingReportToMarkdown(
             `- ${line(entry.item.displayName)} -> ${line(entry.suggested?.displayName ?? "Unassigned")}: ${line(entry.reason)}`,
         )
       : ["- None"]),
+    "",
+    "## Connections",
+    ...connectionSection(report),
     "",
     "## Privileged items requiring review",
     ...(report.privilegedReview.length

@@ -1,6 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import {
   AlertTriangle,
+  Cable,
   CircleHelp,
   Download,
   Fingerprint,
@@ -15,7 +16,15 @@ import {
   offboardingReassignmentToCsv,
   offboardingReportToMarkdown,
 } from "../offboarding-export";
-import { buildOffboardingReport } from "../offboarding";
+import {
+  CONNECTION_STATUS_LABEL,
+  buildOffboardingReport,
+  connectionAction,
+  connectionUsageNames,
+  type OffboardingConnection,
+  type OffboardingReport,
+} from "../offboarding";
+import { connectivityLabel, roleLabel, type ConnectionUsage } from "../connections";
 import type { AtlasData } from "../model";
 import { Card, TypeGlyph, cn } from "../ui";
 
@@ -54,18 +63,26 @@ export function OffboardingDialog({
   principalId,
   open,
   onClose,
+  connectionUsages,
+  connectionUsagesLoading = false,
 }: {
   data: AtlasData;
   principalId: string;
   open: boolean;
   onClose: () => void;
+  /** Items that use each connection in every synchronized workspace. */
+  connectionUsages?: ReadonlyMap<string, ConnectionUsage[]>;
+  connectionUsagesLoading?: boolean;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const returnFocusRef = useRef<HTMLElement>(null);
   const report = useMemo(
-    () => buildOffboardingReport(data, principalId),
-    [data, principalId],
+    () => buildOffboardingReport(data, principalId, { connectionUsages }),
+    [connectionUsages, data, principalId],
   );
+  const ownedConnections = report.connections.filter(
+    (entry) => entry.status !== "user",
+  ).length;
   const subjectName = report.subject.ref;
   const baseName = `fabric-atlas-${safeFileName(subjectName)}`;
   const ownershipRoots =
@@ -247,8 +264,12 @@ export function OffboardingDialog({
                         report.identityDependencies.length,
                       ],
                       ["Ownership unknown", report.ownershipUnknown.length],
-                      ["Urgent risks", report.orphanRisk.length],
+                      [
+                        "Urgent risks",
+                        report.orphanRisk.length + report.connectionRisk.length,
+                      ],
                       ["Blast radius", report.blastRadius.length],
+                      ["Owned connections", ownedConnections],
                     ].map(([label, value]) => (
                       <Card key={label} className="p-m">
                         <div className="font-numeric text-500 font-bold">
@@ -270,9 +291,11 @@ export function OffboardingDialog({
                             Urgent orphan risks
                           </h3>
                         </div>
-                        {report.orphanRisk.length === 0 ? (
+                        {report.orphanRisk.length === 0 &&
+                        report.connectionRisk.length === 0 ? (
                           <p className="p-l text-200 text-muted-foreground">
-                            No sole-owned item with downstream consumers.
+                            No sole-owned item or connection with downstream
+                            consumers.
                           </p>
                         ) : (
                           <div className="divide-y divide-border">
@@ -289,6 +312,23 @@ export function OffboardingDialog({
                                   <div className="mt-xs text-200 text-muted-foreground">
                                     {risk.consumers.length} downstream consumer
                                     {risk.consumers.length === 1 ? "" : "s"}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                            {report.connectionRisk.map((entry) => (
+                              <div
+                                key={`connection-${entry.connection.id}`}
+                                className="flex items-start gap-m p-l"
+                              >
+                                <ConnectionGlyph />
+                                <div>
+                                  <div className="text-300 font-semibold">
+                                    {entry.connection.displayName}
+                                  </div>
+                                  <div className="mt-xs text-200 text-muted-foreground">
+                                    Connection without another owner · used by{" "}
+                                    {usedItems(entry)}
                                   </div>
                                 </div>
                               </div>
@@ -327,6 +367,14 @@ export function OffboardingDialog({
                         )}
                       </Card>
                     </div>
+                  )}
+
+                  {!report.blocked && (
+                    <ConnectionsCard
+                      report={report}
+                      subjectName={subjectName}
+                      usagesLoading={connectionUsagesLoading}
+                    />
                   )}
 
                   {!report.blocked && (
@@ -398,6 +446,152 @@ export function OffboardingDialog({
         </Dialog.Portal>
       )}
     </Dialog.Root>
+  );
+}
+
+function ConnectionGlyph() {
+  return (
+    <span className="inline-flex size-[32px] shrink-0 items-center justify-center rounded-lg bg-secondary text-brand-foreground">
+      <Cable className="icon-size-200" aria-hidden="true" />
+    </span>
+  );
+}
+
+function usedItems(entry: OffboardingConnection): string {
+  const names = connectionUsageNames(entry.usages);
+  return names.length > 3
+    ? `${names.slice(0, 3).join(", ")} +${names.length - 3}`
+    : names.join(", ");
+}
+
+function shortDateTime(value: string | undefined): string {
+  const date = value ? new Date(value) : undefined;
+  return date && !Number.isNaN(date.getTime())
+    ? date.toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })
+    : "";
+}
+
+function ConnectionsCard({
+  report,
+  subjectName,
+  usagesLoading,
+}: {
+  report: OffboardingReport;
+  subjectName: string;
+  usagesLoading: boolean;
+}) {
+  const coverage = report.connectionCoverage;
+  return (
+    <Card className="mt-l overflow-hidden">
+      <div className="flex flex-wrap items-center gap-s border-b border-border bg-secondary px-l py-m">
+        <Cable className="icon-size-200 text-brand-foreground" aria-hidden="true" />
+        <h3 className="text-300 font-semibold">
+          Connections · {report.connections.length}
+        </h3>
+        {coverage.available && (
+          <span className="ml-auto text-100 text-muted-foreground">
+            Tenant connection inventory of {shortDateTime(coverage.collectedAt)}
+          </span>
+        )}
+      </div>
+      {!coverage.available ? (
+        <p className="p-l text-200 text-muted-foreground">
+          No connection inventory yet. The synchronizer collects it on the
+          Connections page.
+        </p>
+      ) : (
+        <>
+          {usagesLoading && (
+            <p role="status" className="border-b border-border px-l py-s text-100 text-muted-foreground">
+              Reading item usage in the other synchronized workspaces…
+            </p>
+          )}
+          {report.connections.length === 0 ? (
+            <p className="p-l text-200 text-muted-foreground">
+              {subjectName} holds no role on the connections whose roles were
+              read.
+            </p>
+          ) : (
+            <div className="divide-y divide-border">
+              {report.connections.map((entry) => (
+                <ConnectionRow key={entry.connection.id} entry={entry} />
+              ))}
+            </div>
+          )}
+          <p className="border-t border-border p-m text-100 text-muted-foreground">
+            Matched on the Entra object ID, or on the user principal name when
+            Fabric returns it. {coverage.checked} connections with known roles
+            checked
+            {coverage.unknown
+              ? `; ${coverage.unknown} with unknown owners`
+              : ""}
+            {coverage.personal
+              ? `; ${coverage.personal} personal connections not checked`
+              : ""}
+            .
+          </p>
+        </>
+      )}
+    </Card>
+  );
+}
+
+function ConnectionRow({ entry }: { entry: OffboardingConnection }) {
+  const { connection } = entry;
+  const unowned = entry.otherOwners.length === 0 && entry.status !== "co-owner" && entry.status !== "user";
+  const details = [
+    connection.connectorType,
+    connectivityLabel(connection.connectivityType),
+    `Role: ${entry.roles.map(roleLabel).join(", ")}`,
+    entry.otherOwners.length
+      ? `${entry.otherOwners.length} other owner${entry.otherOwners.length === 1 ? "" : "s"}`
+      : "No other owner",
+    entry.otherPendingOwners.length
+      ? `${entry.otherPendingOwners.length} pending owner${entry.otherPendingOwners.length === 1 ? "" : "s"}`
+      : undefined,
+  ].filter(Boolean);
+  return (
+    <div
+      className={cn(
+        "flex flex-col gap-s p-l sm:flex-row sm:items-start sm:justify-between",
+        entry.urgent && "bg-status-failing/5",
+      )}
+    >
+      <div className="flex min-w-0 items-start gap-m">
+        <ConnectionGlyph />
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-s">
+            <span className="text-300 font-semibold">{connection.displayName}</span>
+            <span
+              className={cn(
+                "rounded-md border px-s py-xxs text-100 font-semibold",
+                entry.urgent
+                  ? "border-status-failing/30 bg-status-failing/10 text-status-failing"
+                  : unowned
+                    ? "border-status-warning/30 bg-status-warning/10 text-status-warning"
+                    : "border-border bg-card text-muted-foreground",
+              )}
+            >
+              {CONNECTION_STATUS_LABEL[entry.status]}
+            </span>
+            {entry.urgent && (
+              <span className="rounded-md border border-status-failing/30 bg-status-failing/10 px-s py-xxs text-100 font-semibold text-status-failing">
+                Urgent
+              </span>
+            )}
+          </div>
+          <div className="mt-xs text-200 text-muted-foreground">{details.join(" · ")}</div>
+          <div className="mt-xs text-200 text-muted-foreground">
+            {entry.usages.length
+              ? `Used by ${usedItems(entry)}`
+              : "Not used by synchronized items"}
+          </div>
+        </div>
+      </div>
+      <div className="shrink-0 text-200 font-semibold sm:max-w-[280px] sm:text-right">
+        {connectionAction(entry)}
+      </div>
+    </div>
   );
 }
 

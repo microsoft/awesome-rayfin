@@ -8,6 +8,8 @@ import type {
 import { isWorkspaceSection } from "./navigation";
 import type { SavedViewFilters } from "./saved-views";
 import { ITEM_TYPES } from "./model";
+import { PRINCIPAL_TYPE_FILTERS, ROLE_FILTERS } from "./access-filters";
+import { CATALOG_FACETS, facetSelectionFromFilters, facetSelectionToFilters } from "./catalog-facets";
 import { ASSET_OBJECT_KINDS } from "./catalog-objects";
 import { xrayObjectKey } from "./semantic-xray";
 
@@ -20,12 +22,16 @@ interface AtlasLocation {
 const TABS = new Set<Tab>([
   "overview",
   "map",
+  "external",
   "catalog",
   "assets",
   "governance",
   "access",
+  "connections",
   "jobs",
   "workspace",
+  "mcp",
+  "scout",
   "about",
 ]);
 
@@ -52,6 +58,7 @@ const KNOWN_PREFIXES = [
   "assets.",
   "governance.",
   "access.",
+  "connections.",
   "jobs.",
   "workspace.",
   "tm.",
@@ -65,6 +72,7 @@ const GOVERNANCE_SECTIONS = new Set([
   "coverage",
   "posture",
   "policies-ai",
+  "tenant-settings",
 ]);
 const GOVERNANCE_SEVERITIES = new Set([
   "all",
@@ -79,6 +87,7 @@ const GOVERNANCE_CATEGORIES = new Set([
   "metadata",
   "operations",
   "lineage",
+  "connections",
 ]);
 const CHANGE_DOMAINS = new Set([
   "all",
@@ -114,6 +123,8 @@ const ACCESS_RISKS = new Set([
   "admin",
   "resolution",
 ]);
+const CONNECTION_SECTIONS = new Set(["inventory", "ownership", "readiness", "changes"]);
+const CONNECTION_SCOPES = new Set(["used", "tenant"]);
 const JOB_STATUSES = new Set([
   "all",
   "completed",
@@ -214,12 +225,14 @@ export function parseAtlasLocation(
     };
   }
   if (tab === "catalog") {
-    return {
-      tab,
-      focus: request({
-        itemId: value(params, "catalog.item"),
-        query: value(params, "catalog.q"),
-        filters: filters([
+    const facetFilters = facetSelectionToFilters(
+      facetSelectionFromFilters(
+        Object.fromEntries(
+          CATALOG_FACETS.map((facet) => [`facet.${facet}`, params.getAll(`catalog.${facet}`)]),
+        ),
+      ),
+    );
+    const baseFilters = filters([
           [
             "type",
             allowed(
@@ -232,7 +245,16 @@ export function parseAtlasLocation(
             "posturePillar",
             allowed(params, "catalog.posture", POSTURE_PILLARS),
           ],
-        ]),
+        ]);
+    return {
+      tab,
+      focus: request({
+        itemId: value(params, "catalog.item"),
+        query: value(params, "catalog.q"),
+        filters:
+          baseFilters || Object.keys(facetFilters).length
+            ? { ...baseFilters, ...facetFilters }
+            : undefined,
       }),
     };
   }
@@ -305,6 +327,8 @@ export function parseAtlasLocation(
           ],
           ["currentSnapshotId", value(params, "governance.current")],
           ["previousSnapshotId", value(params, "governance.baseline")],
+          ["fabricDomain", value(params, "governance.fabricDomain")],
+          ["mine", params.get("governance.mine") === "1" ? "true" : undefined],
         ]),
       }),
     };
@@ -325,6 +349,22 @@ export function parseAtlasLocation(
           ],
           ["origin", allowed(params, "access.origin", ACCESS_ORIGINS)],
           ["risk", allowed(params, "access.risk", ACCESS_RISKS)],
+          ["principalType", allowed(params, "access.type", new Set(PRINCIPAL_TYPE_FILTERS))],
+          ["role", allowed(params, "access.role", new Set(ROLE_FILTERS))],
+        ]),
+      }),
+    };
+  }
+  if (tab === "connections") {
+    return {
+      tab,
+      focus: request({
+        query: value(params, "connections.q"),
+        filters: filters([
+          ["section", allowed(params, "connections.section", CONNECTION_SECTIONS)],
+          ["scope", allowed(params, "connections.scope", CONNECTION_SCOPES)],
+          ["search", value(params, "connections.q")],
+          ["connection", value(params, "connections.id")],
         ]),
       }),
     };
@@ -427,6 +467,10 @@ export function urlForNavigation(
     set(params, "catalog.type", filterValue(focus, "type"));
     set(params, "catalog.posture", filterValue(focus, "posturePillar"));
     set(params, "catalog.item", focus?.itemId);
+    const facetSelection = facetSelectionFromFilters(focus?.filters);
+    for (const facet of CATALOG_FACETS) {
+      for (const facetValue of facetSelection[facet] ?? []) params.append(`catalog.${facet}`, facetValue);
+    }
   } else if (navigation.tab === "assets") {
     set(params, "assets.q", focus?.query);
     set(params, "assets.kind", filterValue(focus, "kind"));
@@ -448,6 +492,10 @@ export function urlForNavigation(
     set(params, "governance.domain", filterValue(focus, "domain"));
     set(params, "governance.metric", filterValue(focus, "metric"));
     set(params, "governance.pillar", filterValue(focus, "pillar"));
+    set(params, "governance.fabricDomain", filterValue(focus, "fabricDomain"));
+    if (focus?.filters?.mine === true || focus?.filters?.mine === "true") {
+      params.set("governance.mine", "1");
+    }
     set(
       params,
       "governance.current",
@@ -464,8 +512,15 @@ export function urlForNavigation(
     set(params, "access.level", filterValue(focus, "accessLevel"));
     set(params, "access.origin", filterValue(focus, "origin"));
     set(params, "access.risk", filterValue(focus, "risk"));
+    set(params, "access.type", filterValue(focus, "principalType"));
+    set(params, "access.role", filterValue(focus, "role"));
     set(params, "access.item", focus?.itemId);
     set(params, "access.principal", focus?.principalId);
+  } else if (navigation.tab === "connections") {
+    set(params, "connections.section", filterValue(focus, "section"));
+    set(params, "connections.scope", filterValue(focus, "scope"));
+    set(params, "connections.q", focus?.query ?? filterValue(focus, "search"));
+    set(params, "connections.id", filterValue(focus, "connection"));
   } else if (navigation.tab === "jobs") {
     set(params, "jobs.q", focus?.query ?? filterValue(focus, "search"));
     set(params, "jobs.status", filterValue(focus, "status"));

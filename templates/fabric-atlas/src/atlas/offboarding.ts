@@ -11,6 +11,15 @@ import {
   getLineageImpact,
   type LineageImpactItem,
 } from "./lineage";
+import {
+  owners,
+  pendingOwners,
+  usagesByConnection,
+  workspaceConnectionUsages,
+  type ConnectionRole,
+  type ConnectionUsage,
+  type FabricConnectionRecord,
+} from "./connections";
 import type { AtlasData, Item, Principal } from "./model";
 
 export type OffboardingKind = "person-offboarding" | "principal-removal";
@@ -71,6 +80,69 @@ export interface WorkspaceOwnershipCoverage {
   percentage: number | null;
 }
 
+export type ConnectionOwnershipStatus = "sole-owner" | "co-owner" | "pending-owner" | "user";
+
+/** A Fabric connection on which the subject holds a role, from the tenant connection inventory. */
+export interface OffboardingConnection {
+  connection: FabricConnectionRecord;
+  /** Roles of the subject: Owner, PendingOwner, User or UserWithReshare. */
+  roles: string[];
+  /** Entra object ID, or the user principal name when Fabric returns it. */
+  match: "object-id" | "upn";
+  status: ConnectionOwnershipStatus;
+  otherOwners: ConnectionRole[];
+  otherPendingOwners: ConnectionRole[];
+  /** Synchronized items that use the connection (OneLake shortcuts and mirroring). */
+  usages: ConnectionUsage[];
+  /** No other active owner and synchronized items depend on the connection. */
+  urgent: boolean;
+}
+
+export interface OffboardingConnectionCoverage {
+  available: boolean;
+  collectedAt?: string;
+  /** Connections whose roles were read, so the check is conclusive for them. */
+  checked: number;
+  /** Role lookups skipped or failed: the subject may still hold a role there. */
+  unknown: number;
+  /** Personal connections: Fabric returns no roles and only their creator uses them. */
+  personal: number;
+}
+
+export const CONNECTION_STATUS_LABEL: Record<ConnectionOwnershipStatus, string> = {
+  "sole-owner": "Sole owner",
+  "co-owner": "Co-owner",
+  "pending-owner": "Pending owner",
+  user: "User",
+};
+
+const CONNECTION_STATUS_ORDER: Record<ConnectionOwnershipStatus, number> = {
+  "sole-owner": 0,
+  "pending-owner": 1,
+  "co-owner": 2,
+  user: 3,
+};
+
+/** Distinct items that use a connection, as "item (workspace)". */
+export function connectionUsageNames(usages: readonly ConnectionUsage[]): string[] {
+  return [
+    ...new Set(
+      usages.map((usage) => {
+        const name = usage.itemName ?? usage.itemId;
+        return usage.workspaceName ? `${name} (${usage.workspaceName})` : name;
+      }),
+    ),
+  ].sort((left, right) => left.localeCompare(right));
+}
+
+/** What to do with the subject's role before or after the departure. */
+export function connectionAction(entry: OffboardingConnection): string {
+  if (entry.status === "co-owner") return "Remove this owner role after the departure";
+  if (entry.status === "user") return "Remove this access after the departure";
+  if (entry.otherOwners.length === 0) return "Add another owner before the departure";
+  return "Remove the pending owner role after the departure";
+}
+
 export interface OffboardingReport {
   kind: OffboardingKind;
   subject: OffboardingSubject;
@@ -91,6 +163,15 @@ export interface OffboardingReport {
   blastSources: Record<string, string[]>;
   orphanRisk: OrphanRisk[];
   reassignment: Reassignment[];
+  connections: OffboardingConnection[];
+  /** Connections that would be left without an owner while synchronized items use them. */
+  connectionRisk: OffboardingConnection[];
+  connectionCoverage: OffboardingConnectionCoverage;
+}
+
+export interface OffboardingOptions {
+  /** Usages across every synchronized workspace; defaults to the active workspace. */
+  connectionUsages?: ReadonlyMap<string, ConnectionUsage[]>;
 }
 
 function normalize(value: string | undefined): string {
@@ -192,6 +273,78 @@ function identityEvidence(
   return evidence;
 }
 
+function connectionCoverage(data: AtlasData): OffboardingConnectionCoverage {
+  const inventory = data.connections;
+  if (!inventory) return { available: false, checked: 0, unknown: 0, personal: 0 };
+  const count = (status: FabricConnectionRecord["rolesStatus"]) =>
+    inventory.connections.filter((connection) => connection.rolesStatus === status).length;
+  return {
+    available: true,
+    collectedAt: inventory.collectedAt,
+    checked: count("complete"),
+    unknown: count("skipped") + count("failed"),
+    personal: count("personal"),
+  };
+}
+
+/**
+ * Connections on which the subject holds a role. The subject is matched on
+ * its Entra object ID, or on its email against the user principal name Fabric
+ * returns; never on a display name, which is not unique.
+ */
+function subjectConnections(
+  data: AtlasData,
+  principal: Principal,
+  usages: ReadonlyMap<string, ConnectionUsage[]>,
+): OffboardingConnection[] {
+  const id = normalize(principal.principalId);
+  const email = normalize(principal.email);
+  const byId = (role: ConnectionRole) => normalize(role.principalId) === id;
+  const isSubject = (role: ConnectionRole) =>
+    byId(role) || (!!email && normalize(role.displayName) === email);
+  return (data.connections?.connections ?? [])
+    .flatMap((connection): OffboardingConnection[] => {
+      if (connection.rolesStatus !== "complete") return [];
+      const mine = connection.roles.filter(isSubject);
+      if (!mine.length) return [];
+      const roles = [...new Set(mine.map((role) => role.role))].sort();
+      const otherOwners = owners(connection).filter((role) => !isSubject(role));
+      const otherPendingOwners = pendingOwners(connection).filter(
+        (role) => !isSubject(role),
+      );
+      const status: ConnectionOwnershipStatus = roles.includes("Owner")
+        ? otherOwners.length
+          ? "co-owner"
+          : "sole-owner"
+        : roles.includes("PendingOwner")
+          ? "pending-owner"
+          : "user";
+      const used = usages.get(connection.id.toLowerCase()) ?? [];
+      return [
+        {
+          connection,
+          roles,
+          match: mine.some(byId) ? "object-id" : "upn",
+          status,
+          otherOwners,
+          otherPendingOwners,
+          usages: used,
+          urgent:
+            (status === "sole-owner" || status === "pending-owner") &&
+            otherOwners.length === 0 &&
+            used.length > 0,
+        },
+      ];
+    })
+    .sort(
+      (left, right) =>
+        Number(right.urgent) - Number(left.urgent) ||
+        CONNECTION_STATUS_ORDER[left.status] -
+          CONNECTION_STATUS_ORDER[right.status] ||
+        left.connection.displayName.localeCompare(right.connection.displayName),
+    );
+}
+
 function accessEvidence(row: AccessReviewRow): OffboardingReviewEvidence {
   const direct = row.origin === "item" || row.origin === "mixed";
   if (row.effectiveAccess === "owner") {
@@ -203,8 +356,10 @@ function accessEvidence(row: AccessReviewRow): OffboardingReviewEvidence {
 export function buildOffboardingReport(
   data: AtlasData,
   principalIdOrKey: string,
+  options: OffboardingOptions = {},
 ): OffboardingReport {
   const allRows = buildAccessReviewRows(data);
+  const coverageOfConnections = connectionCoverage(data);
   const access = selectAccessByPrincipal(allRows, principalIdOrKey);
   const exact = data.principals.find(
     (principal) =>
@@ -274,6 +429,9 @@ export function buildOffboardingReport(
       blastSources: {},
       orphanRisk: [],
       reassignment: [],
+      connections: [],
+      connectionRisk: [],
+      connectionCoverage: coverageOfConnections,
     };
   }
 
@@ -493,6 +651,22 @@ export function buildOffboardingReport(
         };
   });
 
+  const connections = subjectConnections(
+    data,
+    principal,
+    options.connectionUsages ??
+      usagesByConnection(
+        workspaceConnectionUsages([
+          {
+            workspaceId: data.workspace.fabricId,
+            workspaceName: data.workspace.displayName,
+            config: data.config,
+            items: data.items,
+          },
+        ]),
+      ),
+  );
+
   return {
     kind,
     subject,
@@ -515,5 +689,8 @@ export function buildOffboardingReport(
     ),
     orphanRisk,
     reassignment,
+    connections,
+    connectionRisk: connections.filter((entry) => entry.urgent),
+    connectionCoverage: coverageOfConnections,
   };
 }

@@ -318,7 +318,8 @@ describe("two-workspace collection, publication and hydration", () => {
     fireEvent.click(screen.getByRole("button", { name: "Post foreign target" }));
     await waitFor(() => expect(screen.getByTestId("note-error")).toHaveTextContent("The selected note target is not in the active workspace."));
     expect(data.Comment.rows).toHaveLength(0);
-  });
+    // Two full collections and a render: about 2 s alone, more than 5 s when the whole suite runs in parallel.
+  }, 20_000);
 
   it("publishes a partial FGI-ORACLE-like snapshot when optional storage schema becomes unavailable", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });

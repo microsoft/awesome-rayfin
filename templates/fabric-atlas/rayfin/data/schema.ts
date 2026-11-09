@@ -24,6 +24,12 @@ import { SyncPayloadChunk } from './SyncPayloadChunk.js';
 import { ItemRelationsEvidenceSnapshot } from './ItemRelationsEvidenceSnapshot.js';
 import { AccessPolicyEvidence } from './AccessPolicyEvidence.js';
 import { OperationalIncident } from './OperationalIncident.js';
+import { OpenLineageImport } from './OpenLineageImport.js';
+import { ExternalDataset } from './ExternalDataset.js';
+import { ExternalLineageEdge } from './ExternalLineageEdge.js';
+import { ConnectionInventory } from './ConnectionInventory.js';
+import { ConnectionEntry } from './ConnectionEntry.js';
+import { ConnectionRoleAssignment } from './ConnectionRoleAssignment.js';
 
 /**
  * Schema type map — enables full type-safety through RayfinClient
@@ -56,6 +62,12 @@ export type AtlasSchema = {
   ItemRelationsEvidenceSnapshot: ItemRelationsEvidenceSnapshot;
   AccessPolicyEvidence: AccessPolicyEvidence;
   OperationalIncident: OperationalIncident;
+  OpenLineageImport: OpenLineageImport;
+  ExternalDataset: ExternalDataset;
+  ExternalLineageEdge: ExternalLineageEdge;
+  ConnectionInventory: ConnectionInventory;
+  ConnectionEntry: ConnectionEntry;
+  ConnectionRoleAssignment: ConnectionRoleAssignment;
 };
 
 export const schema = [
@@ -85,4 +97,10 @@ export const schema = [
   AccessPolicyEvidence,
   ItemRelationsEvidenceSnapshot,
   OperationalIncident,
+  OpenLineageImport,
+  ExternalDataset,
+  ExternalLineageEdge,
+  ConnectionInventory,
+  ConnectionEntry,
+  ConnectionRoleAssignment,
 ];

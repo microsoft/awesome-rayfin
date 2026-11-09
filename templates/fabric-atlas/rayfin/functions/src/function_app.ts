@@ -5,6 +5,8 @@ import {
 } from '@microsoft/fabric-user-data-functions';
 import type { AtlasSchema } from '../../data/schema.js';
 import { createPingResult, type PingResult } from './ping.js';
+import { teamsNotify, type TeamsCardJsonInput, type TeamsNotifyResult } from './teams-notify.js';
+import { suggestDescriptions, type AiSuggestRequestJson, type AiSuggestResult } from './ai-suggest.js';
 import { SyncOrchestrator } from './sync/orchestrator.js';
 import { safeSyncCall, type SyncResponse, type SyncUuidInput } from './sync/protocol.js';
 import { graphStart, graphContinue, graphStatus, graphCancel } from './sync/graph-functions.js';
@@ -15,6 +17,10 @@ import {
   workspaceCollectCore,
   type WorkspaceCoreEnvelope,
 } from './workspace-collector.js';
+import {
+  workspaceCollectGovernance,
+  type WorkspaceGovernanceEnvelope,
+} from './workspace-governance.js';
 import {
   workspaceCollectDefinitions,
   type DefinitionItemsInput,
@@ -62,6 +68,10 @@ import {
   type SourceProvenanceItemsInput,
   type SourceProvenanceStageEnvelope,
 } from './workspace-source-provenance.js';
+import {
+  tenantCollectConnections,
+  type TenantConnectionsEnvelope,
+} from './tenant-connections.js';
 
 const udf = new UserDataFunctions();
 
@@ -74,6 +84,26 @@ udf.func(
     snapshotId: SyncUuidInput,
   ): Promise<PolicyCollectionResult> =>
     workspaceCollectAccessPolicyEvidence(ctx, protocolVersion, workspaceId, snapshotId),
+  [],
+);
+
+udf.func(
+  'teamsNotify',
+  async (
+    ctx: RayfinContext<AtlasSchema, AudienceType.Fabric>,
+    protocolVersion: 1,
+    cardJson: TeamsCardJsonInput,
+  ): Promise<TeamsNotifyResult> => teamsNotify(ctx, protocolVersion, cardJson),
+  [],
+);
+
+udf.func(
+  'suggestDescriptions',
+  async (
+    ctx: RayfinContext<AtlasSchema, AudienceType.Fabric>,
+    protocolVersion: 1,
+    requestJson: AiSuggestRequestJson,
+  ): Promise<AiSuggestResult> => suggestDescriptions(ctx, protocolVersion, requestJson),
   [],
 );
 
@@ -108,6 +138,35 @@ udf.func(
     correlationId: SyncUuidInput | null = null,
   ): Promise<WorkspaceCoreEnvelope> =>
     workspaceCollectCore(ctx, protocolVersion, workspaceId, correlationId),
+  [],
+);
+
+// Read-only governance evidence (domains, tags, tenant settings, network, external shares, OneLake roles).
+// Every section is optional and degrades to `unsupported` for non-admin callers.
+udf.func(
+  'workspaceCollectGovernance',
+  async (
+    ctx: RayfinContext<AtlasSchema, AudienceType.Fabric>,
+    protocolVersion: 1,
+    workspaceId: SyncUuidInput,
+    correlationId: SyncUuidInput | null = null,
+    delegatedToken: string | null = null,
+  ): Promise<WorkspaceGovernanceEnvelope> =>
+    workspaceCollectGovernance(ctx, protocolVersion, workspaceId, correlationId, delegatedToken),
+  [],
+);
+
+// Read-only tenant connection inventory (admin connections API, Preview), once per sync batch.
+// Non-admin callers get an `unsupported` envelope; secrets are never returned by Fabric.
+udf.func(
+  'tenantCollectConnections',
+  async (
+    ctx: RayfinContext<AtlasSchema, AudienceType.Fabric>,
+    protocolVersion: 1,
+    correlationId: SyncUuidInput | null = null,
+    delegatedToken: string | null = null,
+  ): Promise<TenantConnectionsEnvelope> =>
+    tenantCollectConnections(ctx, protocolVersion, correlationId, delegatedToken),
   [],
 );
 

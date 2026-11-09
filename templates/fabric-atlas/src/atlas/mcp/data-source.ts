@@ -4,6 +4,7 @@ import type { AtlasData } from "../model";
 import type { OperationalIncidentRecord } from "../operational-incident-store";
 import type { WorkspaceScope } from "../workspace-scope";
 import type { AccessPolicyEvidence } from "../../../rayfin/functions/src/policy-evidence-contract";
+import type { ConnectionInventoryView } from "../connections";
 
 /**
  * Read-only access to validated Atlas evidence for the MCP surface.
@@ -32,6 +33,8 @@ export interface AtlasMcpDataSource {
     workspaceId: string,
     snapshotId: string,
   ): Promise<AccessPolicyEvidence[]>;
+  /** Latest stored tenant connection inventory, or null when none is collected. */
+  loadConnectionInventory?(): Promise<ConnectionInventoryView | null>;
 }
 
 export interface SnapshotCacheOptions {
@@ -64,6 +67,7 @@ export function withSnapshotCache(
     evidence: new Map<string, CacheEntry<PersistedItemRelationsEvidence | null>>(),
     incidents: new Map<string, CacheEntry<OperationalIncidentRecord[]>>(),
     policies: new Map<string, CacheEntry<AccessPolicyEvidence[]>>(),
+    connections: new Map<string, CacheEntry<ConnectionInventoryView | null>>(),
   };
 
   function cached<T>(
@@ -113,5 +117,11 @@ export function withSnapshotCache(
       cached(caches.policies, `${workspaceId}|${snapshotId}`, () =>
         source.loadPolicyEvidence(workspaceId, snapshotId),
       ),
+    ...(source.loadConnectionInventory
+      ? {
+          loadConnectionInventory: () =>
+            cached(caches.connections, "tenant", () => source.loadConnectionInventory!()),
+        }
+      : {}),
   };
 }
