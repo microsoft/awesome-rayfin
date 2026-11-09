@@ -193,6 +193,7 @@ const CATEGORY_LABEL: Record<GovernanceCategory, string> = {
   metadata: "Metadata",
   operations: "Operations",
   lineage: "Lineage",
+  connections: "Connections",
 };
 
 const CHANGE_DOMAIN_LABEL: Record<AtlasChangeDomain, string> = {
@@ -2296,6 +2297,7 @@ function FindingsSection({
             <option value="metadata">Metadata</option>
             <option value="operations">Operations</option>
             <option value="lineage">Lineage</option>
+            <option value="connections">Connections</option>
           </select>
           {activeFilters && (
             <button

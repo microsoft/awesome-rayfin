@@ -42,6 +42,7 @@ const CATEGORY_TO_MICROSOFT: Record<
   metadata: "trust",
   lineage: "trust",
   operations: "health",
+  connections: "protect",
 };
 
 /** Rules whose category is metadata but whose intent is protection. */

@@ -31,6 +31,7 @@ import { useAtlas } from "../store";
 import { NativeLink } from "../components/NativeLink";
 import { hasRecordedAccess, requestAccessLinks } from "../request-access";
 import { itemOneLakeRoles } from "../governance-evidence";
+import { describeProvenanceValue } from "../connections";
 import { OneLakeRolesList } from "../components/OneLakeRolesList";
 import { downloadText, fileSlug } from "../download";
 import { itemPassportMarkdown, scoutItemQuestion } from "../item-passport";
@@ -395,6 +396,10 @@ export function CatalogView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detailId, onStateChange, posturePillar, query, selType, facetKey]);
   const drawerRef = useRef<HTMLElement>(null);
+  const connectionsById = useMemo(
+    () => new Map((data.connections?.connections ?? []).map((connection) => [connection.id, connection])),
+    [data.connections],
+  );
   const detail = items.find((item) => item.fabricId === detailId);
   const dCfgSections = useMemo(() => {
     const rows = config.filter((entry) => entry.itemFabricId === detailId);
@@ -1156,7 +1161,11 @@ export function CatalogView({
                       <DrawerRow
                         key={index}
                         label={row.label}
-                        value={row.value}
+                        value={
+                          section === "Source provenance"
+                            ? describeProvenanceValue(row.value, connectionsById, data.principals)
+                            : row.value
+                        }
                       />
                     ))}
                   </DrawerSection>

@@ -20,6 +20,7 @@ import {
   Activity,
   BarChart3,
   Boxes,
+  Cable,
   Compass,
   FolderTree,
   Globe,
@@ -95,6 +96,7 @@ const catalogLoader = () => import("./atlas/views/Catalog");
 const assetCatalogLoader = () => import("./atlas/views/AssetCatalog");
 const accessLoader = () => import("./atlas/views/Access");
 const governanceLoader = () => import("./atlas/views/GovernanceCenter");
+const connectionsLoader = () => import("./atlas/views/Connections");
 const jobsLoader = () => import("./atlas/views/Jobs");
 const workspaceLoader = () => import("./atlas/views/WorkspaceHub");
 const mcpLoader = () => import("./atlas/views/Mcp");
@@ -126,6 +128,9 @@ const GovernanceCenterView = lazy(() =>
     default: module.GovernanceCenterView,
   })),
 );
+const ConnectionsView = lazy(() =>
+  connectionsLoader().then((module) => ({ default: module.ConnectionsView })),
+);
 const JobsView = lazy(() =>
   jobsLoader().then((module) => ({ default: module.JobsView })),
 );
@@ -155,6 +160,7 @@ const VIEW_LOADERS: Partial<Record<Tab, () => Promise<unknown>>> = {
   assets: assetCatalogLoader,
   access: accessLoader,
   governance: governanceLoader,
+  connections: connectionsLoader,
   jobs: jobsLoader,
   workspace: workspaceLoader,
   mcp: mcpLoader,
@@ -181,6 +187,7 @@ const NAV_GROUPS: {
     items: [
       { id: "governance", label: "Governance Center", icon: ShieldCheck },
       { id: "access", label: "Access Review", icon: KeyRound },
+      { id: "connections", label: "Connections", icon: Cable },
       { id: "scout", label: "Atlas Scout", icon: Sparkles },
     ],
   },
@@ -794,6 +801,13 @@ function App() {
                       ? { ...focus.filters, search: focus.query }
                       : focus?.filters
                   }
+                  onStateChange={replaceViewState}
+                />
+              )}
+              {tab === "connections" && (
+                <ConnectionsView
+                  focus={focus}
+                  onNavigate={navigate}
                   onStateChange={replaceViewState}
                 />
               )}

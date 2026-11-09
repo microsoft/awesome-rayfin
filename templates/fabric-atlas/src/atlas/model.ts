@@ -5,6 +5,7 @@
 // workspace read from the Fabric APIs.
 
 import type { GovernanceEvidence } from "./governance-evidence";
+import type { ConnectionInventoryView } from "./connections";
 import {
   ITEM_METADATA_SCHEMA_NAME,
   type FabricItemMetadata,
@@ -231,6 +232,11 @@ export interface AtlasData {
   objectEdges?: MetadataObjectLineageEdge[];
   /** Optional read-only governance evidence (v2.6); missing sections are Unknown. */
   governanceEvidence?: GovernanceEvidence;
+  /**
+   * Latest tenant connection inventory (v2.8). Tenant-wide and stored outside
+   * workspace snapshots, so it is attached to the live view only.
+   */
+  connections?: ConnectionInventoryView;
 }
 
 // ---------- helpers ----------
@@ -560,6 +566,8 @@ export const SAMPLE_DATA: AtlasData = {
     { itemFabricId: LH, section: "Gold tables", label: "member_segments", value: "4 rows" },
     { itemFabricId: LH, section: "Gold tables", label: "revenue_by_month", value: "7 rows" },
     { itemFabricId: LH, section: "Gold tables", label: "demand_forecast", value: "14 rows" },
+    { itemFabricId: LH, section: "Source provenance", label: "external-shortcut", value: `provider=AdlsGen2; connection=30000000-0000-4000-8000-0000000000c1; consumer=${LH}; field=target.adlsGen2.connectionId; location=Files/landing/partners` },
+    { itemFabricId: LH, section: "Source provenance", label: "external-shortcut", value: `provider=AmazonS3; connection=30000000-0000-4000-8000-0000000000c2; consumer=${LH}; field=target.amazonS3.connectionId; location=Files/vendor/weather` },
     { itemFabricId: DW, section: "Tables", label: "dim_date", value: "210 rows" },
     { itemFabricId: DW, section: "Tables", label: "dim_station", value: "15 rows" },
     { itemFabricId: DW, section: "Tables", label: "dim_equipment", value: "20 rows" },

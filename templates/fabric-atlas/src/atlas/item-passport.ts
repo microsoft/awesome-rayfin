@@ -1,11 +1,12 @@
 import { buildGovernanceFindings, type GovernanceFinding, type GovernanceSeverity } from "./governance";
 import { typeMeta, type AtlasData, type Item } from "./model";
+import { authenticationLabel, connectionUsages, ownerSummary } from "./connections";
 
 export type ItemPassportData = Pick<
   AtlasData,
   "workspace" | "items" | "principals" | "grants" | "jobs" | "edges"
 > &
-  Partial<Pick<AtlasData, "schema" | "governanceEvidence">>;
+  Partial<Pick<AtlasData, "schema" | "governanceEvidence" | "config" | "connections">>;
 
 const SEVERITY_ORDER: Record<GovernanceSeverity, number> = { critical: 0, high: 1, medium: 2, low: 3 };
 const RECENT_JOBS = 5;
@@ -125,6 +126,23 @@ export function itemPassportMarkdown(
     for (const grant of grants) {
       lines.push(
         `| ${cell(principalName(grant.principalRef))} | ${cell(grant.roleName ?? grant.accessLevel)}${grant.flag ? ` (${grant.flag})` : ""} | ${grant.source} |`,
+      );
+    }
+    lines.push("");
+  }
+
+  const usages = connectionUsages(data.config ?? []).filter((usage) => usage.itemId === itemId);
+  if (usages.length) {
+    const byId = new Map((data.connections?.connections ?? []).map((connection) => [connection.id, connection]));
+    lines.push(`## Connections (${usages.length})`, "");
+    lines.push("| Connection | Connector | Authentication | Owners | Used for |", "| --- | --- | --- | --- | --- |");
+    for (const usage of usages) {
+      const connection = byId.get(usage.connectionId);
+      const usedFor = `${usage.relation}${usage.location ? ` ${usage.location}` : ""}`;
+      lines.push(
+        connection
+          ? `| ${cell(connection.displayName)} | ${cell(connection.connectorType ?? "Unknown")} | ${cell(authenticationLabel(connection))} | ${cell(ownerSummary(connection, data.principals))} | ${cell(usedFor)} |`
+          : `| \`${usage.connectionId}\` | ${cell(usage.provider ?? "Unknown")} | Not in the tenant inventory | Not collected | ${cell(usedFor)} |`,
       );
     }
     lines.push("");

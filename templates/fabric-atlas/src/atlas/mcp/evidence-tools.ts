@@ -24,6 +24,13 @@ import {
   type AtlasHistory,
 } from "../history";
 import { domainReference, itemOneLakeRoles } from "../governance-evidence";
+import {
+  authenticationLabel,
+  connectionFlags,
+  connectionUsages,
+  usagesByConnection,
+  type ConnectionInventoryView,
+} from "../connections";
 import { incidentBriefSection } from "../incident-feeds";
 import {
   COVERAGE_DIMENSIONS,
@@ -1244,6 +1251,119 @@ function failureName(error: unknown): string {
   return error instanceof Error ? error.name : typeof error;
 }
 
+type ConnectionInventoryState =
+  | { status: "available"; inventory: ConnectionInventoryView }
+  | { status: "not-collected" | "unavailable" };
+
+async function connectionInventory(runtime: AtlasMcpToolRuntime): Promise<ConnectionInventoryState> {
+  if (!runtime.source.loadConnectionInventory) return { status: "unavailable" };
+  // The tenant inventory is optional evidence: a failed read is reported, never fatal.
+  try {
+    const inventory = await runtime.source.loadConnectionInventory();
+    return inventory ? { status: "available", inventory } : { status: "not-collected" };
+  } catch (error) {
+    runtime.log?.(`[atlas-mcp] connection inventory unavailable: ${failureName(error)}`);
+    return { status: "unavailable" };
+  }
+}
+
+function connectionEvidence(
+  data: AtlasData,
+  args: AtlasMcpToolArguments["atlas_get_connection_evidence"],
+  state: ConnectionInventoryState,
+): ToolOutcome {
+  const item = args.itemId ? findItem(data, args.itemId) : undefined;
+  const usages = connectionUsages(data.config).filter((usage) => !item || usage.itemId === item.fabricId);
+  const grouped = usagesByConnection(usages);
+  const inventory = state.status === "available" ? state.inventory : undefined;
+  const byId = new Map((inventory?.connections ?? []).map((connection) => [connection.id, connection]));
+  const items = new Map(data.items.map((entry) => [entry.fabricId, entry]));
+  const reference = inventory ? Date.parse(inventory.collectedAt) : Number.NaN;
+  const now = Number.isFinite(reference) ? reference : Date.now();
+  const ids = [...grouped.keys()].sort(compareText);
+  const known = ids.filter((id) => byId.has(id));
+  const page = known.slice(0, args.limit);
+  const notes = [
+    ...(state.status !== "available"
+      ? ["The tenant connection inventory is not available: connection details are unknown."]
+      : []),
+    ...(ids.length > known.length
+      ? [`${ids.length - known.length} connection IDs used by items are not in the latest inventory.`]
+      : []),
+    ...(inventory?.truncated ? ["The latest inventory reached the collection limit and is partial."] : []),
+  ];
+  return {
+    result: {
+      scope: item ? "item" : "workspace",
+      ...(item ? { item: itemRef(item) } : {}),
+      inventory: inventory
+        ? {
+            status: inventory.status,
+            collectedAt: inventory.collectedAt,
+            connectionCount: inventory.connections.length,
+            truncated: inventory.truncated,
+          }
+        : { status: state.status },
+      connections: page.map((id) => {
+        const connection = byId.get(id)!;
+        return {
+          connectionId: connection.id,
+          displayName: connection.displayName,
+          connectorType: connection.connectorType ?? null,
+          connectivityType: connection.connectivityType,
+          endpoint: connection.path ?? null,
+          authentication: authenticationLabel(connection),
+          privacyLevel: connection.privacyLevel ?? null,
+          encryption: connection.connectionEncryption ?? null,
+          rolesStatus: connection.rolesStatus,
+          owners: connection.roles
+            .filter((role) => role.role === "Owner" || role.role === "PendingOwner")
+            .map((role) => ({
+              principalId: role.principalId,
+              principalType: role.principalType,
+              role: role.role,
+              ...(role.displayName ? { displayName: role.displayName } : {}),
+            })),
+          flags: connectionFlags(connection, now),
+          lastCredentialUsedAt: connection.lastCredentialUsedAt ?? null,
+          usedBy: (grouped.get(id) ?? []).map((usage) => ({
+            itemId: usage.itemId,
+            displayName: items.get(usage.itemId)?.displayName ?? null,
+            relation: usage.relation,
+            location: usage.location ?? null,
+          })),
+        };
+      }),
+      unresolvedConnectionIds: ids.filter((id) => !byId.has(id)).slice(0, args.limit),
+    },
+    sources: [
+      snapshotSource(data, ["ConfigEntry", "FabricItem"]),
+      ...(inventory
+        ? [{
+            id: "atlas-connection-inventory",
+            label: "Tenant connection inventory (admin connections API, Preview)",
+            authority: "non-authoritative" as const,
+            entities: ["ConnectionInventory", "ConnectionEntry", "ConnectionRoleAssignment"],
+            observedAt: inventory.collectedAt,
+            maturity: "preview" as const,
+          }]
+        : []),
+    ],
+    coverage: coverage(
+      state.status !== "available" ? "unavailable" : ids.length > known.length ? "partial" : "complete",
+      page.length,
+      known.length,
+      notes,
+    ),
+    limitations: [
+      "Usage covers OneLake shortcuts and mirrored databases only; pipeline, Copy job and Dataflow Gen2 definitions are not parsed for connections.",
+      "Recency timestamps are signals, not a dependency map.",
+      "Fabric returns principal IDs and types; names appear only when Fabric returns them.",
+      "Atlas MCP cannot assign owners or change credentials.",
+    ],
+  };
+}
+
 // Stored policy context, incident records and history enrich a response. A
 // failed read is reported as an explicit state, never hidden and never fatal.
 
@@ -1456,6 +1576,13 @@ export async function callAtlasMcpTool(
         outcome = governanceFindings(
           data,
           args as AtlasMcpToolArguments["atlas_get_governance_findings"],
+        );
+        break;
+      case "atlas_get_connection_evidence":
+        outcome = connectionEvidence(
+          data,
+          args as AtlasMcpToolArguments["atlas_get_connection_evidence"],
+          await connectionInventory(runtime),
         );
         break;
       case "atlas_export_snapshot":

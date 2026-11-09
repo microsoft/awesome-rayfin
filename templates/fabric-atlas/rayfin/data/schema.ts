@@ -27,6 +27,9 @@ import { OperationalIncident } from './OperationalIncident.js';
 import { OpenLineageImport } from './OpenLineageImport.js';
 import { ExternalDataset } from './ExternalDataset.js';
 import { ExternalLineageEdge } from './ExternalLineageEdge.js';
+import { ConnectionInventory } from './ConnectionInventory.js';
+import { ConnectionEntry } from './ConnectionEntry.js';
+import { ConnectionRoleAssignment } from './ConnectionRoleAssignment.js';
 
 /**
  * Schema type map — enables full type-safety through RayfinClient
@@ -62,6 +65,9 @@ export type AtlasSchema = {
   OpenLineageImport: OpenLineageImport;
   ExternalDataset: ExternalDataset;
   ExternalLineageEdge: ExternalLineageEdge;
+  ConnectionInventory: ConnectionInventory;
+  ConnectionEntry: ConnectionEntry;
+  ConnectionRoleAssignment: ConnectionRoleAssignment;
 };
 
 export const schema = [
@@ -94,4 +100,7 @@ export const schema = [
   OpenLineageImport,
   ExternalDataset,
   ExternalLineageEdge,
+  ConnectionInventory,
+  ConnectionEntry,
+  ConnectionRoleAssignment,
 ];

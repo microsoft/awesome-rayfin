@@ -20,11 +20,15 @@ compatibility gaps.
 - Permission to create items in the target workspace
 - One Entra SPA registration for delegated compatibility calls
 - Fabric Administrator support for the Power BI metadata scanner settings
-- One configured Atlas synchronizer
+- One configured Atlas synchronizer; give it the Fabric Administrator role to
+  collect governance evidence (domains, tenant settings) and the tenant
+  connection inventory. Without it, unless the tenant lets the application
+  identity call admin APIs, those sections stay Unknown and the Connections
+  page explains why.
 
-The synchronized catalog is shared with the complete authenticated Fabric App
-audience. Personal saved views, review decisions and acknowledgements remain
-user-scoped.
+The synchronized catalog and the tenant connection inventory are shared with
+the complete authenticated Fabric App audience. Personal saved views, review
+decisions and acknowledgements remain user-scoped.
 
 ## 1. Clone and validate
 

@@ -17,6 +17,7 @@ import { lineageEdgeKey } from "./lineage";
 import { searchJobId } from "./search";
 import { buildAccessEvidenceCoverage, type AccessEvidenceCoverage } from "./access-coverage";
 import { domainIndex, domainPath, type GovernanceEvidence } from "./governance-evidence";
+import { connectionFlags, connectionUsages, usagesByConnection } from "./connections";
 
 export type AccessOrigin = "workspace" | "item" | "mixed";
 export type PrincipalResolution = "resolved" | "unresolved" | "ambiguous";
@@ -55,7 +56,8 @@ export type GovernanceCategory =
   | "access"
   | "metadata"
   | "operations"
-  | "lineage";
+  | "lineage"
+  | "connections";
 
 export interface GovernanceFindingTarget {
   kind: "workspace" | "item" | "principal" | "job" | "edge";
@@ -538,7 +540,7 @@ export function buildGovernanceFindings(
     AtlasData,
     "workspace" | "items" | "principals" | "grants" | "jobs" | "edges"
   > &
-    Partial<Pick<AtlasData, "schema" | "governanceEvidence">>,
+    Partial<Pick<AtlasData, "schema" | "governanceEvidence" | "config" | "connections">>,
 ): GovernanceFinding[] {
   const findings: GovernanceFinding[] = [];
   const accessRows = buildAccessReviewRows(data);
@@ -934,6 +936,8 @@ export function buildGovernanceFindings(
     });
   }
 
+  findings.push(...connectionFindings(data));
+
   const uniqueFindings = [...new Map(findings.map((finding) => [
     finding.id,
     finding,
@@ -947,6 +951,64 @@ export function buildGovernanceFindings(
 }
 
 export const getGovernanceFindings = buildGovernanceFindings;
+
+/**
+ * Items that depend on a connection whose ownership or encryption needs
+ * attention. Only a complete tenant inventory raises them; connection-level
+ * findings that no synchronized item uses stay on the Connections page.
+ */
+export function connectionFindings(
+  data: Pick<AtlasData, "items"> & Partial<Pick<AtlasData, "config" | "connections">>,
+): GovernanceFinding[] {
+  const inventory = data.connections;
+  if (!inventory || inventory.status !== "complete" || !data.config?.length) return [];
+  const connections = new Map(inventory.connections.map((connection) => [connection.id, connection]));
+  const items = new Map(data.items.map((item) => [item.fabricId, item]));
+  const reference = Date.parse(inventory.collectedAt);
+  const now = Number.isFinite(reference) ? reference : Date.now();
+  const findings: GovernanceFinding[] = [];
+  for (const [connectionId, usages] of usagesByConnection(connectionUsages(data.config))) {
+    const connection = connections.get(connectionId);
+    if (!connection) continue;
+    const flags = connectionFlags(connection, now);
+    for (const itemId of new Set(usages.map((usage) => usage.itemId))) {
+      const item = items.get(itemId);
+      if (!item) continue;
+      const evidenceIds = [`item:${itemId}:connection:${connectionId}`];
+      const base = { category: "connections" as const, evidenceIds, target: { kind: "item" as const, itemId }, itemId };
+      if (flags.includes("pending-owner") || flags.includes("no-owner")) {
+        findings.push({
+          ...base,
+          id: findingId("connection-no-active-owner", itemId, connectionId),
+          severity: "high",
+          title: `${item.displayName} depends on a connection without an active owner`,
+          detail: `Connection ${connection.displayName} has ${flags.includes("pending-owner") ? "only a pending owner who has not re-entered the credentials" : "no owner"}. Nobody can maintain its credentials.`,
+          recommendation: "Assign an owner in Manage connections and gateways (or through the admin connections API) and have them re-enter the credentials.",
+        });
+      } else if (flags.includes("single-owner")) {
+        findings.push({
+          ...base,
+          id: findingId("connection-single-owner", itemId, connectionId),
+          severity: "medium",
+          title: `${item.displayName} depends on a single-owner connection`,
+          detail: `Connection ${connection.displayName} (${connection.connectorType ?? connection.connectivityType}) has one owner, a single user. If that person leaves, nobody can update its credentials.`,
+          recommendation: "Add a second owner, ideally a group or a service principal.",
+        });
+      }
+      if (flags.includes("not-encrypted")) {
+        findings.push({
+          ...base,
+          id: findingId("connection-not-encrypted", itemId, connectionId),
+          severity: "medium",
+          title: `${item.displayName} reads through an unencrypted connection`,
+          detail: `Gateway connection ${connection.displayName} is set to NotEncrypted for ${connection.path ?? "its endpoint"}.`,
+          recommendation: "Enable an encrypted connection to the source and update the connection setting.",
+        });
+      }
+    }
+  }
+  return findings;
+}
 
 const UNASSIGNED_DOMAIN = "unassigned";
 export const ENDORSED_INACTIVE_DAYS = 90;

@@ -13,6 +13,7 @@ import { PageHeader } from "../components/PageHeader";
 import type { AtlasFocusRequest } from "../navigation";
 import { Card, EndorsementChip, HealthChip, SectionLabel, TypeGlyph, cn } from "../ui";
 import { typeMeta, type ConfigKV, type Item } from "../model";
+import { describeProvenanceValue } from "../connections";
 
 type ItemFilter = "all" | "configured" | "empty";
 
@@ -28,6 +29,10 @@ export function ConfigView({
   const { data } = useAtlas();
   const { items, config } = data;
   const sectionIdPrefix = useId();
+  const connectionsById = useMemo(
+    () => new Map((data.connections?.connections ?? []).map((connection) => [connection.id, connection])),
+    [data.connections],
+  );
 
   const configByItem = useMemo(() => {
     const map = new Map<string, ConfigKV[]>();
@@ -352,7 +357,9 @@ export function ConfigView({
                                       {entry.label}
                                     </dt>
                                     <dd className="break-all font-monospace text-300 leading-300 text-foreground md:col-span-2">
-                                      {entry.value || "—"}
+                                      {(entry.section === "Source provenance"
+                                        ? describeProvenanceValue(entry.value, connectionsById, data.principals)
+                                        : entry.value) || "—"}
                                     </dd>
                                   </div>
                                 ))}

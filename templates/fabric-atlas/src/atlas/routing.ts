@@ -27,6 +27,7 @@ const TABS = new Set<Tab>([
   "assets",
   "governance",
   "access",
+  "connections",
   "jobs",
   "workspace",
   "mcp",
@@ -57,6 +58,7 @@ const KNOWN_PREFIXES = [
   "assets.",
   "governance.",
   "access.",
+  "connections.",
   "jobs.",
   "workspace.",
   "tm.",
@@ -85,6 +87,7 @@ const GOVERNANCE_CATEGORIES = new Set([
   "metadata",
   "operations",
   "lineage",
+  "connections",
 ]);
 const CHANGE_DOMAINS = new Set([
   "all",
@@ -120,6 +123,8 @@ const ACCESS_RISKS = new Set([
   "admin",
   "resolution",
 ]);
+const CONNECTION_SECTIONS = new Set(["inventory", "ownership", "readiness", "changes"]);
+const CONNECTION_SCOPES = new Set(["used", "tenant"]);
 const JOB_STATUSES = new Set([
   "all",
   "completed",
@@ -350,6 +355,20 @@ export function parseAtlasLocation(
       }),
     };
   }
+  if (tab === "connections") {
+    return {
+      tab,
+      focus: request({
+        query: value(params, "connections.q"),
+        filters: filters([
+          ["section", allowed(params, "connections.section", CONNECTION_SECTIONS)],
+          ["scope", allowed(params, "connections.scope", CONNECTION_SCOPES)],
+          ["search", value(params, "connections.q")],
+          ["connection", value(params, "connections.id")],
+        ]),
+      }),
+    };
+  }
   if (tab === "jobs") {
     return {
       tab,
@@ -497,6 +516,11 @@ export function urlForNavigation(
     set(params, "access.role", filterValue(focus, "role"));
     set(params, "access.item", focus?.itemId);
     set(params, "access.principal", focus?.principalId);
+  } else if (navigation.tab === "connections") {
+    set(params, "connections.section", filterValue(focus, "section"));
+    set(params, "connections.scope", filterValue(focus, "scope"));
+    set(params, "connections.q", focus?.query ?? filterValue(focus, "search"));
+    set(params, "connections.id", filterValue(focus, "connection"));
   } else if (navigation.tab === "jobs") {
     set(params, "jobs.q", focus?.query ?? filterValue(focus, "search"));
     set(params, "jobs.status", filterValue(focus, "status"));

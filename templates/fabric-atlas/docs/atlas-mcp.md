@@ -85,6 +85,7 @@ research note that the local Fabric MCP server never touches a live tenant.
 | `atlas_explain_lineage_evidence` | Which sources support this relationship? | None | Authoritative lineage beside non-authoritative Item Relations (Beta) evidence, with agreement status |
 | `atlas_get_access_evidence` | Which grants are recorded, and which access layers are unknown? | Core `list_workspace_roles` (live roles only) | Grant sources, flags and explicit unknown or unsupported layers |
 | `atlas_get_operational_incidents` | Which items currently fail, and what may be affected? | None | Observed failures kept separate from inferred downstream impact |
+| `atlas_get_connection_evidence` | Which connections do these items use, and who owns them? | None | Connection inventory joined to shortcut and mirroring provenance, with owner and credential flags |
 | `atlas_find_catalog_items` | Where is this item, table, column, measure, ontology entity or data agent source? | Core `search_catalog`, IQ `DiscoverArtifacts` | Includes ontology and data agent definition metadata that IQ MCP excludes; no definitions, expressions or data |
 | `atlas_list_workspaces` | Which workspaces may Atlas MCP read? | Core `list_workspaces` | Only the administrator-selected Atlas scope |
 | `atlas_get_governance_findings` | Which governance findings are open, and how do I fix them? | None | Deterministic findings with severity, Microsoft governance pillar, evidence IDs, owner status and a Fabric portal fix link |
@@ -110,6 +111,7 @@ properties. All limits are fixed in `ATLAS_MCP_LIMITS`.
 | `atlas_explain_lineage_evidence` | `workspaceId?`, `itemId`, `limit` (≤50) | Relationships touching the item, by source and agreement |
 | `atlas_get_access_evidence` | `workspaceId?`, `itemId?`, `limit` (≤50) | Item: recorded grant paths (≤20) per principal, named by display name and object ID; an unresolved grant shows its recorded reference. Workspace: counts only. Always the six evidence layers |
 | `atlas_get_operational_incidents` | `workspaceId?`, `includeImpact`, `limit` (≤25) | Observed incidents, inferred impact (≤25 per incident) and monitoring-source status |
+| `atlas_get_connection_evidence` | `workspaceId?`, `itemId?`, `limit` (≤100) | Connections used by the workspace or the item (OneLake shortcuts and mirroring) with connector, endpoint, authentication, owners as principal IDs and types, flags, credential recency and the items that use them; connection IDs missing from the latest inventory are listed apart. The inventory is optional evidence: when it is missing, coverage is `unavailable` and the call still succeeds |
 | `atlas_get_snapshot_changes` | `workspaceId?`, `domains?`, `limit` (≤100) | Changes between the two most recent validated snapshots |
 | `atlas_get_governance_findings` | `workspaceId?`, `severities?`, `categories?`, `pillars?`, `domain?`, `rule?`, `itemId?`, `owner` (`any`, `known`, `unknown`, `workspace`), `limit` (≤100), `offset` | Findings sorted by severity then ID, with pillar, evidence IDs (≤10), `ownerStatus` and `fixUrl`; texts truncated to 500 characters; `countsBySeverity`, `totalFindings` and `nextOffset` |
 | `atlas_export_snapshot` | `workspaceId?`, `section?` (`items`, `edges`, `principals`, `grants`, `jobs`, `config`), `limit` (≤200), `offset` | The snapshot manifest (the same one the UI export writes); with `section`, one page of rows where emails, `configuredBy`, `modifiedBy`, `endorsementBy`, job messages and email-like strings are replaced by `[withheld]` |
@@ -161,6 +163,7 @@ The tools call the same functions as the Atlas UI:
 | Lineage evidence | `buildLineageEvidence` (`lineage-evidence.ts`) and `parseItemRelationsEvidence` |
 | Access evidence | `buildAccessReviewRows`, `selectAccessByItem`, `summarizeAccessReview` (`governance.ts`) and `buildAccessEvidenceCoverage` (`access-coverage.ts`) |
 | Incidents | `observedIncidents`, `incidentImpact` and `MONITORING_SOURCES` (`observability.ts`) |
+| Connection evidence | `connectionUsages`, `usagesByConnection` and `connectionFlags` (`connections.ts`), with `readLatestConnectionInventory` (`connection-inventory-store.ts`) |
 | Changes and provenance | `compareSnapshots`, `summarizeSnapshot` and `snapshotFromData` (`history.ts`) |
 
 Snapshots come from `loadFromDb`, history from `loadHistoryFromDb`, scope from

@@ -1,5 +1,9 @@
 import { loadStoredPolicyEvidence } from "@/atlas/access-policy-evidence-source";
 import { loadFromDb, loadHistoryFromDb } from "@/atlas/backend";
+import {
+  defaultConnectionStoreApi,
+  readLatestConnectionInventory,
+} from "@/atlas/connection-inventory-store";
 import { readLatestItemRelationsEvidence } from "@/atlas/item-relations-evidence-store";
 import type { AtlasMcpDataSource } from "@/atlas/mcp/data-source";
 import { readOperationalIncidents } from "@/atlas/operational-incident-store";
@@ -29,5 +33,7 @@ export function createRayfinAtlasMcpDataSource(session: {
       readOperationalIncidents(workspaceId, snapshotId),
     loadPolicyEvidence: (workspaceId, snapshotId) =>
       loadStoredPolicyEvidence(workspaceId, snapshotId, new AbortController().signal),
+    loadConnectionInventory: async () =>
+      (await readLatestConnectionInventory(await defaultConnectionStoreApi())).latest ?? null,
   };
 }

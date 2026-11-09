@@ -4,7 +4,8 @@
 
 Fabric Atlas is a React and Rayfin Data App that indexes Microsoft Fabric
 workspace metadata. It visualizes catalog items, lineage, access, sensitivity,
-jobs, configuration and team notes. It never stores workspace business data.
+connections, jobs, configuration and team notes. It never stores workspace
+business data or credentials.
 
 ## Architecture
 
@@ -20,6 +21,10 @@ jobs, configuration and team notes. It never stores workspace business data.
   Scout chat client for the published Fabric Data Agent.
 - `src/atlas/openlineage.ts` and `src/atlas/external-lineage*.ts` import and
   export OpenLineage events and link external datasets to catalog items.
+- `src/atlas/connections.ts`, `src/atlas/connection-*.ts` and
+  `src/atlas/views/Connections*.tsx` implement the tenant connection inventory;
+  `rayfin/functions/src/tenant-connections.ts` collects it once per
+  synchronization batch from the Fabric admin connections API (Preview).
 - `src/atlas/lineage.ts` normalizes and lays out lineage graphs.
 - `src/atlas/views/` contains the application pages.
 - `src/atlas/mcp/` defines the read-only Atlas MCP contract and evidence tools;
@@ -45,8 +50,14 @@ jobs, configuration and team notes. It never stores workspace business data.
 - Preserve the first-sync gate and staged synchronization progress.
 - Keep the configured synchronizer contact visible when another user is blocked
   by the first-sync gate.
-- Treat synchronized catalog reads and team notes as shared with the complete
-  authenticated app audience; keep personal review state user-scoped.
+- Treat synchronized catalog reads, the tenant connection inventory and team
+  notes as shared with the complete authenticated app audience; keep personal
+  review state user-scoped.
+- Never store connection secrets: keep connection endpoints without URL user
+  info, query string or fragment.
+- Never name a Rayfin entity with a name ending in `Connection`: Data API
+  Builder reads that GraphQL type as a pagination type and every create and
+  read of the entity fails with an internal server error.
 - Keep team notes append-only unless a reviewed update/delete policy and UX are
   introduced together.
 - Keep grouped lists collapsed by default unless the user is actively searching.
@@ -72,6 +83,7 @@ src/
     browser-collector-sync.ts  in-browser metadata collection
     catalog-objects.ts         Asset Catalog object model
     catalog-search.ts          catalog search
+    connections.ts  connection inventory model, flags and policy readiness
     domain-governance.ts       Fabric domains and per-domain posture
     governance.ts   findings and governance rules
     history.ts      snapshot history and comparison

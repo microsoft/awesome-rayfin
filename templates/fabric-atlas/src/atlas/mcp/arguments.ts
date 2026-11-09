@@ -48,6 +48,7 @@ export const FINDING_CATEGORIES = [
   "metadata",
   "operations",
   "lineage",
+  "connections",
 ] as const satisfies readonly GovernanceCategory[];
 
 export const FINDING_PILLARS = [
@@ -119,6 +120,10 @@ export interface AtlasMcpToolArguments {
     owner: FindingOwnerFilter;
     limit: number;
     offset: number;
+  };
+  atlas_get_connection_evidence: WorkspaceArguments & {
+    itemId?: string;
+    limit: number;
   };
   atlas_export_snapshot: WorkspaceArguments & {
     section?: SnapshotSection;
@@ -332,6 +337,7 @@ const ALLOWED: Record<AtlasMcpToolName, readonly string[]> = {
     "limit",
     "offset",
   ],
+  atlas_get_connection_evidence: ["workspaceId", "itemId", "limit"],
   atlas_export_snapshot: ["workspaceId", "section", "limit", "offset"],
 };
 
@@ -390,6 +396,11 @@ export function parseToolArguments<T extends AtlasMcpToolName>(
       owner: oneOf(args, "owner", FINDING_OWNERS, "any"),
       limit: integer(args, "limit", ATLAS_MCP_LIMITS.findings),
       offset: offset(args),
+    }),
+    atlas_get_connection_evidence: () => ({
+      workspaceId: workspaceId(args),
+      itemId: itemId(args, false),
+      limit: integer(args, "limit", ATLAS_MCP_LIMITS.connections),
     }),
     atlas_export_snapshot: () => ({
       workspaceId: workspaceId(args),

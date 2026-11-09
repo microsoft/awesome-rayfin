@@ -68,6 +68,10 @@ import {
   type SourceProvenanceItemsInput,
   type SourceProvenanceStageEnvelope,
 } from './workspace-source-provenance.js';
+import {
+  tenantCollectConnections,
+  type TenantConnectionsEnvelope,
+} from './tenant-connections.js';
 
 const udf = new UserDataFunctions();
 
@@ -149,6 +153,20 @@ udf.func(
     delegatedToken: string | null = null,
   ): Promise<WorkspaceGovernanceEnvelope> =>
     workspaceCollectGovernance(ctx, protocolVersion, workspaceId, correlationId, delegatedToken),
+  [],
+);
+
+// Read-only tenant connection inventory (admin connections API, Preview), once per sync batch.
+// Non-admin callers get an `unsupported` envelope; secrets are never returned by Fabric.
+udf.func(
+  'tenantCollectConnections',
+  async (
+    ctx: RayfinContext<AtlasSchema, AudienceType.Fabric>,
+    protocolVersion: 1,
+    correlationId: SyncUuidInput | null = null,
+    delegatedToken: string | null = null,
+  ): Promise<TenantConnectionsEnvelope> =>
+    tenantCollectConnections(ctx, protocolVersion, correlationId, delegatedToken),
   [],
 );
 

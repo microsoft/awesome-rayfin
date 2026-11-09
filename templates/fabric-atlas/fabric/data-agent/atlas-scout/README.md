@@ -24,6 +24,9 @@ Every table of the Atlas SQL database is attached to the agent:
   findings, endorsements, sensitivity labels and access assignments.
 - **Governance context:** domains, OneLake data access roles and tenant
   settings.
+- **Connections:** the tenant connection inventory (`ConnectionInventories`,
+  `ConnectionEntries`, `ConnectionRoleAssignments`), joined to the items that
+  use a connection through the `Source provenance` rows of `ConfigEntries`.
 - **Object inventory:** the JSON documents synchronized in `ConfigEntries`
   (tables, columns, semantic model measures and their DAX dependencies,
   relationships, ontology bindings and object-level lineage edges).
@@ -40,6 +43,7 @@ in the app, for items and for objects. Example questions:
 - *Show the object-level lineage of fact_sales*
 - *Which tables do notebooks read and write?*
 - *Which OneLake roles exist and who is in them?*
+- *Which Fabric connections have a single user owner or no active owner?*
 
 The Data Agent runtime did not retrieve the few-shot examples in our tests, so
 the business rules and the SQL recipes the agent relies on live in
@@ -59,7 +63,12 @@ python fabric/data-agent/atlas-scout/provision.py `
 
 The script only writes the Data Agent item. The Atlas SQL database is read,
 never modified. Every table is exposed to the agent; the schema is explicit and
-the instructions carry the remaining business rules.
+the instructions carry the remaining business rules. Agent and data source
+instructions are each limited to 15,000 characters.
+
+The agent keeps its own copy of the table list. After a release adds, renames
+or drops a table, it can still show the old list for an hour or more: remove
+the data source in the agent's staging version, then run the script again.
 
 ## Connect the app
 

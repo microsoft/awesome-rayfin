@@ -61,6 +61,7 @@ const SAMPLE_ARGUMENTS: Record<AtlasMcpToolName, Record<string, unknown>> = {
   atlas_get_operational_incidents: {},
   atlas_get_snapshot_changes: {},
   atlas_get_governance_findings: {},
+  atlas_get_connection_evidence: {},
   atlas_export_snapshot: { section: "items" },
 };
 
@@ -799,5 +800,76 @@ describe("atlas_export_snapshot", () => {
     expect(first.coverage).toMatchObject({ returned: 2, total: 5, truncated: true });
     expect(JSON.stringify(principals)).not.toContain("@");
     expect(principals.rows.some((row: { email?: string }) => row.email === "[withheld]")).toBe(true);
+  });
+});
+
+describe("connection evidence", () => {
+  const CONNECTION = "c0000000-0000-4000-8000-000000000001";
+  const UNKNOWN = "c0000000-0000-4000-8000-000000000002";
+  const OWNER = "c0000000-0000-4000-8000-000000000003";
+  const provenance = (connectionId: string, location: string) => ({
+    itemFabricId: LAKEHOUSE,
+    section: "Source provenance",
+    label: "external-shortcut",
+    value: `provider=AdlsGen2; connection=${connectionId}; consumer=${LAKEHOUSE}; field=target.adlsGen2.connectionId; location=${location}`,
+  });
+
+  function connectionRuntime(loadConnectionInventory?: AtlasMcpToolRuntime["source"]["loadConnectionInventory"]) {
+    const snapshot = currentSnapshot();
+    snapshot.config = [...snapshot.config, provenance(CONNECTION, "Files/landing"), provenance(UNKNOWN, "Files/other")];
+    const { source } = fakeSource({ snapshots: { [WORKSPACE_ID]: snapshot } });
+    const value: AtlasMcpToolRuntime = {
+      source: { ...source, ...(loadConnectionInventory ? { loadConnectionInventory } : {}) },
+      itemRelationsEnabled: false,
+      now: () => NOW,
+    };
+    return value;
+  }
+
+  it("joins an item's provenance with the tenant inventory and flags a single user owner", async () => {
+    const tools = connectionRuntime(async () => ({
+      collectedAt: "2026-10-02T08:00:00.000Z",
+      status: "complete",
+      truncated: false,
+      roleLookups: { done: 1, skipped: 0, failed: 0 },
+      connections: [{
+        id: CONNECTION,
+        displayName: "adls-landing",
+        connectivityType: "ShareableCloud",
+        connectorType: "AzureDataLakeStorage",
+        path: "https://lake.dfs.core.windows.net/landing",
+        credentialType: "Key",
+        rolesStatus: "complete",
+        roles: [{ principalId: OWNER, principalType: "User", role: "Owner" }],
+      }],
+    }));
+
+    const value = result(await callAtlasMcpTool("atlas_get_connection_evidence", { itemId: LAKEHOUSE }, tools));
+
+    expect(value.scope).toBe("item");
+    expect(value.connections).toEqual([expect.objectContaining({
+      connectionId: CONNECTION,
+      authentication: "Key",
+      flags: ["single-owner"],
+      owners: [{ principalId: OWNER, principalType: "User", role: "Owner" }],
+      usedBy: [expect.objectContaining({ itemId: LAKEHOUSE, relation: "external-shortcut", location: "Files/landing" })],
+    })]);
+    expect(value.unresolvedConnectionIds).toEqual([UNKNOWN]);
+  });
+
+  it("reports a missing inventory as a limitation instead of failing", async () => {
+    const envelope = await callAtlasMcpTool(
+      "atlas_get_connection_evidence",
+      {},
+      connectionRuntime(async () => {
+        throw new Error("entities not deployed");
+      }),
+    );
+
+    const value = result(envelope);
+    expect(value.inventory).toEqual({ status: "unavailable" });
+    expect(value.connections).toEqual([]);
+    expect(envelope.coverage.status).toBe("unavailable");
+    expect(JSON.stringify(envelope.coverage)).toContain("connection details are unknown");
   });
 });

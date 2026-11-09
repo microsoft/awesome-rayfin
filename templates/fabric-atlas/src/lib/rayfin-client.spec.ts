@@ -121,6 +121,7 @@ describe("Rayfin Functions contract", () => {
       | "workspaceDiscover"
       | "workspaceCollectCore"
       | "workspaceCollectGovernance"
+      | "tenantCollectConnections"
       | "workspaceCollectDefinitions"
       | "workspaceCollectItemRelations"
       | "workspaceCollectKqlMetadata"

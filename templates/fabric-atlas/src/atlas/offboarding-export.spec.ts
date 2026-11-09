@@ -5,6 +5,7 @@ import {
   offboardingReportToMarkdown,
 } from "./offboarding-export";
 import { buildOffboardingReport } from "./offboarding";
+import { markdownText } from "./markdown";
 import { SAMPLE_DATA } from "./model";
 
 describe("offboarding exports", () => {
@@ -25,6 +26,52 @@ describe("offboarding exports", () => {
     expect(markdown).toContain("2026-08-30T12:00:00.000Z");
     expect(markdown).toContain("## Reassignment plan");
     expect(markdown).toContain("Ownership metadata coverage:");
+    expect(markdown).toContain("## Connections\n- No connection inventory collected yet.");
+  });
+
+  it("lists the connections of the subject and the ones left without an owner", () => {
+    const principal = SAMPLE_DATA.principals.find(
+      (value) => value.kind === "user" && value.email,
+    )!;
+    const value = structuredClone(SAMPLE_DATA);
+    const connectionId = "11111111-1111-4111-8111-111111111111";
+    value.connections = {
+      collectedAt: "2026-11-09T12:00:00.000Z",
+      status: "complete",
+      truncated: false,
+      roleLookups: { done: 1, skipped: 0, failed: 0 },
+      connections: [
+        {
+          id: connectionId,
+          displayName: "adls-[landing]",
+          connectivityType: "ShareableCloud",
+          connectorType: "AzureDataLakeStorage",
+          rolesStatus: "complete",
+          roles: [{ principalId: principal.principalId, principalType: "User", role: "Owner" }],
+        },
+      ],
+    };
+    value.config.push({
+      itemFabricId: value.items[0].fabricId,
+      section: "Source provenance",
+      label: "OneLake shortcut",
+      value: `connection=${connectionId}; consumer=${value.items[0].fabricId}`,
+    });
+
+    const markdown = offboardingReportToMarkdown(
+      buildOffboardingReport(value, principal.principalId),
+      { workspaceName: "Workspace", generatedAt: "2026-11-09T12:00:00.000Z" },
+    );
+
+    const name = markdownText("adls-[landing]");
+    expect(markdown).toContain("- Owned connections: 1 (sole owner: 1)");
+    expect(markdown).toContain(
+      `- Connection ${name}: no other owner; used by ${markdownText(value.items[0].displayName)}`,
+    );
+    expect(markdown).toContain(
+      `- ${name} (AzureDataLakeStorage): Owner; Sole owner; used by:`,
+    );
+    expect(markdown).toContain("-> Add another owner before the departure");
   });
 
   it("neutralizes spreadsheet formulas in reassignment CSV", () => {

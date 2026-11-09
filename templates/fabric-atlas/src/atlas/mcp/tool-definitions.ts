@@ -281,6 +281,16 @@ export const ATLAS_MCP_TOOLS: readonly AtlasMcpToolDefinition[] = [
     }),
   ),
   tool(
+    "atlas_get_connection_evidence",
+    "Get connection evidence",
+    "Returns the Fabric connections used by synchronized items of the workspace (OneLake shortcuts and mirroring), with connector, endpoint, authentication method, owners, recency and ownership flags from the latest tenant connection inventory. The inventory comes from the admin connections API (Preview); Fabric never returns secrets. Read-only; Atlas never changes owners or credentials.",
+    input({
+      workspaceId: WORKSPACE_ID,
+      itemId: ITEM_ID,
+      limit: limit(ATLAS_MCP_LIMITS.connections),
+    }),
+  ),
+  tool(
     "atlas_get_operational_incidents",
     "Get operational incidents",
     "Returns observed incidents (latest failed runs from synchronized Fabric job history, with stored incident records when deployed), downstream impact through snapshot lineage, changes since the previous validated snapshot and which monitoring sources Atlas collects. Impact is inferred unless the consumer has its own observed failure. Read-only.",

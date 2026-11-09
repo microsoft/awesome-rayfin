@@ -44,6 +44,7 @@ import {
 } from "./browser-collector-sync";
 import { normalizeLineageEdges } from "./lineage";
 import { measureDiagnostic } from "./diagnostics";
+import type { WorkspaceProvenanceEvidence } from "./connections";
 import type { PersistedWorkspaceSyncStatus } from "./workspace-sync";
 import { DEPLOYMENT_ID } from "./release";
 import {
@@ -2711,6 +2712,80 @@ export async function loadWorkspaceSyncStatuses(
     if (entry) result[entry[0]] = entry[1];
   }
   return result;
+}
+
+const SOURCE_PROVENANCE_SECTION = "Source provenance";
+const CONNECTION_REFERENCE = /(?:^|;\s*)connection=/i;
+
+/**
+ * Source provenance rows of the latest trusted snapshot of each workspace, with
+ * the names of the items that reference a connection and the workspace
+ * principals. Feeds the "used by synchronized items" column and the owner names
+ * of the connection inventory; a workspace that cannot be read is left out
+ * instead of failing the page.
+ */
+export async function loadConnectionUsageEvidence(
+  isPreview: boolean,
+  workspaceIds: readonly string[],
+): Promise<WorkspaceProvenanceEvidence[]> {
+  if (isPreview) return [];
+  const ids = [...new Set(workspaceIds.map((id) => workspaceId(id)))];
+  const data = await dataApi();
+  const read = readerFor(data);
+  const entries = await Promise.all(
+    ids.map(async (id): Promise<WorkspaceProvenanceEvidence | undefined> => {
+      try {
+        const marker = trustedMarkers(await readTrustedWorkspaceMarkers(read, id), id)[0];
+        const snapshotId = realText(marker?.snapshotId);
+        const writerEmail = realText(marker?.writerEmail);
+        if (!marker || !snapshotId || !writerEmail) return undefined;
+        const filter = {
+          workspace_id: { eq: id },
+          snapshotId: { eq: snapshotId },
+          writerEmail: { eq: writerEmail },
+        };
+        const config = rowsForSnapshot(
+          await read("ConfigEntry", { ...filter, section: { eq: SOURCE_PROVENANCE_SECTION } }),
+          id,
+          snapshotId,
+          writerEmail,
+        )
+          .filter((row) => String(row.section) === SOURCE_PROVENANCE_SECTION)
+          .map((row) => ({
+            itemFabricId: textOrFallback(row.itemFabricId, ""),
+            section: SOURCE_PROVENANCE_SECTION,
+            label: textOrFallback(row.label, ""),
+            value: textOrFallback(row.value, ""),
+          }));
+        const [consumers, principalRows] = await Promise.all([
+          config.some((entry) => CONNECTION_REFERENCE.test(entry.value))
+            ? read("FabricItem", filter)
+            : Promise.resolve([] as Row[]),
+          read("Principal", filter),
+        ]);
+        return {
+          workspaceId: id,
+          workspaceName: realText(marker.displayName) ?? id,
+          config,
+          items: rowsForSnapshot(consumers, id, snapshotId, writerEmail).flatMap((row) => {
+            const fabricId = realText(row.fabricId);
+            return fabricId
+              ? [{ fabricId, displayName: textOrFallback(row.displayName, fabricId), itemType: textOrFallback(row.itemType, "") }]
+              : [];
+          }),
+          principals: rowsForSnapshot(principalRows, id, snapshotId, writerEmail).flatMap((row) => {
+            const principalId = realText(row.principalId);
+            const displayName = realText(row.displayName);
+            return principalId && displayName ? [{ principalId, displayName }] : [];
+          }),
+        };
+      } catch (error) {
+        console.warn("[atlas] connection usage evidence unavailable", id, error instanceof Error ? error.name : "unknown");
+        return undefined;
+      }
+    }),
+  );
+  return entries.filter((entry): entry is WorkspaceProvenanceEvidence => !!entry);
 }
 
 /**

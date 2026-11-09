@@ -1,5 +1,6 @@
 import {
   Activity,
+  Cable,
   ChevronDown,
   CircleDashed,
   CircleX,
@@ -27,6 +28,7 @@ const SIGNAL_ICON: Record<RadarSignalId, LucideIcon> = {
   "finding-metadata": FileWarning,
   "finding-lineage": GitBranch,
   "finding-operations": Activity,
+  "finding-connections": Cable,
   other: CircleDashed,
 };
 

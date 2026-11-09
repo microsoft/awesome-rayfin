@@ -730,3 +730,58 @@ describe("external share finding", () => {
     expect(externalShareFindings({ ...SAMPLE_DATA, governanceEvidence: failed })).toEqual([]);
   });
 });
+
+describe("connection findings", () => {
+  const LH = "lakehouse-1";
+  const SINGLE = "11111111-1111-4111-8111-111111111111";
+  const GROUP_OWNED = "22222222-2222-4222-8222-222222222222";
+  const GATEWAY = "33333333-3333-4333-8333-333333333333";
+  const OWNER = "44444444-4444-4444-8444-444444444444";
+  const usage = (connectionId: string) => ({
+    itemFabricId: LH,
+    section: "Source provenance",
+    label: "external-shortcut",
+    value: `provider=AdlsGen2; connection=${connectionId}; consumer=${LH}; field=target.adlsGen2.connectionId; location=Files/x`,
+  });
+  const record = (id: string, overrides: Record<string, unknown> = {}) => ({
+    id,
+    displayName: `connection-${id.slice(0, 1)}`,
+    connectivityType: "ShareableCloud",
+    connectorType: "AzureDataLakeStorage",
+    rolesStatus: "complete" as const,
+    roles: [{ principalId: OWNER, principalType: "User", role: "Owner" }],
+    ...overrides,
+  });
+
+  it("raises ownership and encryption findings only for connections used by synchronized items", () => {
+    const data: AtlasData = {
+      ...SAMPLE_DATA,
+      items: [item(LH, { displayName: "lh_bronze" })],
+      config: [usage(SINGLE), usage(GROUP_OWNED), usage(GATEWAY)],
+      connections: {
+        collectedAt: "2026-11-09T08:00:00.000Z",
+        status: "complete",
+        truncated: false,
+        roleLookups: { done: 3, skipped: 0, failed: 0 },
+        connections: [
+          record(SINGLE),
+          record(GROUP_OWNED, { roles: [{ principalId: OWNER, principalType: "Group", role: "Owner" }] }),
+          record(GATEWAY, {
+            connectivityType: "OnPremisesGateway",
+            connectionEncryption: "NotEncrypted",
+            path: "10.0.0.4:1521/ERP",
+            roles: [{ principalId: OWNER, principalType: "User", role: "PendingOwner" }],
+          }),
+          record("55555555-5555-4555-8555-555555555555"),
+        ],
+      },
+    };
+    const findings = buildGovernanceFindings(data).filter((finding) => finding.category === "connections");
+    expect(findings.map((finding) => [finding.id.split(":")[0], finding.severity]).sort()).toEqual([
+      ["connection-no-active-owner", "high"],
+      ["connection-not-encrypted", "medium"],
+      ["connection-single-owner", "medium"],
+    ]);
+    expect(findings.every((finding) => finding.itemId === LH)).toBe(true);
+  });
+});

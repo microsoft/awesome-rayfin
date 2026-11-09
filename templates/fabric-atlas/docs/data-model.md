@@ -502,6 +502,68 @@ One input → output edge through an external job.
 External edges are not part of the snapshot; they are merged with snapshot
 edges when the map is read.
 
+## ConnectionInventory
+
+One tenant connection inventory, collected once per synchronization batch, or
+on demand with **Collect connections**, by the `tenantCollectConnections`
+Function from the Fabric admin connections API (Preview). It is tenant-wide and
+stored outside workspace snapshots.
+
+`writerEmail`, `collectedAt`, `status`, `code?`, `connectionCount`,
+`roleLookupCount`, `roleLookupSkippedCount`, `roleLookupFailedCount`,
+`truncated`, `contractVersion`
+
+`status` is `complete`, `unsupported` (the admin API refused the synchronizer)
+or `failed`. Only a `complete` inventory has rows. The manifest is written
+after its rows; a reader rejects a manifest whose `connectionCount` does not
+match its rows and falls back to the previous complete inventory. An
+`unsupported` or `failed` manifest records a collection that stored nothing,
+with its `code` (for example `authorization-failed`, `invoke-failed` or
+`store-failed`): the page explains it while the last complete inventory stays
+visible. Only the newest attempt is kept, and the next complete inventory
+removes it. Inventories beyond the snapshot retention count are pruned, rows
+first. Every authenticated Atlas user can read the inventory; only the
+synchronizer can write or delete it. Restricting reads to administrators is
+tracked in [#98](https://github.com/fredgis/FabricAtlas/issues/98).
+
+## ConnectionEntry
+
+One connection of an inventory, in the `ConnectionEntries` table. Fabric never
+returns secrets. The entity was named `FabricConnection` in 2.8.0 and 2.8.1;
+Data API Builder reads a GraphQL type whose name ends in `Connection` as a
+pagination type, so no row could be written. An entity name must not end in
+`Connection`.
+
+`inventoryId`, `writerEmail`, `connectionId`, `displayName`,
+`connectivityType`, `connectorType?`, `path?`, `gatewayId?`, `privacyLevel?`,
+`credentialType?`, `singleSignOnType?`, `connectionEncryption?`,
+`skipTestConnection?`, `connectionCreatedAt?`, `lastBoundAt?`,
+`lastCredentialUsedAt?`, `rolesStatus`, `ownerCount`, `pendingOwnerCount`
+
+`path` keeps the endpoint without user info, query string or fragment, because
+a Web connection URL can carry a key. Personal connections that Fabric returns
+without a name are stored as `Unnamed connection (<connector>)`. `rolesStatus`
+is `complete`, `skipped` (lookup budget exhausted), `failed` or `personal`
+(only its creator can use it, so no lookup is made).
+
+## ConnectionRoleAssignment
+
+One role of a principal on a connection.
+
+`inventoryId`, `writerEmail`, `connectionId`, `principalId`, `principalType`,
+`principalName?`, `role`
+
+`role` is `Owner`, `PendingOwner`, `User` or `UserWithReshare`. The admin API
+returns principal IDs and types; Atlas names them from the principals of the
+synchronized workspaces, the signed-in user and the configured synchronizers.
+The departure pack matches a principal to these roles on the Entra object ID,
+or on the user principal name when Fabric returns it, never on a display name.
+
+The items that use a connection are not stored here: they come from the
+`Source provenance` rows of `ConfigEntry` in each workspace snapshot
+(`connection=<connectionId>; consumer=<item GUID>`), written for OneLake
+shortcuts and mirrored databases.
+
 ## Snapshot history
 
 History does not require another table. Atlas uses trusted `Workspace`

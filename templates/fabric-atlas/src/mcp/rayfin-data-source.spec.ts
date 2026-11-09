@@ -51,6 +51,7 @@ describe("Rayfin-backed Atlas MCP source", () => {
   it("exposes only read operations", () => {
     const source = createRayfinAtlasMcpDataSource({ requireSession: async () => undefined });
     expect(Object.keys(source).sort()).toEqual([
+      "loadConnectionInventory",
       "loadHistory",
       "loadIncidentRecords",
       "loadItemRelationsEvidence",

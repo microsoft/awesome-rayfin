@@ -69,6 +69,11 @@ const SIGNALS: Record<
       count === 1 ? "New lineage finding" : "New lineage findings",
     summary: (count) => plural(count, "high-priority finding"),
   },
+  "finding-connections": {
+    title: (count) =>
+      count === 1 ? "New connection finding" : "New connection findings",
+    summary: (count) => plural(count, "high-priority finding"),
+  },
   other: {
     title: () => "Other review items",
     summary: (count) => `${plural(count, "item")} to review`,
@@ -86,6 +91,7 @@ const SIGNAL_ORDER: RadarSignalId[] = [
   "finding-access",
   "finding-metadata",
   "finding-lineage",
+  "finding-connections",
   "finding-operations",
   "other",
 ];

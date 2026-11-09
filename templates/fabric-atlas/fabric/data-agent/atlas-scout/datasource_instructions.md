@@ -1,29 +1,30 @@
 Fabric Atlas governance store. All tables are in schema dbo. Each sync of a Fabric workspace creates an immutable snapshot.
 
 # Snapshot rule (MANDATORY)
-- dbo.Workspaces has ONE ROW PER SNAPSHOT of a workspace. Workspaces.fabricId = Fabric workspace GUID; Workspaces.snapshotId = snapshot of that row; syncedAt = when it was published.
+- dbo.Workspaces has ONE ROW PER SNAPSHOT of a workspace. Workspaces.fabricId = Fabric workspace GUID; Workspaces.snapshotId = snapshot of that row; syncedAt = publication time.
 - The current state of a workspace = the Workspaces row with the most recent syncedAt for its fabricId:
   WITH latest AS (SELECT *, ROW_NUMBER() OVER (PARTITION BY fabricId ORDER BY syncedAt DESC) AS rn FROM dbo.Workspaces) ... WHERE rn = 1
 - Snapshot tables (FabricItems, LineageEdges, AccessGrants, Principals, JobRuns, ConfigEntries, OperationalIncidents, AccessPolicyEvidences, ItemRelationsEvidenceSnapshots, SyncRuns) have workspace_id = Workspaces.fabricId (the Fabric workspace GUID, NOT Workspaces.id) and snapshotId. Always join: t.workspace_id = latest.fabricId AND t.snapshotId = latest.snapshotId.
-- WorkspaceScopes.id = Fabric workspace GUID of each workspace selected in Atlas.
+- WorkspaceScopes.id = GUID of each workspace selected in Atlas.
 
 # Main tables
-- Workspaces: displayName, capacity (capacity id), region, fabricDomainId (NULL = not assigned to a domain), itemCount, healthyCount, failingCount, staleCount, edgeCount, brokenEdgeCount, principalCount, externalPrincipalCount, grantCount, failedJobCount, labelCount, governanceSummaryJson (JSON: pillars.health/protect/trust scores 0-100, findings.critical/high/medium/low, coverage.endorsed/certified/described/labeled/tagged each with numerator/denominator/unknown), syncSectionsJson (status per collected section).
+- Workspaces: displayName, capacity, region, fabricDomainId (NULL = not assigned to a domain), itemCount, healthyCount, failingCount, staleCount, edgeCount, brokenEdgeCount, principalCount, externalPrincipalCount, grantCount, failedJobCount, labelCount, governanceSummaryJson (JSON: pillars.health/protect/trust scores 0-100, findings.critical/high/medium/low, coverage.endorsed/certified/described/labeled/tagged each with numerator/denominator/unknown), syncSectionsJson (status per collected section).
 - FabricItems: one row per Fabric item. fabricId = item GUID, displayName, itemType, description, ownerEmail/ownerName, endorsement ('none','promoted','certified'), sensitivity (label name, empty = no label), sensitivityLabelId, tags/tagIds, health ('healthy','failing','unknown'), lastRefresh, itemCreatedAt, itemUpdatedAt, modifiedBy, size.
-  Flags sensitivityMetadataAvailable, tagMetadataAvailable, ownerMetadataAvailable, endorsementMetadataAvailable: when 0 the metric was not collected for that item -> exclude from the denominator and report as unknown.
+  Flags sensitivityMetadataAvailable, tagMetadataAvailable, ownerMetadataAvailable, endorsementMetadataAvailable: 0 = not collected for that item -> exclude from the denominator, report as unknown.
 - LineageEdges: sourceFabricId -> targetFabricId (item GUIDs, join FabricItems.fabricId in the same snapshot), relation (writes, Direct Lake, orchestrates, SQL endpoint, Shortcut, ...), broken (1 = broken edge).
 - AccessGrants: itemFabricId, principalRef (Principals.principalId), accessLevel ('owner','edit',...), roleName, source ('workspaceRole' or 'directShare'), flag ('admin','servicePrincipal' or empty).
-- Principals: principalId, displayName, email, kind ('user','servicePrincipal','group'), [external] (1 = guest / external tenant), workspaceRole (Admin, Member, Contributor, Viewer).
+- Principals: principalId, displayName, email, kind ('user','servicePrincipal','group'), [external] (1 = guest), workspaceRole (Admin, Member, Contributor, Viewer).
 - JobRuns: itemFabricId, itemName, jobType, status ('completed','failed'), startedAt, durationSec, message.
-- OperationalIncidents: failed runs promoted to incidents: itemFabricId, itemName, itemType, jobType, occurredAt, firstObservedAt, durationSec.
-- Item names (lakehouse, notebook, model, report, ontology, ...) are FabricItems.displayName: resolve with LIKE '%name%' first; ConfigEntries labels are objects inside items.
-- ConfigEntries: item configuration facts (itemFabricId, section, label, value) AND the full object inventory (tables, views, columns, measures, DAX dependencies, model relationships, object-level lineage, tenant governance evidence). See the section 'Object inventory' below: everything shown in Fabric Atlas is queryable from there.
+- OperationalIncidents (failed runs): itemFabricId, itemName, itemType, jobType, occurredAt, firstObservedAt, durationSec.
+- Item names are FabricItems.displayName (resolve with LIKE '%name%'); ConfigEntries labels are objects inside items.
+- ConfigEntries: item configuration facts (itemFabricId, section, label, value) AND the full object inventory (tables, views, columns, measures, DAX dependencies, model relationships, object-level lineage, tenant governance evidence). See 'Object inventory' below.
 - SyncRuns: status, startedAt, finishedAt, itemsSynced, failureMessage per sync.
 - ExternalDatasets (state 'linked' via fabricItemId or 'to_link') / ExternalLineageEdges (sourceDatasetId -> targetDatasetId, jobName, lastRunState): OpenLineage imports, not snapshot based.
 - GovernancePolicies, GovernanceExceptions (expiresAt), FindingAcks, AccessReviews / AccessReviewEvents, Comments: user decisions, not snapshot based.
+- Tenant connections, no snapshot (current = latest ConnectionInventories with status 'complete'; join inventoryId): ConnectionEntries (connectionId, displayName, connectorType, connectivityType, path, credentialType, rolesStatus, ownerCount, pendingOwnerCount, lastCredentialUsedAt), ConnectionRoleAssignments (connectionId, principalId, principalType, role 'Owner','PendingOwner','User'). Owner checks: rolesStatus = 'complete' only ('personal' = no roles by design).
 
 # Object inventory (ConfigEntries)
-Readable sections (plain text, one fact per row): 'General', 'Tables' (label = object name, value = object type), 'Report pages' (label = page name), 'Data agent sources' (label = 'published:<source>' or 'draft:<source>', value = 'type | item GUID'), 'Data agent selected elements', 'Notebook dependencies' (label 'Default lakehouse' etc.), 'Source provenance' (shortcuts, mirroring state), 'SQL Primary keys', 'SQL Foreign keys' (value 'table(col) -> table(col)'), 'Model' (storage mode, provider), 'OneLake', 'SQL endpoint', 'KQL database', 'Ontology entity types', 'Graph node types', 'KQL stored functions', and similar.
+Readable sections (plain text, one fact per row): 'General', 'Tables' (label = object name, value = object type), 'Report pages' (label = page name), 'Data agent sources' (label = 'published:<source>' or 'draft:<source>', value = 'type | item GUID'), 'Data agent selected elements', 'Notebook dependencies' (label 'Default lakehouse' etc.), 'Source provenance' (shortcuts, mirroring; value 'connection=<connectionId>; consumer=<item GUID>'), 'SQL Primary keys', 'SQL Foreign keys' (value 'table(col) -> table(col)'), 'Model' (storage mode, provider), 'OneLake', 'SQL endpoint', 'KQL database', 'Ontology entity types', 'Graph node types', 'KQL stored functions', and similar.
 
 Private JSON sections are CHUNKED. Each row value is 'v1:PPPP:TTTT:<json fragment>' (PPPP = part number, TTTT = total parts, the JSON starts at character 14).
 - One document = all rows with the same workspace_id, snapshotId, itemFabricId, section and label. Rebuild it with:
@@ -45,7 +46,7 @@ SELECT DISTINCT e.sourceName + ' (' + COALESCE(si.displayName,'external') + ')' 
 FROM edges e LEFT JOIN items si ON si.fabricId = e.sourceItemId LEFT JOIN items ti ON ti.fabricId = e.targetItemId
 WHERE e.sourceName LIKE '%fact_sales%' OR e.targetName LIKE '%fact_sales%' OR e.sourceTable LIKE '%fact_sales%'
 Variants of the final SELECT/WHERE:
-- Lineage of a table or column: the WHERE above with the object name. Keep the 'contains' edges (table -> columns): for many tables they are the only edges. Matching is case-insensitive.
+- Lineage of a table or column: the WHERE above with the object name. Keep the 'contains' edges (table -> columns): for many tables they are the only edges.
 - Tables that feed an ontology (or graph, data agent): SELECT DISTINCT e.sourceTable + ' (' + COALESCE(si.displayName,'external') + ')' AS [Source], 'table' AS [Source type], 'feeds' AS [Relation], ti.displayName AS [Target], 'Ontology' AS [Target type] ... WHERE e.targetKind LIKE 'ontology%' AND e.sourceKind IN ('sourceObject','sourceField') AND ti.displayName LIKE '%AcuteCareOperationsOntology%'. Ontology bindings are source fields/tables -> ontology entities/properties; the ontology is the TARGET ITEM (ti.displayName), never an object name.
 - Tables read and written by notebooks: WHERE e.relation IN ('reads','writes').
 
@@ -74,13 +75,13 @@ NULL owner/label = not set. Access = item grants.
 # Conventions
 - "Stale" = item with itemUpdatedAt and lastRefresh older than 90 days.
 - "External user / guest" = Principals.[external] = 1 (external is a reserved word: ALWAYS bracket it). Items shared externally: AccessGrants g JOIN Principals p ON p.workspace_id=g.workspace_id AND p.snapshotId=g.snapshotId AND p.principalId=g.principalRef LEFT JOIN FabricItems i ON i.fabricId=g.itemFabricId (same snapshot), latest snapshots, WHERE p.[external]=1; also read $.externalShares in '__governance_evidence__'. No rows = no external access found: say so with the number of principals checked.
-- Domain names are stored in the governance evidence ('__governance_evidence__' above): join Workspaces.fabricDomainId to $.domains.entries[].id to get the displayName.
+- Domain names: join Workspaces.fabricDomainId to $.domains.entries[].id of '__governance_evidence__'.
 
 # SQL dialect rules
-- The engine is Synapse SQL: recursive CTEs (a CTE that references itself) are NOT supported and fail.
-- To walk lineage over several hops, chain non recursive CTEs: hop1 = edges whose sourceFabricId is the root item, hop2 = edges whose sourceFabricId IN (SELECT targetFabricId FROM hop1), and so on up to hop4, then UNION ALL them. For upstream lineage, swap source and target.
-- Lineage can contain cycles: deduplicate edges with GROUP BY.
+- Synapse SQL: recursive CTEs are NOT supported.
+- Multi-hop lineage: chain non recursive CTEs hop1..hop4 (hop2 = edges whose sourceFabricId IN (SELECT targetFabricId FROM hop1)), then UNION ALL; swap source and target for upstream.
+- Lineage can have cycles: deduplicate edges with GROUP BY.
 - LineageEdges.broken is a bit: use MAX(CAST(broken AS int)).
-- Short aliases (e, m, c, r, dep); never reserved words (edge, node, table, object, key) as alias.
-- Items can share a display name (Lakehouse / SQLEndpoint): return the item type too.
+- Never use reserved words (edge, node, table, object, key) as aliases.
+- Display names can repeat (Lakehouse / SQLEndpoint): return the item type too.
 - OPENJSON, JSON_VALUE, JSON_QUERY, ISJSON and STRING_AGG ... WITHIN GROUP are supported. JSON_VALUE on a non-object value fails: only apply '$.status.status' to object blocks.

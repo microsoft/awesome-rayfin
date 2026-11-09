@@ -135,6 +135,11 @@ export interface FabricListLimits {
   maxRecords: number;
   /** Stop paging once this many records are collected. */
   stopAfter?: number;
+  /**
+   * Rebuild the next page from `continuationToken` alone. Some admin APIs
+   * document a `continuationUri` on another path for the same listing.
+   */
+  tokenContinuation?: boolean;
 }
 
 export interface FabricLongRunningLimits {
@@ -567,8 +572,12 @@ export class FabricRestClient {
           throw new FabricRestError("record-limit-exceeded");
         }
       }
+      const tokenOnly =
+        limits.tokenContinuation === true &&
+        typeof payload.continuationToken === "string" &&
+        payload.continuationToken !== "";
       next = continuationUrl(
-        payload.continuationUri,
+        tokenOnly ? undefined : payload.continuationUri,
         payload.continuationToken,
         path,
       );

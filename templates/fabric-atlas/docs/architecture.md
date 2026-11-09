@@ -29,7 +29,7 @@ flowchart LR
 
 | Component | Responsibility |
 |---|---|
-| React application | Navigation, workspace switching, synchronization, catalog, lineage, governance and access review |
+| React application | Navigation, workspace switching, synchronization, catalog, lineage, governance, access review and connections |
 | Fabric brokered authentication | Signs the user into the app inside the Fabric portal |
 | Rayfin Functions | Collect core Fabric metadata with application identity and bounded contracts |
 | Python compatibility UDF | Collect only the remaining Power BI, PBIR-Legacy and Kusto gaps |
@@ -64,19 +64,25 @@ The configured synchronizer is the only identity allowed to:
 Synchronization is serialized in the synchronizer's browser tab.
 
 1. Discover the selected workspace scope.
-2. Create a correlated `SyncRun`.
-3. Invoke bounded Rayfin collectors.
-4. Build the exact Python compatibility plan.
-5. Validate every collector envelope and item identity.
-6. Merge required and optional evidence.
-7. Write snapshot child rows.
-8. Read the rows back through production pagination.
-9. Publish the workspace manifest last.
-10. Apply retention after publication.
+2. Collect the tenant connection inventory once for the whole batch (2.8).
+3. Create a correlated `SyncRun` for each workspace.
+4. Invoke bounded Rayfin collectors.
+5. Build the exact Python compatibility plan.
+6. Validate every collector envelope and item identity.
+7. Merge required and optional evidence.
+8. Write snapshot child rows.
+9. Read the rows back through production pagination.
+10. Publish the workspace manifest last.
+11. Apply retention after publication.
 
 A failed or cancelled run preserves the previous validated snapshot.
 A failed workspace does not stop another selected workspace from
-synchronizing.
+synchronizing. The tenant stage never fails the batch: when the admin
+connections API refuses the synchronizer or the call fails, Atlas records the
+attempt and its error code without connections, the last complete inventory
+stays visible and the workspaces still synchronize. The synchronizer can also
+run the tenant stage alone with **Collect connections** on the Connections
+page.
 
 ### Collector ownership
 
@@ -91,6 +97,7 @@ synchronizing.
 | Shortcuts, mirroring and materialized lake view provenance | `workspaceCollectSourceProvenance` | None |
 | Fabric Policies context | `workspaceCollectAccessPolicyEvidence` | Portal-only evidence stays unavailable |
 | Domains, tags, tenant settings, network policy, external shares, OneLake data access roles (2.6) | `workspaceCollectGovernance` | None; each section is optional and degrades to Unknown |
+| Tenant connection inventory and role assignments (2.8) | `tenantCollectConnections`, once per batch | None; the admin connections API is Preview and needs a Fabric administrator |
 | Power BI admin scanner and scanner lineage | Python `sync_compatibility` | Retained until Rayfin exposes a documented Power BI audience |
 | PBIR-Legacy pages | Python `sync_compatibility` | Retained until the supported definition path covers legacy reports |
 | Kusto live metadata | Python `sync_compatibility` | Retained until Rayfin exposes a documented Kusto audience |
@@ -116,8 +123,13 @@ snapshot only after the complete required contract passes validation.
 ## Rayfin Function contracts
 
 Functions are synchronizer-gated and accept strict workspace, item and
-correlation identifiers. They do not accept browser tokens, arbitrary URLs or
-arbitrary queries.
+correlation identifiers. They do not accept arbitrary URLs or arbitrary
+queries. Two Functions call Fabric admin APIs, which require a Fabric
+administrator: `workspaceCollectGovernance` (2.6) and
+`tenantCollectConnections` (2.8). They accept the synchronizer's delegated
+Fabric token as an optional argument, checked as a bounded JWT, try it first
+and fall back to the application identity. The token is used for that call
+only and is never stored.
 
 Shared protections include:
 
@@ -208,6 +220,9 @@ the newly published snapshot.
 | `OpenLineageImport` | One imported OpenLineage file: name, counts and result, never the raw file |
 | `ExternalDataset` | External dataset keyed by namespace and name, optionally linked to a Fabric item |
 | `ExternalLineageEdge` | External input-to-output edge through a job, merged with snapshot lineage at read time |
+| `ConnectionInventory` | Manifest of one tenant connection inventory, written last, outside workspace snapshots |
+| `ConnectionEntry` | One Fabric connection of an inventory: connector, endpoint without query string, authentication, recency, owner counts |
+| `ConnectionRoleAssignment` | One role (Owner, PendingOwner, User, UserWithReshare) of a principal on a connection |
 | `SyncRootRun`, `SyncJob`, `SyncTask` and `SyncCommand` | Fail-closed durable-execution probe; never publishes a snapshot |
 | `SyncPayloadManifest` and `SyncPayloadChunk` | Hashed, chunked payloads for the durable-execution probe |
 
@@ -343,8 +358,8 @@ The optional local stdio MCP server reads the same validated snapshots as the
 app. It runs on the MCP client machine, not inside a Rayfin Function.
 
 The MCP is read-only and limited to the selected workspace scope. It exposes
-catalog, impact, lineage, access, incident and snapshot evidence without
-personal review state.
+catalog, impact, lineage, access, connection, incident and snapshot evidence
+without personal review state.
 
 Activation remains gated by a dedicated public client, delegated
 `Item.Execute.All`, reviewed external Entra exchange and live Conditional

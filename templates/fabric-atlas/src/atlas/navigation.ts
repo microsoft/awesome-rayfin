@@ -10,6 +10,7 @@ export type Tab =
   | "assets"
   | "governance"
   | "access"
+  | "connections"
   | "jobs"
   | "workspace"
   | "mcp"

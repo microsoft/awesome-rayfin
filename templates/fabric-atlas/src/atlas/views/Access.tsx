@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { SavedViewsMenu } from "../components/SavedViewsMenu";
 import { OffboardingDialog } from "../components/OffboardingDialog";
+import { useConnectionUsages } from "../connection-usage-state";
 import { AccessEvidenceInspector } from "../components/AccessEvidenceInspector";
 import { AccessWhatIf } from "../components/AccessWhatIf";
 import { useDesktopEvidence } from "../use-desktop-evidence";
@@ -1313,6 +1314,8 @@ export function AccessView({
     addSavedView,
     removeSavedView,
     canSync,
+    workspaceScopes,
+    workspaceSyncStatuses,
   } = useAtlas();
   const policyEnabled = isFeatureEnabled("fabric-policies");
   const [policyRefresh, setPolicyRefresh] = useState(0);
@@ -1410,6 +1413,28 @@ export function AccessView({
   const [reviewNoteDraft, setReviewNoteDraft] = useState<{ key: string; note: string } | null>(null);
   const [offboardingPrincipalId, setOffboardingPrincipalId] = useState(
     initialFilters?.mode !== "what-if" && initialPrincipalId && !initialItemId ? initialPrincipalId : "",
+  );
+  // Other workspaces' snapshots are read only while a departure pack is open.
+  const offboardingWorkspaces = useMemo(
+    () =>
+      offboardingPrincipalId
+        ? workspaceScopes.map((workspace) => ({
+            id: workspace.id,
+            snapshotId: workspaceSyncStatuses[workspace.id]?.snapshotId,
+          }))
+        : [],
+    [offboardingPrincipalId, workspaceScopes, workspaceSyncStatuses],
+  );
+  const offboardingUsages = useConnectionUsages(
+    isPreview,
+    {
+      workspaceId: data.workspace.fabricId,
+      workspaceName: data.workspace.displayName,
+      config: data.config,
+      items: data.items,
+      principals: data.principals,
+    },
+    offboardingWorkspaces,
   );
 
   useEffect(() => {
@@ -2162,6 +2187,8 @@ export function AccessView({
         principalId={offboardingPrincipalId}
         open={Boolean(offboardingPrincipalId)}
         onClose={() => setOffboardingPrincipalId("")}
+        connectionUsages={offboardingUsages.usages}
+        connectionUsagesLoading={offboardingUsages.loading}
       />
     </div>
   );
