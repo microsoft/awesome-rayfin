@@ -47,6 +47,7 @@ The CLI reads `rayfin-template.yml` at the repo root and presents an interactive
 
 | Template | Description | Auth | Data | Stack |
 |----------|-------------|:----:|:----:|-------|
+| **[Airport IQ](./templates/airport-iq)** | Two 3D airport views — Live Approach (CesiumJS globe, aircraft on approach/taxi/park) and Live-Ops (Three.js gate operations with delays and cascading conflicts) — over real OpenStreetMap geometry. Runs on baked synthetic data out of the box; swap in live ADS-B or your own Fabric warehouse via a single data adapter. | ✅ | — | — |
 | **[Angular Blank App](./templates/angular-blankapp)** | Bare-bones Fabric-authenticated Angular + Material app — sign-in, routing, and a placeholder home page, with no data layer to remove | ✅ | ✅ | Angular, Material |
 | **[Angular Dashboard App](./templates/angular-dashboard)** | Responsive Angular Material dashboard — top navbar + collapsible side menu, Project/Task data model, and optional one-click GitHub Issues/PRs sync for a public repo. | ✅ | ✅ | Angular, Material |
 | **[Caldova Cologne Digital Twin](./templates/caldova-cologne-digital-twin)** | The combined Caldova app: a photoreal 3D digital twin of the fictional pharmaceutical wholesaler Caldova, with its logistics centre in the real Confex building at Koelnmesse, delivery vans on real Cologne roads to real pharmacy locations, and Reorder and IBCS Finance tabs over Fabric semantic models. | ✅ | ✅ | React, Vite, Tailwind |

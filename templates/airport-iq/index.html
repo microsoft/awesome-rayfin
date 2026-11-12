@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Airport IQ</title>
+<style>
+ *{box-sizing:border-box}
+ body{margin:0;min-height:100vh;font-family:'Segoe UI',system-ui,sans-serif;color:#e7edf7;
+   background:radial-gradient(1200px 700px at 70% -10%,#16233f 0%,#0a0f1e 55%,#070b16 100%);
+   display:flex;flex-direction:column}
+ header{padding:60px 40px 6px;text-align:center}
+ header h1{margin:0;font-size:44px;letter-spacing:.5px}
+ header h1 b{color:#ffd23f}
+ header p{margin:12px 0 0;color:#9fb0d0;font-size:16px}
+ .grid{max-width:900px;margin:40px auto;padding:0 28px;display:grid;gap:24px;
+   grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+ .tile{display:flex;flex-direction:column;text-decoration:none;color:inherit;background:#0f1830cc;
+   border:1px solid rgba(255,255,255,.10);border-radius:20px;padding:28px;min-height:230px;
+   transition:.18s;position:relative;overflow:hidden}
+ .tile::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--c)}
+ .tile:hover{transform:translateY(-4px);border-color:var(--c);box-shadow:0 18px 44px rgba(0,0,0,.5)}
+ .ico{font-size:44px;margin-bottom:14px}
+ .tt{font-size:23px;font-weight:750}
+ .dd{margin-top:10px;color:#9fb0d0;font-size:14px;line-height:1.55;flex:1}
+ .go{margin-top:16px;font-weight:700;color:var(--c)}
+ footer{margin-top:auto;text-align:center;color:#64748b;font-size:12px;padding:0 20px 40px}
+</style></head><body>
+<header>
+  <h1>🛫 Airport <b>IQ</b></h1>
+  <p>Live 3D views of airport operations — Live Approach for any airport, Live-Ops for DUS &amp; BER.</p>
+</header>
+<main class="grid">
+  <a class="tile" style="--c:#39d98a" href="views/approach/index.html">
+    <div class="ico">🛬</div><div class="tt">Live Approach</div>
+    <div class="dd">A real 3D globe (Cesium) with live ADS-B aircraft — approach, landing, taxi and
+      parking at the gate. Zoomable from orbit down to the apron.</div>
+    <div class="go">Open →</div>
+  </a>
+  <a class="tile" style="--c:#2f6df0" href="views/liveops/index.html?ap=DUS">
+    <div class="ico">🛫</div><div class="tt">Live-Ops · DUS &amp; BER</div>
+    <div class="dd">Gate operations on real OSM geometry — time scrubber, docking at real gates,
+      delays and cascading gate conflicts. Available for Düsseldorf and Berlin Brandenburg
+      (the two airports the operational data ships for).</div>
+    <div class="go">Open DUS →</div>
+  </a>
+</main>
+<footer>Airport IQ · Microsoft Fabric Rayfin static-hosting app · Data: Airport IQ (synthetic) + OpenStreetMap + live ADS-B (airplanes.live)</footer>
+</body></html>
