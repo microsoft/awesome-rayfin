@@ -705,6 +705,12 @@ export function createTourLayer(
   if (trucks.instanceColor) trucks.instanceColor.needsUpdate = true;
   group.add(vans);
   group.add(trucks);
+  // ⚠️ NEVER FRUSTUM-CULLED (measured 2026-11-20 in the headset). three computes an InstancedMesh's
+  // bounding sphere ONCE, on the first frame it is visible; shown at 04:30 every vehicle was parked
+  // off-world, the sphere stayed at y = -99999 with a 3 m radius, and every van was culled for the
+  // rest of the session. Sixteen instances cost nothing to draw unconditionally.
+  vans.frustumCulled = false;
+  trucks.frustumCulled = false;
 
   /*
    * ── the glow under each van ───────────────────────────────────────────────────────────────────
@@ -797,6 +803,7 @@ export function createTourLayer(
       ${NIGHT_GLSL}
 
       void main() {
+        tableClip(vWorld);
         // Soft radial falloff — a ring edge would read as a UI target, which this is not.
         // The exponent is gentle on purpose: at 2.2 almost all of the disc was near-transparent and
         // only the very centre carried any weight, which is a small bright dot with a large

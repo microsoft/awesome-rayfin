@@ -1,6 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 
 import { DayScrubber } from '@/components/DayScrubber';
+import { HeadsetControls } from '@/components/HeadsetControls';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Twin3DView } from '@/components/Twin3DView';
 import { activeAoi } from '@/config/aoi';
@@ -82,6 +83,20 @@ export function DcShell() {
     },
     [handle]
   );
+
+  /**
+   * The headset kept its own clock and may have switched the tours or the hall: put the panel back
+   * in step when the session ends. `clockEpoch` tells the day scrubber that someone else owned the
+   * clock, so it stops playing and adopts the scene's fractional time (found 2026-11-20).
+   */
+  const [clockEpoch, setClockEpoch] = useState(0);
+  const syncFromHeadset = useCallback((synced: { slot: number; tours: boolean; hall: boolean }) => {
+    setSlotState(Math.floor(synced.slot));
+    setToursOn(synced.tours);
+    setHallOpen(synced.hall);
+    setClockEpoch((n) => n + 1);
+  }, []);
+  const headsetStarting = useCallback(() => setClockEpoch((n) => n + 1), []);
 
   const toggleTours = useCallback(() => {
     if (!handle) return;
@@ -213,6 +228,7 @@ export function DcShell() {
       <div className={`min-h-0 flex-1 ${tab === 'twin' ? 'flex' : 'hidden'}`}>
         <main className="relative min-w-0 flex-1">
           <Twin3DView aoi={aoi} onReady={onReady} />
+          <HeadsetControls handle={handle} onSync={syncFromHeadset} onStart={headsetStarting} />
         </main>
 
         <aside
@@ -367,7 +383,7 @@ export function DcShell() {
           )}
 
           {/* ── the operating day ───────────────────────────────────────────── */}
-          {ops && <DayScrubber handle={handle} slot={slot} onSlot={setSlot} />}
+          {ops && <DayScrubber handle={handle} slot={slot} onSlot={setSlot} clockEpoch={clockEpoch} />}
 
           {/* ── provenance ──────────────────────────────────────────────────── */}
           <section className="mt-5" data-testid="dc-provenance">
@@ -393,7 +409,15 @@ export function DcShell() {
                   {t('mesh.attribution')}
                 </>
               )}
-              <br />© OpenStreetMap contributors, ODbL 1.0
+              <br />© OpenStreetMap contributors,{' '}
+              <a className="underline" href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">
+                ODbL 1.0
+              </a>
+              <br />
+              {t('dc.odblOffer')}{' '}
+              <a className="underline" href="/terrain/koeln-messe/operations.json" target="_blank" rel="noopener noreferrer">
+                operations.json
+              </a>
               <br />
               {aoi.shellGeobasis.attribution}
             </p>

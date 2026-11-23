@@ -51,7 +51,9 @@ The app has three tabs:
   - the Finance tab: Michael Tenner's cockpit ported onto a Caldova finance model derived from the twin's
     own sales and tours, English UI;
   - the optional Fabric back end (lakehouse, two semantic models, snapshot bakes with drift gates) and the
-    offline mode.
+    offline mode;
+  - the headset mode (WebXR AR table, VR at true scale and the guided tour), inspired by Michał Jezik's
+    "Capa-Cities".
 
   The engine is derived from the
   [campus-scheduler](../campus-scheduler/) template and, through it, from
@@ -232,6 +234,37 @@ which would make the deployed app open only for its owner.
 > for synthetic demo data; do not put real orders into it without closing the entity behind a
 > function.
 
+## Headset mode (AR and VR)
+
+The twin also runs in a WebXR headset (tested on a Meta Quest in the Quest browser). No app
+install: open the deployed app in the headset browser and press **Enter VR** or **Enter AR** in the
+Twin tab.
+
+![Cologne Cathedral at true scale in the headset, with the guided tour card](docs/screenshot-headset.webp)
+
+- **AR table:** the city stands on your real desk through the passthrough cameras, in three sizes:
+  the logistics centre, a 7 km view with a sharp core and a coarser ring, and the whole delivery
+  region. **B** cycles the size.
+- **VR at true scale:** stand above the Confex, look over the Rhine to the Dom and watch the first
+  wave leave the docks. Thumbsticks fly, the trigger picks the hall or a van.
+- **Guided tour:** the morning in a single AR session, paced by you: **A** or the **Next** button moves
+  on. It starts on the night table, dives into the city at 1:1, circles the hall, the docks and the Dom,
+  and rises back onto the table at sunrise; the dives, flights and the rise play by themselves. Every 1:1 stop was checked for texture sharpness against the
+  mesh resolution, so the tour stays where the 3D-Mesh is detailed.
+
+One clock drives everything: while a session runs the headset owns the time of day, and the day
+scrubber takes it back when the session ends.
+
+> **WebXR does not start inside the Fabric portal frame.** Open the app on its own host
+> (`https://<your-app>.webapp.fabricapps.net`) in the headset browser and sign in there. The static
+> hosting stays protected; nothing in this template needs public asset access.
+
+`src/xr/` holds the headset layer: `xrSession.ts` (session, controllers, rig, tabletop and dive
+transitions), `xrPanel.ts` (the floating menu), `xrTabletop.ts`, `xrLocomotion.ts` and
+`headsetBudget.ts` are generic; `caldovaXr.ts` binds them to this scene and `tours.ts` holds the tour
+stops. `src/components/HeadsetControls.tsx` adds the Enter VR/AR buttons. Inspired by Michał Jezik's
+"Capa-Cities", which showed that Fabric Apps can run in VR. A walkthrough with the film:
+[Fabric Apps in AR and VR: Easier Than You Think](https://actionablereporting.com/2026/11/23/fabric-apps-in-ar-and-vr-a-browser-a-300-euro-headset-and-your-data/).
 ## Rayfin capabilities used
 
 | Capability | Use |
@@ -246,7 +279,8 @@ which would make the deployed app open only for its owner.
 | Path | What lives there |
 |---|---|
 | `src/twin3d/` | The 3D engine: terrain, drape, LoD2 buildings, 3D-Mesh core, vegetation, water, logistics centre interior, tours, vehicles, day cycle, fly controls. Three.js |
-| `src/components/` | The shell: header, tabs, side panel, day scrubber, drone HUD |
+| `src/components/` | The shell: header, tabs, side panel, day scrubber, drone HUD, headset buttons |
+| `src/xr/` | Headset mode (WebXR): session, controllers, floating menu, AR table, guided tour |
 | `src/config/` | AOI and brand registries |
 | `src/geo/` | Coordinate transforms (UTM, scene coordinates) |
 | `src/i18n/` | The English UI catalogue (`en.json`), with a reachability test |

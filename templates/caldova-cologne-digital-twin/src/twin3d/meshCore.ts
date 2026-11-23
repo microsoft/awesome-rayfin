@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
+import { gradeBasicMaterial } from './nightLighting';
+
 /**
  * The photoreal core: the NRW 3D-Mesh (photogrammetric, Bildflug 2025) baked into GLB tiles by
  * `tools/geodata/bake_nrw_mesh.py` — PLAN Phase 1.
@@ -70,7 +72,8 @@ export class MeshNotBuiltError extends Error {}
 export async function loadMeshCore(
   aoiId: string,
   base: string,
-  renderer: THREE.WebGLRenderer
+  renderer: THREE.WebGLRenderer,
+  nightUniforms?: Record<string, THREE.IUniform>
 ): Promise<MeshCoreLayer> {
   const root = `${base}/${aoiId}`;
   const response = await fetch(`${root}/mesh.json`);
@@ -92,8 +95,10 @@ export async function loadMeshCore(
     ...(manifest.ring?.tiles ?? []).map((tile) => ({ tile, url: `${root}/${manifest.ring!.dir}/${tile.file}`, ring: true })),
   ];
   const results = await Promise.allSettled(
-    jobs.map(async ({ tile, url }) => {
+    jobs.map(async ({ tile, url, ring }) => {
       const gltf = await loader.loadAsync(url);
+      // The headset's table model shows the fine core alone; the ring is only on the region table.
+      gltf.scene.userData.meshRing = ring;
       gltf.scene.traverse((object) => {
         const mesh = object as THREE.Mesh;
         if (!mesh.isMesh) return;
@@ -105,6 +110,7 @@ export async function loadMeshCore(
           disposables.push(map);
         }
         const material = new THREE.MeshBasicMaterial({ map, side: THREE.DoubleSide });
+        if (nightUniforms) gradeBasicMaterial(material, nightUniforms);
         source.dispose();
         mesh.material = material;
         mesh.name = `mesh-tile-${tile.node}`;
