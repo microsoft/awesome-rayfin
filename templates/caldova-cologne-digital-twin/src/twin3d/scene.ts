@@ -6,7 +6,7 @@ import { placeToWorld, toWorld, worldExtent, type WorldExtent } from '@/geo/worl
 
 import { loadBuildings, type BuildingLayer } from './buildings';
 import { loadMeshCore, MeshNotBuiltError, type MeshCoreLayer } from './meshCore';
-import { applyNightState, REVEAL_SOFT_M, setHeadlamp } from './nightLighting';
+import { applyNightState, nightUniforms, REVEAL_SOFT_M, setHeadlamp, setTableClip } from './nightLighting';
 import { placeName, subscribeBrand } from '@/config/brand';
 import type { DayEvent } from './dayEvents';
 import { createFlyControls, type FlyControls, type FlyTelemetry } from './flyControls';
@@ -35,6 +35,7 @@ import { loadFlows, type FlowLayer } from './flows';
 import { loadDcInterior, type DcInteriorLayer } from './dcInterior';
 import { createTourLayer, nightAt, OPENING_SLOT, type TourLayer } from './tours';
 import { createWalkRouteLayer, type WalkRouteLayer } from './walkRoute';
+import { wantsHeadsetBudget } from '@/xr/headsetBudget';
 
 /**
  * The campus scene.
@@ -311,7 +312,50 @@ export interface Twin3DHandle {
   /** Subscribe to the latch, so the UI can follow a mode it did not switch. Null to unsubscribe. */
   onDroneMode(listener: ((engaged: boolean) => void) | null): void;
   droneTelemetry(): FlyTelemetry | null;
+  /** What the headset modes (`src/xr`) need to drive this same scene from a Meta Quest. */
+  xr: TwinXrHandle;
   dispose(): void;
+}
+
+/** A thing the headset's controller ray picked. */
+export type TwinXrPick = { kind: 'hall' } | { kind: 'van'; index: number };
+
+/** Which part of the city stands on the table. */
+/**
+ * Which part of the city stands on the table:
+ * the fine photoreal core alone, a 7 km square with the coarse ring around it, or the whole ring.
+ */
+export type TwinTableView = 'small' | 'medium' | 'big';
+
+export interface TwinXrHandle {
+  readonly renderer: THREE.WebGLRenderer;
+  readonly scene: THREE.Scene;
+  readonly camera: THREE.PerspectiveCamera;
+  /** Ground height anywhere in the shell, world metres. */
+  groundAt(x: number, z: number): number;
+  /** World point of a WGS84 coordinate at ground height. */
+  worldOf(lat: number, lon: number): THREE.Vector3;
+  pickRay(ray: THREE.Ray): TwinXrPick | null;
+  /**
+   * Called every frame while a headset presents, before rendering. Returns the head's WORLD
+   * position (null before the first pose). The page's rAF is stopped during a session, so this is
+   * also where the headset advances the clock.
+   */
+  setXrFrame(handler: ((dt: number, frame: XRFrame | undefined) => THREE.Vector3 | null) | null): void;
+  /** Show the city as a table model (core or the whole region), or as the 1:1 world (null). */
+  setTabletop(view: TwinTableView | null): void;
+  /** Centre of what goes on the table, at ground height. */
+  tableAnchor(view: TwinTableView): THREE.Vector3;
+  /** The longer side of that table, world metres. */
+  tableExtent(view: TwinTableView): number;
+  /** Open or close the hall WITHOUT a camera flight (the headset owns the camera). */
+  setHall(open: boolean): void;
+  /** Show or hide the tours WITHOUT a camera flight, with the pharmacy names kept in step. */
+  setTours(visible: boolean): void;
+  hallCentre(): THREE.Vector3 | null;
+  /** Desktop camera pose, saved when a session starts and put back when it ends. */
+  saveDesktop(): void;
+  restoreDesktop(): void;
 }
 
 export interface Campus3DOptions {
@@ -448,7 +492,9 @@ export async function initTwin3D(
   const depthM = terrain ? terrain.height * terrain.resolutionM : ext.depthM;
   const groundM = terrain ? terrain.heightMinM : aoi.elevationRangeM.min;
 
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  // The Quest browser (or `?xr=1`) draws the page at 1x: the headset renders its own framebuffer,
+  // and the flat view before entering does not need the memory of a 2x canvas.
+  renderer.setPixelRatio(wantsHeadsetBudget() ? 1 : Math.min(window.devicePixelRatio, 2));
   renderer.setClearColor(SKY_COLOUR, 1);
 
   const scene = new THREE.Scene();
@@ -717,6 +763,13 @@ export async function initTwin3D(
   // Loaded after the layers it replaces, so switching it off has something to fall back to.
   let meshCore: MeshCoreLayer | null = null;
   let meshShown = false;
+  /**
+   * The night grade of the photoreal tiles: one uniform object shared by every tile's built-in
+   * material, carried in `shadingMaterials()` by a material that is never drawn.
+   */
+  const meshNight = nightUniforms();
+  const meshNightCarrier = new THREE.ShaderMaterial({ uniforms: meshNight });
+  disposables.push(meshNightCarrier);
   const applyMeshVisibility = (visible: boolean) => {
     meshShown = Boolean(meshCore) && visible;
     if (meshCore) meshCore.group.visible = meshShown;
@@ -729,7 +782,7 @@ export async function initTwin3D(
   };
   if (hasTerrain) {
     try {
-      meshCore = await loadMeshCore(aoi.id, '/terrain', renderer);
+      meshCore = await loadMeshCore(aoi.id, '/terrain', renderer, meshNight);
       scene.add(meshCore.group);
       disposables.push(meshCore);
       applyMeshVisibility(true);
@@ -1576,6 +1629,7 @@ export async function initTwin3D(
     add(buildings?.mesh.material);
     vegetation?.group.traverse((o) => add((o as THREE.Mesh).material));
     for (const m of tourLayer?.nightMaterials() ?? []) add(m);
+    if (meshCore) add(meshNightCarrier);
     return out;
   };
 
@@ -1714,13 +1768,26 @@ export async function initTwin3D(
   const observer = new ResizeObserver(resize);
   observer.observe(canvas);
 
-  const tick = () => {
+  /** The headset's per-frame hook and table state; see `TwinXrHandle`. */
+  let xrFrame: ((dt: number, frame: XRFrame | undefined) => THREE.Vector3 | null) | null = null;
+  const headWorld = new THREE.Vector3();
+
+  // ⚠️ `setAnimationLoop`, NOT requestAnimationFrame. The page's rAF stops while a headset session
+  // runs; the session drives this loop instead, at the headset's own rate, and hands over the
+  // XRFrame the head pose and the controllers are read from. On a desktop it is the same rAF.
+  const tick = (_time?: number, frame?: XRFrame) => {
     if (!running) return;
-    requestAnimationFrame(tick);
 
     const now = performance.now();
     const dt = Math.min((now - lastFrame) / 1000, 0.1);
     lastFrame = now;
+
+    const presenting = renderer.xr.isPresenting;
+    let head: THREE.Vector3 | null = null;
+    if (presenting) {
+      head = xrFrame?.(dt, frame) ?? null;
+      if (head) headWorld.copy(head);
+    }
 
     /**
      * Leaving the building closes it.
@@ -1734,7 +1801,7 @@ export async function initTwin3D(
      * arm stage: the building then never opens at all, and both dismissal tests fail on the very
      * first wait.
      */
-    if (explodeCentre && explodeTarget > 0) {
+    if (!presenting && explodeCentre && explodeTarget > 0) {
       const distance = camera.position.distanceTo(explodeCentre);
       if (!explodeArmed && distance <= explodeArmRange) explodeArmed = true;
       // Flew away under their own steam: close the floors, and LEAVE THE CAMERA ALONE.
@@ -1757,7 +1824,8 @@ export async function initTwin3D(
     // arrival. Measured, not asserted.
     const reduced = prefersReducedMotion();
 
-    if (flightFrom && flightTo && flightTargetFrom && flightTargetTo) {
+    // The headset owns the camera while it presents: no flights, no orbit, no drone.
+    if (!presenting && flightFrom && flightTo && flightTargetFrom && flightTargetTo) {
       // Arrive at once when motion is unwelcome: the camera still ENDS where it was sent, so
       // nothing becomes unreachable — only the journey is dropped.
       const k = reduced ? 1 : Math.min((now - flightStart) / FLIGHT_MS, 1);
@@ -1769,15 +1837,19 @@ export async function initTwin3D(
       if (k >= 1) flightFrom = flightTo = flightTargetFrom = flightTargetTo = null;
     }
 
-    if (drone.engaged) drone.update(dt);
-    else controls.update();
+    if (!presenting) {
+      if (drone.engaged) drone.update(dt);
+      else controls.update();
+    }
+
+    const viewPosition = presenting ? headWorld : camera.position;
 
     // The ripple is wall-clock, not frame-count, so it runs at the same speed on any machine.
     // ⚠️ Under reduced motion both are HELD on a fixed frame, not hidden: a ripple and a dash that
     // loop forever are precisely the vestibular trigger the setting exists for, but the water and
     // the routes still have to be visible or the lens stops answering its question.
     const loopTime = reduced ? 0 : now / 1000;
-    water?.update(loopTime, camera.position);
+    water?.update(loopTime, viewPosition);
     flows?.update(loopTime);
     walkRoute.update(loopTime);
 
@@ -1792,7 +1864,7 @@ export async function initTwin3D(
     // time moves from a rAF loop in the panel; a camera updated only when the slot changes would
     // lag a quarter-hour behind the vehicle it is supposed to be following. Here it reads the
     // van's CURRENT matrix every frame, so the two cannot come apart.
-    if (followTour >= 0 && tourLayer) {
+    if (!presenting && followTour >= 0 && tourLayer) {
       const at = tourLayer.vanPosition(followTour);
       if (at) {
         // Behind and above, in the direction the van has been travelling. Lerped rather than
@@ -1874,15 +1946,195 @@ export async function initTwin3D(
       }
     }
 
-    sky.update(camera);
-    labels.update(camera, canvas);
+    if (presenting) {
+      // The dome is 50 km; the headset's far plane is 25 km, which would clip it away. Drawn at
+      // 20 km around the head: same directions, same colours, inside the frustum.
+      sky.mesh.position.copy(headWorld);
+      sky.mesh.scale.setScalar(0.4);
+    } else {
+      sky.mesh.scale.setScalar(1);
+      sky.update(camera);
+      labels.update(camera, canvas);
+    }
     renderer.render(scene, camera);
     // The first frame that actually contains the campus. Everything above this line is awaited
     // before the loop starts, so there is no empty-canvas frame to mistake for a fast one.
     // performance.now() is measured from navigation start, which is what a viewer experiences.
     if (firstFrameMs === null) firstFrameMs = performance.now();
   };
-  requestAnimationFrame(tick);
+  renderer.setAnimationLoop(tick);
+
+  // ── Headset ──────────────────────────────────────────────────────────────────────────────────
+  /** World rectangle (x0, z0, x1, z1) of the fine photoreal core, or the core terrain without one. */
+  const coreRect = (): [number, number, number, number] => {
+    const tiles = meshCore?.manifest.tiles ?? [];
+    if (tiles.length === 0) return [-widthM / 2, -depthM / 2, widthM / 2, depthM / 2];
+    return [
+      Math.min(...tiles.map((t) => t.min[0])),
+      Math.min(...tiles.map((t) => t.min[2])),
+      Math.max(...tiles.map((t) => t.max[0])),
+      Math.max(...tiles.map((t) => t.max[2])),
+    ];
+  };
+  const regionRect = (): [number, number, number, number] => {
+    const box = meshCore?.manifest.ring?.box;
+    return box ? [box.x0, box.z0, box.x1, box.z1] : coreRect();
+  };
+  /**
+   * The city table:
+   * 7 km square around the fine core, so the 3.3 km photoreal core sits in the middle and the
+   * coarse 2025 mesh ring fills the rest. Same 1:5000 for both tiers: 1.4 m on the table.
+   */
+  const CITY_TABLE_M = 7000;
+  const cityRect = (): [number, number, number, number] => {
+    const core = coreRect();
+    const region = regionRect();
+    const cx = (core[0] + core[2]) / 2;
+    const cz = (core[1] + core[3]) / 2;
+    const half = CITY_TABLE_M / 2;
+    return [
+      Math.max(cx - half, region[0]),
+      Math.max(cz - half, region[1]),
+      Math.min(cx + half, region[2]),
+      Math.min(cz + half, region[3]),
+    ];
+  };
+  const tableRect = (view: TwinTableView): [number, number, number, number] =>
+    view === 'small' ? coreRect() : view === 'medium' ? cityRect() : regionRect();
+  const rectCentre = (rect: readonly [number, number, number, number]) => {
+    const x = (rect[0] + rect[2]) / 2;
+    const z = (rect[1] + rect[3]) / 2;
+    return new THREE.Vector3(x, groundAnywhere(x, z), z);
+  };
+  let tableView: TwinTableView | null = null;
+  let shellBeforeTable: boolean | null = null;
+  let meshBeforeTable: boolean | null = null;
+  const unculled = new Set<THREE.Object3D>();
+  const applyTable = () => {
+    const active = tableView !== null;
+    sky.mesh.visible = !active;
+    // The table is the PHOTOREAL core even when the desktop had switched to LoD2; the desktop's
+    // choice comes back with the session's end.
+    if (active && meshBeforeTable === null) {
+      shellBeforeTable = shellMeshRef?.visible ?? null;
+      meshBeforeTable = meshShown;
+      if (meshCore) applyMeshVisibility(true);
+    } else if (!active && meshBeforeTable !== null) {
+      applyMeshVisibility(meshBeforeTable);
+      if (shellMeshRef && shellBeforeTable !== null) shellMeshRef.visible = shellBeforeTable;
+      meshBeforeTable = null;
+      shellBeforeTable = null;
+    }
+    if (shellMeshRef && active) shellMeshRef.visible = false;
+    // The coarse ring surrounds the fine core on the medium and big tables; the small one is the
+    // fine core alone. Outside a session the ring is shown as before.
+    for (const child of meshCore?.group.children ?? []) {
+      if (child.userData.meshRing) child.visible = tableView !== 'small';
+    }
+    setTableClip(shadingMaterials(), tableView === null ? null : tableRect(tableView));
+    // ⚠️ NO FRUSTUM CULLING ON THE TABLE (measured on a headset): three builds a headset's culling
+    // frustum from both eyes with the eye distance in WORLD units, and with the rig scaled by 5000 the
+    // 63 mm between the eyes become 315 m. Everything is in front of the viewer on a table anyway.
+    if (active) {
+      scene.traverse((node) => {
+        if (node.frustumCulled) { node.frustumCulled = false; unculled.add(node); }
+      });
+    } else {
+      for (const node of unculled) node.frustumCulled = true;
+      unculled.clear();
+    }
+  };
+  let desktopPose: { position: THREE.Vector3; target: THREE.Vector3; labels: boolean } | null = null;
+  let labelsShown = true;
+
+  const xr: TwinXrHandle = {
+    renderer,
+    scene,
+    camera,
+    groundAt: groundAnywhere,
+    worldOf(lat, lon) {
+      const w = toWorld(lon, lat, ext, 0);
+      return new THREE.Vector3(w.x, groundAnywhere(w.x, w.z), w.z);
+    },
+    pickRay(ray) {
+      // Vans first: they are small and in front of the hall when the wave leaves.
+      if (tourLayer?.visible()) {
+        let best = -1;
+        let bestAngle = THREE.MathUtils.degToRad(2.5);
+        const to = new THREE.Vector3();
+        for (let i = 0; i < tourLayer.tourCount(); i += 1) {
+          const at = tourLayer.vanPosition(i);
+          if (!at) continue;
+          to.copy(at).sub(ray.origin);
+          const angle = to.angleTo(ray.direction);
+          if (angle < bestAngle) { bestAngle = angle; best = i; }
+        }
+        if (best >= 0) return { kind: 'van', index: best };
+      }
+      if (dcInterior) {
+        const b = dcInterior.bounds;
+        if (ray.intersectsSphere(new THREE.Sphere(b.centre, Math.max(b.radiusM, 60)))) return { kind: 'hall' };
+      }
+      return null;
+    },
+    setXrFrame(handler) {
+      xrFrame = handler;
+    },
+    setTabletop(view) {
+      tableView = view;
+      applyTable();
+    },
+    tableAnchor(view) {
+      return rectCentre(tableRect(view));
+    },
+    tableExtent(view) {
+      const r = tableRect(view);
+      return Math.max(r[2] - r[0], r[3] - r[1]);
+    },
+    setHall(open) {
+      if (!dcInterior) return;
+      if (open) {
+        dcInterior.setVisible(true);
+        dcExplodeTarget = 1;
+      } else {
+        dcExplodeTarget = 0;
+      }
+      dcOpenListener?.(open);
+    },
+    hallCentre() {
+      return dcInterior ? dcInterior.bounds.centre.clone() : null;
+    },
+    setTours(visible) {
+      if (!tourLayer) return;
+      tourLayer.setVisible(visible);
+      labels.setKindVisible('pharmacy', visible);
+    },
+    saveDesktop() {
+      desktopPose = { position: camera.position.clone(), target: controls.target.clone(), labels: labelsShown };
+      flightFrom = flightTo = flightTargetFrom = flightTargetTo = null;
+      if (drone.engaged) drone.setEngaged(false);
+      if (followTour >= 0) {
+        followTour = -1;
+        setHeadlamp(shadingMaterials(), null);
+        followListener?.(false);
+      }
+      labels.setVisible(false);
+    },
+    restoreDesktop() {
+      flightFrom = flightTo = flightTargetFrom = flightTargetTo = null;
+      if (desktopPose) {
+        camera.position.copy(desktopPose.position);
+        controls.target.copy(desktopPose.target);
+        labels.setVisible(desktopPose.labels);
+      } else {
+        labels.setVisible(labelsShown);
+      }
+      camera.quaternion.identity();
+      camera.lookAt(controls.target);
+      controls.update();
+      desktopPose = null;
+    },
+  };
 
   const handle: Twin3DHandle = {
     hasTerrain,
@@ -2174,6 +2426,7 @@ export async function initTwin3D(
       selectPlace(placeId);
     },
     setLabelsVisible(visible) {
+      labelsShown = visible;
       labels.setVisible(visible);
     },
     setBuildingCondition(grade, renovationYear) {
@@ -2208,8 +2461,11 @@ export async function initTwin3D(
     droneTelemetry() {
       return drone.engaged ? drone.telemetry() : null;
     },
+    xr,
     dispose() {
       running = false;
+      renderer.setAnimationLoop(null);
+      xrFrame = null;
       observer.disconnect();
       canvas.removeEventListener('pointerdown', onPointerDown);
       canvas.removeEventListener('pointerup', onPointerUp);

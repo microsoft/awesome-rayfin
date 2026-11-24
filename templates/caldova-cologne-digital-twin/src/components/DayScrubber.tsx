@@ -46,10 +46,16 @@ export function DayScrubber({
   handle,
   slot,
   onSlot,
+  clockEpoch = 0,
 }: {
   handle: Twin3DHandle | null;
   slot: number;
   onSlot: (slot: number) => void;
+  /**
+   * Bumped when something else (the headset) takes or returns the clock: stop playing and adopt
+   * the scene's own fractional time, so the old loop cannot overwrite what the headset left.
+   */
+  clockEpoch?: number;
 }) {
   const { t } = useI18n();
   const [playing, setPlaying] = useState(false);
@@ -105,6 +111,15 @@ export function DayScrubber({
     // it changes constantly while playing and would tear the loop down 60 times a second.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playing, onSlot, handle, speed]);
+
+  useEffect(() => {
+    if (clockEpoch === 0) return;
+    setPlaying(false);
+    if (handle) {
+      fractional.current = handle.dcSlot();
+      lastWhole.current = Math.floor(fractional.current);
+    }
+  }, [clockEpoch, handle]);
 
   // The ride can end on its own, when the tour it was following comes home.
   useEffect(() => {

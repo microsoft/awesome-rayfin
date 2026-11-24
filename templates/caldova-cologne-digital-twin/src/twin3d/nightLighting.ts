@@ -71,8 +71,18 @@ uniform float uHeadlampGain;
 uniform float uReveal;
 uniform float uRevealSoft;
 uniform vec3  uNightFog;
+uniform vec4  uTableClip;
+uniform float uTableClipOn;
+
+// The headset's table model: nothing past the edge of the table hangs in the room. Here and not
+// in three's clipping planes because every surface already includes this, built-in or custom.
+// Fragment shaders only (it discards).
+void tableClip(vec3 world) {
+  if (uTableClipOn > 0.5 && (world.x < uTableClip.x || world.z < uTableClip.y || world.x > uTableClip.z || world.z > uTableClip.w)) discard;
+}
 
 vec3 nightGrade(vec3 colour, vec3 world) {
+  tableClip(world);
   if (uNight <= 0.001) return colour;
 
   // Distance to the WAREHOUSE, which is what the reveal and the hub fade are measured from.
@@ -170,7 +180,47 @@ export function nightUniforms(): Record<string, THREE.IUniform> {
     uReveal: { value: 0 },
     uRevealSoft: { value: REVEAL_SOFT_M },
     uNightFog: { value: new THREE.Vector3(NIGHT_FOG.r, NIGHT_FOG.g, NIGHT_FOG.b) },
+    uTableClip: { value: new THREE.Vector4(0, 0, 0, 0) },
+    uTableClipOn: { value: 0 },
   };
+}
+
+/**
+ * Clip every graded surface to a world rectangle (x0, z0, x1, z1), or switch the clip off.
+ * Only the headset's table model uses it.
+ */
+export function setTableClip(
+  materials: (THREE.ShaderMaterial | null | undefined)[],
+  rect: readonly [number, number, number, number] | null
+): void {
+  for (const material of materials) {
+    const u = material?.uniforms;
+    if (!u?.uTableClipOn) continue;
+    if (rect) u.uTableClip.value.set(rect[0], rect[1], rect[2], rect[3]);
+    u.uTableClipOn.value = rect ? 1 : 0;
+  }
+}
+
+/**
+ * Put a built-in unlit material (the photoreal mesh) through the same night grade.
+ *
+ * ⚠️ THE MESH WAS NEVER NIGHT-GRADED (measured 2026-11-20): at 04:30 with `nightFactor` 1 the
+ * photoreal core rendered in full daylight under a black sky, because `MeshBasicMaterial` is not a
+ * `ShaderMaterial` and `shadingMaterials()` only collects those. `uniforms` is one shared object for
+ * all tiles, so one write reaches every tile.
+ */
+export function gradeBasicMaterial(material: THREE.MeshBasicMaterial, uniforms: Record<string, THREE.IUniform>): void {
+  material.onBeforeCompile = (shader) => {
+    Object.assign(shader.uniforms, uniforms);
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vNightWorld;')
+      .replace('#include <project_vertex>', '#include <project_vertex>\nvNightWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>\nvarying vec3 vNightWorld;\n${NIGHT_GLSL}`)
+      .replace('#include <opaque_fragment>', 'outgoingLight = nightGrade(outgoingLight, vNightWorld);\n#include <opaque_fragment>');
+  };
+  material.customProgramCacheKey = () => 'caldova-night-basic';
+  material.needsUpdate = true;
 }
 
 /**
